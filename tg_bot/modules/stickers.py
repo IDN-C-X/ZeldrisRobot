@@ -1,3 +1,4 @@
+import os
 from telegram import Message, Chat, Update, Bot
 from telegram import ParseMode
 from telegram.ext import CommandHandler, run_async
@@ -27,6 +28,7 @@ def getsticker(bot: Bot, update: Update):
         newFile = bot.get_file(file_id)
         newFile.download('sticker.png')
         bot.sendDocument(chat_id, document=open('sticker.png', 'rb'))
+        os.remove("sticker.png")
         
     else:
         update.effective_message.reply_text("Please reply to a sticker for me to upload its PNG.")
