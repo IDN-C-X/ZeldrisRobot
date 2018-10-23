@@ -45,7 +45,7 @@ def kang(bot: Bot, update: Update):
         kang_file = bot.get_file(file_id)
         kang_file.download('kangsticker.png')
         hash = hashlib.sha1(bytearray(user.id)).hexdigest()
-        packname = "a" + hash[:20] + "_by_sphericalmirrorbot"
+        packname = "a" + hash[:20] + "_by_"+bot.username
         if msg.reply_to_message.sticker.emoji:
             sticker_emoji = msg.reply_to_message.sticker.emoji
         else:
@@ -71,9 +71,9 @@ def makepack(bot: Bot, update: Update):
     name = user.first_name
     name = name[:50]
     hash = hashlib.sha1(bytearray(user.id)).hexdigest()
-    packname = "a" + hash[:20] + "_by_sphericalmirrorbot"
+    packname = "a" + hash[:20] + "_by_"+bot.username
     try:
-        success = bot.create_new_sticker_set(user.id, packname, "Kang pack by " + name,
+        success = bot.create_new_sticker_set(user.id, packname, name + "'s kang pack",
                                              png_sticker="https://images.emojiterra.com/google/android-pie/512px/1f914.png",
                                              emojis="🤔")
     except TelegramError as e:
@@ -92,8 +92,6 @@ def makepack(bot: Bot, update: Update):
     else:
         msg.reply_text("Failed to create sticker pack. Possibly due to blek mejik.")
 
-        # /ip is for private use
-
 
 __help__ = """
 Kanging or fetching ID of stickers are made easy! With this stickers command you simply can grab \
@@ -106,10 +104,10 @@ raw png file or fetch ID of sticker.
 """
 
 __mod_name__ = "Stickers"
-STICKERID_HANDLER = CommandHandler("stickerid", stickerid)
-GETSTICKER_HANDLER = CommandHandler("getsticker", getsticker)
-MAKEPACK_HANDLER = CommandHandler("makepack", makepack)
-KANG_HANDLER = CommandHandler("kang", kang)
+STICKERID_HANDLER = DisableAbleCommandHandler("stickerid", stickerid)
+GETSTICKER_HANDLER = DisableAbleCommandHandler("getsticker", getsticker)
+MAKEPACK_HANDLER = DisableAbleCommandHandler("makepack", makepack)
+KANG_HANDLER = DisableAbleCommandHandler("kang", kang)
 
 dispatcher.add_handler(STICKERID_HANDLER)
 dispatcher.add_handler(GETSTICKER_HANDLER)
