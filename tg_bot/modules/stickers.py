@@ -9,6 +9,7 @@ from telegram.utils.helpers import escape_markdown
 
 from tg_bot import dispatcher
 
+from tg_bot.modules.disable import DisableableCommandHandler
 
 @run_async
 def stickerid(update: Update):
