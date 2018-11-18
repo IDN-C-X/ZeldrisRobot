@@ -12,7 +12,7 @@ from tg_bot import dispatcher
 from tg_bot.modules.disable import DisableAbleCommandHandler
 
 @run_async
-def stickerid(update: Update):
+def stickerid(bot: Bot, update: Update):
     msg = update.effective_message
     if msg.reply_to_message and msg.reply_to_message.sticker:
         update.effective_message.reply_text("Sticker ID:\n```" +
@@ -60,6 +60,8 @@ def kang(bot: Bot, update: Update):
         except TelegramError as e:
             if e.message == "Stickerset_invalid":
                 msg.reply_text("Use /makepack to create a pack first.")
+            elif e.message == "Sticker_png_dimensions":
+                msg.reply_text("Invalid sticker dimensions.")
             print(e)
     else:
         msg.reply_text("Please reply to a sticker for me to kang it.")
