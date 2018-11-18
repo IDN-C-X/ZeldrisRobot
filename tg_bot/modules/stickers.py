@@ -113,7 +113,7 @@ __mod_name__ = "Stickers"
 STICKERID_HANDLER = DisableAbleCommandHandler("stickerid", stickerid)
 GETSTICKER_HANDLER = DisableAbleCommandHandler("getsticker", getsticker)
 MAKEPACK_HANDLER = DisableAbleCommandHandler("makepack", makepack)
-KANG_HANDLER = DisableAbleCommandHandler("kang", kang)
+KANG_HANDLER = DisableAbleCommandHandler("kang", kang, pass_args=True)
 
 dispatcher.add_handler(STICKERID_HANDLER)
 dispatcher.add_handler(GETSTICKER_HANDLER)
