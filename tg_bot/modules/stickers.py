@@ -65,6 +65,8 @@ def kang(bot: Bot, update: Update, args: List[str]):
                 msg.reply_text("Use /makepack to create a pack first.")
             elif e.message == "Sticker_png_dimensions":
                 msg.reply_text("Invalid sticker dimensions.")
+            elif e.message == "Invalid sticker emojis":
+                msg.reply_text("Not a valid emoji.")
             print(e)
     else:
         msg.reply_text("Please reply to a sticker for me to kang it.")
