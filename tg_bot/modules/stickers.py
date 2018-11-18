@@ -1,6 +1,7 @@
 import hashlib
 import os
 
+from typing import Optional, List
 from telegram import ParseMode, InlineKeyboardMarkup, InlineKeyboardButton
 from telegram import TelegramError
 from telegram import Update, Bot
@@ -38,7 +39,7 @@ def getsticker(bot: Bot, update: Update):
 
 
 @run_async
-def kang(bot: Bot, update: Update):
+def kang(bot: Bot, update: Update, args: List[str]):
     msg = update.effective_message
     user = update.effective_user
     if msg.reply_to_message and msg.reply_to_message.sticker:
@@ -47,7 +48,9 @@ def kang(bot: Bot, update: Update):
         kang_file.download('kangsticker.png')
         hash = hashlib.sha1(bytearray(user.id)).hexdigest()
         packname = "a" + hash[:20] + "_by_"+bot.username
-        if msg.reply_to_message.sticker.emoji:
+        if args:
+            sticker_emoji = str(args[0])
+        elif msg.reply_to_message.sticker.emoji:
             sticker_emoji = msg.reply_to_message.sticker.emoji
         else:
             sticker_emoji = "🤔"
