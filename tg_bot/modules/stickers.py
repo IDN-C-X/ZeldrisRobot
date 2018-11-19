@@ -33,7 +33,6 @@ def getsticker(bot: Bot, update: Update):
         newFile.download('sticker.png')
         bot.send_document(chat_id, document=open('sticker.png', 'rb'))
         os.remove("sticker.png")
-
     else:
         update.effective_message.reply_text("Please reply to a sticker for me to upload its PNG.")
 
@@ -56,34 +55,30 @@ def kang(bot: Bot, update: Update, args: List[str]):
             sticker_emoji = "🤔"
         try:
             bot.add_sticker_to_set(user_id=user.id, name=packname,
-                                   png_sticker=open('kangsticker.png', 'rb'), emojis=sticker_emoji)
-            os.remove("kangsticker.png")
+                                    png_sticker=open('kangsticker.png', 'rb'), emojis=sticker_emoji)
             msg.reply_text("Sticker successfully added to [pack](t.me/addstickers/%s)" % packname,
-                           parse_mode=ParseMode.MARKDOWN)
+                            parse_mode=ParseMode.MARKDOWN)
         except TelegramError as e:
             if e.message == "Stickerset_invalid":
-                msg.reply_text("Use /makepack to create a pack first.")
+                makepack_internal(msg, user, open('kangsticker.png', 'rb'), sticker_emoji, bot)
             elif e.message == "Sticker_png_dimensions":
                 msg.reply_text("Invalid sticker dimensions.")
             elif e.message == "Invalid sticker emojis":
                 msg.reply_text("Not a valid emoji.")
             print(e)
+        os.remove("kangsticker.png")
     else:
         msg.reply_text("Please reply to a sticker for me to kang it.")
 
-
-@run_async
-def makepack(bot: Bot, update: Update):
-    msg = update.effective_message
-    user = update.effective_user
+def makepack_internal(msg, user, png_sticker, emoji, bot):
     name = user.first_name
     name = name[:50]
     hash = hashlib.sha1(bytearray(user.id)).hexdigest()
-    packname = "a" + hash[:20] + "_by_"+bot.username
+    packname = f"a{hash[:20]}_by_{bot.username}"
     try:
         success = bot.create_new_sticker_set(user.id, packname, name + "'s kang pack",
-                                             png_sticker="https://images.emojiterra.com/google/android-pie/512px/1f914.png",
-                                             emojis="🤔")
+                                             png_sticker=png_sticker,
+                                             emojis=emoji)
     except TelegramError as e:
         print(e)
         if e.message == "Sticker set name is already occupied":
@@ -91,7 +86,7 @@ def makepack(bot: Bot, update: Update):
                            parse_mode=ParseMode.MARKDOWN)
         elif e.message == "Peer_id_invalid":
             msg.reply_text("Contact me in PM first.", reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton(
-                text="Start", url="t.me/{}".format(bot.username))]]))
+                text="Start", url=f"t.me/{bot.usename}")]]))
         return
 
     if success:
@@ -100,24 +95,20 @@ def makepack(bot: Bot, update: Update):
     else:
         msg.reply_text("Failed to create sticker pack. Possibly due to blek mejik.")
 
-
 __help__ = """
 Kanging or fetching ID of stickers are made easy! With this stickers command you simply can grab \
 raw png file or fetch ID of sticker.
 
 - /stickerid: reply to a sticker to me to tell you its file ID.
 - /getsticker: reply to a sticker to me to upload its raw PNG file.
-- /makepack: create a sticker pack that's tied to your telegram account (only one can be made at a time)
-- /kang: reply to a sticker to add it to the created pack.
+- /kang: reply to a sticker to add it to your pack.
 """
 
 __mod_name__ = "Stickers"
 STICKERID_HANDLER = DisableAbleCommandHandler("stickerid", stickerid)
 GETSTICKER_HANDLER = DisableAbleCommandHandler("getsticker", getsticker)
-MAKEPACK_HANDLER = DisableAbleCommandHandler("makepack", makepack)
 KANG_HANDLER = DisableAbleCommandHandler("kang", kang, pass_args=True)
 
 dispatcher.add_handler(STICKERID_HANDLER)
 dispatcher.add_handler(GETSTICKER_HANDLER)
-dispatcher.add_handler(MAKEPACK_HANDLER)
 dispatcher.add_handler(KANG_HANDLER)
