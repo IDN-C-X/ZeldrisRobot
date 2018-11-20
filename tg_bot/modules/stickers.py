@@ -1,6 +1,8 @@
 import hashlib
 import os
 
+from PIL import Image
+
 from typing import Optional, List
 from telegram import ParseMode, InlineKeyboardMarkup, InlineKeyboardButton
 from telegram import TelegramError
@@ -41,32 +43,52 @@ def getsticker(bot: Bot, update: Update):
 def kang(bot: Bot, update: Update, args: List[str]):
     msg = update.effective_message
     user = update.effective_user
-    if msg.reply_to_message and msg.reply_to_message.sticker:
-        file_id = msg.reply_to_message.sticker.file_id
+    if msg.reply_to_message:
+        if msg.reply_to_message.sticker:
+            file_id = msg.reply_to_message.sticker.file_id
+        elif msg.reply_to_message.photo:
+            file_id = msg.reply_to_message.photo[-1].file_id
+        elif msg.reply_to_message.document:
+            file_id = msg.reply_to_message.document.file_id
         kang_file = bot.get_file(file_id)
         kang_file.download('kangsticker.png')
         hash = hashlib.sha1(bytearray(user.id)).hexdigest()
         packname = "a" + hash[:20] + "_by_"+bot.username
         if args:
             sticker_emoji = str(args[0])
-        elif msg.reply_to_message.sticker.emoji:
+        elif msg.reply_to_message.sticker and msg.reply_to_message.sticker.emoji:
             sticker_emoji = msg.reply_to_message.sticker.emoji
         else:
             sticker_emoji = "🤔"
         try:
+            size = (512, 512)
+            kangsticker = "kangsticker.png"
+            im = Image.open(kangsticker)
+            im.thumbnail(size)
+            if not msg.reply_to_message.sticker:
+                im.save(kangsticker, "PNG")
             bot.add_sticker_to_set(user_id=user.id, name=packname,
                                     png_sticker=open('kangsticker.png', 'rb'), emojis=sticker_emoji)
             msg.reply_text("Sticker successfully added to [pack](t.me/addstickers/%s)" % packname,
                             parse_mode=ParseMode.MARKDOWN)
+        except OSError as e:
+            msg.reply_text("I can only kang images m8.")
+            print(e)
+            return
         except TelegramError as e:
             if e.message == "Stickerset_invalid":
                 makepack_internal(msg, user, open('kangsticker.png', 'rb'), sticker_emoji, bot)
             elif e.message == "Sticker_png_dimensions":
-                msg.reply_text("Invalid sticker dimensions.")
+                im.save(kangsticker, "PNG")
+                bot.add_sticker_to_set(user_id=user.id, name=packname,
+                                        png_sticker=open('kangsticker.png', 'rb'), emojis=sticker_emoji)
+                msg.reply_text("Sticker successfully added to [pack](t.me/addstickers/%s)" % packname,
+                                parse_mode=ParseMode.MARKDOWN)
             elif e.message == "Invalid sticker emojis":
                 msg.reply_text("Not a valid emoji.")
             print(e)
-        os.remove("kangsticker.png")
+        if os.path.isfile("kangsticker.png"):
+            os.remove("kangsticker.png")
     else:
         msg.reply_text("Please reply to a sticker for me to kang it.")
 
