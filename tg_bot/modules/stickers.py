@@ -67,6 +67,7 @@ def kang(bot: Bot, update: Update, args: List[str]):
             im.thumbnail(size)
             if not msg.reply_to_message.sticker:
                 im.save(kangsticker, "PNG")
+            msg.reply_text("Emoji is:" + sticker_emoji)
             bot.add_sticker_to_set(user_id=user.id, name=packname,
                                     png_sticker=open('kangsticker.png', 'rb'), emojis=sticker_emoji)
             msg.reply_text("Sticker successfully added to [pack](t.me/addstickers/%s)" % packname,
