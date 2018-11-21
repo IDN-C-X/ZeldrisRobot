@@ -1,5 +1,6 @@
 import hashlib
 import os
+import math
 
 from PIL import Image
 
@@ -61,17 +62,32 @@ def kang(bot: Bot, update: Update, args: List[str]):
         else:
             sticker_emoji = "🤔"
         try:
-            size = (512, 512)
+            maxsize = (512, 512)
             kangsticker = "kangsticker.png"
             im = Image.open(kangsticker)
-            im.thumbnail(size)
+            if (im.width and im.height) < 512:
+                size1 = im.width
+                size2 = im.height
+                if im.width > im.height:
+                    scale = 512/size1
+                    size1new = 512
+                    size2new = size2 * scale
+                else:
+                    scale = 512/size2
+                    size1new = size1 * scale
+                    size2new = 512
+                size1new = math.floor(size1new)
+                size2new = math.floor(size2new)
+                sizenew = (size1new, size2new)
+                im = im.resize(sizenew)
+            else:
+                im.thumbnail(maxsize)
             if not msg.reply_to_message.sticker:
                 im.save(kangsticker, "PNG")
-            msg.reply_text("Emoji is:" + sticker_emoji)
             bot.add_sticker_to_set(user_id=user.id, name=packname,
                                     png_sticker=open('kangsticker.png', 'rb'), emojis=sticker_emoji)
-            msg.reply_text("Sticker successfully added to [pack](t.me/addstickers/%s)" % packname,
-                            parse_mode=ParseMode.MARKDOWN)
+            msg.reply_text("Sticker successfully added to [pack](t.me/addstickers/%s)" % packname + "\n"
+                            "Emoji is:" + " " + sticker_emoji, parse_mode=ParseMode.MARKDOWN)
         except OSError as e:
             msg.reply_text("I can only kang images m8.")
             print(e)
@@ -83,8 +99,8 @@ def kang(bot: Bot, update: Update, args: List[str]):
                 im.save(kangsticker, "PNG")
                 bot.add_sticker_to_set(user_id=user.id, name=packname,
                                         png_sticker=open('kangsticker.png', 'rb'), emojis=sticker_emoji)
-                msg.reply_text("Sticker successfully added to [pack](t.me/addstickers/%s)" % packname,
-                                parse_mode=ParseMode.MARKDOWN)
+                msg.reply_text("Sticker successfully added to [pack](t.me/addstickers/%s)" % packname + "\n"
+                            "Emoji is:" + " " + sticker_emoji, parse_mode=ParseMode.MARKDOWN)
             elif e.message == "Invalid sticker emojis":
                 msg.reply_text("Not a valid emoji.")
             print(e)
