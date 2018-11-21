@@ -102,12 +102,15 @@ def kang(bot: Bot, update: Update, args: List[str]):
                 msg.reply_text("Sticker successfully added to [pack](t.me/addstickers/%s)" % packname + "\n"
                             "Emoji is:" + " " + sticker_emoji, parse_mode=ParseMode.MARKDOWN)
             elif e.message == "Invalid sticker emojis":
-                msg.reply_text("Not a valid emoji.")
+                msg.reply_text("Invalid emoji(s).")
             print(e)
         if os.path.isfile("kangsticker.png"):
             os.remove("kangsticker.png")
     else:
-        msg.reply_text("Please reply to a sticker for me to kang it.")
+        hash = hashlib.sha1(bytearray(user.id)).hexdigest()
+        packname = "a" + hash[:20] + "_by_"+bot.username
+        msg.reply_text("Please reply to a sticker, or image to kang it!" + "\n"
+                        "Oh, by the way. Your pack can be found [here](t.me/addstickers/%s)" % packname, parse_mode=ParseMode.MARKDOWN)
 
 def makepack_internal(msg, user, png_sticker, emoji, bot):
     name = user.first_name
