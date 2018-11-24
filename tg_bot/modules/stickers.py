@@ -128,7 +128,7 @@ def makepack_internal(msg, user, png_sticker, emoji, bot):
                            parse_mode=ParseMode.MARKDOWN)
         elif e.message == "Peer_id_invalid":
             msg.reply_text("Contact me in PM first.", reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton(
-                text="Start", url=f"t.me/{bot.usename}")]]))
+                text="Start", url=f"t.me/{bot.username}")]]))
         return
 
     if success:
