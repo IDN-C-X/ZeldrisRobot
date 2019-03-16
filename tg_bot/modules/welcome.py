@@ -1,15 +1,20 @@
-import html
+import html, time
+import re
 from typing import Optional, List
 
-from telegram import Message, Chat, Update, Bot, User
-from telegram import ParseMode, InlineKeyboardMarkup
+from telegram import Message, Chat, Update, Bot, User, CallbackQuery
+from telegram import ParseMode, InlineKeyboardMarkup, InlineKeyboardButton
 from telegram.error import BadRequest
-from telegram.ext import MessageHandler, Filters, CommandHandler, run_async
+from telegram.ext import MessageHandler, Filters, CommandHandler, run_async, CallbackQueryHandler
 from telegram.utils.helpers import mention_markdown, mention_html, escape_markdown
 
 import tg_bot.modules.sql.welcome_sql as sql
 from tg_bot import dispatcher, OWNER_ID, LOGGER
+<<<<<<< HEAD
 from tg_bot.modules.helper_funcs.chat_status import user_admin
+=======
+from tg_bot.modules.helper_funcs.chat_status import user_admin, can_delete, is_user_ban_protected
+>>>>>>> b96fb3d... Welcome Mute functions
 from tg_bot.modules.helper_funcs.misc import build_keyboard, revert_buttons
 from tg_bot.modules.helper_funcs.msg_types import get_welcome_type
 from tg_bot.modules.helper_funcs.string_handling import markdown_parser, \
@@ -79,8 +84,11 @@ def send(update, message, keyboard, backup_message):
 @run_async
 def new_member(bot: Bot, update: Update):
     chat = update.effective_chat  # type: Optional[Chat]
-
+    user = update.effective_user  # type: Optional[User]
+    msg = update.effective_message # type: Optional[Message]
+    chat_name = chat.title or chat.first or chat.username # type: Optional:[chat name]
     should_welc, cust_welcome, welc_type = sql.get_welc_pref(chat.id)
+    welc_mutes = sql.welcome_mutes(chat.id)
     if should_welc:
         sent = None
         new_members = update.effective_message.new_chat_members
@@ -129,6 +137,32 @@ def new_member(bot: Bot, update: Update):
 
                 sent = send(update, res, keyboard,
                             sql.DEFAULT_WELCOME.format(first=first_name))  # type: Optional[Message]
+            
+                
+                #Sudo user exception from mutes:
+                if is_user_ban_protected(chat, new_mem.id, chat.get_member(new_mem.id)):
+                    continue
+
+                #Join welcome: soft mute
+                if welc_mutes == "soft":
+                    bot.restrict_chat_member(chat.id, new_mem.id, 
+                                             can_send_messages=True, 
+                                             can_send_media_messages=False, 
+                                             can_send_other_messages=False, 
+                                             can_add_web_page_previews=False, 
+                                             until_date=(int(time.time() + 24 * 60 * 60)))
+
+                #Join welcome: strong mute
+                if welc_mutes == "strong":
+                    msg.reply_text("Click the button below to prove you're human",
+                         reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton(text="Yes, I'm a human", 
+                         callback_data="userverify_({})".format(new_mem.id))]]))
+                    bot.restrict_chat_member(chat.id, new_mem.id, 
+                                             can_send_messages=False, 
+                                             can_send_media_messages=False, 
+                                             can_send_other_messages=False, 
+                                             can_add_web_page_previews=False)
+            delete_join(bot, update)
 
         prev_welc = sql.get_clean_pref(chat.id)
         if prev_welc:
@@ -139,7 +173,6 @@ def new_member(bot: Bot, update: Update):
 
             if sent:
                 sql.set_clean_welcome(chat.id, sent.message_id)
-
 
 @run_async
 def left_member(bot: Bot, update: Update):
@@ -359,6 +392,48 @@ def reset_goodbye(bot: Bot, update: Update) -> str:
            "\nReset the goodbye message.".format(html.escape(chat.title),
                                                  mention_html(user.id, user.first_name))
 
+@run_async
+@user_admin
+@loggable
+def welcomemute(bot: Bot, update: Update, args: List[str]) -> str:
+    chat = update.effective_chat  # type: Optional[Chat]
+    user = update.effective_user  # type: Optional[User]
+    msg = update.effective_message # type: Optional[Message]
+    
+    if len(args) >= 1:
+        if  args[0].lower() in ("off", "no"):
+            sql.set_welcome_mutes(chat.id, False)
+            msg.reply_text("I will no longer mute people on joining!")
+            return "<b>{}:</b>" \
+                   "\n#WELCOME_MUTE" \
+                   "\n<b>• Admin:</b> {}" \
+                   "\nHas toggled welcome mute to <b>OFF</b>.".format(html.escape(chat.title),
+                                                                      mention_html(user.id, user.first_name))
+        elif args[0].lower() in ("soft"):
+             sql.set_welcome_mutes(chat.id, "soft")
+             msg.reply_text("I will restrict user's permission to send media for 24 hours")
+             return "<b>{}:</b>" \
+                    "\n#WELCOME_MUTE" \
+                    "\n<b>• Admin:</b> {}" \
+                    "\nHas toggled welcome mute to <b>SOFT</b>.".format(html.escape(chat.title),
+                                                                       mention_html(user.id, user.first_name))
+        elif args[0].lower() in ("strong"):
+             sql.set_welcome_mutes(chat.id, "strong")
+             msg.reply_text("I will now mute people when they join and"
+                           " click on the button to be unmuted.")
+             return "<b>{}:</b>" \
+                    "\n#WELCOME_MUTE" \
+                    "\n<b>• Admin:</b> {}" \
+                    "\nHas toggled welcome mute to <b>STRONG</b>.".format(html.escape(chat.title),
+                                                                          mention_html(user.id, user.first_name))
+        else:
+            msg.reply_text("Please enter `off`/`on`/`soft`/`strong`!", parse_mode=ParseMode.MARKDOWN)
+            return ""
+    else:
+        curr_setting = sql.welcome_mutes(chat.id)
+        reply = "\n Give me a setting! Choose one of: `off`/`no` or `soft` or `strong` only! \nCurrent setting: `{}`"
+        msg.reply_text(reply.format(curr_setting), parse_mode=ParseMode.MARKDOWN)
+        return ""
 
 @run_async
 @user_admin
@@ -395,6 +470,71 @@ def clean_welcome(bot: Bot, update: Update, args: List[str]) -> str:
         # idek what you're writing, say yes or no
         update.effective_message.reply_text("I understand 'on/yes' or 'off/no' only!")
         return ""
+
+@run_async
+@user_admin
+@loggable
+def del_joined(bot: Bot, update: Update, args: List[str]) -> str:
+    chat = update.effective_chat  # type: Optional[Chat]
+    user = update.effective_user  # type: Optional[User]
+
+    if not args:
+        del_pref = sql.get_del_pref(chat.id)
+        if del_pref:
+            update.effective_message.reply_text("I should be deleting `user` joined the chat messages now.")
+        else:
+            update.effective_message.reply_text("I'm currently not deleting old joined messages!")
+        return ""
+
+    if args[0].lower() in ("on", "yes"):
+        sql.set_del_joined(str(chat.id), True)
+        update.effective_message.reply_text("I'll try to delete old joined messages!")
+        return "<b>{}:</b>" \
+               "\n#CLEAN_SERVICE" \
+               "\n<b>• Admin:</b> {}" \
+               "\nHas toggled joined deletion to <code>ON</code>.".format(html.escape(chat.title),
+                                                                         mention_html(user.id, user.first_name))
+    elif args[0].lower() in ("off", "no"):
+        sql.set_del_joined(str(chat.id), False)
+        update.effective_message.reply_text("I won't delete old joined messages.")
+        return "<b>{}:</b>" \
+               "\n#CLEAN_SERVICE" \
+               "\n<b>• Admin:</b> {}" \
+               "\nHas toggled joined deletion to <code>OFF</code>.".format(html.escape(chat.title),
+                                                                          mention_html(user.id, user.first_name))
+    else:
+        # idek what you're writing, say yes or no
+        update.effective_message.reply_text("I understand 'on/yes' or 'off/no' only!")
+        return ""
+
+
+@run_async
+def delete_join(bot: Bot, update: Update):
+    chat = update.effective_chat  # type: Optional[Chat]
+    join = update.effective_message.new_chat_members
+    if can_delete(chat, bot.id):
+        del_join = sql.get_del_pref(chat.id)
+        if del_join:
+            update.message.delete()
+            
+@run_async
+def user_button(bot: Bot, update: Update):
+    chat = update.effective_chat  # type: Optional[Chat]
+    user = update.effective_user  # type: Optional[User]
+    query = update.callback_query  # type: Optional[CallbackQuery]
+    match = re.match(r"userverify_\((.+?)\)", query.data)
+    message = update.effective_message  # type: Optional[Message]
+    join_user =  int(match.group(1))
+    
+    if join_user == user.id:
+        query.answer(text="Yus! You're a human, Unmuted!")
+        bot.restrict_chat_member(chat.id, user.id, can_send_messages=True, 
+                                                   can_send_media_messages=True, 
+                                                   can_send_other_messages=True, 
+                                                   can_add_web_page_previews=True)
+        bot.deleteMessage(chat.id, message.message_id)
+    else:
+        query.answer(text="Sorry, I can't unmute you!")
 
 
 WELC_HELP_TXT = "Your group's welcome/goodbye messages can be personalised in multiple ways. If you want the messages" \
@@ -464,11 +604,12 @@ __help__ = """
  - /resetwelcome: reset to the default welcome message.
  - /resetgoodbye: reset to the default goodbye message.
  - /cleanwelcome <on/off>: On new member, try to delete the previous welcome message to avoid spamming the chat.
-
+ - /cleanservice <on/off>: when someone joins, try to delete the *user* joined the group message.
+ - /welcomemute <off/soft/strong>: all users that join, get muted; a button gets added to the welcome message for them to unmute themselves. This proves they aren't a bot! soft - restricts users ability to post media for 24 hours. strong - mutes on join until they prove they're not bots.
  - /welcomehelp: view more formatting information for custom welcome/goodbye messages.
 """.format(WELC_HELP_TXT)
 
-__mod_name__ = "Welcomes/Goodbyes"
+__mod_name__ = "Greetings"
 
 NEW_MEM_HANDLER = MessageHandler(Filters.status_update.new_chat_members, new_member)
 LEFT_MEM_HANDLER = MessageHandler(Filters.status_update.left_chat_member, left_member)
@@ -479,7 +620,10 @@ SET_GOODBYE = CommandHandler("setgoodbye", set_goodbye, filters=Filters.group)
 RESET_WELCOME = CommandHandler("resetwelcome", reset_welcome, filters=Filters.group)
 RESET_GOODBYE = CommandHandler("resetgoodbye", reset_goodbye, filters=Filters.group)
 CLEAN_WELCOME = CommandHandler("cleanwelcome", clean_welcome, pass_args=True, filters=Filters.group)
+WELCOMEMUTE_HANDLER = CommandHandler("welcomemute", welcomemute, pass_args=True, filters=Filters.group)
+DEL_JOINED = CommandHandler(["rmjoin", "cleanservice"], del_joined, pass_args=True, filters=Filters.group)
 WELCOME_HELP = CommandHandler("welcomehelp", welcome_help)
+BUTTON_VERIFY_HANDLER = CallbackQueryHandler(user_button, pattern=r"userverify_")
 
 dispatcher.add_handler(NEW_MEM_HANDLER)
 dispatcher.add_handler(LEFT_MEM_HANDLER)
@@ -490,4 +634,8 @@ dispatcher.add_handler(SET_GOODBYE)
 dispatcher.add_handler(RESET_WELCOME)
 dispatcher.add_handler(RESET_GOODBYE)
 dispatcher.add_handler(CLEAN_WELCOME)
+dispatcher.add_handler(WELCOMEMUTE_HANDLER)
+dispatcher.add_handler(BUTTON_VERIFY_HANDLER)
+dispatcher.add_handler(DEL_JOINED)
 dispatcher.add_handler(WELCOME_HELP)
+
