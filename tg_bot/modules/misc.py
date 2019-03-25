@@ -623,7 +623,7 @@ def gps(bot: Bot, update: Update, args: List[str]):
 
 # /ip is for private use
 __help__ = """
-An "odds and ends" module for small, simple commands which don't really fit anywhere
+An "odds and ends" module for small, simple commands which don't reall fit anywhere
  - /id: get the current group id. If used by replying to a message, gets that user's id.
  - /runs: reply a random string from an array of replies.
  - /spank: same as /slap but nastier.
