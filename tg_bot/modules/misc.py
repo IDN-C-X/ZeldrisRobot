@@ -121,6 +121,17 @@ PUNCH_TEMPLATES = (
     "{user1} shout's 'it's garbage day' at {user2}.",
     "{user1} throws his axe at {user2}.",
     "{user1} is now {user2}'s grim reaper.",
+    "{user1} {punches} {user2} with a {item}.",
+    "{user1} {punches} {user2} in the face with a {item}.",
+    "{user1} {punches} {user2} around a bit with a {item}.",
+    "{user1} {punches} {user2} on their face. 👊",
+)
+
+HUG_TEMPLATES = (
+    "{user1} {hug} {user2}.",
+    "{user1} {hug} {user2} warmly.",
+    "{user1} {hug} {user2} with a love. 💘",
+    "{user1} {hug} {user2} with kindness.",
 )
 
 PUNCH = (
@@ -217,6 +228,18 @@ EMOJI = (
     "\U0001F632",
 )
 
+PUNCH = (
+    "punch",
+    "punched",
+    "smack",
+)
+
+HUG = (
+    "hugs",
+    "hugged",
+    "kissed",
+    "pinches",
+)
 GMAPS_LOC = "https://maps.googleapis.com/maps/api/geocode/json"
 GMAPS_TIME = "https://maps.googleapis.com/maps/api/timezone/json"
 
@@ -279,6 +302,82 @@ def slap(bot: Bot, update: Update, args: List[str]):
     repl = temp.format(user1=user1, user2=user2, item=item, hits=hit, throws=throw, emoji=emoji)
 
     reply_text(repl, parse_mode=ParseMode.MARKDOWN)
+
+
+@run_async
+def punch(bot: Bot, update: Update, args: List[str]):
+    msg = update.effective_message  # type: Optional[Message]
+
+    # reply to correct message
+    reply_text = msg.reply_to_message.reply_text if msg.reply_to_message else msg.reply_text
+
+    # get user who sent message
+    if msg.from_user.username:
+        curr_user = "@" + escape_markdown(msg.from_user.username)
+    else:
+        curr_user = "[{}](tg://user?id={})".format(msg.from_user.first_name, msg.from_user.id)
+
+    user_id = extract_user(update.effective_message, args)
+    if user_id:
+        punched_user = bot.get_chat(user_id)
+        user1 = curr_user
+        if punched_user.username:
+            user2 = "@" + escape_markdown(punched_user.username)
+        else:
+            user2 = "[{}](tg://user?id={})".format(punched_user.first_name,
+                                                   punched_user.id)
+
+    # if no target found, bot targets the sender
+    else:
+        user1 = "[{}](tg://user?id={})".format(bot.first_name, bot.id)
+        user2 = curr_user
+
+    temp = random.choice(PUNCH_TEMPLATES)
+    item = random.choice(ITEMS)
+    punch = random.choice(PUNCH)
+
+    repl = temp.format(user1=user1, user2=user2, item=item, punches=punch)
+
+    reply_text(repl, parse_mode=ParseMode.MARKDOWN)
+
+
+
+@run_async
+def hug(bot: Bot, update: Update, args: List[str]):
+    msg = update.effective_message  # type: Optional[Message]
+
+    # reply to correct message
+    reply_text = msg.reply_to_message.reply_text if msg.reply_to_message else msg.reply_text
+
+    # get user who sent message
+    if msg.from_user.username:
+        curr_user = "@" + escape_markdown(msg.from_user.username)
+    else:
+        curr_user = "[{}](tg://user?id={})".format(msg.from_user.first_name, msg.from_user.id)
+
+    user_id = extract_user(update.effective_message, args)
+    if user_id:
+        hugged_user = bot.get_chat(user_id)
+        user1 = curr_user
+        if hugged_user.username:
+            user2 = "@" + escape_markdown(hugged_user.username)
+        else:
+            user2 = "[{}](tg://user?id={})".format(hugged_user.first_name,
+                                                   hugged_user.id)
+
+    # if no target found, bot targets the sender
+    else:
+        user1 = "Awwh! [{}](tg://user?id={})".format(bot.first_name, bot.id)
+        user2 = curr_user
+
+    temp = random.choice(HUG_TEMPLATES)
+    hug = random.choice(HUG)
+
+    repl = temp.format(user1=user1, user2=user2, hug=hug)
+
+    reply_text(repl, parse_mode=ParseMode.MARKDOWN)
+ 
+
 
 @run_async
 def punch(bot: Bot, update: Update, args: List[str]):
@@ -529,6 +628,9 @@ An "odds and ends" module for small, simple commands which don't really fit anyw
  - /runs: reply a random string from an array of replies.
  - /spank: same as /slap but nastier.
  - /slap: slap a user, or get slapped if not a reply.
+ - /time <place>: gives the local time at the given place.
+ - /hug: hug a user, or get hugged if not a reply.
+ - /punch: punch a user, or get punched if not a reply.
  - /info: get information about a user.
  - /gdpr: deletes your information from the bot's database. Private chats only.
  - /markdownhelp: quick summary of how markdown works in telegram - can only be called in private chats.
@@ -544,11 +646,10 @@ RUNS_HANDLER = DisableAbleCommandHandler("runs", runs)
 SMACK_HANDLER = DisableAbleCommandHandler("smack", smack)
 SLAP_HANDLER = DisableAbleCommandHandler("slap", slap, pass_args=True)
 PUNCH_HANDLER = DisableAbleCommandHandler("punch", punch, pass_args=True)
-SPANK_HANDLER = DisableAbleCommandHandler("spank", slap, pass_args=True)
+HUG_HANDLER = DisableAbleCommandHandler("hug", hug, pass_args=True)
 INFO_HANDLER = DisableAbleCommandHandler("info", info, pass_args=True)
 ECHO_HANDLER = CommandHandler("echo", echo, filters=Filters.user(OWNER_ID))
-MD_HELP_HANDLER = CommandHandler("markdownhelp", markdown_help, filters=Filters.private)
-
+MD_HELP_HANDLER = CommandHandler("markdownhelp", markdown_help, filters=Filters.private
 STATS_HANDLER = CommandHandler("stats", stats, filters=CustomFilters.sudo_filter)
 GDPR_HANDLER = CommandHandler("gdpr", gdpr, filters=Filters.private)
 GPS_HANDLER = DisableAbleCommandHandler("gps", gps, pass_args=True)
@@ -556,10 +657,10 @@ GPS_HANDLER = DisableAbleCommandHandler("gps", gps, pass_args=True)
 dispatcher.add_handler(ID_HANDLER)
 # dispatcher.add_handler(TIME_HANDLER)
 dispatcher.add_handler(RUNS_HANDLER)
-dispatcher.add_handler(SMACK_HANDLER)
+dispatcher.add_handler(SMACK_HANDLER
 dispatcher.add_handler(SLAP_HANDLER)
 dispatcher.add_handler(PUNCH_HANDLER)
-dispatcher.add_handler(SPANK_HANDLER)
+dispatcher.add_handler(HUG_HANDLER)
 dispatcher.add_handler(INFO_HANDLER)
 dispatcher.add_handler(ECHO_HANDLER)
 dispatcher.add_handler(MD_HELP_HANDLER)
