@@ -51,6 +51,23 @@ def kang(bot: Bot, update: Update, args: List[str]):
     packname = "a" + packnum + "_" + str(user.id) + "_by_"+bot.username
     kangsticker = "kangsticker.png"
     if msg.reply_to_message or args:
+    if msg.reply_to_message:
+        if msg.reply_to_message.sticker:
+            file_id = msg.reply_to_message.sticker.file_id
+        elif msg.reply_to_message.photo:
+            file_id = msg.reply_to_message.photo[-1].file_id
+        elif msg.reply_to_message.document:
+            file_id = msg.reply_to_message.document.file_id
+        else:
+            msg.reply_text("Yea, I can't kang that.")
+        kang_file = bot.get_file(file_id)
+        kang_file.download('kangsticker.png')
+        if args:
+            sticker_emoji = str(args[0])
+        elif msg.reply_to_message.sticker and msg.reply_to_message.sticker.emoji:
+            sticker_emoji = msg.reply_to_message.sticker.emoji
+        else:
+            sticker_emoji = "🤔"
         try:
             if msg.reply_to_message:
                 if msg.reply_to_message.sticker:
