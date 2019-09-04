@@ -24,7 +24,7 @@ def get_bot_ip(bot: Bot, update: Update):
 @run_async
 def ping(bot: Bot, update: Update):
     start = datetime.now()
-    hostname = "google.com" #example
+    hostname = "1.1.1.1" #cloudfare's stable dns server
     response = os.system("ping -c 1 " + hostname)
     end = datetime.now()
     ping_time = (end - start).microseconds / 1000
