@@ -45,6 +45,7 @@ def ping(bot: Bot, update: Update):
     for line in splitOut:
         if(line.startswith('time=')):
             stringtocut=line
+            break
     newstr=stringtocut.split('=')
     ping_time = float(newstr[1])
     update.effective_message.reply_text(" Ping speed was: {}ms".format(ping_time))
