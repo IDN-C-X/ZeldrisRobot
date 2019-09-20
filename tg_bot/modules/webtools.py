@@ -39,6 +39,7 @@ def get_bot_ip(bot: Bot, update: Update):
 @run_async
 def ping(bot: Bot, update: Update):
     out = ""
+    under = False
     if os.name == 'nt':
         output = subprocess.check_output("ping -n 1 1.0.0.1 | findstr time*", shell=True).decode()
         outS = output.splitlines()
@@ -53,6 +54,7 @@ def ping(bot: Bot, update: Update):
             break
     newstra=stringtocut.split('=')
     if len(newstra) == 1:
+		under = True
         newstra=stringtocut.split('<')
     newstr=""
     if os.name == 'nt':
@@ -60,7 +62,10 @@ def ping(bot: Bot, update: Update):
     else:
         newstr=newstra
     ping_time = float(newstr[0])
-    update.effective_message.reply_text(" Ping speed was: {}ms".format(ping_time))
+    if os.name == 'nt' and under:
+        update.effective_message.reply_text(" Ping speed was: <{}ms".format(ping_time))
+    else:
+        update.effective_message.reply_text(" Ping speed was: {}ms".format(ping_time))
 
 @run_async
 def speedtst(bot: Bot, update: Update):
