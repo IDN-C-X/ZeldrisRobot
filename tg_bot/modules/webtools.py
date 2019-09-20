@@ -38,16 +38,22 @@ def get_bot_ip(bot: Bot, update: Update):
 
 @run_async
 def ping(bot: Bot, update: Update):
-    out = subprocess.check_output("ping -c 1 1.1.1.1", shell=True).decode()
-    listOut = out.splitlines()
-    splitOut = listOut[1].split(' ')
+	out = ""
+	if os.name == 'nt':
+        out = subprocess.check_output("ping -n 1 1.1.1.1 | findstr time=", shell=True).decode()
+    else:
+        out = subprocess.check_output("ping -c 1 1.1.1.1 | grep time=", shell=True).decode()
+    splitOut = out.split(' ')
     stringtocut = ""
     for line in splitOut:
         if(line.startswith('time=')):
             stringtocut=line
             break
-    newstr=stringtocut.split('=')
-    ping_time = float(newstr[1])
+    newstra=stringtocut.split('=')
+    newstr=newstra
+    if os.name == 'nt':
+        newstr=newstra[1].split('ms')
+    ping_time = float(newstr[0])
     update.effective_message.reply_text(" Ping speed was: {}ms".format(ping_time))
 
 @run_async
