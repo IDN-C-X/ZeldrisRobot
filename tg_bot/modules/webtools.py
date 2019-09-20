@@ -38,8 +38,8 @@ def get_bot_ip(bot: Bot, update: Update):
 
 @run_async
 def ping(bot: Bot, update: Update):
-	out = ""
-	if os.name == 'nt':
+    out = ""
+    if os.name == 'nt':
         out = subprocess.check_output("ping -n 1 1.1.1.1 | findstr time=", shell=True).decode()
     else:
         out = subprocess.check_output("ping -c 1 1.1.1.1 | grep time=", shell=True).decode()
