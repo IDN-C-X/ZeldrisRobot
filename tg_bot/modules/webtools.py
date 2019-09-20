@@ -63,7 +63,7 @@ def ping(bot: Bot, update: Update):
         newstr=newstra
     ping_time = float(newstr[0])
     if os.name == 'nt' and under:
-        update.effective_message.reply_text(" Ping speed was: <{}ms".format(ping_time))
+        update.effective_message.reply_text(" Ping speed was <{}ms".format(ping_time))
     else:
         update.effective_message.reply_text(" Ping speed was: {}ms".format(ping_time))
 
