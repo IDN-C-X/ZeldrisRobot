@@ -40,7 +40,9 @@ def get_bot_ip(bot: Bot, update: Update):
 def ping(bot: Bot, update: Update):
     out = ""
     if os.name == 'nt':
-        out = subprocess.check_output("ping -n 1 1.1.1.1 | findstr time=", shell=True).decode()
+        output = subprocess.check_output("ping -n 1 1.0.0.1 | findstr time*", shell=True).decode()
+        outS = output.splitlines()
+        out = outS[0]
     else:
         out = subprocess.check_output("ping -c 1 1.1.1.1 | grep time=", shell=True).decode()
     splitOut = out.split(' ')
