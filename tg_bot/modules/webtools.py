@@ -48,10 +48,10 @@ def ping(bot: Bot, update: Update):
     splitOut = out.split(' ')
     stringtocut = ""
     for line in splitOut:
-        if(line.startswith('time=')):
+        if(line.startswith('time')):
             stringtocut=line
             break
-    newstra=stringtocut.split('=')
+    newstra=stringtocut.split('=|<|>')
     newstr=newstra
     if os.name == 'nt':
         newstr=newstra[1].split('ms')
