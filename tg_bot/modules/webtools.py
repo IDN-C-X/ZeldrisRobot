@@ -54,7 +54,7 @@ def ping(bot: Bot, update: Update):
             break
     newstra=stringtocut.split('=')
     if len(newstra) == 1:
-		under = True
+        under = True
         newstra=stringtocut.split('<')
     newstr=""
     if os.name == 'nt':
