@@ -45,7 +45,7 @@ def ping(bot: Bot, update: Update):
         outS = output.splitlines()
         out = outS[0]
     else:
-        out = subprocess.check_output("ping -c 1 1.1.1.1 | grep time=", shell=True).decode()
+        out = subprocess.check_output("ping -c 1 1.0.0.1 | grep time=", shell=True).decode()
     splitOut = out.split(' ')
     stringtocut = ""
     for line in splitOut:
@@ -60,7 +60,7 @@ def ping(bot: Bot, update: Update):
     if os.name == 'nt':
         newstr=newstra[1].split('ms')
     else:
-        newstr=newstra
+        newstr=newstra[1].split(' ') #redundant split, but to try and not break windows ping
     ping_time = float(newstr[0])
     if os.name == 'nt' and under:
         update.effective_message.reply_text(" Ping speed was <{}ms".format(ping_time))
