@@ -11,6 +11,7 @@ from telegram import Message, Chat, Update, Bot, MessageEntity
 from telegram import ParseMode
 from telegram.ext import CommandHandler, run_async, Filters
 from telegram.utils.helpers import escape_markdown, mention_html
+from tg_bot.modules.helper_funcs.extraction import extract_text
 
 from tg_bot import dispatcher, OWNER_ID, SUDO_USERS, SUPPORT_USERS, WHITELIST_USERS
 from tg_bot.modules.disable import DisableAbleCommandHandler
@@ -68,13 +69,54 @@ def rtt(bot: Bot, update: Update):
     else:
         update.effective_message.reply_text(" Round-trip time: {}ms".format(ping_time))
 
-#Based on old ping command
 def ping(bot: Bot, update: Update):
-    start_time = time.time()
-    requests.get('https://api.telegram.org')
-    end_time = time.time()
-    ping_time = round(float(end_time - start_time)*1000, 2)
-    update.effective_message.reply_text(" Telegram ping: {}ms".format(ping_time))
+    message = update.effective_message
+    parsing = extract_text(message).split(' ')
+    if(len(parsing) < 2):
+        message.reply_text("Give me an address to ping!")
+        return
+    elif(len(parsing)>2):
+        message.reply_text("Too many arguments!")
+        return
+    dns = (parsing)[1]
+    out = ""
+    under = False
+    if os.name == 'nt':
+        try:
+            output = subprocess.check_output("ping -n 1 " + dns + " | findstr time*", shell=True).decode()
+        except:
+            message.reply_text("There was a problem parsing the IP/Hostname")
+            return
+        outS = output.splitlines()
+        out = outS[0]
+    else:
+        try:
+            out = subprocess.check_output("ping -c 1 " + dns + " | grep time=", shell=True).decode()
+        except:
+            message.reply_text("There was a problem parsing the IP/Hostname")
+            return
+    splitOut = out.split(' ')
+    stringtocut = ""
+    for line in splitOut:
+        if(line.startswith('time=') or line.startswith('time<')):
+            stringtocut=line
+            break
+    newstra=stringtocut.split('=')
+    if len(newstra) == 1:
+        under = True
+        newstra=stringtocut.split('<')
+    newstr=""
+    if os.name == 'nt':
+        newstr=newstra[1].split('ms')
+    else:
+        newstr=newstra[1].split(' ') #redundant split, but to try and not break windows ping
+    ping_time = float(newstr[0])
+    if os.name == 'nt' and under:
+        update.effective_message.reply_text(" Ping speed of " +dns+" is <{}ms".format(ping_time))
+    else:
+        update.effective_message.reply_text(" Ping speed of " +dns+": {}ms".format(ping_time))
+    
+    
 
 @run_async
 def speedtst(bot: Bot, update: Update):
@@ -95,7 +137,7 @@ def speedtst(bot: Bot, update: Update):
 
 IP_HANDLER = CommandHandler("ip", get_bot_ip, filters=Filters.chat(OWNER_ID))
 RTT_HANDLER = DisableAbleCommandHandler("ping", rtt, filters=CustomFilters.sudo_filter)
-PING_HANDLER = DisableAbleCommandHandler("tgping", ping, filters=CustomFilters.sudo_filter)
+PING_HANDLER = DisableAbleCommandHandler("cping", ping, filters=CustomFilters.sudo_filter)
 SPEED_HANDLER = DisableAbleCommandHandler("speedtest", speedtst, filters=CustomFilters.sudo_filter) 
 
 dispatcher.add_handler(IP_HANDLER)
