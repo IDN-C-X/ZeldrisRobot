@@ -6,6 +6,7 @@ import requests
 import subprocess
 import os
 import speedtest
+import time
 from telegram import Message, Chat, Update, Bot, MessageEntity
 from telegram import ParseMode
 from telegram.ext import CommandHandler, run_async, Filters
@@ -37,7 +38,7 @@ def get_bot_ip(bot: Bot, update: Update):
     update.message.reply_text(res.text)
 
 @run_async
-def ping(bot: Bot, update: Update):
+def rtt(bot: Bot, update: Update):
     out = ""
     under = False
     if os.name == 'nt':
@@ -63,9 +64,17 @@ def ping(bot: Bot, update: Update):
         newstr=newstra[1].split(' ') #redundant split, but to try and not break windows ping
     ping_time = float(newstr[0])
     if os.name == 'nt' and under:
-        update.effective_message.reply_text(" Ping speed was <{}ms".format(ping_time))
+        update.effective_message.reply_text(" Round-trip time is <{}ms".format(ping_time))
     else:
-        update.effective_message.reply_text(" Ping speed was: {}ms".format(ping_time))
+        update.effective_message.reply_text(" Round-trip time: {}ms".format(ping_time))
+
+def ping(bot: Bot, update: Update):
+    start_time = time.time()
+    requests.get('https://api.telegram.org')
+    end_time = time.time()
+    ping_time = round(float(end_time - start_time)*1000, 2)
+    
+    update.effective_message.reply_text(" Telegram ping: {}ms".format(ping_time))
 
 @run_async
 def speedtst(bot: Bot, update: Update):
@@ -85,9 +94,11 @@ def speedtst(bot: Bot, update: Update):
                    f"{result['client']['isp']}")
 
 IP_HANDLER = CommandHandler("ip", get_bot_ip, filters=Filters.chat(OWNER_ID))
-PING_HANDLER = DisableAbleCommandHandler("ping", ping, filters=CustomFilters.sudo_filter)
+RTT_HANDLER = DisableAbleCommandHandler("ping", rtt, filters=CustomFilters.sudo_filter)
+PING_HANDLER = DisableAbleCommandHandler("tgping", ping, filters=CustomFilters.sudo_filter)
 SPEED_HANDLER = DisableAbleCommandHandler("speedtest", speedtst, filters=CustomFilters.sudo_filter) 
 
 dispatcher.add_handler(IP_HANDLER)
-dispatcher.add_handler(PING_HANDLER)
+dispatcher.add_handler(RTT_HANDLER)
 dispatcher.add_handler(SPEED_HANDLER)
+dispatcher.add_handler(PING_HANDLER)
