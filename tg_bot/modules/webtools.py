@@ -68,12 +68,12 @@ def rtt(bot: Bot, update: Update):
     else:
         update.effective_message.reply_text(" Round-trip time: {}ms".format(ping_time))
 
+#Based on old ping command
 def ping(bot: Bot, update: Update):
     start_time = time.time()
     requests.get('https://api.telegram.org')
     end_time = time.time()
     ping_time = round(float(end_time - start_time)*1000, 2)
-    
     update.effective_message.reply_text(" Telegram ping: {}ms".format(ping_time))
 
 @run_async
