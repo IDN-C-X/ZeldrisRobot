@@ -51,7 +51,7 @@ def promote(bot: Bot, update: Update, args: List[str]) -> str:
                           can_invite_users=bot_member.can_invite_users,
                           can_restrict_members=bot_member.can_restrict_members,
                           can_pin_messages=bot_member.can_pin_messages,
-                          # can_promote_members=bot_member.can_promote_members)
+                          can_promote_members=bot_member.can_promote_members)
 
     message.reply_text("Successfully promoted!")
     return "<b>{}:</b>" \
