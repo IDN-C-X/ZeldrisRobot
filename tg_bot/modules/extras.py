@@ -286,7 +286,7 @@ def decide(bot: Bot, update: Update):
 __help__ = """
 Some random memes to make ur day!
 
- - /shrug : get shrug  ¯\_a(ツ)_/¯
+ - /shrug : get shrug  ¯\_(ツ)_/¯
  - /decide : Randomly answers yes/no/maybe
  - /abuse : Abuses the retard!
  - /rlg : create an emoji ^_^
