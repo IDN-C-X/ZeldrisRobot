@@ -124,7 +124,6 @@ def kang(bot: Bot, update: Update, args: List[str]):
             print(e)
      elif args:
         try:
-            try:
                 urlemoji = msg.text.split(" ")
                 png_sticker = urlemoji[1]
                 sticker_emoji = urlemoji[2]
