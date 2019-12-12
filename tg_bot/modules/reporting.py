@@ -2,6 +2,7 @@ import html
 from typing import Optional, List
 
 from telegram import Message, Chat, Update, Bot, User, ParseMode
+from telegram import InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.error import BadRequest, Unauthorized
 from telegram.ext import CommandHandler, RegexHandler, run_async, Filters
 from telegram.utils.helpers import mention_html
@@ -60,8 +61,11 @@ def report(bot: Bot, update: Update) -> str:
         reported_user = message.reply_to_message.from_user  # type: Optional[User]
         chat_name = chat.title or chat.first or chat.username
         admin_list = chat.get_administrators()
-
+        messages = update.effective_message  # type: Optional[Message]
         if chat.username and chat.type == Chat.SUPERGROUP:
+            
+            reported = "Reported {} to admins. I've notified the admins!".format(mention_html(reported_user.id,
+                                                                                       reported_user.first_name))
             msg = "<b>{}:</b>" \
                   "\n<b>Reported user:</b> {} (<code>{}</code>)" \
                   "\n<b>Reported by:</b> {} (<code>{}</code>)".format(html.escape(chat.title),
@@ -74,15 +78,20 @@ def report(bot: Bot, update: Update) -> str:
                                                                       user.id)
             link = "\n<b>Link:</b> " \
                    "<a href=\"http://telegram.me/{}/{}\">click here</a>".format(chat.username, message.message_id)
-
+            
+            
             should_forward = False
-
+            keyboard = []
+            messages.reply_text(reported, reply_markup=keyboard, parse_mode=ParseMode.HTML)
         else:
+            reported = "Reported {} to admins. I've notified the admins!".format(mention_html(reported_user.id,
+                                                                                       reported_user.first_name))
             msg = "{} is calling for admins in \"{}\"!".format(mention_html(user.id, user.first_name),
                                                                html.escape(chat_name))
             link = ""
             should_forward = True
-
+            keyboard = []
+            messages.reply_text(reported, reply_markup=keyboard, parse_mode=ParseMode.HTML)
         for admin in admin_list:
             if admin.user.is_bot:  # can't message bots
                 continue
@@ -90,7 +99,6 @@ def report(bot: Bot, update: Update) -> str:
             if sql.user_should_report(admin.user.id):
                 try:
                     bot.send_message(admin.user.id, msg + link, parse_mode=ParseMode.HTML)
-
                     if should_forward:
                         message.reply_to_message.forward(admin.user.id)
 
@@ -129,10 +137,6 @@ react if someone in your group is spamming?
 Presenting reports; if someone in your group thinks someone needs reporting, they now have \
 an easy way to call all admins.
 
- - /report <reason>: reply to a message to report it to admins.
- - @admin: reply to a message to report it to admins.
-NOTE: neither of these will get triggered if used by admins
-
 *Admin only:*
  - /reports <on/off>: change report setting, or view current status.
    - If done in pm, toggles your status.
@@ -145,7 +149,6 @@ You MUST reply to a message to report a user; you can't just use @admin to tag a
 Note that the report commands do not work when admins use them; or when used to report an admin. Bot assumes that \
 admins don't need to report, or be reported!
 """
-
 REPORT_HANDLER = CommandHandler("report", report, filters=Filters.group)
 SETTING_HANDLER = CommandHandler("reports", report_setting, pass_args=True)
 ADMIN_REPORT_HANDLER = RegexHandler("(?i)@admin(s)?", report)
@@ -153,3 +156,4 @@ ADMIN_REPORT_HANDLER = RegexHandler("(?i)@admin(s)?", report)
 dispatcher.add_handler(REPORT_HANDLER, REPORT_GROUP)
 dispatcher.add_handler(ADMIN_REPORT_HANDLER, REPORT_GROUP)
 dispatcher.add_handler(SETTING_HANDLER)
+

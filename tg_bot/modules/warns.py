@@ -55,12 +55,12 @@ def warn(user: User, chat: Chat, reason: str, message: Message, warner: User = N
         log_reason = "<b>{}:</b>" \
                      "\n#WARN_BAN" \
                      "\n<b>Admin:</b> {}" \
-                     "\n<b>User:</b> {} (<code>{}</code>)" \
+                     "\n<b>User:</b> {}" \
                      "\n<b>Reason:</b> {}"\
                      "\n<b>Counts:</b> <code>{}/{}</code>".format(html.escape(chat.title),
                                                                   warner_tag,
-                                                                  mention_html(user.id, user.first_name),
-                                                                  user.id, reason, num_warns, limit)
+                                                                  mention_html(user.id, user.first_name), 
+                                                                  reason, num_warns, limit)
 
     else:
         keyboard = InlineKeyboardMarkup(
@@ -74,12 +74,12 @@ def warn(user: User, chat: Chat, reason: str, message: Message, warner: User = N
         log_reason = "<b>{}:</b>" \
                      "\n#WARN" \
                      "\n<b>Admin:</b> {}" \
-                     "\n<b>User:</b> {} (<code>{}</code>)" \
+                     "\n<b>User:</b> {}" \
                      "\n<b>Reason:</b> {}"\
                      "\n<b>Counts:</b> <code>{}/{}</code>".format(html.escape(chat.title),
                                                                   warner_tag,
-                                                                  mention_html(user.id, user.first_name),
-                                                                  user.id, reason, num_warns, limit)
+                                                                  mention_html(user.id, user.first_name), 
+                                                                  reason, num_warns, limit)
 
     try:
         message.reply_text(reply, reply_markup=keyboard, parse_mode=ParseMode.HTML)
@@ -112,10 +112,9 @@ def button(bot: Bot, update: Update) -> str:
             return "<b>{}:</b>" \
                    "\n#UNWARN" \
                    "\n<b>Admin:</b> {}" \
-                   "\n<b>User:</b> {} (<code>{}</code>)".format(html.escape(chat.title),
-                                                                mention_html(user.id, user.first_name),
-                                                                mention_html(user_member.user.id, user_member.user.first_name),
-                                                                user_member.user.id)
+                   "\n<b>User:</b> {}".format(html.escape(chat.title),
+                                              mention_html(user.id, user.first_name),
+                                              mention_html(user_member.user.id, user_member.user.first_name))
         else:
             update.effective_message.edit_text(
                 "User has already has no warns.".format(mention_html(user.id, user.first_name)),
@@ -163,10 +162,9 @@ def reset_warns(bot: Bot, update: Update, args: List[str]) -> str:
         return "<b>{}:</b>" \
                "\n#RESETWARNS" \
                "\n<b>Admin:</b> {}" \
-               "\n<b>User:</b> {} (<code>{}</code>)".format(html.escape(chat.title),
-                                                            mention_html(user.id, user.first_name),
-                                                            mention_html(warned.id, warned.first_name),
-                                                            warned.id)
+               "\n<b>User:</b> {}".format(html.escape(chat.title),
+                                          mention_html(user.id, user.first_name),
+                                          mention_html(warned.id, warned.first_name))
     else:
         message.reply_text("No user has been designated!")
     return ""
@@ -403,11 +401,8 @@ Keep your members in check with warnings; stop them getting out of control!
 *Admin only:*
  - /warn <userhandle>: warn a user. After 3 warns, the user will be banned from the group. Can also be used as a reply.
  - /resetwarn <userhandle>: reset the warnings for a user. Can also be used as a reply.
- - /rmwarn <userhandle>: removes latest warn for a user. It also can be used as reply.
- - /unwarn <userhandle>: same as /rmwarn
- - /addwarn <keyword> <reply message>: set a warning filter on a certain keyword.
- - /nowarn <keyword>: stop a warning filter.
- - /warnlimit <num>: set the warning limit.
+ - /nowarn <keyword>: stop a warning filter
+ - /warnlimit <num>: set the warning limit
  - /strongwarn <on/yes/off/no>: If set to on, exceeding the warn limit will result in a ban. Else, will just kick.
 
 If you're looking for a way to automatically warn users when they say certain things, use the /addwarn command.
@@ -419,8 +414,6 @@ This will automatically warn a user that triggers "very angry", with reason of '
 
 An example of how to set a new multiword warning:
 `/warn @user Because warning is fun`
-
-This will warn the user called @user, with a reason of 'Because warning is fun'
 """
 
 __mod_name__ = "Warnings"

@@ -3,23 +3,18 @@ import json
 import random
 from datetime import datetime
 from typing import Optional, List
-import time
+
 import requests
-import os
 from telegram import Message, Chat, Update, Bot, MessageEntity
 from telegram import ParseMode
 from telegram.ext import CommandHandler, run_async, Filters
 from telegram.utils.helpers import escape_markdown, mention_html
 
 from tg_bot import dispatcher, OWNER_ID, SUDO_USERS, SUPPORT_USERS, WHITELIST_USERS, BAN_STICKER
-from tg_bot.__main__ import GDPR
 from tg_bot.__main__ import STATS, USER_INFO
 from tg_bot.modules.disable import DisableAbleCommandHandler
 from tg_bot.modules.helper_funcs.extraction import extract_user
 from tg_bot.modules.helper_funcs.filters import CustomFilters
-
-from geopy.geocoders import Nominatim
-from telegram import Location
 
 RUN_STRINGS = (
     "Where do you think you're going?",
@@ -74,53 +69,25 @@ RUN_STRINGS = (
 )
 
 SLAP_TEMPLATES = (
-    "{user1} {hits} {user2} with *{item}*. {emoji}",
-    "{user1} {hits} {user2} in the face with *{item}*. {emoji}",
-    "{user1} {hits} {user2} around a bit with *{item}*. {emoji}",
-    "{user1} {throws} *{item}* at {user2}. {emoji}",
-    "{user1} grabs *{item}* and {throws} it at {user2}'s face. {emoji}",
-    "{user1} launches *{item}* in {user2}'s general direction. {emoji}",
-    "{user1} starts slapping {user2} silly with *{item}*. {emoji}",
-    "{user1} pins {user2} down and repeatedly {hits} them with *{item}*. {emoji}",
-    "{user1} grabs up *{item}* and {hits} {user2} with it. {emoji}",
-    "{user1} ties {user2} to a chair and {throws} *{item}* at them. {emoji}",
+    "{user1} {hits} {user2} with a {item}.",
+    "{user1} {hits} {user2} in the face with a {item}.",
+    "{user1} {hits} {user2} around a bit with a {item}.",
+    "{user1} {throws} a {item} at {user2}.",
+    "{user1} grabs a {item} and {throws} it at {user2}'s face.",
+    "{user1} launches a {item} in {user2}'s general direction.",
+    "{user1} starts slapping {user2} silly with a {item}.",
+    "{user1} pins {user2} down and repeatedly {hits} them with a {item}.",
+    "{user1} grabs up a {item} and {hits} {user2} with it.",
+    "{user1} ties {user2} to a chair and {throws} a {item} at them.",
+    "{user1} gave a friendly push to help {user2} learn to swim in lava."
+    "{user1} {hits} {user2} with a glue filled hands.",
+    "{user1} slams the metal door at {user2}.",
+    "{user1} thundersmacks {user2} with lightning bolt.",
+    "{user1} gave a friendly push to help {user2} learn to swim in a wild ocean.",
+    "{user1} {throws} {user2} into shark infested water.",
 )
 
 PUNCH_TEMPLATES = (
-    "{user1} {punches} {user2} to assert dominance.",
-    "{user1} {punches} {user2} to see if they shut the fuck up for once.",
-    "{user1} {punches} {user2} because they were asking for it.",
-    "It's over {user2}, they have the high ground.",
-    "{user1} performs a superman punch on {user2}, {user2} is rekt now.",
-    "{user1} kills off {user2} with a T.K.O",
-    "{user1} attacks {user2} with a billiard cue. A bloody mess.",
-    "{user1} disintegrates {user2} with a MG.",
-    "A hit and run over {user2} performed by {user1}",
-    "{user1} punches {user2} into the throat. Warning, choking hazard!",
-    "{user1} drops a piano on top of {user2}. A harmonical death.",
-    "{user1} throws rocks at {user2}",
-    "{user1} forces {user2} to drink chlorox. What a painful death.",
-    "{user2} got sliced in half by {user1}'s katana.",
-    "{user1} makes {user2} fall on their sword. A stabby death lol.",
-    "{user1} kangs {user2} 's life energy away.",
-    "{user1} shoot's {user2} into a million pieces. Hasta la vista baby.",
-    "{user1} drop's the frigde on {user2}. Beware of crushing.",
-    "{user1} engage's a guerilla tactic on {user2}",
-    "{user1} ignite's {user2} into flames. IT'S LIT FAM.",
-    "{user1} pulls a loaded 12 gauge on {user2}.",
-    "{user1} throws a Galaxy Note7 into {user2}'s general direction. A bombing massacre.",
-    "{user1} walks with {user2} to the end of the world, then pushes him over the edge.",
-    "{user1} performs a Stabby McStabby on {user2} with a butterfly.",
-    "{user1} cut's {user2}'s neck off with a machete. A blood bath.",
-    "{user1} secretly fills in {user2}'s cup with Belle Delphine's Gamer Girl Bathwater instead of water. Highly contagious herpes.",
-    "{user1} is tea cupping on {user2} after a 1v1, to assert their dominance.",
-    "{user1} ask's for {user2}'s last words. {user2} is ded now.",
-    "{user1} let's {user2} know their position.",
-    "{user1} makes {user2} to his slave. What is your bidding? My Master.",
-    "{user1} forces {user2} to commit suicide.",
-    "{user1} shout's 'it's garbage day' at {user2}.",
-    "{user1} throws his axe at {user2}.",
-    "{user1} is now {user2}'s grim reaper.",
     "{user1} {punches} {user2} with a {item}.",
     "{user1} {punches} {user2} in the face with a {item}.",
     "{user1} {punches} {user2} around a bit with a {item}.",
@@ -134,68 +101,36 @@ HUG_TEMPLATES = (
     "{user1} {hug} {user2} with kindness.",
 )
 
-PUNCH = (
-    "punches",
-    "RKOs",
-    "smashes the skull of",
-    "throws a pipe wrench at",
-)
-
 ITEMS = (
-    "a Samsung J5 2017",
-    "a Samsung S10+",
-    "an iPhone XS MAX",
-    "a Note 9",
-    "a Note 10+",
-    "knox 0x0",
-    "OneUI 2.0",
-    "OneUI 69.0",
-    "TwoUI 1.0",
-    "Secure Folder",
-    "Samsung Pay",
-    "prenormal RMM state",
-    "prenormal KG state",
-    "a locked bootloader",
-    "payment lock",
-    "stock rom",
-    "good rom",
-    "Good Lock apps",
-    "Q port",
-    "Pie port",
-    "8.1 port",
-    "Pie port",
-    "Pie OTA",
-    "Q OTA",
-    "LineageOS 16",
-    "LineageOS 17",
-    "a bugless rom",
-    "a kernel",
-    "a kernal",
-    "a karnal",
-    "a karnel",
-    "official TWRP",
-    "VOLTE",
-    "kanged rom",
-    "an antikang",
-    "audio fix",
-    "hwcomposer fix",
-    "mic fix",
-    "random reboots",
-    "bootloops",
-    "unfiltered logs",
-    "a keylogger",
-    "120FPS",
-    "a download link",
-    "168h uptime",
-    "a paypal link",
-    "treble support",
-    "EVO-X gsi",
-    "Q gsi",
-    "Q beta",
-    "a Rom Control",
-    "a hamburger",
-    "a cheeseburger",
-    "a Big-Mac",
+    "cast iron skillet",
+    "large trout",
+    "baseball bat",
+    "cricket bat",
+    "wooden cane",
+    "nail",
+    "printer",
+    "shovel",
+    "CRT monitor",
+    "physics textbook",
+    "toaster",
+    "portrait of Richard Stallman",
+    "television",
+    "five ton truck",
+    "roll of duct tape",
+    "book",
+    "laptop",
+    "old television",
+    "sack of rocks",
+    "rainbow trout",
+    "rubber chicken",
+    "spiked bat",
+    "fire extinguisher",
+    "heavy rock",
+    "chunk of dirt",
+    "beehive",
+    "piece of rotten meat",
+    "bear",
+    "ton of bricks",
 )
 
 THROW = (
@@ -210,22 +145,7 @@ HIT = (
     "whacks",
     "slaps",
     "smacks",
-    "spanks",
     "bashes",
-)
-EMOJI = (
-    "\U0001F923",
-    "\U0001F602",
-    "\U0001F922",
-    "\U0001F605",
-    "\U0001F606",
-    "\U0001F609",
-    "\U0001F60E",
-    "\U0001F929",
-    "\U0001F623",
-    "\U0001F973",
-    "\U0001F9D0",
-    "\U0001F632",
 )
 
 PUNCH = (
@@ -244,23 +164,10 @@ GMAPS_LOC = "https://maps.googleapis.com/maps/api/geocode/json"
 GMAPS_TIME = "https://maps.googleapis.com/maps/api/timezone/json"
 
 
-SMACK_STRING = """[smack my beach up!!](https://vimeo.com/31482159)"""
-
 @run_async
 def runs(bot: Bot, update: Update):
-    running = update.effective_message
-    if running.reply_to_message:
-        update.effective_message.reply_to_message.reply_text(random.choice(RUN_STRINGS))
-    else:
-        update.effective_message.reply_text(random.choice(RUN_STRINGS))
+    update.effective_message.reply_text(random.choice(RUN_STRINGS))
 
-@run_async
-def smack(bot: Bot, update: Update):
-    msg = update.effective_message
-    if msg.reply_to_message:
-        update.effective_message.reply_to_message.reply_text(SMACK_STRING, parse_mode=ParseMode.MARKDOWN, disable_web_page_preview=True)
-    else:
-        update.effective_message.reply_text(SMACK_STRING, parse_mode=ParseMode.MARKDOWN, disable_web_page_preview=True)
 
 @run_async
 def slap(bot: Bot, update: Update, args: List[str]):
@@ -276,10 +183,7 @@ def slap(bot: Bot, update: Update, args: List[str]):
         curr_user = "[{}](tg://user?id={})".format(msg.from_user.first_name, msg.from_user.id)
 
     user_id = extract_user(update.effective_message, args)
-    if user_id == bot.id:
-        user1 = "[{}](tg://user?id={})".format(bot.first_name, bot.id)
-        user2 = curr_user
-    elif user_id:
+    if user_id:
         slapped_user = bot.get_chat(user_id)
         user1 = curr_user
         if slapped_user.username:
@@ -297,12 +201,10 @@ def slap(bot: Bot, update: Update, args: List[str]):
     item = random.choice(ITEMS)
     hit = random.choice(HIT)
     throw = random.choice(THROW)
-    emoji = random.choice(EMOJI)
 
-    repl = temp.format(user1=user1, user2=user2, item=item, hits=hit, throws=throw, emoji=emoji)
+    repl = temp.format(user1=user1, user2=user2, item=item, hits=hit, throws=throw)
 
     reply_text(repl, parse_mode=ParseMode.MARKDOWN)
-
 
 @run_async
 def punch(bot: Bot, update: Update, args: List[str]):
@@ -380,42 +282,13 @@ def hug(bot: Bot, update: Update, args: List[str]):
 
 
 @run_async
-def punch(bot: Bot, update: Update, args: List[str]):
-    msg = update.effective_message  # type: Optional[Message]
+def get_bot_ip(bot: Bot, update: Update):
+    """ Sends the bot's IP address, so as to be able to ssh in if necessary.
+        OWNER ONLY.
+    """
+    res = requests.get("http://ipinfo.io/ip")
+    update.message.reply_text(res.text)
 
-    # reply to correct message
-    reply_text = msg.reply_to_message.reply_text if msg.reply_to_message else msg.reply_text
-
-    # get user who sent message
-    if msg.from_user.username:
-        curr_user = "@" + escape_markdown(msg.from_user.username)
-    else:
-        curr_user = "[{}](tg://user?id={})".format(msg.from_user.first_name, msg.from_user.id)
-
-    user_id = extract_user(update.effective_message, args)
-    if user_id == bot.id:
-        user1 = "[{}](tg://user?id={})".format(bot.first_name, bot.id)
-        user2 = curr_user
-    elif user_id:
-        slapped_user = bot.get_chat(user_id)
-        user1 = curr_user
-        if slapped_user.username:
-            user2 = "@" + escape_markdown(slapped_user.username)
-        else:
-            user2 = "[{}](tg://user?id={})".format(slapped_user.first_name,
-                                                   slapped_user.id)
-
-    # if no target found, bot targets the sender
-    else:
-        user1 = "[{}](tg://user?id={})".format(bot.first_name, bot.id)
-        user2 = curr_user
-
-    temp = random.choice(PUNCH_TEMPLATES)
-    punch = random.choice(PUNCH)
-
-    repl = temp.format(user1=user1, user2=user2, punches = punch)
-
-    reply_text(repl, parse_mode=ParseMode.MARKDOWN)
 
 @run_async
 def get_id(bot: Bot, update: Update, args: List[str]):
@@ -444,6 +317,7 @@ def get_id(bot: Bot, update: Update, args: List[str]):
         else:
             update.effective_message.reply_text("This group's id is `{}`.".format(chat.id),
                                                 parse_mode=ParseMode.MARKDOWN)
+
 
 @run_async
 def info(bot: Bot, update: Update, args: List[str]):
@@ -499,6 +373,7 @@ def info(bot: Bot, update: Update, args: List[str]):
 
     update.effective_message.reply_text(text, parse_mode=ParseMode.HTML)
 
+
 @run_async
 def get_time(bot: Bot, update: Update, args: List[str]):
     location = " ".join(args)
@@ -540,6 +415,7 @@ def get_time(bot: Bot, update: Update, args: List[str]):
                 time_there = datetime.fromtimestamp(timenow + timestamp + offset).strftime("%H:%M:%S on %A %d %B")
                 update.message.reply_text("It's {} in {}".format(time_there, location))
 
+
 @run_async
 def echo(bot: Bot, update: Update):
     args = update.effective_message.text.split(None, 1)
@@ -549,7 +425,8 @@ def echo(bot: Bot, update: Update):
     else:
         message.reply_text(args[1], quote=False)
     message.delete()
-         
+
+
 @run_async
 def gdpr(bot: Bot, update: Update):
     update.effective_message.reply_text("Deleting identifiable data...")
@@ -557,7 +434,7 @@ def gdpr(bot: Bot, update: Update):
         mod.__gdpr__(update.effective_user.id)
 
     update.effective_message.reply_text("Your personal data has been deleted.\n\nNote that this will not unban "
-                                        "you from any chats, as that is telegram data, not this bot's data. "
+                                        "you from any chats, as that is telegram data, not Marie data. "
                                         "Flooding, warns, and gbans are also preserved, as of "
                                         "[this](https://ico.org.uk/for-organisations/guide-to-the-general-data-protection-regulation-gdpr/individual-rights/right-to-erasure/), "
                                         "which clearly states that the right to erasure does not apply "
@@ -569,20 +446,24 @@ def gdpr(bot: Bot, update: Update):
 MARKDOWN_HELP = """
 Markdown is a very powerful formatting tool supported by telegram. {} has some enhancements, to make sure that \
 saved messages are correctly parsed, and to allow you to create buttons.
+
 - <code>_italic_</code>: wrapping text with '_' will produce italic text
 - <code>*bold*</code>: wrapping text with '*' will produce bold text
 - <code>`code`</code>: wrapping text with '`' will produce monospaced text, also known as 'code'
 - <code>[sometext](someURL)</code>: this will create a link - the message will just show <code>sometext</code>, \
 and tapping on it will open the page at <code>someURL</code>.
 EG: <code>[test](example.com)</code>
+
 - <code>[buttontext](buttonurl:someURL)</code>: this is a special enhancement to allow users to have telegram \
 buttons in their markdown. <code>buttontext</code> will be what is displayed on the button, and <code>someurl</code> \
 will be the url which is opened.
 EG: <code>[This is a button](buttonurl:example.com)</code>
+
 If you want multiple buttons on the same line, use :same, as such:
 <code>[one](buttonurl://example.com)
 [two](buttonurl://google.com:same)</code>
 This will create two buttons on a single line, instead of one button per line.
+
 Keep in mind that your message <b>MUST</b> contain some text other than just a button!
 """.format(dispatcher.bot.first_name)
 
@@ -598,35 +479,51 @@ def markdown_help(bot: Bot, update: Update):
 
 @run_async
 def stats(bot: Bot, update: Update):
-	update.effective_message.reply_text("*Current stats:*\n" + "\n".join([mod.__stats__() for mod in STATS]),
-                                                parse_mode=ParseMode.MARKDOWN)
+    update.effective_message.reply_text("Current stats:\n" + "\n".join([mod.__stats__() for mod in STATS]))
 
-
-
-def gps(bot: Bot, update: Update, args: List[str]):
-    message = update.effective_message
-    if len(args) == 0:
-        update.effective_message.reply_text("That was a funny joke, but no really, put in a location")
-    try:
-        geolocator = Nominatim(user_agent="hades")
-        location = " ".join(args)
-        geoloc = geolocator.geocode(location)  
-        chat_id = update.effective_chat.id
-        lon = geoloc.longitude
-        lat = geoloc.latitude
-        the_loc = Location(lon, lat) 
-        gm = "https://www.google.com/maps/search/{},{}".format(lat,lon)
-        bot.send_location(chat_id, location=the_loc)
-        update.message.reply_text("Open with: [Google Maps]({})".format(gm), parse_mode=ParseMode.MARKDOWN, disable_web_page_preview=True)
-    except AttributeError:
-        update.message.reply_text("I can't find that")
+@run_async
+def stickerid(bot: Bot, update: Update):
+    msg = update.effective_message
+    if msg.reply_to_message and msg.reply_to_message.sticker:
+        update.effective_message.reply_text("Hello " +
+                                            "[{}](tg://user?id={})".format(msg.from_user.first_name, msg.from_user.id)
+                                            + ", The sticker id you are replying is :\n```" + 
+                                            escape_markdown(msg.reply_to_message.sticker.file_id) + "```",
+                                            parse_mode=ParseMode.MARKDOWN)
+    else:
+        update.effective_message.reply_text("Hello " + "[{}](tg://user?id={})".format(msg.from_user.first_name,
+                                            msg.from_user.id) + ", Please reply to sticker message to get id sticker",
+                                            parse_mode=ParseMode.MARKDOWN)
+@run_async
+def getsticker(bot: Bot, update: Update):
+    msg = update.effective_message
+    chat_id = update.effective_chat.id
+    if msg.reply_to_message and msg.reply_to_message.sticker:
+        bot.sendChatAction(chat_id, "typing")
+        update.effective_message.reply_text("Hello " + "[{}](tg://user?id={})".format(msg.from_user.first_name,
+                                            msg.from_user.id) + ", Please check the file you requested below."
+                                            "\nPlease use this feature wisely!",
+                                            parse_mode=ParseMode.MARKDOWN)
+        bot.sendChatAction(chat_id, "upload_document")
+        file_id = msg.reply_to_message.sticker.file_id
+        newFile = bot.get_file(file_id)
+        newFile.download('sticker.png')
+        bot.sendDocument(chat_id, document=open('sticker.png', 'rb'))
+        bot.sendChatAction(chat_id, "upload_photo")
+        bot.send_photo(chat_id, photo=open('sticker.png', 'rb'))
+        
+    else:
+        bot.sendChatAction(chat_id, "typing")
+        update.effective_message.reply_text("Hello " + "[{}](tg://user?id={})".format(msg.from_user.first_name,
+                                            msg.from_user.id) + ", Please reply to sticker message to get sticker image",
+                                            parse_mode=ParseMode.MARKDOWN)
 
 # /ip is for private use
 __help__ = """
-An "odds and ends" module for small, simple commands which don't reall fit anywhere
+An "odds and ends" module for small, simple commands which don't really fit anywhere
+
  - /id: get the current group id. If used by replying to a message, gets that user's id.
  - /runs: reply a random string from an array of replies.
- - /spank: same as /slap but nastier.
  - /slap: slap a user, or get slapped if not a reply.
  - /time <place>: gives the local time at the given place.
  - /hug: hug a user, or get hugged if not a reply.
@@ -634,30 +531,37 @@ An "odds and ends" module for small, simple commands which don't reall fit anywh
  - /info: get information about a user.
  - /gdpr: deletes your information from the bot's database. Private chats only.
  - /markdownhelp: quick summary of how markdown works in telegram - can only be called in private chats.
+ - /stickerid: reply to a sticker and get sticker id of that.
+ - /getsticker: reply to a sticker and get that sticker as .png and image. 
 """
 
 __mod_name__ = "Misc"
 
 ID_HANDLER = DisableAbleCommandHandler("id", get_id, pass_args=True)
+IP_HANDLER = CommandHandler("ip", get_bot_ip, filters=Filters.chat(OWNER_ID))
 
 TIME_HANDLER = CommandHandler("time", get_time, pass_args=True)
 
 RUNS_HANDLER = DisableAbleCommandHandler("runs", runs)
-SMACK_HANDLER = DisableAbleCommandHandler("smack", smack)
 SLAP_HANDLER = DisableAbleCommandHandler("slap", slap, pass_args=True)
 PUNCH_HANDLER = DisableAbleCommandHandler("punch", punch, pass_args=True)
 HUG_HANDLER = DisableAbleCommandHandler("hug", hug, pass_args=True)
 INFO_HANDLER = DisableAbleCommandHandler("info", info, pass_args=True)
+
 ECHO_HANDLER = CommandHandler("echo", echo, filters=Filters.user(OWNER_ID))
-MD_HELP_HANDLER = CommandHandler("markdownhelp", markdown_help, filters=Filters.private
+MD_HELP_HANDLER = CommandHandler("markdownhelp", markdown_help, filters=Filters.private)
+
 STATS_HANDLER = CommandHandler("stats", stats, filters=CustomFilters.sudo_filter)
 GDPR_HANDLER = CommandHandler("gdpr", gdpr, filters=Filters.private)
-GPS_HANDLER = DisableAbleCommandHandler("gps", gps, pass_args=True)
+
+STICKERID_HANDLER = DisableAbleCommandHandler("stickerid", stickerid)
+GETSTICKER_HANDLER = DisableAbleCommandHandler("getsticker", getsticker)
+
 
 dispatcher.add_handler(ID_HANDLER)
-# dispatcher.add_handler(TIME_HANDLER)
+dispatcher.add_handler(IP_HANDLER)
+dispatcher.add_handler(TIME_HANDLER)
 dispatcher.add_handler(RUNS_HANDLER)
-dispatcher.add_handler(SMACK_HANDLER
 dispatcher.add_handler(SLAP_HANDLER)
 dispatcher.add_handler(PUNCH_HANDLER)
 dispatcher.add_handler(HUG_HANDLER)
@@ -666,4 +570,5 @@ dispatcher.add_handler(ECHO_HANDLER)
 dispatcher.add_handler(MD_HELP_HANDLER)
 dispatcher.add_handler(STATS_HANDLER)
 dispatcher.add_handler(GDPR_HANDLER)
-dispatcher.add_handler(GPS_HANDLER)
+dispatcher.add_handler(STICKERID_HANDLER)
+dispatcher.add_handler(GETSTICKER_HANDLER)

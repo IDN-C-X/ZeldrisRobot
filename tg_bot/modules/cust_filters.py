@@ -115,6 +115,8 @@ def filters(bot: Bot, update: Update):
         is_document = True
 
     elif msg.reply_to_message and msg.reply_to_message.photo:
+        offset = len(msg.reply_to_message.caption)
+        ignore_underscore_case, buttons = button_markdown_parser(msg.reply_to_message.caption, entities=msg.reply_to_message.parse_entities(), offset=offset)
         content = msg.reply_to_message.photo[-1].file_id  # last elem = best quality
         is_image = True
 
@@ -191,17 +193,29 @@ def reply_filter(bot: Bot, update: Update):
     if not to_match:
         return
 
+    # my custom thing
+    if message.reply_to_message:
+        message = message.reply_to_message
+    ad_filter = ""
+    # my custom thing
+
     chat_filters = sql.get_chat_triggers(chat.id)
     for keyword in chat_filters:
         pattern = r"( |^|[^\w])" + re.escape(keyword) + r"( |$|[^\w])"
         if re.search(pattern, to_match, flags=re.IGNORECASE):
             filt = sql.get_filter(chat.id, keyword)
+            buttons = sql.get_buttons(chat.id, filt.keyword)
             if filt.is_sticker:
                 message.reply_sticker(filt.reply)
             elif filt.is_document:
                 message.reply_document(filt.reply)
             elif filt.is_image:
-                message.reply_photo(filt.reply)
+                if len(buttons) > 0:
+                    keyb = build_keyboard(buttons)
+                    keyboard = InlineKeyboardMarkup(keyb)
+                    message.reply_photo(filt.reply, reply_markup=keyboard)
+                else:
+                    message.reply_photo(filt.reply)
             elif filt.is_audio:
                 message.reply_audio(filt.reply)
             elif filt.is_voice:
@@ -209,13 +223,16 @@ def reply_filter(bot: Bot, update: Update):
             elif filt.is_video:
                 message.reply_video(filt.reply)
             elif filt.has_markdown:
-                buttons = sql.get_buttons(chat.id, filt.keyword)
                 keyb = build_keyboard(buttons)
                 keyboard = InlineKeyboardMarkup(keyb)
 
+                should_preview_disabled = True
+                if "telegra.ph" in filt.reply or "youtu.be" in filt.reply:
+                    should_preview_disabled = False
+
                 try:
-                    message.reply_text(filt.reply, parse_mode=ParseMode.MARKDOWN,
-                                       disable_web_page_preview=True,
+                    message.reply_text(ad_filter + "\n" + filt.reply, parse_mode=ParseMode.MARKDOWN,
+                                       disable_web_page_preview=should_preview_disabled,
                                        reply_markup=keyboard)
                 except BadRequest as excp:
                     if excp.message == "Unsupported url protocol":
@@ -234,7 +251,7 @@ def reply_filter(bot: Bot, update: Update):
 
             else:
                 # LEGACY - all new filters will have has_markdown set to True.
-                message.reply_text(filt.reply)
+                message.reply_text(ad_filter + "\n" + filt.reply)
             break
 
 
@@ -267,7 +284,7 @@ __mod_name__ = "Filters"
 FILTER_HANDLER = CommandHandler("filter", filters)
 STOP_HANDLER = CommandHandler("stop", stop_filter)
 LIST_HANDLER = DisableAbleCommandHandler("filters", list_handlers, admin_ok=True)
-CUST_FILTER_HANDLER = MessageHandler(CustomFilters.has_text, reply_filter)
+CUST_FILTER_HANDLER = MessageHandler(CustomFilters.has_text, reply_filter, edited_updates=True)
 
 dispatcher.add_handler(FILTER_HANDLER)
 dispatcher.add_handler(STOP_HANDLER)

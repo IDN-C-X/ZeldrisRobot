@@ -57,7 +57,7 @@ def weather(bot, update, args):
         update.message.reply_text("Today in {} is being {}, around {}°C.\n".format(thelocation,
                 status, temperature))
 
-    except pyowm.exceptions.api_response_error.NotFoundError:
+    except pyowm.exceptions.not_found_error.NotFoundError:
         update.effective_message.reply_text("Sorry, location not found.")
 
 

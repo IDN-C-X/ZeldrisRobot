@@ -185,7 +185,7 @@ def makepack_internal(msg, user, png_sticker, emoji, bot):
 
 __help__ = """
 Kanging or fetching ID of stickers are made easy! With this stick>
-raw png file or fetch ID of sticker.
+raw png file or faetch ID of sticker.
 
 - /stickerid: reply to a sticker to me to tell you its file ID.
 - /getsticker: reply to a sticker to me to upload its raw PNG file.

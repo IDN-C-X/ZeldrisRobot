@@ -217,18 +217,29 @@ def kick(bot: Bot, update: Update, args: List[str]) -> str:
 @run_async
 @bot_admin
 @can_restrict
+@loggable
 def banme(bot: Bot, update: Update):
     user_id = update.effective_message.from_user.id
+    chat = update.effective_chat
+    user = update.effective_user
     if is_user_admin(update.effective_chat, user_id):
         update.effective_message.reply_text("I wish I could... but you're an admin.")
         return
 
     res = update.effective_chat.kick_member(user_id)  
     if res:
-        update.effective_message.reply_text("No problem, banned.")
+        update.effective_message.reply_text("Yes,You're Right! GTFO..")
+        log = "<b>{}:</b>" \
+              "\n#BANME" \
+              "\n<b>User:</b> {}" \
+              "\n<b>ID:</b> <code>{}</code>".format(html.escape(chat.title),
+                                                    mention_html(user.id, user.first_name), user_id)
+        return log
+    
     else:
         update.effective_message.reply_text("Huh? I can't :/")
         
+
 @run_async
 @bot_admin
 @can_restrict
@@ -294,14 +305,12 @@ def unban(bot: Bot, update: Update, args: List[str]) -> str:
 
 
 __help__ = """
-Some people need to be publicly banned; spammers, annoyances, or just trolls.
 
+Some people need to be publicly banned; spammers, annoyances, or just trolls.
 This module allows you to do that easily, by exposing some common actions, so everyone will see!
 
-
- - /kickme: kicks the user who issued the command.
- - /banme: bans the user who issued the command.
-
+ - /kickme: kicks the user who issued the command
+ - /banme: Bans the user who issued the command
 *Admin only:*
  - /ban <userhandle>: bans a user. (via handle, or reply)
  - /tban <userhandle> x(m/h/d): bans a user for x time. (via handle, or reply). m = minutes, h = hours, d = days.
@@ -310,12 +319,6 @@ This module allows you to do that easily, by exposing some common actions, so ev
 
 An example of temporarily banning someone:
 `/tban @username 2h`; this bans a user for 2 hours.
-
-As for the silent ban, it shows no bot output results on banning a user. \
-That makes admins of chat quietly ban users without any expose.
-
-An example of banning someone silently:
-`/sban @username or 728762378`; this bans user silently and deletes command.
 """
 
 __mod_name__ = "Bans"
