@@ -9,7 +9,6 @@ pyowm
 bs4
 lxml
 demjson
-PyLyrics
 wget
 telegram
 bs4
