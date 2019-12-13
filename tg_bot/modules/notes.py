@@ -186,10 +186,10 @@ def list_notes(bot: Bot, update: Update):
     user = update.effective_user  # type: Optional[User]
     note_list = sql.get_all_chat_notes(chat_id)
     chat_name = chat.title or chat.first or chat.username
-    msg = "*List of notes in {}:*\n"
+    msg = "*Notes saved in {}:*\n"
     des = "You can get notes by using `/get notename`, or `#notename`.\n"
     for note in note_list:
-        note_name = (" • `{}`\n".format(note.name))
+        note_name = (" × `#{}`\n".format(note.name))
         if len(msg) + len(note_name) > MAX_MESSAGE_LENGTH:
             update.effective_message.reply_text(msg, parse_mode=ParseMode.MARKDOWN)
             msg = ""
