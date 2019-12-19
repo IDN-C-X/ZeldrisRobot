@@ -14,18 +14,19 @@ from googletrans import Translator
 @run_async
 def gtrans(bot: Bot, update: Update, args: List[str]):
     oky = " ".join(args)
-    to_translate_text = update.effective_message.reply_to_message.text
+    lol = update.effective_message
+    to_translate_text = lol.reply_to_message.text
     translator = Translator()
     try:
         translated = translator.translate(to_translate_text, dest=oky)
         oof = translated.src
         results = translated.text
-        update.effective_message.reply_text("Translated from {} to {}.\n {}".format(oof, oky, results))
+        lol.reply_text("Translated from {} to {}.\n {}".format(oof, oky, results))
     except exc:
-        update.effective_message.reply_text(str(exc))
+        lol.reply_text(str(exc))
 
 
-__help__ = """- /tr - To translate to your language!
+__help__ = """- /tr <lang> - To translate to your language!
 """
 __mod_name__ = "G Translate"
 
