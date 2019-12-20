@@ -22,8 +22,8 @@ def gtrans(bot: Bot, update: Update, args: List[str]):
         oof = translated.src
         results = translated.text
         lol.reply_text("Translated from {} to {}.\n {}".format(oof, oky, results))
-    except exc:
-        lol.reply_text(str(exc))
+    except :
+        lol.reply_text("Which language should i translate into?")
 
 
 __help__ = """- /tr <lang> - To translate to your language!
