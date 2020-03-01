@@ -282,7 +282,22 @@ def decide(bot: Bot, update: Update):
             update.message.reply_text("NoU.")
         else:
             update.message.reply_text("Maybe.")
-		
+
+@run_async
+def snipe(bot: Bot, update: Update, args: List[str]):     
+    try:         
+        chat_id = str(args[0])         
+        del args[0]     
+    except TypeError as excp:         
+        update.effective_message.reply_text("Please give me a chat to echo to!")     
+    to_send = " ".join(args)     
+    if len(to_send) >= 2:         
+        try:            
+            bot.sendMessage(int(chat_id), str(to_send))        
+        except TelegramError:           
+            LOGGER.warning("Couldn't send to group %s", str(chat_id))             
+            update.effective_message.reply_text("Couldn't send the message. Perhaps I'm not part of that group?")  
+	
 __help__ = """
 Some random memes to make ur day!
 
@@ -296,9 +311,11 @@ __mod_name__ = "Extras"
 SHRUG_HANDLER = DisableAbleCommandHandler("shrug", shrug)
 RLG_HANDLER = DisableAbleCommandHandler("rlg", rlg)
 DECIDE_HANDLER = DisableAbleCommandHandler("decide", decide)
+SNIPE_HANDLER = CommandHandler("snipe", snipe, pass_args=True, filters=CustomFilters.sudo_filter)
 ABUSE_HANDLER = DisableAbleCommandHandler("abuse", abuse)
 
 dispatcher.add_handler(SHRUG_HANDLER)
 dispatcher.add_handler(RLG_HANDLER)
 dispatcher.add_handler(DECIDE_HANDLER)
 dispatcher.add_handler(ABUSE_HANDLER)
+dispatcher.add_handler(SNIPE_HANDLER)
