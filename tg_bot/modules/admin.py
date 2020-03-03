@@ -50,8 +50,7 @@ def promote(bot: Bot, update: Update, args: List[str]) -> str:
                           can_delete_messages=bot_member.can_delete_messages,
                           can_invite_users=bot_member.can_invite_users,
                           can_restrict_members=bot_member.can_restrict_members,
-                          can_pin_messages=bot_member.can_pin_messages,
-                          can_promote_members=bot_member.can_promote_members)
+                          can_pin_messages=bot_member.can_pin_messages)
 
     message.reply_text("promoted🧡")
     return "<b>{}:</b>" \
@@ -83,7 +82,7 @@ def demote(bot: Bot, update: Update, args: List[str]) -> str:
         return ""
 
     if not user_member.status == 'administrator':
-        message.reply_text("Can't demote what wasn't promoted!")
+        message.reply_text("I Can't demote someone who wasna't promoted!")
         return ""
 
     if user_id == bot.id:
@@ -98,8 +97,7 @@ def demote(bot: Bot, update: Update, args: List[str]) -> str:
                               can_delete_messages=False,
                               can_invite_users=False,
                               can_restrict_members=False,
-                              can_pin_messages=False,
-                              can_promote_members=False)
+                              can_pin_messages=False)
         message.reply_text("Successfully demoted!")
         return "<b>{}:</b>" \
                "\n#DEMOTED" \

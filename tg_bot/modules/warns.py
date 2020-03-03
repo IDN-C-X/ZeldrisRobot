@@ -422,6 +422,13 @@ def __chat_settings__(chat_id, user_id):
 
 
 __help__ = """
+ If you're looking for a way to automatically warn users when they say certain things, use the /addwarn command.
+ An example of setting multiword warns filter:
+`- /addwarn "very angry" This is an angry user`
+ This will automatically warn a user that triggers "very angry", with reason of 'This is an angry user'.
+ An example of how to set a new multiword warning:
+`/warn @user Because warning is fun`
+
  - /warns <userhandle>: get a user's number, and reason, of warnings.
  - /warnlist: list of all current warning filters
 
