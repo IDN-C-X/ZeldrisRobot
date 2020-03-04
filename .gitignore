@@ -1,4 +1,5 @@
-tg_bot/config.py
+skylee/config.py
+logfile
 *.pyc
 .idea/
 .project
