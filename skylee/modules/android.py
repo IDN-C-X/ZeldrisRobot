@@ -1,8 +1,8 @@
-import re
-import html
-from requests import get
+import re, html, time
 from bs4 import BeautifulSoup
+from requests import get
 from telegram import Message, Update, Bot, User, Chat, ParseMode, InlineKeyboardMarkup
+from telegram.error import BadRequest
 from telegram.ext import run_async
 from telegram.utils.helpers import escape_markdown, mention_html
 
@@ -16,21 +16,38 @@ DEVICES_DATA = 'https://raw.githubusercontent.com/androidtrackers/certified-andr
 def magisk(bot, update):
     url = 'https://raw.githubusercontent.com/topjohnwu/magisk_files/'
     releases = ""
-    for type, path  in {"Stable":"master/stable", "Beta":"master/beta", "Canary":"canary/release"}.items():
-        data = get(url + path + '.json').json()
-        releases += f'{type}: [ZIP v{data["magisk"]["version"]}]({data["magisk"]["link"]}) | ' \
-                    f'[APP v{data["app"]["version"]}]({data["app"]["link"]}) | ' \
-                    f'[Uninstaller]({data["uninstaller"]["link"]})\n'
+    for type, branch in {"Stable":["master/stable","master"], "Beta":["master/beta","master"], "Canary (release)":["canary/release","canary"], "Canary (debug)":["canary/debug","canary"]}.items():
+        data = get(url + branch[0] + '.json').json()
+        releases += f'*{type}*: \n' \
+                    f'• [Changelog](https://github.com/topjohnwu/magisk_files/blob/{branch[1]}/notes.md)\n' \
+                    f'• Zip - [{data["magisk"]["version"]}-{data["magisk"]["versionCode"]}]({data["magisk"]["link"]}) \n' \
+                    f'• App - [{data["app"]["version"]}-{data["app"]["versionCode"]}]({data["app"]["link"]}) \n' \
+                    f'• Uninstaller - [{data["magisk"]["version"]}-{data["magisk"]["versionCode"]}]({data["uninstaller"]["link"]})\n\n'
                         
 
-    update.message.reply_text("*Latest Magisk Releases:*\n{}".format(releases),
+    del_msg = update.message.reply_text("*Latest Magisk Releases:*\n{}".format(releases),
                                parse_mode=ParseMode.MARKDOWN, disable_web_page_preview=True)
+    time.sleep(300)
+    try:
+        del_msg.delete()
+        update.effective_message.delete()
+    except BadRequest as err:
+        if (err.message == "Message to delete not found" ) or (err.message == "Message can't be deleted" ):
+            return
 
 @run_async
 def device(bot, update, args):
     if len(args) == 0:
-        update.effective_message.reply_text("No codename provided, write a codename for fetching informations.")
-        return
+        reply = f'No codename provided, write a codename for fetching informations.'
+        del_msg = update.effective_message.reply_text("{}".format(reply),
+                               parse_mode=ParseMode.MARKDOWN, disable_web_page_preview=True)
+        time.sleep(5)
+        try:
+            del_msg.delete()
+            update.effective_message.delete()
+        except BadRequest as err:
+            if (err.message == "Message to delete not found" ) or (err.message == "Message can't be deleted" ):
+                return
     device = " ".join(args)
     found = [
         i for i in get(DEVICES_DATA).json()
@@ -48,19 +65,45 @@ def device(bot, update, args):
                 f'Codename: <code>{codename}</code>\n\n'                
     else:
         reply = f"Couldn't find info about {device}!\n"
+        del_msg = update.effective_message.reply_text("{}".format(reply),
+                               parse_mode=ParseMode.MARKDOWN, disable_web_page_preview=True)
+        time.sleep(5)
+        try:
+            del_msg.delete()
+            update.effective_message.delete()
+        except BadRequest as err:
+            if (err.message == "Message to delete not found" ) or (err.message == "Message can't be deleted" ):
+                return
     update.message.reply_text("{}".format(reply),
                                parse_mode=ParseMode.HTML, disable_web_page_preview=True)
-        
-        
+
+
+@run_async
 def twrp(bot, update, args):
     if len(args) == 0:
-        update.effective_message.reply_text("No codename provided, write a codename for fetching informations.")
-        return
+        reply='No codename provided, write a codename for fetching informations.'
+        del_msg = update.effective_message.reply_text("{}".format(reply),
+                               parse_mode=ParseMode.MARKDOWN, disable_web_page_preview=True)
+        time.sleep(5)
+        try:
+            del_msg.delete()
+            update.effective_message.delete()
+        except BadRequest as err:
+            if (err.message == "Message to delete not found" ) or (err.message == "Message can't be deleted" ):
+                return
     device = " ".join(args)
     url = get(f'https://eu.dl.twrp.me/{device}/')
     if url.status_code == 404:
         reply = f"Couldn't find twrp downloads for {device}!\n"
-        return
+        del_msg = update.effective_message.reply_text("{}".format(reply),
+                               parse_mode=ParseMode.MARKDOWN, disable_web_page_preview=True)
+        time.sleep(5)
+        try:
+            del_msg.delete()
+            update.effective_message.delete()
+        except BadRequest as err:
+            if (err.message == "Message to delete not found" ) or (err.message == "Message can't be deleted" ):
+                return
     reply = f'*Latest Official TWRP for {device}*\n'            
     db = get(DEVICES_DATA).json()
     newdevice = device.strip('lte') if device.startswith('beyond') else device
@@ -86,12 +129,11 @@ def twrp(bot, update, args):
                                parse_mode=ParseMode.MARKDOWN, disable_web_page_preview=True)
 
 __help__ = """
-Android related commands:
+*Android related commands:*
 
  - /magisk - gets the latest magisk release for Stable/Beta/Canary
  - /device <codename> - gets android device basic info from its codename
  - /twrp <codename> -  gets latest twrp for the android device using the codename
- 
 """
 
 __mod_name__ = "Android"
