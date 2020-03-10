@@ -133,6 +133,12 @@ if is_module_loaded(FILENAME):
         chat = update.effective_chat
         update.effective_message.reply_text(build_curr_disabled(chat.id), parse_mode=ParseMode.MARKDOWN)
 
+    def __import_data__(chat_id, data):
+        disabled = data.get('disabled', {})
+        for disable_cmd in disabled:
+            sql.disable_command(chat_id, disable_cmd)
+
+
 
     def __stats__():
         return "{} disabled items, across {} chats.".format(sql.num_disabled(), sql.num_chats())

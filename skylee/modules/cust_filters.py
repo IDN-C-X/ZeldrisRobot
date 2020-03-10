@@ -267,6 +267,12 @@ def __chat_settings__(chat_id, user_id):
     cust_filters = sql.get_chat_triggers(chat_id)
     return "There are `{}` custom filters here.".format(len(cust_filters))
 
+def __import_data__(chat_id, data):
+    # set chat filters
+    filters = data.get('filters', {})
+    for trigger in filters:
+        sql.add_to_blacklist(chat_id, trigger)
+
 
 __help__ = """
  - /filters: list all active filters in this chat.
