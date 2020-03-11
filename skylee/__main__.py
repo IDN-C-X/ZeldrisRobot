@@ -19,16 +19,18 @@ from skylee.modules.helper_funcs.chat_status import is_user_admin
 from skylee.modules.helper_funcs.misc import paginate_modules
 
 PM_START_TEXT = """
-Hi {}, my name is {}! If you have any questions on how to use me, read /help.
+Hey there!, my name is sкyℓєє. If you have any questions on how to use me, Click Help button!
 
-I'm a group manager bot maintained by [this wonderful person](tg://user?id={}). I'm built in python3, using the \
+I'm a group manager bot maintained by [this wonderful person](tg://user?id=894380120). I'm built in python3, using the \
 python-telegram-bot library, and am fully opensource - you can find what makes me tick \
 [here](www.github.com/starry69/skyleebot)!
 
-You can find the list of available commands with /help.
-
-If you're enjoying using me, and/or would like to help me survive in the wild, hit /donate to help fund/upgrade my VPS!
+Wanna Add me to your Group? Just click the button below ⬇️
 """
+
+buttons = [[InlineKeyboardButton(text="Add me to Group 👥", url="t.me/skylee_bot?startgroup=true")]]
+buttons += [[InlineKeyboardButton(text="Help & Commands ❔", callback_data="help_back")]]
+
 
 HELP_STRINGS = """
 Hey there! My name is *{}*.
@@ -144,10 +146,7 @@ def start(bot: Bot, update: Update, args: List[str]):
                 IMPORTED["rules"].send_rules(update, args[0], from_pm=True)
 
         else:
-            first_name = update.effective_user.first_name
-            update.effective_message.reply_text(
-                PM_START_TEXT.format(escape_markdown(first_name), escape_markdown(bot.first_name), OWNER_ID),
-                parse_mode=ParseMode.MARKDOWN, disable_web_page_preview=True)
+            update.effective_message.reply_text(PM_START_TEXT, reply_markup=InlineKeyboardMarkup(buttons), parse_mode=ParseMode.MARKDOWN, disable_web_page_preview=True)
     else:
         update.effective_message.reply_text("Sending you a warm hi & wishing your day is a happy one!")
 
