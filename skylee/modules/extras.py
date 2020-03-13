@@ -1,8 +1,9 @@
 import random, re
+import wikipedia
 from typing import Optional, List
 from random import randint
 from telegram import Message, Update, Bot, User
-from telegram import MessageEntity
+from telegram import MessageEntity, InlineKeyboardMarkup, InlineKeyboardButton
 from telegram.ext import Filters, CommandHandler, MessageHandler, run_async
 from telegram import TelegramError, Chat, Message
 from telegram.error import BadRequest
@@ -121,7 +122,25 @@ def snipe(bot: Bot, update: Update, args: List[str]):
             LOGGER.warning("Couldn't send to group %s", str(chat_id))             
             update.effective_message.reply_text("Couldn't send the message. Perhaps I'm not part of that group?")  
 
-	
+@run_async
+def wiki(bot: Bot, update: Update):
+    kueri = re.split(pattern="wiki", string=update.effective_message.text)
+    wikipedia.set_lang("en")
+    if len(str(kueri[1])) == 0:
+        update.effective_message.reply_text("Enter keywords!")
+    else:
+        try:
+            pertama = update.effective_message.reply_text("🔄 Loading...")
+            keyboard = InlineKeyboardMarkup([[InlineKeyboardButton(text="🔧 More Info...", url=wikipedia.page(kueri).url)]])
+            bot.editMessageText(chat_id=update.effective_chat.id, message_id=pertama.message_id, text=wikipedia.summary(kueri, sentences=10), reply_markup=keyboard)
+        except wikipedia.PageError as e:
+            update.effective_message.reply_text(f"⚠ Error: {e}")
+        except BadRequest as et :
+            update.effective_message.reply_text(f"⚠ Error: {et}")
+        except wikipedia.exceptions.DisambiguationError as eet:
+            update.effective_message.reply_text(f"⚠ Error\n There are too many query! Express it more!\nPossible query result:\n{eet}")
+
+
 __help__ = """
 Some random memes to make ur day!
 
@@ -135,8 +154,10 @@ SHRUG_HANDLER = DisableAbleCommandHandler("shrug", shrug)
 DECIDE_HANDLER = DisableAbleCommandHandler("decide", decide)
 SNIPE_HANDLER = CommandHandler("snipe", snipe, pass_args=True, filters=CustomFilters.sudo_filter)
 ABUSE_HANDLER = DisableAbleCommandHandler("abuse", abuse)
+WIKI_HANDLER = DisableAbleCommandHandler("wiki", wiki)
 
 dispatcher.add_handler(SHRUG_HANDLER)
 dispatcher.add_handler(DECIDE_HANDLER)
 dispatcher.add_handler(ABUSE_HANDLER)
 dispatcher.add_handler(SNIPE_HANDLER)
+dispatcher.add_handler(WIKI_HANDLER)
