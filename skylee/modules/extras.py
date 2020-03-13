@@ -90,12 +90,12 @@ def abuse(bot: Bot, update: Update):
     # reply to correct message
     reply_text = update.effective_message.reply_to_message.reply_text if update.effective_message.reply_to_message else update.effective_message.reply_text
     reply_text(random.choice(ABUSE_STRINGS))
-	
+
 @run_async
 def shrug(bot: Bot, update: Update):
     # reply to correct message
     reply_text = update.effective_message.reply_to_message.reply_text if update.effective_message.reply_to_message else update.effective_message.reply_text
-    reply_text("¯\_(ツ)_/¯")	
+    reply_text("¯\_(ツ)_/¯")
 
 @run_async
 def decide(bot: Bot, update: Update):
@@ -109,16 +109,16 @@ def decide(bot: Bot, update: Update):
 
 @run_async
 def snipe(bot: Bot, update: Update, args: List[str]):     
-    try:         
-        chat_id = str(args[0])         
-        del args[0]     
-    except TypeError as excp:         
+    try:
+        chat_id = str(args[0])
+        del args[0]
+    except TypeError as excp:
         update.effective_message.reply_text("Please give me a chat to echo to!")     
-    to_send = " ".join(args)     
-    if len(to_send) >= 2:         
-        try:            
+    to_send = " ".join(args)
+    if len(to_send) >= 2:
+        try:
             bot.sendMessage(int(chat_id), str(to_send))        
-        except TelegramError:           
+        except TelegramError:
             LOGGER.warning("Couldn't send to group %s", str(chat_id))             
             update.effective_message.reply_text("Couldn't send the message. Perhaps I'm not part of that group?")  
 
@@ -140,21 +140,24 @@ def wiki(bot: Bot, update: Update):
         except wikipedia.exceptions.DisambiguationError as eet:
             update.effective_message.reply_text(f"⚠ Error\n There are too many query! Express it more!\nPossible query result:\n{eet}")
 
-
 __help__ = """
-Some random memes to make ur day!
+Some random extra commands for fun!
 
- - /shrug : get shrug  ¯\_(ツ)_/¯
+ - /shrug : get shrug 🤷
  - /decide : Randomly answers yes/no/maybe
  - /abuse : Abuses the retard!
+ - /wiki  : Search the wikipedia articles.
 """
 
 __mod_name__ = "Extras"
+
 SHRUG_HANDLER = DisableAbleCommandHandler("shrug", shrug)
 DECIDE_HANDLER = DisableAbleCommandHandler("decide", decide)
 SNIPE_HANDLER = CommandHandler("snipe", snipe, pass_args=True, filters=CustomFilters.sudo_filter)
 ABUSE_HANDLER = DisableAbleCommandHandler("abuse", abuse)
+
 WIKI_HANDLER = DisableAbleCommandHandler("wiki", wiki)
+
 
 dispatcher.add_handler(SHRUG_HANDLER)
 dispatcher.add_handler(DECIDE_HANDLER)
