@@ -281,6 +281,7 @@ done easily using the bot.
  - /invitelink: gets invitelink
  - /promote: promotes the user replied to
  - /demote: demotes the user replied to
+ - /settitle: sets a custom title for an admin which is promoted by bot
 
 An example of promoting someone to admins:
 `/promote @username`; this promotes a user to admins.
