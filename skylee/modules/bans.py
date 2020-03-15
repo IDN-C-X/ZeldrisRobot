@@ -1,7 +1,7 @@
 import html
 from typing import Optional, List
 
-from telegram import Message, Chat, Update, Bot, User
+from telegram import Message, Chat, Update, Bot, User, ParseMode
 from telegram.error import BadRequest
 from telegram.ext import run_async, CommandHandler, Filters
 from telegram.utils.helpers import mention_html
@@ -61,13 +61,13 @@ def ban(bot: Bot, update: Update, args: List[str]) -> str:
     try:
         chat.kick_member(user_id)
         #bot.send_sticker(chat.id, BAN_STICKER)  # banhammer marie sticker
-        message.reply_text("Banned!😏")
+        bot.sendMessage(chat.id, "Banned! {}.".format(mention_html(member.user.id, member.user.first_name)), parse_mode=ParseMode.HTML)
         return log
 
     except BadRequest as excp:
         if excp.message == "Reply message not found":
             # Do not reply
-            message.reply_text('Banned!😏', quote=False)
+            message.reply_text('Banned!', quote=False)
             return log
         else:
             LOGGER.warning(update)
@@ -195,7 +195,7 @@ def kick(bot: Bot, update: Update, args: List[str]) -> str:
     res = chat.unban_member(user_id)  # unban on current user = kick
     if res:
         #bot.send_sticker(chat.id, BAN_STICKER)  # banhammer marie sticker
-        message.reply_text("Get Out!")
+        bot.sendMessage(chat.id, "Kicked! {}.".format(mention_html(member.user.id, member.user.first_name)), parse_mode=ParseMode.HTML)
         log = "<b>{}:</b>" \
               "\n#KICKED" \
               "\n<b>Admin:</b> {}" \
@@ -228,7 +228,7 @@ def banme(bot: Bot, update: Update):
 
     res = update.effective_chat.kick_member(user_id)  
     if res:
-        update.effective_message.reply_text("Yes,You're Right! GTFO..")
+        update.effective_message.reply_text("Yes, you're right! GTFO..")
         log = "<b>{}:</b>" \
               "\n#BANME" \
               "\n<b>User:</b> {}" \
