@@ -19,31 +19,6 @@ from skylee.modules.disable import DisableAbleCommandHandler
 
 
 @run_async
-def stickerid(bot: Bot, update: Update):
-    msg = update.effective_message
-    if msg.reply_to_message and msg.reply_to_message.sticker:
-        update.effective_message.reply_text("Sticker ID:\n```" +
-                                            escape_markdown(msg.reply_to_message.sticker.file_id) + "```",
-                                            parse_mode=ParseMode.MARKDOWN)
-    else:
-        update.effective_message.reply_text("Please reply to a sticker to get its ID.")
-
-
-@run_async
-def getsticker(bot: Bot, update: Update):
-    msg = update.effective_message
-    chat_id = update.effective_chat.id
-    if msg.reply_to_message and msg.reply_to_message.sticker:
-        file_id = msg.reply_to_message.sticker.file_id
-        newFile = bot.get_file(file_id)
-        newFile.download('sticker.png')
-        bot.send_document(chat_id, document=open('sticker.png', 'rb'))
-        os.remove("sticker.png")
-    else:
-        update.effective_message.reply_text("Please reply to a sticker for me to upload its PNG.")
-
-
-@run_async
 def kang(bot: Bot, update: Update, args: List[str]):
     msg = update.effective_message
     user = update.effective_user
@@ -229,17 +204,14 @@ def makepack_internal(msg, user, png_sticker, emoji, bot, packname, packnum):
 
 
 __help__ = """
+Kanging Stickers made easy with stickers module!
+
 - /stickerid: reply to a sticker to me to tell you its file ID.
 - /getsticker: reply to a sticker to me to upload its raw PNG file.
 - /kang: reply to a sticker to add it to your pack.
 """
 
 __mod_name__ = "Stickers"
-STICKERID_HANDLER = DisableAbleCommandHandler("stickerid", stickerid)
-GETSTICKER_HANDLER = DisableAbleCommandHandler("getsticker", getsticker)
 KANG_HANDLER = DisableAbleCommandHandler("kang", kang, pass_args=True, admin_ok=True)
 
-dispatcher.add_handler(STICKERID_HANDLER)
-dispatcher.add_handler(GETSTICKER_HANDLER)
-dispatcher.add_handler(KANG_HANDLER)
-
+dispatcher.add_handler(KANG_HANDLER) 
