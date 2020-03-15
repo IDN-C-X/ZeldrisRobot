@@ -1,5 +1,6 @@
 import html
 from typing import Optional, List
+import requests
 
 from telegram import Message, Chat, Update, Bot, User
 from telegram import ParseMode
@@ -8,10 +9,10 @@ from telegram.ext import CommandHandler, Filters
 from telegram.ext.dispatcher import run_async
 from telegram.utils.helpers import escape_markdown, mention_html
 
-from skylee import dispatcher
+from skylee import dispatcher, TOKEN
 from skylee.modules.disable import DisableAbleCommandHandler
 from skylee.modules.helper_funcs.chat_status import bot_admin, can_promote, user_admin, can_pin
-from skylee.modules.helper_funcs.extraction import extract_user
+from skylee.modules.helper_funcs.extraction import extract_user, extract_user_and_text
 from skylee.modules.log_channel import loggable
 
 
@@ -209,6 +210,57 @@ def adminlist(bot: Bot, update: Update):
     update.effective_message.reply_text(text, parse_mode=ParseMode.MARKDOWN)
 
 
+@run_async
+@bot_admin
+@can_promote
+@user_admin
+def set_title(bot: Bot, update: Update, args: List[str]):
+
+    chat = update.effective_chat
+    message = update.effective_message
+
+    user_id, title = extract_user_and_text(message, args)
+    try:
+        user_member = chat.get_member(user_id)
+    except:
+        return
+
+    if not user_id:
+        message.reply_text("You don't seem to be referring to a user.")
+        return
+
+    if user_member.status == 'creator':
+        message.reply_text("This person CREATED the chat, how can i set custom title for him?")
+        return
+
+    if not user_member.status == 'administrator':
+        message.reply_text("Can't set title for non-admins!\nPromote them first to set custom title!")
+        return
+
+    if user_id == bot.id:
+        message.reply_text("I can't set my own title myself! Get the one who made me admin to do it for me.")
+        return
+
+    if not title:
+        message.reply_text("Setting blank title doesn't do anything!")
+        return
+
+    if len(title) > 16:
+        message.reply_text("The title length is longer than 16 characters.\nTruncating it to 16 characters.")
+
+    result = requests.post(f"https://api.telegram.org/bot{TOKEN}/setChatAdministratorCustomTitle?chat_id={chat.id}&user_id={user_id}&custom_title={title}")
+    status = result.json()["ok"]
+
+    if status == True:
+        bot.sendMessage(chat.id, "Sucessfully set title for <code>{}</code> to <code>{}</code>!".format(user_member.user.first_name or user_id, title[:16]), parse_mode=ParseMode.HTML)
+    else:
+        description = result.json()["description"]
+        if description == "Bad Request: not enough rights to change custom title of the user":
+            message.reply_text("I can't set custom title for admins that I didn't promote!")
+
+
+
+
 def __chat_settings__(chat_id, user_id):
     return "You are *admin*: `{}`".format(
         dispatcher.bot.get_chat_member(chat_id, user_id).status in ("administrator", "creator"))
@@ -244,6 +296,8 @@ INVITE_HANDLER = CommandHandler("invitelink", invite, filters=Filters.group)
 PROMOTE_HANDLER = CommandHandler("promote", promote, pass_args=True, filters=Filters.group)
 DEMOTE_HANDLER = CommandHandler("demote", demote, pass_args=True, filters=Filters.group)
 
+SET_TITLE_HANDLER = CommandHandler("settitle", set_title, pass_args=True)
+
 ADMINLIST_HANDLER = DisableAbleCommandHandler("adminlist", adminlist, filters=Filters.group)
 
 dispatcher.add_handler(PIN_HANDLER)
@@ -252,3 +306,4 @@ dispatcher.add_handler(INVITE_HANDLER)
 dispatcher.add_handler(PROMOTE_HANDLER)
 dispatcher.add_handler(DEMOTE_HANDLER)
 dispatcher.add_handler(ADMINLIST_HANDLER)
+dispatcher.add_handler(SET_TITLE_HANDLER)
