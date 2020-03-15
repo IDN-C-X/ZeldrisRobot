@@ -11,6 +11,30 @@ announcements.
 
 Alternatively, [contact my reporter bot on telegram](https://t.me/YumiUzo_bot)! (Keep all support questions in the support chat, where more people can help you.)
 
+## Credits
+
+Skittbot for Stickers module and memes in extras module.
+
+@1maverick1 for many stuffs.
+
+@AyraHikari for weather modules and some other stuffs.
+
+@RealAkito for reverse search modules.
+
+@nitanmarcel for chat blacklist // whitelist
+
+@MrYacha for connections
+
+@ATechnoHazard for many stuffs
+
+@nunopenim for webtools
+
+@corsicanu for android modules
+
+@Loli-Killer for /settitle command
+
+Any other missing Credits can be seen in commits!
+
 ## Starting the bot.
 
 Once you've setup your database and your configuration (see below) is complete, simply run:
