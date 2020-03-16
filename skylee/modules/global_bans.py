@@ -8,7 +8,7 @@ from telegram.ext import run_async, CommandHandler, MessageHandler, Filters
 from telegram.utils.helpers import mention_html
 
 import skylee.modules.sql.global_bans_sql as sql
-from skylee import dispatcher, OWNER_ID, SUDO_USERS, SUPPORT_USERS, STRICT_GBAN
+from skylee import dispatcher, OWNER_ID, SUDO_USERS, SUPPORT_USERS, STRICT_GBAN, MESSAGE_DUMP
 from skylee.modules.helper_funcs.chat_status import user_admin, is_user_admin
 from skylee.modules.helper_funcs.extraction import extract_user, extract_user_and_text
 from skylee.modules.helper_funcs.filters import CustomFilters
@@ -95,7 +95,7 @@ def gban(bot: Bot, update: Update, args: List[str]):
     message.reply_text("*Blows dust off of banhammer* 😉")
 
     banner = update.effective_user  # type: Optional[User]
-    send_to_list(bot, SUDO_USERS + SUPPORT_USERS,
+    bot.sendMessage(MESSAGE_DUMP,
                  "<b>Global Ban</b>" \
                  "\n#GBAN" \
                  "\n<b>Status:</b> <code>Enforcing</code>" \
@@ -105,7 +105,7 @@ def gban(bot: Bot, update: Update, args: List[str]):
                  "\n<b>Reason:</b> {}".format(mention_html(banner.id, banner.first_name),
                                               mention_html(user_chat.id, user_chat.first_name), 
                                                            user_chat.id, reason or "No reason given"), 
-                html=True)
+                parse_mode=ParseMode.HTML)
 
     sql.gban_user(user_id, user_chat.username or user_chat.first_name, reason)
 
@@ -132,7 +132,7 @@ def gban(bot: Bot, update: Update, args: List[str]):
 
     send_to_list(bot, SUDO_USERS + SUPPORT_USERS,
                    "{} has been successfully gbanned!".format(mention_html(user_chat.id, user_chat.first_name)),
-                   html=True)  
+                   html=True)
     message.reply_text("Person has been \"Dealt with\".")
 
 
@@ -158,7 +158,7 @@ def ungban(bot: Bot, update: Update, args: List[str]):
 
     message.reply_text("I'll give {} a second chance, globally.".format(user_chat.first_name))
 
-    send_to_list(bot, SUDO_USERS + SUPPORT_USERS,
+    bot.sendMessage(MESSAGE_DUMP,
                  "<b>Regression of Global Ban</b>" \
                  "\n#UNGBAN" \
                  "\n<b>Status:</b> <code>Ceased</code>" \
@@ -167,7 +167,7 @@ def ungban(bot: Bot, update: Update, args: List[str]):
                  "\n<b>ID:</b> <code>{}</code>".format(mention_html(banner.id, banner.first_name),
                                                        mention_html(user_chat.id, user_chat.first_name), 
                                                                     user_chat.id),
-                html=True)
+                parse_mode=ParseMode.HTML)
 
     chats = get_all_chats()
     for chat in chats:
@@ -194,7 +194,7 @@ def ungban(bot: Bot, update: Update, args: List[str]):
 
     sql.ungban_user(user_id)
 
-    send_to_list(bot, SUDO_USERS + SUPPORT_USERS, 
+    send_to_list(bot, SUDO_USERS + SUPPORT_USERS,
                   "{} has been successfully un-gbanned!".format(mention_html(user_chat.id, 
                                                                          user_chat.first_name)),
                  html=True)
@@ -226,7 +226,12 @@ def check_and_ban(update, user_id, should_message=True):
     if sql.is_user_gbanned(user_id):
         update.effective_chat.kick_member(user_id)
         if should_message:
-            update.effective_message.reply_text("This is a bad person, they shouldn't be here!")
+            usr = sql.get_gbanned_user(user_id)
+            greason = usr.reason
+            if not greason:
+                greason = "No reason given"
+
+            update.effective_message.reply_text(f"*This user was GBanned! so, have been Banned from chat.*\nReason: `{greason}`", parse_mode=ParseMode.MARKDOWN)
 
 
 @run_async
