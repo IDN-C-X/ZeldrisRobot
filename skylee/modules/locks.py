@@ -307,12 +307,12 @@ You're in the right place!
 The locks module allows you to lock away some common items in the \
 telegram world; the bot will automatically delete them!
 
- - /locktypes: a list of possible locktypes
+ - /locktypes: Lists all possible locktypes
 
 *Admin only:*
- - /lock <type>: lock items of a certain type (not available in private)
- - /unlock <type>: unlock items of a certain type (not available in private)
- - /locks: the current list of locks in this chat.
+ - /lock <type>: Lock items of a certain type (not available in private)
+ - /unlock <type>: Unlock items of a certain type (not available in private)
+ - /locks: The current list of locks in this chat.
 
 Locks can be used to restrict a group's users.
 eg:

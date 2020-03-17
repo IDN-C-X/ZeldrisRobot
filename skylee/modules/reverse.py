@@ -54,7 +54,7 @@ def reverse(bot: Bot, update: Update, args: List[str]):
             lim = 2
     elif args and not reply:
         splatargs = msg.text.split(" ")
-        if len(splatargs) == 3:                
+        if len(splatargs) == 3:
             img_link = splatargs[1]
             try:
                 lim = int(splatargs[2])

@@ -183,11 +183,11 @@ Some people need to be publicly muted; spammers, annoyances, or just trolls.
 This module allows you to do that easily, by exposing some common actions, so everyone will see!
 
 *Admin only:*
- - /mute <userhandle>: silences a user. Can also be used as a reply, muting the replied to user.
- - /tmute <userhandle> x(m/h/d): mutes a user for x time. (via handle, or reply). m = minutes, h = hours, d = days.
- - /unmute <userhandle>: unmutes a user. Can also be used as a reply, muting the replied to user. 
+ - /mute <userhandle>: Silences a user. Can also be used as a reply, muting the replied to user.
+ - /tmute <userhandle> x(m/h/d): Mutes a user for x time. (via handle, or reply). m = minutes, h = hours, d = days.
+ - /unmute <userhandle>: Unmutes a user. Can also be used as a reply, muting the replied to user. 
 An example of temporarily mute someone:
-`/tmute @username 2h`; this mutes a user for 2 hours.
+`/tmute @username 2h`; This mutes a user for 2 hours.
 """
 
 __mod_name__ = "Mute"

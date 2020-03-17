@@ -468,7 +468,7 @@ def getsticker(bot: Bot, update: Update):
         bot.sendDocument(chat_id, document=open('sticker.png', 'rb'))
         bot.sendChatAction(chat_id, "upload_photo")
         bot.send_photo(chat_id, photo=open('sticker.png', 'rb'))
-        
+
     else:
         bot.sendChatAction(chat_id, "typing")
         update.effective_message.reply_text("Hello " + "[{}](tg://user?id={})".format(msg.from_user.first_name,
@@ -479,16 +479,14 @@ def getsticker(bot: Bot, update: Update):
 __help__ = """
 An "odds and ends" module for small, simple commands which don't really fit anywhere
 
- - /id: get the current group id. If used by replying to a message, gets that user's id.
- - /runs: reply a random string from an array of replies.
- - /slap: slap a user, or get slapped if not a reply.
- - /warm: hug a user warmly, or get hugged if not a reply.
- - /punch: punch a user, or get punched if not a reply.
- - /info: get information about a user.
- - /gdpr: deletes your information from the bot's database. Private chats only.
- - /markdownhelp: quick summary of how markdown works in telegram - can only be called in private chats.
- - /stickerid: reply to a sticker and get sticker id of that.
- - /getsticker: reply to a sticker and get that sticker as .png and image. 
+ - /id: Get the current group id. If used by replying to a message, gets that user's id.
+ - /runs: Reply a random string from an array of replies.
+ - /slap: Slap a user, or get slapped if not a reply.
+ - /warm: Hug a user warmly, or get hugged if not a reply.
+ - /punch: Punch a user, or get punched if not a reply.
+ - /info: Get information about a user.
+ - /gdpr: Deletes your information from the bot's database. Private chats only.
+ - /markdownhelp: Quick summary of how markdown works in telegram - can only be called in private chats.
 """
 
 __mod_name__ = "Misc"

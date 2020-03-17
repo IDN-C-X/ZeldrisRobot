@@ -33,7 +33,7 @@ def check_flood(bot: Bot, update: Update) -> str:
     should_ban = sql.update_flood(chat.id, user.id)
     if not should_ban:
         return ""
-    
+
     soft_flood = sql.get_flood_strength(chat.id)
     if soft_flood:  # kick
         chat.unban_member(user.id)
@@ -48,21 +48,21 @@ def check_flood(bot: Bot, update: Update) -> str:
         keyboard = []
         msg.reply_text(reply, reply_markup=keyboard, parse_mode=ParseMode.HTML)
         msg.delete()
-        
+
         log = "<b>{}:</b>" \
               "\n#FLOOD_CONTROL" \
               "\n<b>• User:</b> {}" \
               "\n<b>• ID:</b> <code>{}</code>".format(html.escape(chat.title), mention_html(user.id, user.first_name), user.id)
-        
+
         if soft_flood:
            log +="\n<b>• Action:</b> kicked"
-        
+
         else:
            log +="\n<b>• Action:</b> banned"
-        
+
         log +="\n<b>• Reason:</b> Exceeded flood limit of {} consecutive messages.".format(limit)
-                                                                               
-        
+
+
         return log
 
     except BadRequest:
@@ -169,11 +169,11 @@ def set_flood_strength(bot: Bot, update: Update, args: List[str]):
             msg.reply_text("Flood strength is currently set to *kick* users when they exceed the limits, "
                            "user will be kicked.",
                            parse_mode=ParseMode.MARKDOWN)
-                 
+
         elif soft_flood:
             msg.reply_text("The default configuration for flood control is currently set as a ban.",
                            parse_mode=ParseMode.MARKDOWN)
-        
+
         elif soft_flood == False:
             msg.reply_text("Flood strength is currently set to *ban* users when they exceed the limits, "
                            "user will be banned.",
@@ -203,7 +203,7 @@ will result in banning or kicking the user.
  - /flood: Get the current flood control setting
 
 *Admin only:*
- - /setflood <int/'no'/'off'>: enables or disables flood control
+ - /setflood <int/'no'/'off'>: Enables or Disables flood control
  - /strongflood <on/yes/off/no>: If set to on, exceeding the flood limit will result in a ban. Else, will just kick.
 """
 

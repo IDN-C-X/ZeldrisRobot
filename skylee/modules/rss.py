@@ -216,10 +216,10 @@ def rss_set(bot, job):
 
 
 __help__ = """
- - /addrss <link>: add an RSS link to the subscriptions.
- - /removerss <link>: removes the RSS link from the subscriptions.
- - /rss <link>: shows the link's data and the last entry, for testing purposes.
- - /listrss: shows the list of rss feeds that the chat is currently subscribed to.
+ - /addrss <link>: Add an RSS link to the subscriptions.
+ - /removerss <link>: Removes the RSS link from the subscriptions.
+ - /rss <link>: Shows the link's data and the last entry, for testing purposes.
+ - /listrss: Shows the list of rss feeds that the chat is currently subscribed to.
 
 NOTE: In groups, only admins can add/remove RSS links to the group's subscription
 """

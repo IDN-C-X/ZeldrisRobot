@@ -28,7 +28,7 @@ def gtrans(bot: Bot, update: Update, args: List[str]):
 
 __help__ = """- /tr <lang> - To translate to your language!
 """
-__mod_name__ = "G Translate"
+__mod_name__ = "Translate"
 
 dispatcher.add_handler(DisableAbleCommandHandler("tr", gtrans, pass_args=True))
 

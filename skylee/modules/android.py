@@ -23,7 +23,7 @@ def magisk(bot, update):
                     f'• Zip - [{data["magisk"]["version"]}-{data["magisk"]["versionCode"]}]({data["magisk"]["link"]}) \n' \
                     f'• App - [{data["app"]["version"]}-{data["app"]["versionCode"]}]({data["app"]["link"]}) \n' \
                     f'• Uninstaller - [{data["magisk"]["version"]}-{data["magisk"]["versionCode"]}]({data["uninstaller"]["link"]})\n\n'
-                        
+
 
     del_msg = update.message.reply_text("*Latest Magisk Releases:*\n{}".format(releases),
                                parse_mode=ParseMode.MARKDOWN, disable_web_page_preview=True)
@@ -62,7 +62,7 @@ def device(bot, update, args):
             model = item['model']
             reply += f'<b>{brand} {name}</b>\n' \
                 f'Model: <code>{model}</code>\n' \
-                f'Codename: <code>{codename}</code>\n\n'                
+                f'Codename: <code>{codename}</code>\n\n'
     else:
         reply = f"Couldn't find info about {device}!\n"
         del_msg = update.effective_message.reply_text("{}".format(reply),
@@ -104,7 +104,7 @@ def twrp(bot, update, args):
         except BadRequest as err:
             if (err.message == "Message to delete not found" ) or (err.message == "Message can't be deleted" ):
                 return
-    reply = f'*Latest Official TWRP for {device}*\n'            
+    reply = f'*Latest Official TWRP for {device}*\n'
     db = get(DEVICES_DATA).json()
     newdevice = device.strip('lte') if device.startswith('beyond') else device
     for dev in db:
@@ -131,9 +131,9 @@ def twrp(bot, update, args):
 __help__ = """
 *Android related commands:*
 
- - /magisk - gets the latest magisk release for Stable/Beta/Canary
- - /device <codename> - gets android device basic info from its codename
- - /twrp <codename> -  gets latest twrp for the android device using the codename
+ - /magisk - Gets the latest magisk release for Stable/Beta/Canary
+ - /device <codename> - Gets android device basic info from its codename
+ - /twrp <codename> -  Gets latest twrp for the android device using the codename
 """
 
 __mod_name__ = "Android"

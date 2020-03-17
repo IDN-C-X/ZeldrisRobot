@@ -83,7 +83,7 @@ def connect_chat(bot, update, args):
                             number = 1
                         else:
                             print("Error")
-                    
+
                         print(history.updated)
                         print(number)
 
@@ -93,7 +93,7 @@ def connect_chat(bot, update, args):
                         sql.add_history(user.id, connect_chat, "0", "0", 2)
                     #Rebuild user's keyboard
                     keyboard(bot, update)
-                    
+
                 else:
                     update.effective_message.reply_text("Connection failed!")
             else:

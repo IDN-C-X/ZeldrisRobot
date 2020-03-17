@@ -275,14 +275,14 @@ def __import_data__(chat_id, data):
 
 
 __help__ = """
- - /filters: list all active filters in this chat.
+ - /filters: List all active filters saved in the chat.
 
 *Admin only:*
- - /filter <keyword> <reply message>: add a filter to this chat. The bot will now reply that message whenever 'keyword'\
+ - /filter <keyword> <reply message>: Add a filter to this chat. The bot will now reply that message whenever 'keyword'\
 is mentioned. If you reply to a sticker with a keyword, the bot will reply with that sticker. NOTE: all filter \
 keywords are in lowercase. If you want your keyword to be a sentence, use quotes. eg: /filter "hey there" How you \
 doin?
- - /stop <filter keyword>: stop that filter.
+ - /stop <filter keyword>: Stop that filter.
 """
 
 __mod_name__ = "Filters"

@@ -114,8 +114,8 @@ def ping(bot: Bot, update: Update):
         update.effective_message.reply_text(" Ping speed of " +dns+" is <{}ms".format(ping_time))
     else:
         update.effective_message.reply_text(" Ping speed of " +dns+": {}ms".format(ping_time))
-    
-    
+
+
 
 @run_async
 def speedtst(bot: Bot, update: Update):

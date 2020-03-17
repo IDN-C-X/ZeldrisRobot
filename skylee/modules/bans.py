@@ -226,7 +226,7 @@ def banme(bot: Bot, update: Update):
         update.effective_message.reply_text("I wish I could... but you're an admin.")
         return
 
-    res = update.effective_chat.kick_member(user_id)  
+    res = update.effective_chat.kick_member(user_id)
     if res:
         update.effective_message.reply_text("Yes, you're right! GTFO..")
         log = "<b>{}:</b>" \
@@ -235,10 +235,10 @@ def banme(bot: Bot, update: Update):
               "\n<b>ID:</b> <code>{}</code>".format(html.escape(chat.title),
                                                     mention_html(user.id, user.first_name), user_id)
         return log
-    
+
     else:
         update.effective_message.reply_text("Huh? I can't :/")
-        
+
 
 @run_async
 @bot_admin
@@ -309,13 +309,13 @@ __help__ = """
 Some people need to be publicly banned; spammers, annoyances, or just trolls.
 This module allows you to do that easily, by exposing some common actions, so everyone will see!
 
- - /kickme: kicks the user who issued the command
+ - /kickme: Kicks the user who issued the command
  - /banme: Bans the user who issued the command
 *Admin only:*
- - /ban <userhandle>: bans a user. (via handle, or reply)
- - /tban <userhandle> x(m/h/d): bans a user for x time. (via handle, or reply). m = minutes, h = hours, d = days.
- - /unban <userhandle>: unbans a user. (via handle, or reply)
- - /kick <userhandle>: kicks a user, (via handle, or reply)
+ - /ban <userhandle>: Bans a user. (via handle, or reply)
+ - /tban <userhandle> x(m/h/d): Bans a user for x time. (via handle, or reply). m = minutes, h = hours, d = days.
+ - /unban <userhandle>: Unbans a user. (via handle, or reply)
+ - /kick <userhandle>: Kicks a user, (via handle, or reply)
 
 An example of temporarily banning someone:
 `/tban @username 2h`; this bans a user for 2 hours.

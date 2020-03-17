@@ -63,7 +63,7 @@ def report(bot: Bot, update: Update) -> str:
         admin_list = chat.get_administrators()
         messages = update.effective_message  # type: Optional[Message]
         if chat.username and chat.type == Chat.SUPERGROUP:
-            
+
             reported = "Reported {} to admins. I've notified the admins!".format(mention_html(reported_user.id,
                                                                                        reported_user.first_name))
             msg = "<b>{}:</b>" \
@@ -78,8 +78,8 @@ def report(bot: Bot, update: Update) -> str:
                                                                       user.id)
             link = "\n<b>Link:</b> " \
                    "<a href=\"http://telegram.me/{}/{}\">click here</a>".format(chat.username, message.message_id)
-            
-            
+
+
             should_forward = False
             keyboard = []
             messages.reply_text(reported, reply_markup=keyboard, parse_mode=ParseMode.HTML)
@@ -138,7 +138,7 @@ Presenting reports; if someone in your group thinks someone needs reporting, the
 an easy way to call all admins.
 
 *Admin only:*
- - /reports <on/off>: change report setting, or view current status.
+ - /reports <on/off>: Change report setting, or view current status.
    - If done in pm, toggles your status.
    - If in chat, toggles that chat's status.
 

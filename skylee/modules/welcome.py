@@ -136,8 +136,8 @@ def new_member(bot: Bot, update: Update):
 
                 sent = send(update, res, keyboard,
                             sql.DEFAULT_WELCOME.format(first=first_name))  # type: Optional[Message]
-            
-    
+
+
                     #User exception from mutes:
                 if is_user_ban_protected(chat, new_mem.id, chat.get_member(new_mem.id)) or human_checks:
                     continue
@@ -394,7 +394,7 @@ def welcomemute(bot: Bot, update: Update, args: List[str]) -> str:
     chat = update.effective_chat  # type: Optional[Chat]
     user = update.effective_user  # type: Optional[User]
     msg = update.effective_message # type: Optional[Message]
-    
+
     if len(args) >= 1:
         if  args[0].lower() in ("off", "no"):
             sql.set_welcome_mutes(chat.id, False)
@@ -475,7 +475,7 @@ def user_button(bot: Bot, update: Update):
     message = update.effective_message  # type: Optional[Message]
     db_checks = sql.set_human_checks(user.id, chat.id)
     join_user =  int(match.group(1))
-    
+
     if join_user == user.id:
         query.answer(text="Yus! You're a human, Unmuted!")
         bot.restrict_chat_member(chat.id, user.id, can_send_messages=True, 
@@ -486,7 +486,7 @@ def user_button(bot: Bot, update: Update):
         db_checks
     else:
         query.answer(text="You're not allowed to do this!")
-    
+
 WELC_HELP_TXT = "Your group's welcome/goodbye messages can be personalised in multiple ways. If you want the messages" \
                 " to be individually generated, like the default welcome message is, you can use *these* variables:\n" \
                 " - `{{first}}`: this represents the user's *first* name\n" \
@@ -553,19 +553,19 @@ __help__ = """
 {}
 
 *Admin only:*
- - /welcome <on/off>: enable/disable welcome messages.
- - /welcome: shows current welcome settings.
- - /welcome noformat: shows current welcome settings, without the formatting - useful to recycle your welcome messages!
- - /goodbye -> same usage and args as /welcome.
- - /setwelcome <sometext>: set a custom welcome message. If used replying to media, uses that media.
- - /setgoodbye <sometext>: set a custom goodbye message. If used replying to media, uses that media.
- - /resetwelcome: reset to the default welcome message.
- - /resetgoodbye: reset to the default goodbye message.
+ - /welcome <on/off>: enable/disable Welcome messages.
+ - /welcome: Shows current welcome settings.
+ - /welcome noformat: Shows current welcome settings, without the formatting - useful to recycle your welcome messages!
+ - /goodbye -> Same usage and args as /welcome.
+ - /setwelcome <sometext>: Sets a custom welcome message. If used replying to media, uses that media.
+ - /setgoodbye <sometext>: Sets a custom goodbye message. If used replying to media, uses that media.
+ - /resetwelcome: Resets to the default welcome message.
+ - /resetgoodbye: Resets to the default goodbye message.
  - /cleanwelcome <on/off>: On new member, try to delete the previous welcome message to avoid spamming the chat.
- - /welcomemute <off/soft/strong>: all users that join, get muted; a button gets added to the welcome message for them to unmute themselves. \
+ - /welcomemute <off/soft/strong>: All users that join, get muted; a button gets added to the welcome message for them to unmute themselves. \
 This proves they aren't a bot! soft - restricts users ability to post media for 24 hours. strong - mutes on join until they prove they're not bots.
- - /welcomehelp: view more formatting information for custom welcome/goodbye messages.
- 
+ - /welcomehelp: View more formatting information for custom welcome/goodbye messages.
+
 Buttons in welcome messages are made easy, everyone hates URLs visible. With button links you can make your chats look more \
 tidy and simplified.
 
@@ -580,7 +580,7 @@ If you wish to add more than 1 buttons simply do the following:
 The `:same` end of the link merges 2 buttons on same line as 1 button, resulting in 3rd button to be separated \
 from same line.
 
-Tip: Buttons must be placed at the end of welcome messages. 
+Tip: Buttons must be placed at the end of welcome messages.
 """.format(WELC_HELP_TXT)
 
 __mod_name__ = "Greetings"

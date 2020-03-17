@@ -52,7 +52,7 @@ def weather(bot, update, args):
         elif status_now < 804: # Cloudy
              status += "☁️ "
         status += theweather._detailed_status
-                        
+
 
         update.message.reply_text("Today in {} is being {}, around {}°C.\n".format(thelocation,
                 status, temperature))
@@ -62,7 +62,7 @@ def weather(bot, update, args):
 
 
 __help__ = """
- - /weather <city>: get weather info in a particular place
+ - /weather <city>: Gets weather information of a particular location
 """
 
 __mod_name__ = "Weather"
