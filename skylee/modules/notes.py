@@ -15,6 +15,7 @@ from skylee.modules.disable import DisableAbleCommandHandler
 from skylee.modules.helper_funcs.chat_status import user_admin
 from skylee.modules.helper_funcs.misc import build_keyboard, revert_buttons
 from skylee.modules.helper_funcs.msg_types import get_note_type
+from skylee.modules.connection import connected
 
 FILE_MATCHER = re.compile(r"^###file_id(!photo)?###:(.*?)(?:\s|$)")
 
@@ -33,6 +34,16 @@ ENUM_FUNC_MAP = {
 # Do not async
 def get(bot, update, notename, show_none=True, no_format=False):
     chat_id = update.effective_chat.id
+    chat = update.effective_chat  # type: Optional[Chat]
+    user = update.effective_user  # type: Optional[User]
+    conn = connected(bot, update, chat, user.id, need_admin=False)
+    if not conn == False:
+        chat_id = conn
+        send_id = user.id
+    else:
+        chat_id = update.effective_chat.id
+        send_id = chat_id
+
     note = sql.get_note(chat_id, notename)
     message = update.effective_message  # type: Optional[Message]
 
@@ -81,11 +92,11 @@ def get(bot, update, notename, show_none=True, no_format=False):
 
             try:
                 if note.msgtype in (sql.Types.BUTTON_TEXT, sql.Types.TEXT):
-                    bot.send_message(chat_id, text, reply_to_message_id=reply_id,
+                    bot.send_message(update.effective_chat.id, text, reply_to_message_id=reply_id,
                                      parse_mode=parseMode, disable_web_page_preview=True,
                                      reply_markup=keyboard)
                 else:
-                    ENUM_FUNC_MAP[note.msgtype](chat_id, note.file, caption=text, reply_to_message_id=reply_id,
+                    ENUM_FUNC_MAP[note.msgtype](update.effective_chat.id, note.file, caption=text, reply_to_message_id=reply_id,
                                                 parse_mode=parseMode, disable_web_page_preview=True,
                                                 reply_markup=keyboard)
 
@@ -130,10 +141,22 @@ def hash_get(bot: Bot, update: Update):
 @run_async
 @user_admin
 def save(bot: Bot, update: Update):
-    chat_id = update.effective_chat.id
-    chat = update.effective_chat
-    msg = update.effective_message  # type: Optional[Message]
-    chat_name = chat.title or chat.first or chat.username
+    chat = update.effective_chat  # type: Optional[Chat]
+    user = update.effective_user  # type: Optional[User]
+    conn = connected(bot, update, chat, user.id)
+    if not conn == False:
+        chat_id = conn
+        chat_name = dispatcher.bot.getChat(conn).title
+    else:
+        chat_id = update.effective_chat.id
+        if chat.type == "private":
+            chat_name = "local notes"
+        else:
+            chat_name = chat.title
+
+    msg = update.effective_message
+
+
     note_name, text, data_type, content, buttons = get_note_type(msg)
 
     if data_type is None:
@@ -165,11 +188,19 @@ def save(bot: Bot, update: Update):
 @run_async
 @user_admin
 def clear(bot: Bot, update: Update, args: List[str]):
-    chat_id = update.effective_chat.id
-    msg = update.effective_message
-    chat = update.effective_chat
-    chat_name = chat.title or chat.first or chat.username
-    note_name, text, data_type, content, buttons = get_note_type(msg)
+    chat = update.effective_chat  # type: Optional[Chat]
+    user = update.effective_user  # type: Optional[User]
+    conn = connected(bot, update, chat, user.id)
+    if not conn == False:
+        chat_id = conn
+        chat_name = dispatcher.bot.getChat(conn).title
+    else:
+        chat_id = update.effective_chat.id
+        if chat.type == "private":
+            chat_name = "local notes"
+        else:
+            chat_name = chat.title
+
     if len(args) >= 1:
         notename = args[0]
 
@@ -184,9 +215,21 @@ def list_notes(bot: Bot, update: Update):
     chat_id = update.effective_chat.id
     chat = update.effective_chat  # type: Optional[Chat]
     user = update.effective_user  # type: Optional[User]
+    conn = connected(bot, update, chat, user.id, need_admin=False)
+    if not conn == False:
+        chat_id = conn
+        chat_name = dispatcher.bot.getChat(conn).title
+        msg = "*Notes in {}:*\n"
+    else:
+        chat_id = update.effective_chat.id
+        if chat.type == "private":
+            chat_name = ""
+            msg = "*Local Notes:*\n"
+        else:
+            chat_name = chat.title
+            msg = "*Notes saved in {}:*\n"
+
     note_list = sql.get_all_chat_notes(chat_id)
-    chat_name = chat.title or chat.first or chat.username
-    msg = "*Notes saved in {}:*\n"
     des = "You can get notes by using `/get notename`, or `#notename`.\n"
     for note in note_list:
         note_name = (" × `{}`\n".format(note.name))
@@ -283,3 +326,4 @@ dispatcher.add_handler(SAVE_HANDLER)
 dispatcher.add_handler(LIST_HANDLER)
 dispatcher.add_handler(DELETE_HANDLER)
 dispatcher.add_handler(HASH_GET_HANDLER)
+
