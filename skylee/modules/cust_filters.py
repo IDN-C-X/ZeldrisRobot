@@ -44,7 +44,7 @@ def list_handlers(bot: Bot, update: Update):
 
 
     all_handlers = sql.get_chat_triggers(chat_id)
-    chat_name = chat.title or chat.first or chat.username
+
     if not all_handlers:
         update.effective_message.reply_text("No filters in {}!".format(chat_name))
         return
