@@ -124,15 +124,15 @@ def gban(bot: Bot, update: Update, args: List[str]):
                 pass
             else:
                 message.reply_text("Could not gban due to: {}".format(excp.message))
-                send_to_list(bot, SUDO_USERS + SUPPORT_USERS, "Could not gban due to: {}".format(excp.message))
+                bot.sendMessage(MESSAGE_DUMP, "Could not gban due to: {}".format(excp.message))
                 sql.ungban_user(user_id)
                 return
         except TelegramError:
             pass
 
-    send_to_list(bot, SUDO_USERS + SUPPORT_USERS,
+    bot.sendMessage(MESSAGE_DUMP,
                    "{} has been successfully gbanned!".format(mention_html(user_chat.id, user_chat.first_name)),
-                   html=True)
+                 parse_mode=ParseMode.HTML)
     message.reply_text("Person has been \"Dealt with\".")
 
 
@@ -194,11 +194,10 @@ def ungban(bot: Bot, update: Update, args: List[str]):
 
     sql.ungban_user(user_id)
 
-    send_to_list(bot, SUDO_USERS + SUPPORT_USERS,
+    bot.sendMessage(MESSAGE_DUMP,
                   "{} has been successfully un-gbanned!".format(mention_html(user_chat.id, 
                                                                          user_chat.first_name)),
-                 html=True)
-
+                 parse_mode=ParseMode.HTML)
     message.reply_text("Person has been un-gbanned.")
 
 
