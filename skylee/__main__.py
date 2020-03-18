@@ -188,7 +188,7 @@ def help_button(bot: Bot, update: Update):
             query.message.reply_text(text=text,
                                      parse_mode=ParseMode.MARKDOWN,
                                      reply_markup=InlineKeyboardMarkup(
-                                         [[InlineKeyboardButton(text="Back", callback_data="help_back")]]))
+                                         [[InlineKeyboardButton(text="⬅️ Back", callback_data="help_back")]]))
 
         elif prev_match:
             curr_page = int(prev_match.group(1))
