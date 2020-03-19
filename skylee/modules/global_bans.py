@@ -272,11 +272,11 @@ def gbanstat(bot: Bot, update: Update, args: List[str]):
     if len(args) > 0:
         if args[0].lower() in ["on", "yes"]:
             sql.enable_gbans(update.effective_chat.id)
-            update.effective_message.reply_text("I've enabled gbans in this group. This will help protect you "
+            update.effective_message.reply_text("I've enabled Spam Sheild in this group. This will help protect you "
                                                 "from spammers, unsavoury characters, and the biggest trolls.")
         elif args[0].lower() in ["off", "no"]:
             sql.disable_gbans(update.effective_chat.id)
-            update.effective_message.reply_text("I've disabled gbans in this group. GBans wont affect your users "
+            update.effective_message.reply_text("I've disabled Spam sheild in this group. GBans wont affect your users "
                                                 "anymore. You'll be less protected from any trolls and spammers "
                                                 "though!")
     else:
