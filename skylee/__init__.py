@@ -1,6 +1,7 @@
 import logging
 import os
 import sys
+import spamwatch
 
 import telegram.ext as tg
 
@@ -118,11 +119,14 @@ else:
     BAN_STICKER = Config.BAN_STICKER
     ALLOW_EXCL = Config.ALLOW_EXCL
     API_WEATHER = Config.API_OPENWEATHER
-   
+
 
 SUDO_USERS.add(OWNER_ID)
 
+# SpamWatch
 
+sw_token = Config.SPAMWATCH_API
+spamwtc = spamwatch.Client(sw_token)
 
 updater = tg.Updater(TOKEN, workers=WORKERS)
 

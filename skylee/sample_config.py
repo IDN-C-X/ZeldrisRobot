@@ -37,7 +37,7 @@ class Config(object):
     BAN_STICKER = None  # banhammer marie sticker
     ALLOW_EXCL = False  # Allow ! commands as well as /
     API_OPENWEATHER = None # OpenWeather API
-
+    SPAMWATCH_API = None # Your SpamWatch token
 
 class Production(Config):
     LOGGER = False

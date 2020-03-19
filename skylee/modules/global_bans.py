@@ -8,7 +8,7 @@ from telegram.ext import run_async, CommandHandler, MessageHandler, Filters
 from telegram.utils.helpers import mention_html
 
 import skylee.modules.sql.global_bans_sql as sql
-from skylee import dispatcher, OWNER_ID, SUDO_USERS, SUPPORT_USERS, STRICT_GBAN, MESSAGE_DUMP
+from skylee import dispatcher, OWNER_ID, SUDO_USERS, SUPPORT_USERS, STRICT_GBAN, MESSAGE_DUMP, spamwtc
 from skylee.modules.helper_funcs.chat_status import user_admin, is_user_admin
 from skylee.modules.helper_funcs.extraction import extract_user, extract_user_and_text
 from skylee.modules.helper_funcs.filters import CustomFilters
@@ -222,6 +222,15 @@ def gbanlist(bot: Bot, update: Update):
 
 
 def check_and_ban(update, user_id, should_message=True):
+    spmban = spamwtc.get_ban(int(user_id))
+    if spmban:
+        update.effective_chat.kick_member(user_id)
+        if should_message:
+            update.effective_message.reply_markdown("**This user is detected as potential Spambot by SpamWatch and have been Banned!**\n\nPlease visit @SpamWatchSupport to know more or Appeal")
+            return
+        else:
+            return
+
     if sql.is_user_gbanned(user_id):
         update.effective_chat.kick_member(user_id)
         if should_message:
@@ -231,6 +240,8 @@ def check_and_ban(update, user_id, should_message=True):
                 greason = "No reason given"
 
             update.effective_message.reply_text(f"*This user was GBanned! so, have been Banned from chat.*\nReason: `{greason}`", parse_mode=ParseMode.MARKDOWN)
+
+            return
 
 
 @run_async
@@ -304,14 +315,16 @@ def __chat_settings__(chat_id, user_id):
 
 __help__ = """
 *Admin only:*
- - /gbanstat <on/off/yes/no>: Will disable the effect of global bans on your group, or return your current settings.
+ - /spamshield <on/off/yes/no>: Will disable or enable the effect of Spam protection in your group.
 
-Gbans, also known as global bans, are used by the bot owners to ban spammers across all groups. This helps protect \
-you and your groups by removing spam flooders as quickly as possible. They can be disabled for you group by calling \
-/gbanstat
+Spam shield uses @Spamwatch API and Global bans to remove Spammers as much as possible from your chatroom!
+
+*What is SpamWatch?*
+
+SpamWatch maintains a large constantly updated ban-list of spambots, trolls, bitcoin spammers and unsavoury characters. Skylee will constantly help banning spammers off from your group automatically So, you don't have to worry about spammers storming your group.
 """
 
-__mod_name__ = "Global Bans"
+__mod_name__ = "Spam Shield"
 
 GBAN_HANDLER = CommandHandler("gban", gban, pass_args=True,
                               filters=CustomFilters.sudo_filter | CustomFilters.support_filter)
@@ -320,7 +333,7 @@ UNGBAN_HANDLER = CommandHandler("ungban", ungban, pass_args=True,
 GBAN_LIST = CommandHandler("gbanlist", gbanlist,
                            filters=CustomFilters.sudo_filter | CustomFilters.support_filter)
 
-GBAN_STATUS = CommandHandler("gbanstat", gbanstat, pass_args=True, filters=Filters.group)
+GBAN_STATUS = CommandHandler("spamshield", gbanstat, pass_args=True, filters=Filters.group)
 
 GBAN_ENFORCER = MessageHandler(Filters.all & Filters.group, enforce_gban)
 
@@ -331,4 +344,3 @@ dispatcher.add_handler(GBAN_STATUS)
 
 if STRICT_GBAN:  # enforce GBANS if this is set
     dispatcher.add_handler(GBAN_ENFORCER, GBAN_ENFORCE_GROUP)
-
