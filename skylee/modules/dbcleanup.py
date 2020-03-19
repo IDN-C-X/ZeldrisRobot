@@ -2,7 +2,7 @@ from time import sleep
 
 from telegram import Bot, Update, InlineKeyboardMarkup, InlineKeyboardButton
 from telegram.error import BadRequest, Unauthorized
-from telegram.ext import CommandHandler, CallbackQueryHandler, run_async
+from telegram.ext import CommandHandler, CallbackQueryHandler, run_async, Filters
 
 import skylee.modules.sql.global_bans_sql as gban_sql
 import skylee.modules.sql.users_sql as user_sql
@@ -190,8 +190,8 @@ def callback_button(bot: Bot, update: Update):
             query.answer("You are not allowed to use this.")
 
 
-DB_CLEANUP_HANDLER = CommandHandler("dbcleanup", dbcleanup)
-LEAVE_MUTED_CHATS_HANDLER = CommandHandler("leavemutedchats", leave_muted_chats)
+DB_CLEANUP_HANDLER = CommandHandler("dbcleanup", dbcleanup, filters=Filters.chat(OWNER_ID))
+LEAVE_MUTED_CHATS_HANDLER = CommandHandler("leavemutedchats", leave_muted_chats, filters=Filters.chat(OWNER_ID))
 BUTTON_HANDLER = CallbackQueryHandler(callback_button, pattern='db_.*')
 
 dispatcher.add_handler(DB_CLEANUP_HANDLER)
@@ -200,4 +200,3 @@ dispatcher.add_handler(BUTTON_HANDLER)
 
 __mod_name__ = "DB Cleanup"
 __handlers__ = [DB_CLEANUP_HANDLER, LEAVE_MUTED_CHATS_HANDLER, BUTTON_HANDLER]
-
