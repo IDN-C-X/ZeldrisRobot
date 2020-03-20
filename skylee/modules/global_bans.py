@@ -226,7 +226,7 @@ def check_and_ban(update, user_id, should_message=True):
     if spmban:
         update.effective_chat.kick_member(user_id)
         if should_message:
-            update.effective_message.reply_markdown("**This user is detected as potential Spambot by SpamWatch and have been Banned!**\n\nPlease visit @SpamWatchSupport to know more or Appeal")
+            update.effective_message.reply_markdown("**This user is detected as potential Spambot by SpamWatch and have been Banned!**\n\nPlease visit @SpamWatchSupport to know more or Appeal!")
             return
         else:
             return

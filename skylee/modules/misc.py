@@ -278,16 +278,6 @@ def hug(bot: Bot, update: Update, args: List[str]):
     repl = temp.format(user1=user1, user2=user2, hug=hug)
 
     reply_text(repl, parse_mode=ParseMode.MARKDOWN)
- 
-
-
-@run_async
-def get_bot_ip(bot: Bot, update: Update):
-    """ Sends the bot's IP address, so as to be able to ssh in if necessary.
-        OWNER ONLY.
-    """
-    res = requests.get("http://ipinfo.io/ip")
-    update.message.reply_text(res.text)
 
 
 @run_async
@@ -492,7 +482,6 @@ An "odds and ends" module for small, simple commands which don't really fit anyw
 __mod_name__ = "Misc"
 
 ID_HANDLER = DisableAbleCommandHandler("id", get_id, pass_args=True)
-IP_HANDLER = CommandHandler("ip", get_bot_ip, filters=Filters.chat(OWNER_ID))
 RUNS_HANDLER = DisableAbleCommandHandler("runs", runs)
 SLAP_HANDLER = DisableAbleCommandHandler("slap", slap, pass_args=True)
 PUNCH_HANDLER = DisableAbleCommandHandler("punch", punch, pass_args=True)
@@ -510,7 +499,6 @@ GETSTICKER_HANDLER = DisableAbleCommandHandler("getsticker", getsticker)
 
 
 dispatcher.add_handler(ID_HANDLER)
-dispatcher.add_handler(IP_HANDLER)
 dispatcher.add_handler(RUNS_HANDLER)
 dispatcher.add_handler(SLAP_HANDLER)
 dispatcher.add_handler(PUNCH_HANDLER)
