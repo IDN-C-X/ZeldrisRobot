@@ -1,68 +1,104 @@
-import pyowm
-from pyowm import timeutils, exceptions
-from telegram import Message, Chat, Update, Bot
+import time, requests, json
+from pytz import country_names as cname
+from telegram import Message, Chat, Update, Bot, ParseMode
+from telegram.error import BadRequest
 from telegram.ext import run_async
 
-from skylee import dispatcher, updater, API_WEATHER
+from skylee import dispatcher, updater, API_WEATHER as APPID
 from skylee.modules.disable import DisableAbleCommandHandler
 
 @run_async
 def weather(bot, update, args):
     if len(args) == 0:
-        update.effective_message.reply_text("Write a location to check the weather.")
-        return
+        reply = f'Write a location to check the weather.'
+        del_msg = update.effective_message.reply_text("{}".format(reply),
+                               parse_mode=ParseMode.MARKDOWN, disable_web_page_preview=True)
+        time.sleep(5)
+        try:
+            del_msg.delete()
+            update.effective_message.delete()
+        except BadRequest as err:
+            if (err.message == "Message to delete not found" ) or (err.message == "Message can't be deleted" ):
+                return
 
-    location = " ".join(args)
-    if location.lower() == bot.first_name.lower():
-        update.effective_message.reply_text("I will keep an eye on both happy and sad times!")
-        bot.send_sticker(update.effective_chat.id, BAN_STICKER)
-        return
 
+    CITY = " ".join(args)
+    url = f'https://api.openweathermap.org/data/2.5/weather?q={CITY}&appid={APPID}'
+    request = requests.get(url)
+    result = json.loads(request.text)
+    if request.status_code != 200:
+        reply = f'Location not valid.'
+        del_msg = update.effective_message.reply_text("{}".format(reply),
+                               parse_mode=ParseMode.MARKDOWN, disable_web_page_preview=True)
+        time.sleep(5)
+        try:
+            del_msg.delete()
+            update.effective_message.delete()
+        except BadRequest as err:
+            if (err.message == "Message to delete not found" ) or (err.message == "Message can't be deleted" ):
+                return
+    
+    cityname = result['name']
+    curtemp = result['main']['temp']
+    feels_like = result['main']['feels_like']
+    humidity = result['main']['humidity']
+    wind = result['wind']['speed']
+    weath = result['weather'][0]
+    desc = weath['main']
+    icon = weath['id']
+    condmain = weath['main']
+    conddet = weath['description']
+    country_name = cname[f"{result['sys']['country']}"]
+    if icon <= 232: # Rain storm
+        icon = "⛈"
+    elif icon <= 321: # Drizzle
+        icon = "🌧"
+    elif icon <= 504: # Light rain
+        icon = "🌦"
+    elif icon <= 531: # Cloudy rain
+        icon = "⛈"
+    elif icon <= 622: # Snow
+        icon = "❄️"
+    elif icon <= 781: # Atmosphere
+        icon = "🌪"
+    elif icon <= 800: # Bright
+        icon = "☀️"
+    elif icon <= 801: # A little cloudy
+        icon = "⛅️"
+    elif icon <= 804: # Cloudy
+        icon = "☁️"
+    kmph = str(wind * 3.6).split(".")
+    def celsius(c):
+        k = 273.15
+        c = k if ( c > (k - 1) ) and ( c < k ) else c
+        temp = str(round((c - k)))
+        return temp
+    def fahr(c):
+        c1 = 9/5
+        c2 = 459.67
+        tF = c * c1 - c2
+        if tF<0 and tF>-1:
+            tF = 0
+        temp = str(round(tF))
+        return temp
+
+    reply = f"*Current weather for {cityname}, {country_name} is*:\n\n*Temperature:* `{celsius(curtemp)}°C ({fahr(curtemp)}ºF), feels like {celsius(feels_like)}°C ({fahr(feels_like)}ºF) \n`*Condition:* `{condmain}, {conddet}` {icon}\n*Humidity:* `{humidity}%`\n*Wind:* `{kmph[0]} km/h`\n"
+    del_msg = update.effective_message.reply_text("{}".format(reply),
+                           parse_mode=ParseMode.MARKDOWN, disable_web_page_preview=True)
+    time.sleep(30)
     try:
-        owm = pyowm.OWM(API_WEATHER)
-        observation = owm.weather_at_place(location)
-        getloc = observation.get_location()
-        thelocation = getloc.get_name()
-        if thelocation == None:
-            thelocation = "Unknown"
-        theweather = observation.get_weather()
-        temperature = theweather.get_temperature(unit='celsius').get('temp')
-        if temperature == None:
-            temperature = "Unknown"
-
-        # Weather symbols
-        status = ""
-        status_now = theweather.get_weather_code()
-        if status_now < 232: # Rain storm
-            status += "⛈️ "
-        elif status_now < 321: # Drizzle
-            status += "🌧️ "
-        elif status_now < 504: # Light rain
-            status += "🌦️ "
-        elif status_now < 531: # Cloudy rain
-             status += "⛈️ "
-        elif status_now < 622: # Snow
-            status += "🌨️ "
-        elif status_now < 781: # Atmosphere
-            status += "🌪️ "
-        elif status_now < 800: # Bright
-            status += "🌤️ "
-        elif status_now < 801: # A little cloudy
-             status += "⛅️ "
-        elif status_now < 804: # Cloudy
-             status += "☁️ "
-        status += theweather._detailed_status
-
-
-        update.message.reply_text("Today in {} is being {}, around {}°C.\n".format(thelocation,
-                status, temperature))
-
-    except pyowm.exceptions.api_response_error.NotFoundError:
-        update.effective_message.reply_text("Sorry, location not found.")
-
+        del_msg.delete()
+        update.effective_message.delete()
+    except BadRequest as err:
+        if (err.message == "Message to delete not found" ) or (err.message == "Message can't be deleted" ):
+            return
 
 __help__ = """
- - /weather <city>: Gets weather information of a particular location
+Weather module:
+
+ - /weather <city>: Gets weather information of particular place!
+
+ \* To prevent spams weather command and the output will be deleted after 30 seconds
 """
 
 __mod_name__ = "Weather"
