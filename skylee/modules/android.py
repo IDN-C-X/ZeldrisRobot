@@ -10,7 +10,7 @@ from skylee import dispatcher, updater
 from skylee.modules.disable import DisableAbleCommandHandler
 
 GITHUB = 'https://github.com'
-DEVICES_DATA = 'https://raw.githubusercontent.com/androidtrackers/certified-android-devices/master/devices.json'
+DEVICES_DATA = 'https://raw.githubusercontent.com/androidtrackers/certified-android-devices/master/by_device.json'
 
 @run_async
 def magisk(bot, update):
@@ -49,21 +49,18 @@ def device(bot, update, args):
             if (err.message == "Message to delete not found" ) or (err.message == "Message can't be deleted" ):
                 return
     device = " ".join(args)
-    found = [
-        i for i in get(DEVICES_DATA).json()
-        if i["device"] == device or i["model"] == device
-    ]
-    if found:
+    db = get(DEVICES_DATA).json()
+    newdevice = device.strip('lte') if device.startswith('beyond') else device
+    try:
         reply = f'Search results for {device}:\n\n'
-        for item in found:
-            brand = item['brand']
-            name = item['name']
-            codename = item['device']
-            model = item['model']
-            reply += f'<b>{brand} {name}</b>\n' \
-                f'Model: <code>{model}</code>\n' \
-                f'Codename: <code>{codename}</code>\n\n'
-    else:
+        brand = db[newdevice][0]['brand']
+        name = db[newdevice][0]['name']
+        model = db[newdevice][0]['model']
+        codename = newdevice
+        reply += f'<b>{brand} {name}</b>\n' \
+            f'Model: <code>{model}</code>\n' \
+            f'Codename: <code>{codename}</code>\n\n'
+    except KeyError as err:
         reply = f"Couldn't find info about {device}!\n"
         del_msg = update.effective_message.reply_text("{}".format(reply),
                                parse_mode=ParseMode.MARKDOWN, disable_web_page_preview=True)
@@ -91,6 +88,7 @@ def twrp(bot, update, args):
         except BadRequest as err:
             if (err.message == "Message to delete not found" ) or (err.message == "Message can't be deleted" ):
                 return
+
     device = " ".join(args)
     url = get(f'https://eu.dl.twrp.me/{device}/')
     if url.status_code == 404:
@@ -104,36 +102,39 @@ def twrp(bot, update, args):
         except BadRequest as err:
             if (err.message == "Message to delete not found" ) or (err.message == "Message can't be deleted" ):
                 return
-    reply = f'*Latest Official TWRP for {device}*\n'
-    db = get(DEVICES_DATA).json()
-    newdevice = device.strip('lte') if device.startswith('beyond') else device
-    for dev in db:
-        if (dev['device'] == newdevice) or (dev['model'] == newdevice):
-            brand = dev['brand']
-            name = dev['name']
+    else:
+        reply = f'*Latest Official TWRP for {device}*\n'
+        db = get(DEVICES_DATA).json()
+        newdevice = device.strip('lte') if device.startswith('beyond') else device
+        try:
+            brand = db[newdevice][0]['brand']
+            name = db[newdevice][0]['name']
             reply += f'*{brand} - {name}*\n'
-            break
-    page = BeautifulSoup(url.content, 'lxml')
-    date = page.find("em").text.strip()
-    reply += f'*Updated:* {date}\n'
-    trs = page.find('table').find_all('tr')
-    row = 2 if trs[0].find('a').text.endswith('tar') else 1
-    for i in range(row):
-        download = trs[i].find('a')
-        dl_link = f"https://eu.dl.twrp.me{download['href']}"
-        dl_file = download.text
-        size = trs[i].find("span", {"class": "filesize"}).text
-        reply += f'[{dl_file}]({dl_link}) - {size}\n'
+        except KeyError as err:
+            pass
+        page = BeautifulSoup(url.content, 'lxml')
+        date = page.find("em").text.strip()
+        reply += f'*Updated:* {date}\n'
+        trs = page.find('table').find_all('tr')
+        row = 2 if trs[0].find('a').text.endswith('tar') else 1
+        for i in range(row):
+            download = trs[i].find('a')
+            dl_link = f"https://eu.dl.twrp.me{download['href']}"
+            dl_file = download.text
+            size = trs[i].find("span", {"class": "filesize"}).text
+            reply += f'[{dl_file}]({dl_link}) - {size}\n'
 
-    update.message.reply_text("{}".format(reply),
+        update.message.reply_text("{}".format(reply),
                                parse_mode=ParseMode.MARKDOWN, disable_web_page_preview=True)
 
 __help__ = """
+Get Latest magisk relese, Twrp for your device or info about some device using its codename, Directly from Bot!
+
 *Android related commands:*
 
- - /magisk - Gets the latest magisk release for Stable/Beta/Canary
- - /device <codename> - Gets android device basic info from its codename
- - /twrp <codename> -  Gets latest twrp for the android device using the codename
+ - /magisk - gets the latest magisk release for Stable/Beta/Canary.
+ - /device <codename> - gets android device basic info from its codename.
+ - /twrp <codename> -  gets latest twrp for the android device using the codename.
 """
 
 __mod_name__ = "Android"
