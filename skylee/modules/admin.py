@@ -263,7 +263,7 @@ def set_title(bot: Bot, update: Update, args: List[str]):
 
 def __chat_settings__(chat_id, user_id):
     return "You are *admin*: `{}`".format(
-        dispatcher.bot.get_chat_member(chat_id, user_id).status in ("a	dministrator", "creator"))
+        dispatcher.bot.get_chat_member(chat_id, user_id).status in ("administrator", "creator"))
 
 
 __help__ = """
