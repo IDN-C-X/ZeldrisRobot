@@ -29,7 +29,7 @@ def promote(bot: Bot, update: Update, args: List[str]) -> str:
 
     user_id = extract_user(message, args)
     if not user_id:
-        message.reply_text("mension one.... 🤷🏻‍♂.")
+        message.reply_text("mention one.... 🤷🏻‍♂.")
         return ""
 
     user_member = chat.get_member(user_id)
@@ -74,12 +74,12 @@ def demote(bot: Bot, update: Update, args: List[str]) -> str:
 
     user_id = extract_user(message, args)
     if not user_id:
-        message.reply_text("mension one.... 🤷🏻‍♂.")
+        message.reply_text("mention one.... 🤷🏻‍♂.")
         return ""
 
     user_member = chat.get_member(user_id)
     if user_member.status == 'creator':
-        message.reply_text("i cant ban creator of the group.... 😬")
+        message.reply_text("i can't demote someone who created this group.... 🙄")
         return ""
 
     if not user_member.status == 'administrator':
@@ -263,7 +263,7 @@ def set_title(bot: Bot, update: Update, args: List[str]):
 
 def __chat_settings__(chat_id, user_id):
     return "You are *admin*: `{}`".format(
-        dispatcher.bot.get_chat_member(chat_id, user_id).status in ("administrator", "creator"))
+        dispatcher.bot.get_chat_member(chat_id, user_id).status in ("a	dministrator", "creator"))
 
 
 __help__ = """
@@ -276,7 +276,7 @@ done easily using the bot.
  - /staff: Same as /adminlist
 
 *Admin only:*
- - /pin: Silently pins the message replied to - add 'loud' or 'notify' to give notifies to users.
+ - /pin: Silently pins the message replied to - add 'loud','notify' or `violent` to give notificaton to users.
  - /unpin: Unpins the currently pinned message
  - /invitelink: Gets private chat's invitelink
  - /promote: Promotes the user replied to
