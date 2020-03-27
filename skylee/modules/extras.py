@@ -8,7 +8,7 @@ from telegram.ext import Filters, CommandHandler, MessageHandler, run_async
 from telegram import TelegramError, Chat, Message
 from telegram.error import BadRequest
 from skylee.modules.helper_funcs.filters import CustomFilters
-from skylee import dispatcher
+from skylee import dispatcher, OWNER_ID
 from skylee.modules.disable import DisableAbleCommandHandler
 
 #Abuse strings credits @NotAMemeBot
@@ -140,6 +140,31 @@ def wiki(bot: Bot, update: Update):
         except wikipedia.exceptions.DisambiguationError as eet:
             update.effective_message.reply_text(f"⚠ Error\n There are too many query! Express it more!\nPossible query result:\n{eet}")
 
+
+def getlink(bot: Bot, update: Update, args: List[int]):
+    message = update.effective_message
+    if args:
+        pattern = re.compile(r'-\d+')
+    else:
+        message.reply_text("You don't seem to be referring to any chats.")
+    links = "Invite link(s):\n"
+    for chat_id in pattern.findall(message.text):
+        try:
+            chat = bot.getChat(chat_id)
+            bot_member = chat.get_member(bot.id)
+            if bot_member.can_invite_users:
+                invitelink = bot.exportChatInviteLink(chat_id)
+                links += str(chat_id) + ":\n" + invitelink + "\n"
+            else:
+                links += str(chat_id) + ":\nI don't have access to the invite link." + "\n"
+        except BadRequest as excp:
+                links += str(chat_id) + ":\n" + excp.message + "\n"
+        except TelegramError as excp:
+                links += str(chat_id) + ":\n" + excp.message + "\n"
+
+    message.reply_text(links)
+
+
 __help__ = """
 Some random extra commands for fun!
 
@@ -155,7 +180,7 @@ SHRUG_HANDLER = DisableAbleCommandHandler("shrug", shrug)
 DECIDE_HANDLER = DisableAbleCommandHandler("decide", decide)
 SNIPE_HANDLER = CommandHandler("snipe", snipe, pass_args=True, filters=CustomFilters.sudo_filter)
 ABUSE_HANDLER = DisableAbleCommandHandler("abuse", abuse)
-
+GETLINK_HANDLER = CommandHandler("getlink", getlink, pass_args=True, filters=Filters.user(OWNER_ID))
 WIKI_HANDLER = DisableAbleCommandHandler("wiki", wiki)
 
 
@@ -164,3 +189,4 @@ dispatcher.add_handler(DECIDE_HANDLER)
 dispatcher.add_handler(ABUSE_HANDLER)
 dispatcher.add_handler(SNIPE_HANDLER)
 dispatcher.add_handler(WIKI_HANDLER)
+dispatcher.add_handler(GETLINK_HANDLER)
