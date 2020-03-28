@@ -11,7 +11,7 @@ from telegram.utils.helpers import escape_markdown, mention_html
 
 from skylee import dispatcher, TOKEN
 from skylee.modules.disable import DisableAbleCommandHandler
-from skylee.modules.helper_funcs.chat_status import bot_admin, can_promote, user_admin, can_pin, user_can_promote
+from skylee.modules.helper_funcs.chat_status import bot_admin, can_promote, user_admin, can_pin, user_can_promote, user_can_pin
 from skylee.modules.helper_funcs.extraction import extract_user, extract_user_and_text
 from skylee.modules.log_channel import loggable
 
@@ -129,10 +129,15 @@ def demote(bot: Bot, update: Update, args: List[str]) -> str:
 def pin(bot: Bot, update: Update, args: List[str]) -> str:
     user = update.effective_user  # type: Optional[User]
     chat = update.effective_chat  # type: Optional[Chat]
+    message = update.effective_message  # type: Optional[Message]
 
     is_group = chat.type != "private" and chat.type != "channel"
 
     prev_message = update.effective_message.reply_to_message
+    
+    if user_can_pin(chat, user, bot.id) == False:
+    	message.reply_text("You don't have enough rights to pin a message!")
+    	return ""
 
     is_silent = True
     if len(args) >= 1:
@@ -161,6 +166,11 @@ def pin(bot: Bot, update: Update, args: List[str]) -> str:
 def unpin(bot: Bot, update: Update) -> str:
     chat = update.effective_chat
     user = update.effective_user  # type: Optional[User]
+    message = update.effective_message  # type: Optional[Message]
+    
+    if user_can_pin(chat, user, bot.id) == False:
+    	message.reply_text("You don't have enough rights to unpin a message!")
+    	return ""
 
     try:
         bot.unpinChatMessage(chat.id)

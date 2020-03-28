@@ -14,6 +14,9 @@ def user_can_promote(chat: Chat, user: User, bot_id: int) -> bool:
 	
 def user_can_ban(chat: Chat, user: User, bot_id: int) -> bool:
 	return chat.get_member(user.id).can_restrict_members
+	
+def user_can_pin(chat: Chat, user: User, bot_id: int) -> bool:
+	return chat.get_member(user.id).can_pin_messages
 
 def is_user_ban_protected(chat: Chat, user_id: int, member: ChatMember = None) -> bool:
     if chat.type == 'private' \
