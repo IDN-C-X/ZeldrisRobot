@@ -25,10 +25,13 @@ I'm group manager bot made with 🧡 by [this wonderful person](tg://user?id=894
 python-telegram-bot library, and am fully opensource - you can find what makes me tick \
 [here](www.github.com/starry69/skyleebot)!
 
-Wanna Add me to your Group? Just click the button below ⬇️
+Wanna Add me to your Group? Just click the button below!
 """
 
-buttons = [[InlineKeyboardButton(text="Add me to Group 👥", url="t.me/skylee_bot?startgroup=true")]]
+buttons = [[
+                    InlineKeyboardButton(text="Add to Group 👥", url="t.me/skylee_bot?startgroup=true"),
+                    InlineKeyboardButton(text="Updates 📢", url="https://t.me/skyleeupdates")
+                  ]]
 buttons += [[InlineKeyboardButton(text="Help & Commands ❔", callback_data="help_back")]]
 
 
