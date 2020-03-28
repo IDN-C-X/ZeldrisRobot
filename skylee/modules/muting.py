@@ -8,7 +8,7 @@ from telegram.ext.dispatcher import run_async
 from telegram.utils.helpers import mention_html
 
 from skylee import dispatcher, LOGGER
-from skylee.modules.helper_funcs.chat_status import bot_admin, user_admin, is_user_admin, can_restrict
+from skylee.modules.helper_funcs.chat_status import bot_admin, user_admin, is_user_admin, can_restrict, user_can_ban
 from skylee.modules.helper_funcs.extraction import extract_user, extract_user_and_text
 from skylee.modules.helper_funcs.string_handling import extract_time
 from skylee.modules.log_channel import loggable
@@ -22,6 +22,10 @@ def mute(bot: Bot, update: Update, args: List[str]) -> str:
     chat = update.effective_chat  # type: Optional[Chat]
     user = update.effective_user  # type: Optional[User]
     message = update.effective_message  # type: Optional[Message]
+    
+    if user_can_ban(chat, user, bot.id) == False:
+    	message.reply_text("You don't have enough rights to restrict someone from talking!")
+    	return ""
 
     user_id = extract_user(message, args)
     if not user_id:
@@ -64,6 +68,10 @@ def unmute(bot: Bot, update: Update, args: List[str]) -> str:
     chat = update.effective_chat  # type: Optional[Chat]
     user = update.effective_user  # type: Optional[User]
     message = update.effective_message  # type: Optional[Message]
+    
+    if user_can_ban(chat, user, bot.id) == False:
+    	message.reply_text("You don't have enough rights to unmute people")
+    	return ""
 
     user_id = extract_user(message, args)
     if not user_id:
@@ -105,6 +113,10 @@ def temp_mute(bot: Bot, update: Update, args: List[str]) -> str:
     chat = update.effective_chat  # type: Optional[Chat]
     user = update.effective_user  # type: Optional[User]
     message = update.effective_message  # type: Optional[Message]
+    
+    if user_can_ban(chat, user, bot.id) == False:
+    	message.reply_text("You don't have enough rights to restrict someone from talking!")
+    	return ""
 
     user_id, reason = extract_user_and_text(message, args)
 
