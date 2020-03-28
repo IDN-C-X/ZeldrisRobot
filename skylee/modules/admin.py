@@ -26,12 +26,12 @@ def promote(bot: Bot, update: Update, args: List[str]) -> str:
     message = update.effective_message  # type: Optional[Message]
     chat = update.effective_chat  # type: Optional[Chat]
     user = update.effective_user  # type: Optional[User]
-    user_id = extract_user(message, args)
     
     if user_can_promote(chat, user, bot.id) == False:
     	message.reply_text("You don't have enough rights to promote someone!")
     	return ""
-    
+    	
+    user_id = extract_user(message, args)
     if not user_id:
         message.reply_text("mention one.... 🤷🏻‍♂.")
         return ""
