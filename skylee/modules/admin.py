@@ -11,7 +11,7 @@ from telegram.utils.helpers import escape_markdown, mention_html
 
 from skylee import dispatcher, TOKEN
 from skylee.modules.disable import DisableAbleCommandHandler
-from skylee.modules.helper_funcs.chat_status import bot_admin, can_promote, user_admin, can_pin
+from skylee.modules.helper_funcs.chat_status import bot_admin, can_promote, user_admin, can_pin, user_can_promote
 from skylee.modules.helper_funcs.extraction import extract_user, extract_user_and_text
 from skylee.modules.log_channel import loggable
 
@@ -26,8 +26,12 @@ def promote(bot: Bot, update: Update, args: List[str]) -> str:
     message = update.effective_message  # type: Optional[Message]
     chat = update.effective_chat  # type: Optional[Chat]
     user = update.effective_user  # type: Optional[User]
-
     user_id = extract_user(message, args)
+    
+    if user_can_promote(chat, user, bot.id) == False:
+    	message.reply_text("You don't have enough rights to promote someone!")
+    	return ""
+    
     if not user_id:
         message.reply_text("mention one.... 🤷🏻‍♂.")
         return ""
@@ -71,6 +75,10 @@ def demote(bot: Bot, update: Update, args: List[str]) -> str:
     chat = update.effective_chat  # type: Optional[Chat]
     message = update.effective_message  # type: Optional[Message]
     user = update.effective_user  # type: Optional[User]
+    
+    if user_can_promote(chat, user, bot.id) == False:
+    	message.reply_text("You don't have enough rights to demote someone!")
+    	return ""
 
     user_id = extract_user(message, args)
     if not user_id:
