@@ -9,7 +9,7 @@ from telegram.utils.helpers import mention_html
 from skylee import dispatcher, LOGGER
 from skylee.modules.disable import DisableAbleCommandHandler
 from skylee.modules.helper_funcs.chat_status import bot_admin, user_admin, is_user_ban_protected, can_restrict, \
-    is_user_admin, is_user_in_chat
+    is_user_admin, is_user_in_chat, user_can_ban
 from skylee.modules.helper_funcs.extraction import extract_user_and_text
 from skylee.modules.helper_funcs.string_handling import extract_time
 from skylee.modules.log_channel import loggable
@@ -24,6 +24,10 @@ def ban(bot: Bot, update: Update, args: List[str]) -> str:
     chat = update.effective_chat  # type: Optional[Chat]
     user = update.effective_user  # type: Optional[User]
     message = update.effective_message  # type: Optional[Message]
+    
+    if user_can_ban(chat, user, bot.id) == False:
+    	message.reply_text("You don't have enough rights to ban users!")
+    	return ""
 
     user_id, reason = extract_user_and_text(message, args)
 
@@ -87,6 +91,10 @@ def temp_ban(bot: Bot, update: Update, args: List[str]) -> str:
     chat = update.effective_chat  # type: Optional[Chat]
     user = update.effective_user  # type: Optional[User]
     message = update.effective_message  # type: Optional[Message]
+    
+    if user_can_ban(chat, user, bot.id) == False:
+    	message.reply_text("You don't have enough rights to temporarily ban someone!")
+    	return ""
 
     user_id, reason = extract_user_and_text(message, args)
 
@@ -169,6 +177,10 @@ def kick(bot: Bot, update: Update, args: List[str]) -> str:
     chat = update.effective_chat  # type: Optional[Chat]
     user = update.effective_user  # type: Optional[User]
     message = update.effective_message  # type: Optional[Message]
+    
+    if user_can_ban(chat, user, bot.id) == False:
+    	message.reply_text("You don't have enough rights to kick users!")
+    	return ""
 
     user_id, reason = extract_user_and_text(message, args)
 
@@ -265,6 +277,10 @@ def unban(bot: Bot, update: Update, args: List[str]) -> str:
     message = update.effective_message  # type: Optional[Message]
     user = update.effective_user  # type: Optional[User]
     chat = update.effective_chat  # type: Optional[Chat]
+    
+    if user_can_ban(chat, user, bot.id) == False:
+    	message.reply_text("You don't have enough rights to unban people here!")
+    	return ""
 
     user_id, reason = extract_user_and_text(message, args)
 

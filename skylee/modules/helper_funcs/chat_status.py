@@ -10,7 +10,10 @@ def can_delete(chat: Chat, bot_id: int) -> bool:
     return chat.get_member(bot_id).can_delete_messages
 
 def user_can_promote(chat: Chat, user: User, bot_id: int) -> bool:
-	return chat.get_member(bot_id).can_promote_members and chat.get_member(user.id).can_promote_members
+	return chat.get_member(user.id).can_promote_members
+	
+def user_can_ban(chat: Chat, user: User, bot_id: int) -> bool:
+	return chat.get_member(user.id).can_restrict_members
 
 def is_user_ban_protected(chat: Chat, user_id: int, member: ChatMember = None) -> bool:
     if chat.type == 'private' \
