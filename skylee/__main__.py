@@ -21,7 +21,7 @@ from skylee.modules.helper_funcs.misc import paginate_modules
 PM_START_TEXT = """
 Hey there!, my name is sкyℓєє. If you have any questions on how to use me, Click Help button!
 
-I'm a group manager bot maintained by [this wonderful person](tg://user?id=894380120). I'm built in python3, using the \
+I'm group manager bot made with 🧡 by [this wonderful person](tg://user?id=894380120). I'm built in python3, using the \
 python-telegram-bot library, and am fully opensource - you can find what makes me tick \
 [here](www.github.com/starry69/skyleebot)!
 
