@@ -2,7 +2,7 @@ future
 emoji
 requests
 sqlalchemy
-python-telegram-bot==11.1.0
+python-telegram-bot==12.5.0
 psycopg2-binary
 pythonping
 feedparser
@@ -21,3 +21,4 @@ wikipedia
 spamwatch
 bleach
 markdown2
+alphabet_detector

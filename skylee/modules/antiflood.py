@@ -16,7 +16,7 @@ FLOOD_GROUP = 3
 
 @run_async
 @loggable
-def check_flood(bot: Bot, update: Update) -> str:
+def check_flood(update, context) -> str:
     user = update.effective_user  # type: Optional[User]
     chat = update.effective_chat  # type: Optional[Chat]
     msg = update.effective_message  # type: Optional[Message]
@@ -77,11 +77,12 @@ def check_flood(bot: Bot, update: Update) -> str:
 @user_admin
 @can_restrict
 @loggable
-def set_flood(bot: Bot, update: Update, args: List[str]) -> str:
+def set_flood(update, context) -> str:
     chat = update.effective_chat  # type: Optional[Chat]
     user = update.effective_user  # type: Optional[User]
     message = update.effective_message  # type: Optional[Message]
 
+    args = context.args
     if len(args) >= 1:
         val = args[0].lower()
         if val == "off" or val == "no" or val == "0":
@@ -120,7 +121,7 @@ def set_flood(bot: Bot, update: Update, args: List[str]) -> str:
 
 
 @run_async
-def flood(bot: Bot, update: Update):
+def flood(update, context):
     chat = update.effective_chat  # type: Optional[Chat]
     msg = update.effective_message # type: Optional[Message]
     limit = sql.get_flood_limit(chat.id)
@@ -138,11 +139,11 @@ def flood(bot: Bot, update: Update):
 @run_async
 @user_admin
 @loggable
-def set_flood_strength(bot: Bot, update: Update, args: List[str]):
+def set_flood_strength(update, context):
     chat = update.effective_chat  # type: Optional[Chat]
     user = update.effective_user  # type: Optional[User]
     msg = update.effective_message  # type: Optional[Message]
-
+    args = context.args
     if args:
         if args[0].lower() in ("on", "yes"):
             sql.set_flood_strength(chat.id, False)

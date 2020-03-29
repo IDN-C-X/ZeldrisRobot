@@ -25,14 +25,14 @@ from skylee.modules.connection import connected
 
 @run_async
 @user_admin
-def import_data(bot: Bot, update):
+def import_data(update, context):
 	msg = update.effective_message  # type: Optional[Message]
 	chat = update.effective_chat  # type: Optional[Chat]
 	user = update.effective_user  # type: Optional[User]
 	# TODO: allow uploading doc with command, not just as reply
 	# only work with a doc
 
-	conn = connected(bot, update, chat, user.id, need_admin=True)
+	conn = connected(context.bot, update, chat, user.id, need_admin=True)
 	if conn:
 		chat = dispatcher.bot.getChat(conn)
 		chat_id = conn
@@ -48,7 +48,7 @@ def import_data(bot: Bot, update):
 
 	if msg.reply_to_message and msg.reply_to_message.document:
 		try:
-			file_info = bot.get_file(msg.reply_to_message.document.file_id)
+			file_info = context.bot.get_file(msg.reply_to_message.document.file_id)
 		except BadRequest:
 			msg.reply_text("Try downloading and uploading the file yourself again, This one seem broken!")
 			return
@@ -107,15 +107,14 @@ def import_data(bot: Bot, update):
 
 @run_async
 @user_admin
-def export_data(bot: Bot, update: Update, chat_data):
+def export_data(update, context):
+	chat_data = context.chat_data
 	msg = update.effective_message  # type: Optional[Message]
 	user = update.effective_user  # type: Optional[User]
-
 	chat_id = update.effective_chat.id
 	chat = update.effective_chat
 	current_chat_id = update.effective_chat.id
-
-	conn = connected(bot, update, chat, user.id, need_admin=True)
+	conn = connected(context.bot, update, chat, user.id, need_admin=True)
 	if conn:
 		chat = dispatcher.bot.getChat(conn)
 		chat_id = conn
@@ -270,18 +269,18 @@ def export_data(bot: Bot, update: Update, chat_data):
 	# Warns (TODO)
 	# warns = warnssql.get_warns(chat_id)
 	# Backing up
-	backup[chat_id] = {'bot': bot.id, 'hashes': {'info': {'rules': rules}, 'extra': notes, 'blacklist': bl, 'disabled': disabledcmd, 'locks': locked}}
+	backup[chat_id] = {'bot': context.bot.id, 'hashes': {'info': {'rules': rules}, 'extra': notes, 'blacklist': bl, 'disabled': disabledcmd, 'locks': locked}}
 	baccinfo = json.dumps(backup, indent=4)
 	f=open("SkyLee{}.backup".format(chat_id), "w")
 	f.write(str(baccinfo))
 	f.close()
-	bot.sendChatAction(current_chat_id, "upload_document")
+	context.bot.sendChatAction(current_chat_id, "upload_document")
 	tgl = time.strftime("%H:%M:%S - %d/%m/%Y", time.localtime(time.time()))
 	try:
-		bot.sendMessage(MESSAGE_DUMP, "*Successfully imported backup:*\nChat: `{}`\nChat ID: `{}`\nOn: `{}`".format(chat.title, chat_id, tgl), parse_mode=ParseMode.MARKDOWN)
+		context.bot.sendMessage(MESSAGE_DUMP, "*Successfully imported backup:*\nChat: `{}`\nChat ID: `{}`\nOn: `{}`".format(chat.title, chat_id, tgl), parse_mode=ParseMode.MARKDOWN)
 	except BadRequest:
 		pass
-	bot.sendDocument(current_chat_id, document=open('SkyLee{}.backup'.format(chat_id), 'rb'), caption="*Successfully imported backup:*\nChat: `{}`\nChat ID: `{}`\nOn: `{}`\n\nNote: This `SkyLee-Backup` is specially made for notes.".format(chat.title, chat_id, tgl), timeout=360, reply_to_message_id=msg.message_id, parse_mode=ParseMode.MARKDOWN)
+	context.bot.sendDocument(current_chat_id, document=open('SkyLee{}.backup'.format(chat_id), 'rb'), caption="*Successfully imported backup:*\nChat: `{}`\nChat ID: `{}`\nOn: `{}`\n\nNote: This `SkyLee-Backup` is specially made for notes.".format(chat.title, chat_id, tgl), timeout=360, reply_to_message_id=msg.message_id, parse_mode=ParseMode.MARKDOWN)
 	os.remove("SkyLee{}.backup".format(chat_id)) # Cleaning file
 
 

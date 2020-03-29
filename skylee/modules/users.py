@@ -48,14 +48,14 @@ def get_user_id(username):
 
 
 @run_async
-def broadcast(bot: Bot, update: Update):
+def broadcast(update, context):
     to_send = update.effective_message.text.split(None, 1)
     if len(to_send) >= 2:
         chats = sql.get_all_chats() or []
         failed = 0
         for chat in chats:
             try:
-                bot.sendMessage(int(chat.chat_id), to_send[1])
+                context.bot.sendMessage(int(chat.chat_id), to_send[1])
                 sleep(0.1)
             except TelegramError:
                 failed += 1
@@ -66,7 +66,7 @@ def broadcast(bot: Bot, update: Update):
 
 
 @run_async
-def log_user(bot: Bot, update: Update):
+def log_user(update, context):
     chat = update.effective_chat  # type: Optional[Chat]
     msg = update.effective_message  # type: Optional[Message]
 
@@ -87,7 +87,7 @@ def log_user(bot: Bot, update: Update):
 
 
 @run_async
-def chats(bot: Bot, update: Update):
+def chats(update, context):
     all_chats = sql.get_all_chats() or []
     chatfile = 'List of chats.\n'
     for chat in all_chats:
@@ -99,9 +99,9 @@ def chats(bot: Bot, update: Update):
                                                 caption="Here is the list of chats in my database.")
 
 @run_async
-def chat_checker(bot: Bot, update: Update):
-  if update.effective_message.chat.get_member(bot.id).can_send_messages == False:
-    bot.leaveChat(update.effective_message.chat.id)
+def chat_checker(update, context):
+  if update.effective_message.chat.get_member(context.bot.id).can_send_messages == False:
+    context.bot.leaveChat(update.effective_message.chat.id)
 
 def __user_info__(user_id):
     if user_id == dispatcher.bot.id:

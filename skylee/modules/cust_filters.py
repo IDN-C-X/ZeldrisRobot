@@ -24,11 +24,11 @@ BASIC_FILTER_STRING = "*Filters in {}:*\n"
 
 
 @run_async
-def list_handlers(bot: Bot, update: Update):
+def list_handlers(update, context):
     chat = update.effective_chat  # type: Optional[Chat]
     user = update.effective_user  # type: Optional[User]
 
-    conn = connected(bot, update, chat, user.id, need_admin=False)
+    conn = connected(context.bot, update, chat, user.id, need_admin=False)
     if not conn == False:
         chat_id = conn
         chat_name = dispatcher.bot.getChat(conn).title
@@ -63,13 +63,13 @@ def list_handlers(bot: Bot, update: Update):
 
 # NOT ASYNC BECAUSE DISPATCHER HANDLER RAISED
 @user_admin
-def filters(bot: Bot, update: Update):
+def filters(update, context):
     chat = update.effective_chat  # type: Optional[Chat]
     user = update.effective_user  # type: Optional[User]
     msg = update.effective_message  # type: Optional[Message]
     args = msg.text.split(None, 1)  # use python's maxsplit to separate Cmd, keyword, and reply_text
 
-    conn = connected(bot, update, chat, user.id)
+    conn = connected(context.bot, update, chat, user.id)
     if not conn == False:
         chat_id = conn
         chat_name = dispatcher.bot.getChat(conn).title
@@ -151,12 +151,12 @@ def filters(bot: Bot, update: Update):
 
 # NOT ASYNC BECAUSE DISPATCHER HANDLER RAISED
 @user_admin
-def stop_filter(bot: Bot, update: Update):
+def stop_filter(update, context):
     chat = update.effective_chat  # type: Optional[Chat]
     user = update.effective_user  # type: Optional[User]
     args = update.effective_message.text.split(None, 1)
 
-    conn = connected(bot, update, chat, user.id)
+    conn = connected(context.bot, update, chat, user.id)
     if not conn == False:
         chat_id = conn
         chat_name = dispatcher.bot.getChat(conn).title
@@ -186,7 +186,7 @@ def stop_filter(bot: Bot, update: Update):
 
 
 @run_async
-def reply_filter(bot: Bot, update: Update):
+def reply_filter(update, context):
     chat = update.effective_chat  # type: Optional[Chat]
     message = update.effective_message  # type: Optional[Message]
     to_match = extract_text(message)
@@ -240,7 +240,7 @@ def reply_filter(bot: Bot, update: Update):
                                            "doesn't support buttons for some protocols, such as tg://. Please try "
                                            "again, or ask in @MarieSupport for help.")
                     elif excp.message == "Reply message not found":
-                        bot.send_message(chat.id, filt.reply, parse_mode=ParseMode.MARKDOWN,
+                        context.bot.send_message(chat.id, filt.reply, parse_mode=ParseMode.MARKDOWN,
                                          disable_web_page_preview=True,
                                          reply_markup=keyboard)
                     else:
@@ -290,7 +290,7 @@ __mod_name__ = "Filters"
 FILTER_HANDLER = CommandHandler("filter", filters)
 STOP_HANDLER = CommandHandler("stop", stop_filter)
 LIST_HANDLER = DisableAbleCommandHandler("filters", list_handlers, admin_ok=True)
-CUST_FILTER_HANDLER = MessageHandler(CustomFilters.has_text, reply_filter, edited_updates=True)
+CUST_FILTER_HANDLER = MessageHandler(CustomFilters.has_text, reply_filter)
 
 dispatcher.add_handler(FILTER_HANDLER)
 dispatcher.add_handler(STOP_HANDLER)

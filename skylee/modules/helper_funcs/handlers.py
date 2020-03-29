@@ -32,7 +32,3 @@ class CustomCommandHandler(tg.CommandHandler):
 
             return False
 
-
-class CustomRegexHandler(tg.RegexHandler):
-    def __init__(self, pattern, callback, friendly="", **kwargs):
-        super().__init__(pattern, callback, **kwargs)

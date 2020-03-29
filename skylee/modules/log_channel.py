@@ -18,8 +18,8 @@ if is_module_loaded(FILENAME):
 
     def loggable(func):
         @wraps(func)
-        def log_action(bot: Bot, update: Update, *args, **kwargs):
-            result = func(bot, update, *args, **kwargs)
+        def log_action(update, context, *args, **kwargs):
+            result = func(update, context, *args, **kwargs)
             chat = update.effective_chat  # type: Optional[Chat]
             message = update.effective_message  # type: Optional[Message]
             if result:
@@ -29,7 +29,7 @@ if is_module_loaded(FILENAME):
                                                                                            message.message_id)
                 log_chat = sql.get_chat_log_channel(chat.id)
                 if log_chat:
-                    send_log(bot, log_chat, chat.id, result)
+                    send_log(context.bot, log_chat, chat.id, result)
             elif result == "":
                 pass
             else:
@@ -57,13 +57,13 @@ if is_module_loaded(FILENAME):
 
     @run_async
     @user_admin
-    def logging(bot: Bot, update: Update):
+    def logging(update, context):
         message = update.effective_message  # type: Optional[Message]
         chat = update.effective_chat  # type: Optional[Chat]
 
         log_channel = sql.get_chat_log_channel(chat.id)
         if log_channel:
-            log_channel_info = bot.get_chat(log_channel)
+            log_channel_info = context.bot.get_chat(log_channel)
             message.reply_text(
                 "This group has all it's logs sent to: {} (`{}`)".format(escape_markdown(log_channel_info.title),
                                                                          log_channel),
@@ -75,7 +75,7 @@ if is_module_loaded(FILENAME):
 
     @run_async
     @user_admin
-    def setlog(bot: Bot, update: Update):
+    def setlog(update, context):
         message = update.effective_message  # type: Optional[Message]
         chat = update.effective_chat  # type: Optional[Chat]
         if chat.type == chat.CHANNEL:
@@ -92,7 +92,7 @@ if is_module_loaded(FILENAME):
                     LOGGER.exception("Error deleting message in log channel. Should work anyway though.")
 
             try:
-                bot.send_message(message.forward_from_chat.id,
+                context.bot.send_message(message.forward_from_chat.id,
                                  "This channel has been set as the log channel for {}.".format(
                                      chat.title or chat.first_name))
             except Unauthorized as excp:
@@ -101,7 +101,7 @@ if is_module_loaded(FILENAME):
                 else:
                     LOGGER.exception("ERROR in setting the log channel.")
 
-            bot.send_message(chat.id, "Successfully set log channel!")
+            context.bot.send_message(chat.id, "Successfully set log channel!")
 
         else:
             message.reply_text("The steps to set a log channel are:\n"
@@ -112,13 +112,13 @@ if is_module_loaded(FILENAME):
 
     @run_async
     @user_admin
-    def unsetlog(bot: Bot, update: Update):
+    def unsetlog(update, context):
         message = update.effective_message  # type: Optional[Message]
         chat = update.effective_chat  # type: Optional[Chat]
 
         log_channel = sql.stop_chat_logging(chat.id)
         if log_channel:
-            bot.send_message(log_channel, "Channel has been unlinked from {}".format(chat.title))
+            context.bot.send_message(log_channel, "Channel has been unlinked from {}".format(chat.title))
             message.reply_text("Log channel has been un-set.")
 
         else:

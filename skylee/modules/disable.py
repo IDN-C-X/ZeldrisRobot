@@ -1,8 +1,8 @@
 from typing import Union, List, Optional
 
 from future.utils import string_types
-from telegram import ParseMode, Update, Bot, Chat, User
-from telegram.ext import CommandHandler, RegexHandler, Filters
+from telegram import ParseMode, Update, Bot, Chat, User, MessageEntity
+from telegram.ext import CommandHandler, Filters, MessageHandler
 from telegram.utils.helpers import escape_markdown
 
 from skylee import dispatcher
@@ -36,38 +36,58 @@ if is_module_loaded(FILENAME):
                     ADMIN_CMDS.extend(command)
 
         def check_update(self, update):
-            chat = update.effective_chat  # type: Optional[Chat]
-            user = update.effective_user  # type: Optional[User]
-            if super().check_update(update):
-                # Should be safe since check_update passed.
-                command = update.effective_message.text_html.split(None, 1)[0][1:].split('@')[0]
+            if isinstance(update, Update) and update.effective_message:
+                message = update.effective_message
 
-                # disabled, admincmd, user admin
-                if sql.is_command_disabled(chat.id, command):
-                    return command in ADMIN_CMDS and is_user_admin(chat, user.id)
+                if (message.entities and message.entities[0].type == MessageEntity.BOT_COMMAND
+                        and message.entities[0].offset == 0):
+                    command = message.text[1:message.entities[0].length]
+                    args = message.text.split()[1:]
+                    command = command.split('@')
+                    command.append(message.bot.username)
 
-                # not disabled
-                else:
-                    return True
+                    if not (command[0].lower() in self.command
+                            and command[1].lower() == message.bot.username.lower()):
+                        return None
 
-            return False
+                    filter_result = self.filters(update)
+                    if filter_result:
+                        chat = update.effective_chat
+                        # disabled, admincmd, user admin
+                        if sql.is_command_disabled(chat.id, command[0].lower()):
+                            # check if command was disabled
+                            is_disabled = command[0] in ADMIN_CMDS and is_user_admin(chat, user.id)
+                            if not is_disabled and sql.is_disable_del(chat.id):
+                                # disabled and should delete
+                                update.effective_message.delete()
+                            if not is_disabled:
+                                return None
+                            else:
+                                return args, filter_result
+
+                        return args, filter_result
+                    else:
+                        return False
 
 
-    class DisableAbleRegexHandler(RegexHandler):
-        def __init__(self, pattern, callback, friendly="", **kwargs):
-            super().__init__(pattern, callback, **kwargs)
-            DISABLE_OTHER.append(friendly or pattern)
-            self.friendly = friendly or pattern
+    class DisableAbleMessageHandler(MessageHandler):
+         def __init__(self, pattern, callback, friendly="", **kwargs):
+             super().__init__(pattern, callback, **kwargs)
+             DISABLE_OTHER.append(friendly or pattern)
+             sql.disableable_cache(friendly or pattern)
+             self.friendly = friendly or pattern
 
-        def check_update(self, update):
-            chat = update.effective_chat
-            return super().check_update(update) and not sql.is_command_disabled(chat.id, self.friendly)
+         def check_update(self, update):
+             if isinstance(update, Update) and update.effective_message:
+                 chat = update.effective_chat
+                 return self.filters(update) and not sql.is_command_disabled(chat.id, self.friendly)
 
 
     @run_async
     @user_admin
-    def disable(bot: Bot, update: Update, args: List[str]):
+    def disable(update, context):
         chat = update.effective_chat  # type: Optional[Chat]
+        args = context.args
         if len(args) >= 1:
             disable_cmd = args[0]
             if disable_cmd.startswith(CMD_STARTERS):
@@ -86,7 +106,8 @@ if is_module_loaded(FILENAME):
 
     @run_async
     @user_admin
-    def enable(bot: Bot, update: Update, args: List[str]):
+    def enable(update, context):
+        args = context.args
         chat = update.effective_chat  # type: Optional[Chat]
         if len(args) >= 1:
             enable_cmd = args[0]
@@ -105,7 +126,7 @@ if is_module_loaded(FILENAME):
 
     @run_async
     @user_admin
-    def list_cmds(bot: Bot, update: Update):
+    def list_cmds(update, context):
         if DISABLE_CMDS + DISABLE_OTHER:
             result = ""
             for cmd in set(DISABLE_CMDS + DISABLE_OTHER):
@@ -129,7 +150,7 @@ if is_module_loaded(FILENAME):
 
 
     @run_async
-    def commands(bot: Bot, update: Update):
+    def commands(update, context):
         chat = update.effective_chat
         update.effective_message.reply_text(build_curr_disabled(chat.id), parse_mode=ParseMode.MARKDOWN)
 
@@ -181,4 +202,4 @@ It'll also allow you to autodelete them, stopping people from bluetexting.
 
 else:
     DisableAbleCommandHandler = CommandHandler
-    DisableAbleRegexHandler = RegexHandler
+    DisableAbleMessageHandler = MessageHandler

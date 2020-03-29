@@ -19,10 +19,10 @@ BASE_BLACKLIST_STRING = "Current <b>blacklisted</b> words:\n"
 
 
 @run_async
-def blacklist(bot: Bot, update: Update, args: List[str]):
+def blacklist(update, context):
     msg = update.effective_message  # type: Optional[Message]
     chat = update.effective_chat  # type: Optional[Chat]
-
+    args = context.args
     all_blacklisted = sql.get_chat_blacklist(chat.id)
 
     filter_list = BASE_BLACKLIST_STRING
@@ -44,7 +44,7 @@ def blacklist(bot: Bot, update: Update, args: List[str]):
 
 @run_async
 @user_admin
-def add_blacklist(bot: Bot, update: Update):
+def add_blacklist(update, context):
     msg = update.effective_message  # type: Optional[Message]
     chat = update.effective_chat  # type: Optional[Chat]
     words = msg.text.split(None, 1)
@@ -68,7 +68,7 @@ def add_blacklist(bot: Bot, update: Update):
 
 @run_async
 @user_admin
-def unblacklist(bot: Bot, update: Update):
+def unblacklist(update, context):
     msg = update.effective_message  # type: Optional[Message]
     chat = update.effective_chat  # type: Optional[Chat]
     words = msg.text.split(None, 1)
@@ -109,7 +109,7 @@ def unblacklist(bot: Bot, update: Update):
 
 @run_async
 @user_not_admin
-def del_blacklist(bot: Bot, update: Update):
+def del_blacklist(update, context):
     chat = update.effective_chat  # type: Optional[Chat]
     message = update.effective_message  # type: Optional[Message]
     to_match = extract_text(message)

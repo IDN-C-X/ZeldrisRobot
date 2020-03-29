@@ -78,14 +78,14 @@ def get_invalid_gban(bot: Bot, update: Update, remove: bool = False):
         return ungbanned_users
 
 @run_async
-def dbcleanup(bot: Bot, update: Update):
+def dbcleanup(update, context):
     msg = update.effective_message
 
     msg.reply_text("Getting invalid chat count ...")
-    invalid_chat_count = get_invalid_chats(bot, update)
+    invalid_chat_count = get_invalid_chats(context.bot, update)
 
     msg.reply_text("Getting invalid gbanned count ...")
-    invalid_gban_count = get_invalid_gban(bot, update)
+    invalid_gban_count = get_invalid_gban(context.bot, update)
 
     reply = f"Total invalid chats - {invalid_chat_count}\n"
     reply += f"Total invalid gbanned users - {invalid_gban_count}"
@@ -147,10 +147,10 @@ def get_muted_chats(bot: Bot, update: Update, leave: bool = False):
 
 
 @run_async
-def leave_muted_chats(bot: Bot, update: Update):
+def leave_muted_chats(update, context):
     message = update.effective_message
     progress_message = message.reply_text("Getting chat count ...")
-    muted_chats = get_muted_chats(bot, update)
+    muted_chats = get_muted_chats(context.bot, update)
 
     buttons = [
         [InlineKeyboardButton("Leave chats", callback_data=f"db_leave_chat")]
@@ -162,7 +162,8 @@ def leave_muted_chats(bot: Bot, update: Update):
 
 
 @run_async
-def callback_button(bot: Bot, update: Update):
+def callback_button(update, context):
+    bot = context.bot
     query = update.callback_query
     message = query.message
     chat_id = update.effective_chat.id

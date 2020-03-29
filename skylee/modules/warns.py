@@ -96,7 +96,7 @@ def warn(user: User, chat: Chat, reason: str, message: Message, warner: User = N
 @user_admin_no_reply
 @bot_admin
 @loggable
-def button(bot: Bot, update: Update) -> str:
+def button(update, context):
     query = update.callback_query  # type: Optional[CallbackQuery]
     user = update.effective_user  # type: Optional[User]
     match = re.match(r"rm_warn\((.+?)\)", query.data)
@@ -128,11 +128,11 @@ def button(bot: Bot, update: Update) -> str:
 @user_admin
 @can_restrict
 @loggable
-def warn_user(bot: Bot, update: Update, args: List[str]) -> str:
+def warn_user(update, context):
     message = update.effective_message  # type: Optional[Message]
     chat = update.effective_chat  # type: Optional[Chat]
     warner = update.effective_user  # type: Optional[User]
-
+    args = context.args
     user_id, reason = extract_user_and_text(message, args)
 
     if user_id:
@@ -149,11 +149,11 @@ def warn_user(bot: Bot, update: Update, args: List[str]) -> str:
 @user_admin
 @bot_admin
 @loggable
-def reset_warns(bot: Bot, update: Update, args: List[str]) -> str:
+def reset_warns(update, context):
     message = update.effective_message  # type: Optional[Message]
     chat = update.effective_chat  # type: Optional[Chat]
     user = update.effective_user  # type: Optional[User]
-
+    args = context.args
     user_id = extract_user(message, args)
 
     if user_id:
@@ -175,11 +175,11 @@ def reset_warns(bot: Bot, update: Update, args: List[str]) -> str:
 @user_admin
 @bot_admin
 @loggable
-def remove_warns(bot: Bot, update: Update, args: List[str]) -> str:
+def remove_warns(update, context):
     message = update.effective_message  # type: Optional[Message]
     chat = update.effective_chat  # type: Optional[Chat]
     user = update.effective_user  # type: Optional[User]
-
+    args = context.args
     user_id = extract_user(message, args)
 
     if user_id:
@@ -200,12 +200,12 @@ def remove_warns(bot: Bot, update: Update, args: List[str]) -> str:
 
 
 @run_async
-def warns(bot: Bot, update: Update, args: List[str]):
+def warns(update, context):
     message = update.effective_message  # type: Optional[Message]
     chat = update.effective_chat  # type: Optional[Chat]
     user_id = extract_user(message, args) or update.effective_user.id
     result = sql.get_warns(user_id, chat.id)
-
+    args = context.args
     if result and result[0] != 0:
         num_warns, reasons = result
         limit, soft_warn = sql.get_warn_setting(chat.id)
@@ -227,7 +227,7 @@ def warns(bot: Bot, update: Update, args: List[str]):
 
 # Dispatcher handler stop - do not async
 @user_admin
-def add_warn_filter(bot: Bot, update: Update):
+def add_warn_filter(update, context):
     chat = update.effective_chat  # type: Optional[Chat]
     msg = update.effective_message  # type: Optional[Message]
 
@@ -258,7 +258,7 @@ def add_warn_filter(bot: Bot, update: Update):
 
 
 @user_admin
-def remove_warn_filter(bot: Bot, update: Update):
+def remove_warn_filter(update, context):
     chat = update.effective_chat  # type: Optional[Chat]
     msg = update.effective_message  # type: Optional[Message]
 
@@ -290,7 +290,7 @@ def remove_warn_filter(bot: Bot, update: Update):
 
 
 @run_async
-def list_warn_filters(bot: Bot, update: Update):
+def list_warn_filters(update, context):
     chat = update.effective_chat  # type: Optional[Chat]
     all_handlers = sql.get_chat_warn_triggers(chat.id)
 
@@ -313,7 +313,7 @@ def list_warn_filters(bot: Bot, update: Update):
 
 @run_async
 @loggable
-def reply_filter(bot: Bot, update: Update) -> str:
+def reply_filter(update, context) -> str:
     chat = update.effective_chat  # type: Optional[Chat]
     message = update.effective_message  # type: Optional[Message]
 
@@ -334,11 +334,11 @@ def reply_filter(bot: Bot, update: Update) -> str:
 @run_async
 @user_admin
 @loggable
-def set_warn_limit(bot: Bot, update: Update, args: List[str]) -> str:
+def set_warn_limit(update, context) -> str:
     chat = update.effective_chat  # type: Optional[Chat]
     user = update.effective_user  # type: Optional[User]
     msg = update.effective_message  # type: Optional[Message]
-
+    args = context.args
     if args:
         if args[0].isdigit():
             if int(args[0]) < 3:
@@ -362,11 +362,11 @@ def set_warn_limit(bot: Bot, update: Update, args: List[str]) -> str:
 
 @run_async
 @user_admin
-def set_warn_strength(bot: Bot, update: Update, args: List[str]):
+def set_warn_strength(update, context):
     chat = update.effective_chat  # type: Optional[Chat]
     user = update.effective_user  # type: Optional[User]
     msg = update.effective_message  # type: Optional[Message]
-
+    args = context.args
     if args:
         if args[0].lower() in ("on", "yes"):
             sql.set_warn_strength(chat.id, False)

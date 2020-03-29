@@ -19,8 +19,9 @@ from skylee.modules.keyboard import keyboard
 
 @user_admin
 @run_async
-def allow_connections(bot: Bot, update: Update, args: List[str]) -> str:
+def allow_connections(update, context) -> str:
     chat = update.effective_chat  # type: Optional[Chat]
+    args = context.args
     if chat.type != chat.PRIVATE:
         if len(args) >= 1:
             var = args[0]
@@ -40,22 +41,24 @@ def allow_connections(bot: Bot, update: Update, args: List[str]) -> str:
 
 
 @run_async
-def connect_chat(bot, update, args):
+def connect_chat(update, context):
     chat = update.effective_chat  # type: Optional[Chat]
     user = update.effective_user  # type: Optional[User]
+    args = context.args
     if update.effective_chat.type == 'private':
         if len(args) >= 1:
             try:
                 connect_chat = int(args[0])
             except ValueError:
                 update.effective_message.reply_text("Invalid Chat ID provided!")
-            if (bot.get_chat_member(connect_chat, update.effective_message.from_user.id).status in ('administrator', 'creator') or 
+            if (context.bot.get_chat_member(connect_chat, update.effective_message.from_user.id).status in ('administrator', 'creator') or 
                                      (sql.allow_connect_to_chat(connect_chat) == True) and 
-                                     bot.get_chat_member(connect_chat, update.effective_message.from_user.id).status in ('member')) or (
+                                     context.bot.get_chat_member(connect_chat, update.effective_message.from_user.id).status in ('member')) or (
                                      user.id in SUDO_USERS):
 
                 connection_status = sql.connect(update.effective_message.from_user.id, connect_chat)
                 if connection_status:
+                    bot = context.bot
                     chat_name = dispatcher.bot.getChat(connected(bot, update, chat, user.id, need_admin=False)).title
                     update.effective_message.reply_text("Successfully connected to *{}*".format(chat_name), parse_mode=ParseMode.MARKDOWN)
 
@@ -107,7 +110,7 @@ def connect_chat(bot, update, args):
         update.effective_message.reply_text("Usage limited to PMs only!")
 
 
-def disconnect_chat(bot, update):
+def disconnect_chat(update, context):
     if update.effective_chat.type == 'private':
         disconnection_status = sql.disconnect(update.effective_message.from_user.id)
         if disconnection_status:
@@ -157,10 +160,11 @@ Actions are available with connected groups:
 
 __mod_name__ = "Connections"
 
-CONNECT_CHAT_HANDLER = CommandHandler("connect", connect_chat, allow_edited=True, pass_args=True)
-DISCONNECT_CHAT_HANDLER = CommandHandler("disconnect", disconnect_chat, allow_edited=True)
-ALLOW_CONNECTIONS_HANDLER = CommandHandler("allowconnect", allow_connections, allow_edited=True, pass_args=True)
+CONNECT_CHAT_HANDLER = CommandHandler("connect", connect_chat, pass_args=True)
+DISCONNECT_CHAT_HANDLER = CommandHandler("disconnect", disconnect_chat)
+ALLOW_CONNECTIONS_HANDLER = CommandHandler("allowconnect", allow_connections, pass_args=True)
 
 dispatcher.add_handler(CONNECT_CHAT_HANDLER)
 dispatcher.add_handler(DISCONNECT_CHAT_HANDLER)
 dispatcher.add_handler(ALLOW_CONNECTIONS_HANDLER)
+

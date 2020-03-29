@@ -8,7 +8,7 @@ from telegram.ext import Filters, CommandHandler, MessageHandler, run_async
 from telegram import TelegramError, Chat, Message
 from telegram.error import BadRequest
 from skylee.modules.helper_funcs.filters import CustomFilters
-from skylee import dispatcher, OWNER_ID
+from skylee import dispatcher
 from skylee.modules.disable import DisableAbleCommandHandler
 
 #Abuse strings credits @NotAMemeBot
@@ -86,19 +86,19 @@ ABUSE_STRINGS = (
 )
 
 @run_async
-def abuse(bot: Bot, update: Update):
+def abuse(update, context):
     # reply to correct message
     reply_text = update.effective_message.reply_to_message.reply_text if update.effective_message.reply_to_message else update.effective_message.reply_text
     reply_text(random.choice(ABUSE_STRINGS))
 
 @run_async
-def shrug(bot: Bot, update: Update):
+def shrug(update, context):
     # reply to correct message
     reply_text = update.effective_message.reply_to_message.reply_text if update.effective_message.reply_to_message else update.effective_message.reply_text
     reply_text("¯\_(ツ)_/¯")
 
 @run_async
-def decide(bot: Bot, update: Update):
+def decide(update, context):
         r = randint(1, 100)
         if r <= 65:
             update.message.reply_text("Yes.")
@@ -108,7 +108,8 @@ def decide(bot: Bot, update: Update):
             update.message.reply_text("Maybe.")
 
 @run_async
-def snipe(bot: Bot, update: Update, args: List[str]):     
+def snipe(update, context):
+    args = context.args
     try:
         chat_id = str(args[0])
         del args[0]
@@ -117,13 +118,13 @@ def snipe(bot: Bot, update: Update, args: List[str]):
     to_send = " ".join(args)
     if len(to_send) >= 2:
         try:
-            bot.sendMessage(int(chat_id), str(to_send))        
+            context.bot.sendMessage(int(chat_id), str(to_send))        
         except TelegramError:
             LOGGER.warning("Couldn't send to group %s", str(chat_id))             
             update.effective_message.reply_text("Couldn't send the message. Perhaps I'm not part of that group?")  
 
 @run_async
-def wiki(bot: Bot, update: Update):
+def wiki(update, context):
     kueri = re.split(pattern="wiki", string=update.effective_message.text)
     wikipedia.set_lang("en")
     if len(str(kueri[1])) == 0:
@@ -132,38 +133,13 @@ def wiki(bot: Bot, update: Update):
         try:
             pertama = update.effective_message.reply_text("🔄 Loading...")
             keyboard = InlineKeyboardMarkup([[InlineKeyboardButton(text="🔧 More Info...", url=wikipedia.page(kueri).url)]])
-            bot.editMessageText(chat_id=update.effective_chat.id, message_id=pertama.message_id, text=wikipedia.summary(kueri, sentences=10), reply_markup=keyboard)
+            context.bot.editMessageText(chat_id=update.effective_chat.id, message_id=pertama.message_id, text=wikipedia.summary(kueri, sentences=10), reply_markup=keyboard)
         except wikipedia.PageError as e:
             update.effective_message.reply_text(f"⚠ Error: {e}")
         except BadRequest as et :
             update.effective_message.reply_text(f"⚠ Error: {et}")
         except wikipedia.exceptions.DisambiguationError as eet:
             update.effective_message.reply_text(f"⚠ Error\n There are too many query! Express it more!\nPossible query result:\n{eet}")
-
-
-def getlink(bot: Bot, update: Update, args: List[int]):
-    message = update.effective_message
-    if args:
-        pattern = re.compile(r'-\d+')
-    else:
-        message.reply_text("You don't seem to be referring to any chats.")
-    links = "Invite link(s):\n"
-    for chat_id in pattern.findall(message.text):
-        try:
-            chat = bot.getChat(chat_id)
-            bot_member = chat.get_member(bot.id)
-            if bot_member.can_invite_users:
-                invitelink = bot.exportChatInviteLink(chat_id)
-                links += str(chat_id) + ":\n" + invitelink + "\n"
-            else:
-                links += str(chat_id) + ":\nI don't have access to the invite link." + "\n"
-        except BadRequest as excp:
-                links += str(chat_id) + ":\n" + excp.message + "\n"
-        except TelegramError as excp:
-                links += str(chat_id) + ":\n" + excp.message + "\n"
-
-    message.reply_text(links)
-
 
 __help__ = """
 Some random extra commands for fun!
@@ -180,7 +156,7 @@ SHRUG_HANDLER = DisableAbleCommandHandler("shrug", shrug)
 DECIDE_HANDLER = DisableAbleCommandHandler("decide", decide)
 SNIPE_HANDLER = CommandHandler("snipe", snipe, pass_args=True, filters=CustomFilters.sudo_filter)
 ABUSE_HANDLER = DisableAbleCommandHandler("abuse", abuse)
-GETLINK_HANDLER = CommandHandler("getlink", getlink, pass_args=True, filters=Filters.user(OWNER_ID))
+
 WIKI_HANDLER = DisableAbleCommandHandler("wiki", wiki)
 
 
@@ -189,4 +165,3 @@ dispatcher.add_handler(DECIDE_HANDLER)
 dispatcher.add_handler(ABUSE_HANDLER)
 dispatcher.add_handler(SNIPE_HANDLER)
 dispatcher.add_handler(WIKI_HANDLER)
-dispatcher.add_handler(GETLINK_HANDLER)

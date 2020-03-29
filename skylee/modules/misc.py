@@ -165,12 +165,13 @@ GMAPS_TIME = "https://maps.googleapis.com/maps/api/timezone/json"
 
 
 @run_async
-def runs(bot: Bot, update: Update):
+def runs(update, context):
     update.effective_message.reply_text(random.choice(RUN_STRINGS))
 
 
 @run_async
-def slap(bot: Bot, update: Update, args: List[str]):
+def slap(update, context):
+    args = context.args
     msg = update.effective_message  # type: Optional[Message]
 
     # reply to correct message
@@ -184,7 +185,7 @@ def slap(bot: Bot, update: Update, args: List[str]):
 
     user_id = extract_user(update.effective_message, args)
     if user_id:
-        slapped_user = bot.get_chat(user_id)
+        slapped_user = context.bot.get_chat(user_id)
         user1 = curr_user
         if slapped_user.username:
             user2 = "@" + escape_markdown(slapped_user.username)
@@ -194,7 +195,7 @@ def slap(bot: Bot, update: Update, args: List[str]):
 
     # if no target found, bot targets the sender
     else:
-        user1 = "[{}](tg://user?id={})".format(bot.first_name, bot.id)
+        user1 = "[{}](tg://user?id={})".format(context.bot.first_name, context.bot.id)
         user2 = curr_user
 
     temp = random.choice(SLAP_TEMPLATES)
@@ -207,7 +208,8 @@ def slap(bot: Bot, update: Update, args: List[str]):
     reply_text(repl, parse_mode=ParseMode.MARKDOWN)
 
 @run_async
-def punch(bot: Bot, update: Update, args: List[str]):
+def punch(update, context):
+    args = context.args
     msg = update.effective_message  # type: Optional[Message]
 
     # reply to correct message
@@ -221,7 +223,7 @@ def punch(bot: Bot, update: Update, args: List[str]):
 
     user_id = extract_user(update.effective_message, args)
     if user_id:
-        punched_user = bot.get_chat(user_id)
+        punched_user = context.bot.get_chat(user_id)
         user1 = curr_user
         if punched_user.username:
             user2 = "@" + escape_markdown(punched_user.username)
@@ -231,7 +233,7 @@ def punch(bot: Bot, update: Update, args: List[str]):
 
     # if no target found, bot targets the sender
     else:
-        user1 = "[{}](tg://user?id={})".format(bot.first_name, bot.id)
+        user1 = "[{}](tg://user?id={})".format(context.bot.first_name, context.bot.id)
         user2 = curr_user
 
     temp = random.choice(PUNCH_TEMPLATES)
@@ -245,7 +247,8 @@ def punch(bot: Bot, update: Update, args: List[str]):
 
 
 @run_async
-def hug(bot: Bot, update: Update, args: List[str]):
+def hug(update, context):
+    args = context.args
     msg = update.effective_message  # type: Optional[Message]
 
     # reply to correct message
@@ -259,7 +262,7 @@ def hug(bot: Bot, update: Update, args: List[str]):
 
     user_id = extract_user(update.effective_message, args)
     if user_id:
-        hugged_user = bot.get_chat(user_id)
+        hugged_user = context.bot.get_chat(user_id)
         user1 = curr_user
         if hugged_user.username:
             user2 = "@" + escape_markdown(hugged_user.username)
@@ -269,7 +272,7 @@ def hug(bot: Bot, update: Update, args: List[str]):
 
     # if no target found, bot targets the sender
     else:
-        user1 = "Awwh! [{}](tg://user?id={})".format(bot.first_name, bot.id)
+        user1 = "Awwh! [{}](tg://user?id={})".format(context.bot.first_name, context.bot.id)
         user2 = curr_user
 
     temp = random.choice(HUG_TEMPLATES)
@@ -281,7 +284,8 @@ def hug(bot: Bot, update: Update, args: List[str]):
 
 
 @run_async
-def get_id(bot: Bot, update: Update, args: List[str]):
+def get_id(update, context):
+    args = context.args
     user_id = extract_user(update.effective_message, args)
     if user_id:
         if update.effective_message.reply_to_message and update.effective_message.reply_to_message.forward_from:
@@ -310,13 +314,13 @@ def get_id(bot: Bot, update: Update, args: List[str]):
 
 
 @run_async
-def info(bot: Bot, update: Update, args: List[str]):
+def info(update, context):
+    args = context.args
     msg = update.effective_message  # type: Optional[Message]
     user_id = extract_user(update.effective_message, args)
-    chat = update.effective_chat
 
     if user_id:
-        user = bot.get_chat(user_id)
+        user = context.bot.get_chat(user_id)
 
     elif not msg.reply_to_message and not args:
         user = msg.from_user
@@ -343,36 +347,29 @@ def info(bot: Bot, update: Update, args: List[str]):
     text += "\nPermanent user link: {}".format(mention_html(user.id, "link"))
 
     if user.id == OWNER_ID:
-        text += "\n\nAye this guy is my owner - I would never do anything against him!"
-
-    elif user.id in SUDO_USERS:
-           text += "\nThis person is one of my sudo users! " \
+        text += "\n\n Aye, This guy is my owner - I would never do anything against them!"
+    else:
+        if user.id in SUDO_USERS:
+            text += "\nThis person is one of my sudo users! " \
                     "Nearly as powerful as my owner - so watch it."
-
-    elif user.id in SUPPORT_USERS:
-          text += "\nThis person is one of my support users! " \
+        else:
+            if user.id in SUPPORT_USERS:
+                text += "\nThis person is one of my support users! " \
                         "Not quite a sudo user, but can still gban you off the map."
 
-    elif user.id in WHITELIST_USERS:
-           text += "\nThis person has been whitelisted! " \
+            if user.id in WHITELIST_USERS:
+                text += "\nThis person has been whitelisted! " \
                         "That means I'm not allowed to ban/kick them."
 
     for mod in USER_INFO:
-        if mod.__mod_name__ == "Users":
-            continue
-
-        try:
-            mod_info = mod.__user_info__(user.id)
-        except TypeError:
-            mod_info = mod.__user_info__(user.id, chat.id)
+        mod_info = mod.__user_info__(user.id).strip()
         if mod_info:
-            text += "\n" + mod_info
+            text += "\n\n" + mod_info
 
-    update.effective_message.reply_text(text, parse_mode=ParseMode.HTML, disable_web_page_preview=True)
-
+    update.effective_message.reply_text(text, parse_mode=ParseMode.HTML)
 
 @run_async
-def echo(bot: Bot, update: Update):
+def echo(update, context):
     args = update.effective_message.text.split(None, 1)
     message = update.effective_message
     if message.reply_to_message:
@@ -383,7 +380,7 @@ def echo(bot: Bot, update: Update):
 
 
 @run_async
-def gdpr(bot: Bot, update: Update):
+def gdpr(update, context):
     update.effective_message.reply_text("Deleting identifiable data...")
     for mod in GDPR:
         mod.__gdpr__(update.effective_user.id)
@@ -424,7 +421,7 @@ Keep in mind that your message <b>MUST</b> contain some text other than just a b
 
 
 @run_async
-def markdown_help(bot: Bot, update: Update):
+def markdown_help(update, context):
     update.effective_message.reply_text(MARKDOWN_HELP, parse_mode=ParseMode.HTML)
     update.effective_message.reply_text("Try forwarding the following message to me, and you'll see!")
     update.effective_message.reply_text("/save test This is a markdown test. _italics_, *bold*, `code`, "
@@ -433,11 +430,11 @@ def markdown_help(bot: Bot, update: Update):
 
 
 @run_async
-def stats(bot: Bot, update: Update):
+def stats(update, context):
     update.effective_message.reply_text("Current stats:\n" + "\n".join([mod.__stats__() for mod in STATS]))
 
 @run_async
-def stickerid(bot: Bot, update: Update):
+def stickerid(update, context):
     msg = update.effective_message
     if msg.reply_to_message and msg.reply_to_message.sticker:
         update.effective_message.reply_text("Hello " +
@@ -450,25 +447,25 @@ def stickerid(bot: Bot, update: Update):
                                             msg.from_user.id) + ", Please reply to sticker message to get id sticker",
                                             parse_mode=ParseMode.MARKDOWN)
 @run_async
-def getsticker(bot: Bot, update: Update):
+def getsticker(update, context):
     msg = update.effective_message
     chat_id = update.effective_chat.id
     if msg.reply_to_message and msg.reply_to_message.sticker:
-        bot.sendChatAction(chat_id, "typing")
+        context.bot.sendChatAction(chat_id, "typing")
         update.effective_message.reply_text("Hello " + "[{}](tg://user?id={})".format(msg.from_user.first_name,
                                             msg.from_user.id) + ", Please check the file you requested below."
                                             "\nPlease use this feature wisely!",
                                             parse_mode=ParseMode.MARKDOWN)
-        bot.sendChatAction(chat_id, "upload_document")
+        context.bot.sendChatAction(chat_id, "upload_document")
         file_id = msg.reply_to_message.sticker.file_id
-        newFile = bot.get_file(file_id)
+        newFile = context.bot.get_file(file_id)
         newFile.download('sticker.png')
-        bot.sendDocument(chat_id, document=open('sticker.png', 'rb'))
-        bot.sendChatAction(chat_id, "upload_photo")
-        bot.send_photo(chat_id, photo=open('sticker.png', 'rb'))
+        context.bot.sendDocument(chat_id, document=open('sticker.png', 'rb'))
+        context.bot.sendChatAction(chat_id, "upload_photo")
+        context.bot.send_photo(chat_id, photo=open('sticker.png', 'rb'))
 
     else:
-        bot.sendChatAction(chat_id, "typing")
+        context.bot.sendChatAction(chat_id, "typing")
         update.effective_message.reply_text("Hello " + "[{}](tg://user?id={})".format(msg.from_user.first_name,
                                             msg.from_user.id) + ", Please reply to sticker message to get sticker image",
                                             parse_mode=ParseMode.MARKDOWN)
@@ -496,10 +493,10 @@ PUNCH_HANDLER = DisableAbleCommandHandler("punch", punch, pass_args=True)
 HUG_HANDLER = DisableAbleCommandHandler("warm", hug, pass_args=True)
 INFO_HANDLER = DisableAbleCommandHandler("info", info, pass_args=True)
 
-ECHO_HANDLER = CommandHandler("echo", echo, filters=Filters.user(OWNER_ID))
+ECHO_HANDLER = CommandHandler("echo", echo, filters=CustomFilters.sudo_filter)
 MD_HELP_HANDLER = CommandHandler("markdownhelp", markdown_help, filters=Filters.private)
 
-STATS_HANDLER = CommandHandler("stats", stats, filters=CustomFilters.sudo_filter)
+STATS_HANDLER = CommandHandler("stats", stats, filters=Filters.user(OWNER_ID))
 GDPR_HANDLER = CommandHandler("gdpr", gdpr, filters=Filters.private)
 
 STICKERID_HANDLER = DisableAbleCommandHandler("stickerid", stickerid)

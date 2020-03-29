@@ -5,7 +5,7 @@ from telegram import MessageEntity
 from telegram.ext import Filters, MessageHandler, run_async
 
 from skylee import dispatcher
-from skylee.modules.disable import DisableAbleCommandHandler, DisableAbleRegexHandler
+from skylee.modules.disable import DisableAbleCommandHandler
 from skylee.modules.sql import afk_sql as sql
 from skylee.modules.users import get_user_id
 
@@ -14,7 +14,7 @@ AFK_REPLY_GROUP = 8
 
 
 @run_async
-def afk(bot: Bot, update: Update):
+def afk(update, context):
     args = update.effective_message.text.split(None, 1)
     if len(args) >= 2:
         reason = args[1]
@@ -26,7 +26,7 @@ def afk(bot: Bot, update: Update):
 
 
 @run_async
-def no_longer_afk(bot: Bot, update: Update):
+def no_longer_afk(update, context):
     user = update.effective_user  # type: Optional[User]
 
     if not user:  # ignore channels
@@ -38,7 +38,7 @@ def no_longer_afk(bot: Bot, update: Update):
 
 
 @run_async
-def reply_afk(bot: Bot, update: Update):
+def reply_afk(update, context):
     message = update.effective_message  # type: Optional[Message]
     entities = message.parse_entities([MessageEntity.TEXT_MENTION, MessageEntity.MENTION])
     if message.entities and entities:
@@ -52,7 +52,7 @@ def reply_afk(bot: Bot, update: Update):
                 if not user_id:
                     # Should never happen, since for a user to become AFK they must have spoken. Maybe changed username?
                     return
-                chat = bot.get_chat(user_id)
+                chat = context.bot.get_chat(user_id)
                 fst_name = chat.first_name
 
             else:
@@ -82,7 +82,7 @@ When marked as AFK, any mentions will be replied to with a message to say you're
 __mod_name__ = "AFK"
 
 AFK_HANDLER = DisableAbleCommandHandler("afk", afk)
-AFK_REGEX_HANDLER = DisableAbleRegexHandler("(?i)brb", afk, friendly="afk")
+AFK_REGEX_HANDLER = MessageHandler(Filters.regex("(?i)brb"), afk)
 NO_AFK_HANDLER = MessageHandler(Filters.all & Filters.group, no_longer_afk)
 AFK_REPLY_HANDLER = MessageHandler(Filters.entity(MessageEntity.MENTION) | Filters.entity(MessageEntity.TEXT_MENTION),
                                    reply_afk)

@@ -12,7 +12,8 @@ from googletrans import Translator
 #Translator based on google translate API
 
 @run_async
-def gtrans(bot: Bot, update: Update, args: List[str]):
+def gtrans(update, context):
+    args = context.args
     oky = " ".join(args)
     lol = update.effective_message
     to_translate_text = lol.reply_to_message.text

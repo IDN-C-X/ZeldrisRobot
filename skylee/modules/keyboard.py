@@ -10,7 +10,7 @@ from telegram.ext import CommandHandler, Filters, MessageHandler, CallbackQueryH
 
 import skylee.modules.sql.connection_sql as con_sql
 
-def keyboard(bot, update):
+def keyboard(context, update):
     user = update.effective_user  # type: Optional[User]
     conn_id = con_sql.get_connected_chat(user.id)
     if conn_id and not conn_id == False:

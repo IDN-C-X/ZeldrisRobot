@@ -13,7 +13,7 @@ GITHUB = 'https://github.com'
 DEVICES_DATA = 'https://raw.githubusercontent.com/androidtrackers/certified-android-devices/master/by_device.json'
 
 @run_async
-def magisk(bot, update):
+def magisk(update, context):
     url = 'https://raw.githubusercontent.com/topjohnwu/magisk_files/'
     releases = ""
     for type, branch in {"Stable":["master/stable","master"], "Beta":["master/beta","master"], "Canary (release)":["canary/release","canary"], "Canary (debug)":["canary/debug","canary"]}.items():
@@ -36,7 +36,8 @@ def magisk(bot, update):
             return
 
 @run_async
-def device(bot, update, args):
+def device(update, context):
+    args = context.args
     if len(args) == 0:
         reply = f'No codename provided, write a codename for fetching informations.'
         del_msg = update.effective_message.reply_text("{}".format(reply),
@@ -76,7 +77,8 @@ def device(bot, update, args):
 
 
 @run_async
-def twrp(bot, update, args):
+def twrp(update, context):
+    args = context.args
     if len(args) == 0:
         reply='No codename provided, write a codename for fetching informations.'
         del_msg = update.effective_message.reply_text("{}".format(reply),

@@ -21,7 +21,7 @@ from skylee.modules.helper_funcs.misc import paginate_modules
 PM_START_TEXT = """
 Hey there!, my name is sкyℓєє. If you have any questions on how to use me, Click Help button!
 
-I'm group manager bot made with 🧡 by [this wonderful person](tg://user?id=894380120). I'm built in python3, using the \
+I'm group manager bot made with 🧡 by [this person](tg://user?id=894380120). I'm built in python3, using the \
 python-telegram-bot library, and am fully opensource - you can find what makes me tick \
 [here](www.github.com/starry69/skyleebot)!
 
@@ -29,9 +29,10 @@ Wanna Add me to your Group? Just click the button below!
 """
 
 buttons = [[
-                    InlineKeyboardButton(text="Add to Group 👥", url="t.me/skylee_bot?startgroup=true"),
-                    InlineKeyboardButton(text="Updates 📢", url="https://t.me/skyleeupdates")
+InlineKeyboardButton(text="Add me to Group 👥", url="t.me/skylee_bot?startgroup=true"),
+InlineKeyboardButton(text="Updates 📢", url="https://t.me/skyleeupdates")
                   ]]
+                  
 buttons += [[InlineKeyboardButton(text="Help & Commands ❔", callback_data="help_back")]]
 
 
@@ -115,7 +116,7 @@ def send_help(chat_id, text, keyboard=None):
 
 
 @run_async
-def test(bot: Bot, update: Update):
+def test(update, context):
     # pprint(eval(str(update)))
     # update.effective_message.reply_text("Hola tester! _I_ *have* `markdown`", parse_mode=ParseMode.MARKDOWN)
     update.effective_message.reply_text("This person edited a message")
@@ -123,8 +124,9 @@ def test(bot: Bot, update: Update):
 
 
 @run_async
-def start(bot: Bot, update: Update, args: List[str]):
+def start(update, context):
     if update.effective_chat.type == "private":
+        args = context.args
         if len(args) >= 1:
             if args[0].lower() == "help":
                 send_help(update.effective_chat.id, HELP_STRINGS)
@@ -148,36 +150,30 @@ def start(bot: Bot, update: Update, args: List[str]):
 
 
 # for test purposes
-def error_callback(bot, update, error):
+def error_callback(update, context):
     try:
-        raise error
+        raise context.error
     except Unauthorized:
-        print("no nono1")
-        print(error)
         # remove update.message.chat_id from conversation list
+        LOGGER.exception('Update "%s" caused error "%s"', update, context.error)
     except BadRequest:
-        print("no nono2")
-        print("BadRequest caught")
-        print(error)
-
         # handle malformed requests - read more below!
+        LOGGER.exception('Update "%s" caused error "%s"', update, context.error)
     except TimedOut:
-        print("no nono3")
         # handle slow connection problems
+        LOGGER.exception('Update "%s" caused error "%s"', update, context.error)
     except NetworkError:
-        print("no nono4")
         # handle other connection problems
-    except ChatMigrated as err:
-        print("no nono5")
-        print(err)
+        LOGGER.exception('Update "%s" caused error "%s"', update, context.error)
+    except ChatMigrated as e:
         # the chat_id of a group has changed, use e.new_chat_id instead
+        LOGGER.exception('Update "%s" caused error "%s"', update, context.error)
     except TelegramError:
-        print(error)
         # handle all other telegram related errors
-
+        LOGGER.exception('Update "%s" caused error "%s"', update, context.error)
 
 @run_async
-def help_button(bot: Bot, update: Update):
+def help_button(update, context):
     query = update.callback_query
     mod_match = re.match(r"help_module\((.+?)\)", query.data)
     prev_match = re.match(r"help_prev\((.+?)\)", query.data)
@@ -213,9 +209,9 @@ def help_button(bot: Bot, update: Update):
                                      reply_markup=InlineKeyboardMarkup(paginate_modules(0, HELPABLE, "help")))
 
         # ensure no spinny white circle
-        bot.answer_callback_query(query.id)
         query.message.delete()
-    except BadRequest as excp:
+        context.bot.answer_callback_query(query.id)
+    except Exception as excp:
         if excp.message == "Message is not modified":
             pass
         elif excp.message == "Query_id_invalid":
@@ -223,11 +219,12 @@ def help_button(bot: Bot, update: Update):
         elif excp.message == "Message can't be deleted":
             pass
         else:
+            query.message.edit_text(excp.message)
             LOGGER.exception("Exception in help buttons. %s", str(query.data))
 
 
 @run_async
-def get_help(bot: Bot, update: Update):
+def get_help(update, context):
     chat = update.effective_chat  # type: Optional[Chat]
     args = update.effective_message.text.split(None, 1)
 
@@ -238,7 +235,7 @@ def get_help(bot: Bot, update: Update):
                                             reply_markup=InlineKeyboardMarkup(
                                                 [[InlineKeyboardButton(text="Help",
                                                                        url="t.me/{}?start=help".format(
-                                                                           bot.username))]]))
+                                                                           context. bot.username))]]))
         return
 
     elif len(args) >= 2 and any(args[1].lower() == x for x in HELPABLE):
@@ -278,7 +275,7 @@ def send_settings(chat_id, user_id, user=False):
 
 
 @run_async
-def settings_button(bot: Bot, update: Update):
+def settings_button(update, context):
     query = update.callback_query
     user = update.effective_user
     mod_match = re.match(r"stngs_module\((.+?),(.+?)\)", query.data)
@@ -303,7 +300,7 @@ def settings_button(bot: Bot, update: Update):
         elif prev_match:
             chat_id = prev_match.group(1)
             curr_page = int(prev_match.group(2))
-            chat = bot.get_chat(chat_id)
+            chat = context.bot.get_chat(chat_id)
             query.message.reply_text("Hi there! There are quite a few settings for {} - go ahead and pick what "
                                      "you're interested in.".format(chat.title),
                                      reply_markup=InlineKeyboardMarkup(
@@ -313,7 +310,7 @@ def settings_button(bot: Bot, update: Update):
         elif next_match:
             chat_id = next_match.group(1)
             next_page = int(next_match.group(2))
-            chat = bot.get_chat(chat_id)
+            chat = context.bot.get_chat(chat_id)
             query.message.reply_text("Hi there! There are quite a few settings for {} - go ahead and pick what "
                                      "you're interested in.".format(chat.title),
                                      reply_markup=InlineKeyboardMarkup(
@@ -322,7 +319,7 @@ def settings_button(bot: Bot, update: Update):
 
         elif back_match:
             chat_id = back_match.group(1)
-            chat = bot.get_chat(chat_id)
+            chat = context.bot.get_chat(chat_id)
             query.message.reply_text(text="Hi there! There are quite a few settings for {} - go ahead and pick what "
                                           "you're interested in.".format(escape_markdown(chat.title)),
                                      parse_mode=ParseMode.MARKDOWN,
@@ -330,9 +327,9 @@ def settings_button(bot: Bot, update: Update):
                                                                                         chat=chat_id)))
 
         # ensure no spinny white circle
-        bot.answer_callback_query(query.id)
         query.message.delete()
-    except BadRequest as excp:
+        context.bot.answer_callback_query(query.id)
+    except Exception as excp:
         if excp.message == "Message is not modified":
             pass
         elif excp.message == "Query_id_invalid":
@@ -340,11 +337,12 @@ def settings_button(bot: Bot, update: Update):
         elif excp.message == "Message can't be deleted":
             pass
         else:
+            query.message.edit_text(excp.message)
             LOGGER.exception("Exception in settings buttons. %s", str(query.data))
 
 
 @run_async
-def get_settings(bot: Bot, update: Update):
+def get_settings(update, context):
     chat = update.effective_chat  # type: Optional[Chat]
     user = update.effective_user  # type: Optional[User]
     msg = update.effective_message  # type: Optional[Message]
@@ -358,14 +356,14 @@ def get_settings(bot: Bot, update: Update):
                            reply_markup=InlineKeyboardMarkup(
                                [[InlineKeyboardButton(text="Settings",
                                                       url="t.me/{}?start=stngs_{}".format(
-                                                          bot.username, chat.id))]]))
+                                                          context.bot.username, chat.id))]]))
         else:
             text = "Click here to check your settings."
 
     else:
         send_settings(chat.id, user.id, True)
 
-def migrate_chats(bot: Bot, update: Update):
+def migrate_chats(update, context):
     msg = update.effective_message  # type: Optional[Message]
     if msg.migrate_to_chat_id:
         old_chat = update.effective_chat.id
@@ -383,7 +381,7 @@ def migrate_chats(bot: Bot, update: Update):
     LOGGER.info("Successfully migrated!")
     raise DispatcherHandlerStop
 
-def is_chat_allowed(bot, update):
+def is_chat_allowed(update, context):
     if len(WHITELIST_CHATS) != 0:
         chat_id = update.effective_message.chat_id
         if chat_id not in WHITELIST_CHATS:
@@ -439,9 +437,6 @@ def main():
 
     # dispatcher.add_error_handler(error_callback)
 
-    # add antiflood processor
-    Dispatcher.process_update = process_update
-
     if WEBHOOK:
         LOGGER.info("Using webhooks.")
         updater.start_webhook(listen="0.0.0.0",
@@ -459,61 +454,6 @@ def main():
         updater.start_polling(timeout=15, read_latency=4)
 
     updater.idle()
-
-
-CHATS_CNT = {}
-CHATS_TIME = {}
-
-
-def process_update(self, update):
-    # An error happened while polling
-    if isinstance(update, TelegramError):
-        try:
-            self.dispatch_error(None, update)
-        except Exception:
-            self.logger.exception('An uncaught error was raised while handling the error')
-        return
-
-    now = datetime.datetime.utcnow()
-    cnt = CHATS_CNT.get(update.effective_chat.id, 0)
-
-    t = CHATS_TIME.get(update.effective_chat.id, datetime.datetime(1970, 1, 1))
-    if t and now > t + datetime.timedelta(0, 1):
-        CHATS_TIME[update.effective_chat.id] = now
-        cnt = 0
-    else:
-        cnt += 1
-
-    if cnt > 10:
-        return
-
-    CHATS_CNT[update.effective_chat.id] = cnt
-    for group in self.groups:
-        try:
-            for handler in (x for x in self.handlers[group] if x.check_update(update)):
-                handler.handle_update(update, self)
-                break
-
-        # Stop processing with any other handler.
-        except DispatcherHandlerStop:
-            self.logger.debug('Stopping further handlers due to DispatcherHandlerStop')
-            break
-
-        # Dispatch any error.
-        except TelegramError as te:
-            self.logger.warning('A TelegramError was raised while processing the Update')
-
-            try:
-                self.dispatch_error(update, te)
-            except DispatcherHandlerStop:
-                self.logger.debug('Error handler stopped further handlers')
-                break
-            except Exception:
-                self.logger.exception('An uncaught error was raised while handling the error')
-
-        # Errors should not stop the thread.
-        except Exception:
-            self.logger.exception('An uncaught error was raised while processing the update')
 
 
 if __name__ == '__main__':
