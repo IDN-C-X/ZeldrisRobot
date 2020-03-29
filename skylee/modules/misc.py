@@ -313,6 +313,7 @@ def get_id(bot: Bot, update: Update, args: List[str]):
 def info(bot: Bot, update: Update, args: List[str]):
     msg = update.effective_message  # type: Optional[Message]
     user_id = extract_user(update.effective_message, args)
+    chat = update.effective_chat
 
     if user_id:
         user = bot.get_chat(user_id)
@@ -343,25 +344,32 @@ def info(bot: Bot, update: Update, args: List[str]):
 
     if user.id == OWNER_ID:
         text += "\n\nAye this guy is my owner - I would never do anything against him!"
-    else:
-        if user.id in SUDO_USERS:
-            text += "\nThis person is one of my sudo users! " \
+
+    elif user.id in SUDO_USERS:
+           text += "\nThis person is one of my sudo users! " \
                     "Nearly as powerful as my owner - so watch it."
-        else:
-            if user.id in SUPPORT_USERS:
-                text += "\nThis person is one of my support users! " \
+
+    elif user.id in SUPPORT_USERS:
+          text += "\nThis person is one of my support users! " \
                         "Not quite a sudo user, but can still gban you off the map."
 
-            if user.id in WHITELIST_USERS:
-                text += "\nThis person has been whitelisted! " \
+    elif user.id in WHITELIST_USERS:
+           text += "\nThis person has been whitelisted! " \
                         "That means I'm not allowed to ban/kick them."
 
     for mod in USER_INFO:
-        mod_info = mod.__user_info__(user.id).strip()
-        if mod_info:
-            text += "\n\n" + mod_info
+        if mod.__mod_name__ == "Users":
+            continue
 
-    update.effective_message.reply_text(text, parse_mode=ParseMode.HTML)
+        try:
+            mod_info = mod.__user_info__(user.id)
+        except TypeError:
+            mod_info = mod.__user_info__(user.id, chat.id)
+        if mod_info:
+            text += "\n" + mod_info
+
+    update.effective_message.reply_text(text, parse_mode=ParseMode.HTML, disable_web_page_preview=True)
+
 
 @run_async
 def echo(bot: Bot, update: Update):
