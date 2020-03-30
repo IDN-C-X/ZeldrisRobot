@@ -83,7 +83,7 @@ __mod_name__ = "AFK"
 
 AFK_HANDLER = DisableAbleCommandHandler("afk", afk)
 AFK_REGEX_HANDLER = MessageHandler(Filters.regex("(?i)brb"), afk)
-NO_AFK_HANDLER = MessageHandler(Filters.all & Filters.group, no_longer_afk)
+NO_AFK_HANDLER = MessageHandler(Filters.all & Filters.group & ~Filters.update.edited_message, no_longer_afk)
 AFK_REPLY_HANDLER = MessageHandler(Filters.entity(MessageEntity.MENTION) | Filters.entity(MessageEntity.TEXT_MENTION),
                                    reply_afk)
 
