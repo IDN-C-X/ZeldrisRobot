@@ -19,9 +19,9 @@ from skylee.modules.helper_funcs.chat_status import is_user_admin
 from skylee.modules.helper_funcs.misc import paginate_modules
 
 PM_START_TEXT = """
-Hey there!, my name is sкyℓєє. If you have any questions on how to use me, Click Help button!
+Hey there! my name is sкyℓєє. If you have any questions on how to use me, Click Help button!
 
-I'm group manager bot made with 🧡 by [this person](tg://user?id=894380120). I'm built in python3, using the \
+I'm group manager bot made with 🧡 by [This Guy](tg://user?id=894380120). I'm built in python3, using the \
 python-telegram-bot library, and am fully opensource - you can find what makes me tick \
 [here](www.github.com/starry69/skyleebot)!
 
@@ -29,7 +29,7 @@ Wanna Add me to your Group? Just click the button below!
 """
 
 buttons = [[
-InlineKeyboardButton(text="Add me to Group 👥", url="t.me/skylee_bot?startgroup=true"),
+InlineKeyboardButton(text="Add to Group 👥", url="t.me/skylee_bot?startgroup=true"),
 InlineKeyboardButton(text="Updates 📢", url="https://t.me/skyleeupdates")
                   ]]
                   

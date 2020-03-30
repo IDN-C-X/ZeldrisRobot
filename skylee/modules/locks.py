@@ -298,7 +298,7 @@ def build_lock_message(chat_id):
 		# Building lock list string
 		for x in locklist:
 			res += "\n - {}".format(x)
-	res += "\n\n*" + "These are current permission in this Chat:" + "*"
+	res += "\n\n*" + "These are current chat permissions:" + "*"
 	for x in permslist:
 		res += "\n - {}".format(x)
 	return res
@@ -367,6 +367,10 @@ eg:
 Locking urls will auto-delete all messages with urls which haven't been whitelisted, locking stickers will restrict all \
 non-admin users from sending stickers, etc.
 Locking bots will stop non-admins from adding bots to the chat.
+
+Note:
+ - Unlocking permission *info* will allow members (non-admins) to change the group information, such as the description or the group name
+ - Unlocking permission *pin* will allow members (non-admins) to pinned a message in a group
 """
 
 __mod_name__ = "Locks"

@@ -21,13 +21,14 @@ from skylee.modules.log_channel import loggable
 @can_promote
 @user_admin
 @loggable
-def promote(bot: Bot, update: Update, args: List[str]) -> str:
+def promote(update, context):
     chat_id = update.effective_chat.id
     message = update.effective_message  # type: Optional[Message]
     chat = update.effective_chat  # type: Optional[Chat]
     user = update.effective_user  # type: Optional[User]
-    
-    if user_can_promote(chat, user, bot.id) == False:
+    args = context.args
+
+    if user_can_promote(chat, user, context.bot.id) == False:
     	message.reply_text("You don't have enough rights to promote someone!")
     	return ""
     	
@@ -41,14 +42,14 @@ def promote(bot: Bot, update: Update, args: List[str]) -> str:
         message.reply_text("How am I meant to promote someone that's already an admin?")
         return ""
 
-    if user_id == bot.id:
+    if user_id == context.bot.id:
         message.reply_text("I can't promote myself! Get an admin to do it for me.")
         return ""
 
     # set same perms as bot - bot can't assign higher perms than itself!
-    bot_member = chat.get_member(bot.id)
+    bot_member = chat.get_member(context.bot.id)
 
-    bot.promoteChatMember(chat_id, user_id,
+    context.bot.promoteChatMember(chat_id, user_id,
                           can_change_info=bot_member.can_change_info,
                           can_post_messages=bot_member.can_post_messages,
                           can_edit_messages=bot_member.can_edit_messages,
@@ -71,12 +72,13 @@ def promote(bot: Bot, update: Update, args: List[str]) -> str:
 @can_promote
 @user_admin
 @loggable
-def demote(bot: Bot, update: Update, args: List[str]) -> str:
+def demote(update, context):
     chat = update.effective_chat  # type: Optional[Chat]
     message = update.effective_message  # type: Optional[Message]
     user = update.effective_user  # type: Optional[User]
-    
-    if user_can_promote(chat, user, bot.id) == False:
+    args = context.args
+
+    if user_can_promote(chat, user, context.bot.id) == False:
     	message.reply_text("You don't have enough rights to demote someone!")
     	return ""
 
@@ -94,12 +96,12 @@ def demote(bot: Bot, update: Update, args: List[str]) -> str:
         message.reply_text("I Can't demote someone who wasna't promoted!")
         return ""
 
-    if user_id == bot.id:
+    if user_id == context.bot.id:
         message.reply_text("I can't demote myself! Get an admin to do it for me.")
         return ""
 
     try:
-        bot.promoteChatMember(int(chat.id), int(user_id),
+        context.bot.promoteChatMember(int(chat.id), int(user_id),
                               can_change_info=False,
                               can_post_messages=False,
                               can_edit_messages=False,
@@ -126,7 +128,8 @@ def demote(bot: Bot, update: Update, args: List[str]) -> str:
 @can_pin
 @user_admin
 @loggable
-def pin(bot: Bot, update: Update, args: List[str]) -> str:
+def pin(update, context):
+    args = context.args
     user = update.effective_user  # type: Optional[User]
     chat = update.effective_chat  # type: Optional[Chat]
     message = update.effective_message  # type: Optional[Message]
@@ -135,7 +138,7 @@ def pin(bot: Bot, update: Update, args: List[str]) -> str:
 
     prev_message = update.effective_message.reply_to_message
     
-    if user_can_pin(chat, user, bot.id) == False:
+    if user_can_pin(chat, user, context.bot.id) == False:
     	message.reply_text("You don't have enough rights to pin a message!")
     	return ""
 
@@ -145,7 +148,7 @@ def pin(bot: Bot, update: Update, args: List[str]) -> str:
 
     if prev_message and is_group:
         try:
-            bot.pinChatMessage(chat.id, prev_message.message_id, disable_notification=is_silent)
+            context.bot.pinChatMessage(chat.id, prev_message.message_id, disable_notification=is_silent)
         except BadRequest as excp:
             if excp.message == "Chat_not_modified":
                 pass
@@ -163,17 +166,18 @@ def pin(bot: Bot, update: Update, args: List[str]) -> str:
 @can_pin
 @user_admin
 @loggable
-def unpin(bot: Bot, update: Update) -> str:
+def unpin(update, context):
+    args = context.args
     chat = update.effective_chat
     user = update.effective_user  # type: Optional[User]
     message = update.effective_message  # type: Optional[Message]
     
-    if user_can_pin(chat, user, bot.id) == False:
+    if user_can_pin(chat, user, context.bot.id) == False:
     	message.reply_text("You don't have enough rights to unpin a message!")
     	return ""
 
     try:
-        bot.unpinChatMessage(chat.id)
+        context.bot.unpinChatMessage(chat.id)
     except BadRequest as excp:
         if excp.message == "Chat_not_modified":
             pass
@@ -189,14 +193,14 @@ def unpin(bot: Bot, update: Update) -> str:
 @run_async
 @bot_admin
 @user_admin
-def invite(bot: Bot, update: Update):
+def invite(update, context):
     chat = update.effective_chat  # type: Optional[Chat]
     if chat.username:
         update.effective_message.reply_text(chat.username)
     elif chat.type == chat.SUPERGROUP or chat.type == chat.CHANNEL:
-        bot_member = chat.get_member(bot.id)
+        bot_member = chat.get_member(context.bot.id)
         if bot_member.can_invite_users:
-            invitelink = bot.exportChatInviteLink(chat.id)
+            invitelink = context.bot.exportChatInviteLink(chat.id)
             update.effective_message.reply_text(invitelink)
         else:
             update.effective_message.reply_text("I don't have access to the invite link, try changing my permissions!")
@@ -205,7 +209,7 @@ def invite(bot: Bot, update: Update):
 
 
 @run_async
-def adminlist(bot: Bot, update: Update):
+def adminlist(update, context):
     administrators = update.effective_chat.get_administrators()
     text = "Admins in *{}*:".format(update.effective_chat.title or "this chat")
     for admin in administrators:
@@ -232,8 +236,8 @@ def adminlist(bot: Bot, update: Update):
 @bot_admin
 @can_promote
 @user_admin
-def set_title(bot: Bot, update: Update, args: List[str]):
-
+def set_title(update, context):
+    args = context.args
     chat = update.effective_chat
     message = update.effective_message
 
@@ -255,7 +259,7 @@ def set_title(bot: Bot, update: Update, args: List[str]):
         message.reply_text("Can't set title for non-admins!\nPromote them first to set custom title!")
         return
 
-    if user_id == bot.id:
+    if user_id == context.bot.id:
         message.reply_text("I can't set my own title myself! Get the one who made me admin to do it for me.")
         return
 
@@ -270,13 +274,11 @@ def set_title(bot: Bot, update: Update, args: List[str]):
     status = result.json()["ok"]
 
     if status == True:
-        bot.sendMessage(chat.id, "Sucessfully set title for <code>{}</code> to <code>{}</code>!".format(user_member.user.first_name or user_id, title[:16]), parse_mode=ParseMode.HTML)
+        context.bot.sendMessage(chat.id, "Sucessfully set title for <code>{}</code> to <code>{}</code>!".format(user_member.user.first_name or user_id, title[:16]), parse_mode=ParseMode.HTML)
     else:
         description = result.json()["description"]
         if description == "Bad Request: not enough rights to change custom title of the user":
             message.reply_text("I can't set custom title for admins that I didn't promote!")
-
-
 
 
 def __chat_settings__(chat_id, user_id):
@@ -285,13 +287,11 @@ def __chat_settings__(chat_id, user_id):
 
 
 __help__ = """
- - /adminlist: list of admins in the chat
-
 Lazy to promote or demote someone for admins? Want to see basic information about chat? \
 All stuff about chatroom such as admin lists, pinning or grabbing an invite link can be \
 done easily using the bot.
 
- - /staff: Same as /adminlist
+ - /adminlist: list of admins in the chat
 
 *Admin only:*
  - /pin: Silently pins the message replied to - add 'loud','notify' or `violent` to give notificaton to users.
