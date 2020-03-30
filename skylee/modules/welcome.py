@@ -79,7 +79,7 @@ def send(update, message, keyboard, backup_message):
 
 
 @run_async
-def new_member(bot: Bot, update: Update):
+def new_member(update, context):
     chat = update.effective_chat  # type: Optional[Chat]
     user = update.effective_user  # type: Optional[User]
     msg = update.effective_message # type: Optional[Message]
@@ -99,9 +99,9 @@ def new_member(bot: Bot, update: Update):
                 continue
 
             # Make bot greet admins
-            elif new_mem.id == bot.id:
+            elif new_mem.id == context.bot.id:
                 update.effective_message.reply_text("Hey {}, I'm {}! Thank you for adding me to {}" 
-                " and be sure to check /help in PM for more commands and tricks!".format(user.first_name, bot.first_name, chat_name))
+                " and be sure to join our [channel](t.me/skyleeupdates) to know more about updates and tricks!".format(user.first_name, bot.first_name, chat_name))
 
             else:
                 # If welcome message is media, send with appropriate function
@@ -157,7 +157,7 @@ def new_member(bot: Bot, update: Update):
                     msg.reply_text("{},\nClick the button below to prove you're human".format(new_join_mem),
                          reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton(text="Yes, I'm a human", 
                          callback_data="user_join_({})".format(new_mem.id))]]), parse_mode=ParseMode.MARKDOWN)
-                    bot.restrict_chat_member(chat.id, new_mem.id, 
+                    context.bot.restrict_chat_member(chat.id, new_mem.id, 
                                              can_send_messages=False, 
                                              can_send_media_messages=False, 
                                              can_send_other_messages=False, 
@@ -165,7 +165,7 @@ def new_member(bot: Bot, update: Update):
         prev_welc = sql.get_clean_pref(chat.id)
         if prev_welc:
             try:
-                bot.delete_message(chat.id, prev_welc)
+                context.bot.delete_message(chat.id, prev_welc)
             except BadRequest as excp:
                 pass
 
@@ -173,7 +173,7 @@ def new_member(bot: Bot, update: Update):
                 sql.set_clean_welcome(chat.id, sent.message_id)
 
 @run_async
-def left_member(bot: Bot, update: Update):
+def left_member(update, context):
     chat = update.effective_chat  # type: Optional[Chat]
     should_goodbye, cust_goodbye, goodbye_type = sql.get_gdbye_pref(chat.id)
     cust_goodbye = markdown_to_html(cust_goodbye)
@@ -181,7 +181,7 @@ def left_member(bot: Bot, update: Update):
         left_mem = update.effective_message.left_chat_member
         if left_mem:
             # Ignore bot being kicked
-            if left_mem.id == bot.id:
+            if left_mem.id == context.bot.id:
                 return
 
             # Give the owner a special goodbye
@@ -226,8 +226,9 @@ def left_member(bot: Bot, update: Update):
 
 @run_async
 @user_admin
-def welcome(bot: Bot, update: Update, args: List[str]):
+def welcome(update, context):
     chat = update.effective_chat  # type: Optional[Chat]
+    args = context.args
     # if no args, show current replies.
     if len(args) == 0 or args[0].lower() == "noformat":
         noformat = args and args[0].lower() == "noformat"
@@ -271,8 +272,9 @@ def welcome(bot: Bot, update: Update, args: List[str]):
 
 @run_async
 @user_admin
-def goodbye(bot: Bot, update: Update, args: List[str]):
+def goodbye(update, context):
     chat = update.effective_chat  # type: Optional[Chat]
+    args = context.args
 
     if len(args) == 0 or args[0] == "noformat":
         noformat = args and args[0] == "noformat"
@@ -318,7 +320,7 @@ def goodbye(bot: Bot, update: Update, args: List[str]):
 @run_async
 @user_admin
 @loggable
-def set_welcome(bot: Bot, update: Update) -> str:
+def set_welcome(update, context) -> str:
     chat = update.effective_chat  # type: Optional[Chat]
     user = update.effective_user  # type: Optional[User]
     msg = update.effective_message  # type: Optional[Message]
@@ -342,7 +344,7 @@ def set_welcome(bot: Bot, update: Update) -> str:
 @run_async
 @user_admin
 @loggable
-def reset_welcome(bot: Bot, update: Update) -> str:
+def reset_welcome(update, context) -> str:
     chat = update.effective_chat  # type: Optional[Chat]
     user = update.effective_user  # type: Optional[User]
     sql.set_custom_welcome(chat.id, sql.DEFAULT_WELCOME, sql.Types.TEXT)
@@ -357,7 +359,7 @@ def reset_welcome(bot: Bot, update: Update) -> str:
 @run_async
 @user_admin
 @loggable
-def set_goodbye(bot: Bot, update: Update) -> str:
+def set_goodbye(update, context) -> str:
     chat = update.effective_chat  # type: Optional[Chat]
     user = update.effective_user  # type: Optional[User]
     msg = update.effective_message  # type: Optional[Message]
@@ -379,7 +381,7 @@ def set_goodbye(bot: Bot, update: Update) -> str:
 @run_async
 @user_admin
 @loggable
-def reset_goodbye(bot: Bot, update: Update) -> str:
+def reset_goodbye(update, context) -> str:
     chat = update.effective_chat  # type: Optional[Chat]
     user = update.effective_user  # type: Optional[User]
     sql.set_custom_gdbye(chat.id, sql.DEFAULT_GOODBYE, sql.Types.TEXT)
@@ -393,10 +395,11 @@ def reset_goodbye(bot: Bot, update: Update) -> str:
 @run_async
 @user_admin
 @loggable
-def welcomemute(bot: Bot, update: Update, args: List[str]) -> str:
+def welcomemute(update, context) -> str:
     chat = update.effective_chat  # type: Optional[Chat]
     user = update.effective_user  # type: Optional[User]
     msg = update.effective_message # type: Optional[Message]
+    args = context.args
 
     if len(args) >= 1:
         if  args[0].lower() in ("off", "no"):
@@ -436,9 +439,10 @@ def welcomemute(bot: Bot, update: Update, args: List[str]) -> str:
 @run_async
 @user_admin
 @loggable
-def clean_welcome(bot: Bot, update: Update, args: List[str]) -> str:
+def clean_welcome(update, context) -> str:
     chat = update.effective_chat  # type: Optional[Chat]
     user = update.effective_user  # type: Optional[User]
+    args = context.args
 
     if not args:
         clean_pref = sql.get_clean_pref(chat.id)
@@ -470,7 +474,7 @@ def clean_welcome(bot: Bot, update: Update, args: List[str]) -> str:
         return ""
 
 @run_async
-def user_button(bot: Bot, update: Update):
+def user_button(update, context):
     chat = update.effective_chat  # type: Optional[Chat]
     user = update.effective_user  # type: Optional[User]
     query = update.callback_query  # type: Optional[CallbackQuery]
@@ -481,11 +485,11 @@ def user_button(bot: Bot, update: Update):
 
     if join_user == user.id:
         query.answer(text="Yus! You're a human, Unmuted!")
-        bot.restrict_chat_member(chat.id, user.id, can_send_messages=True, 
+        context.bot.restrict_chat_member(chat.id, user.id, can_send_messages=True, 
                                                    can_send_media_messages=True, 
                                                    can_send_other_messages=True, 
                                                    can_add_web_page_previews=True)
-        bot.deleteMessage(chat.id, message.message_id)
+        context.bot.deleteMessage(chat.id, message.message_id)
         db_checks
     else:
         query.answer(text="You're not allowed to do this!")
@@ -517,7 +521,7 @@ WELC_HELP_TXT = "Your group's welcome/goodbye messages can be personalised in mu
 
 @run_async
 @user_admin
-def welcome_help(bot: Bot, update: Update):
+def welcome_help(update, context):
     update.effective_message.reply_text(WELC_HELP_TXT, parse_mode=ParseMode.MARKDOWN)
 
 

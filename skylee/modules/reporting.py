@@ -4,7 +4,7 @@ from typing import Optional, List
 from telegram import Message, Chat, Update, Bot, User, ParseMode
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.error import BadRequest, Unauthorized
-from telegram.ext import CommandHandler, RegexHandler, run_async, Filters
+from telegram.ext import CommandHandler, MessageHandler, run_async, Filters
 from telegram.utils.helpers import mention_html
 
 from skylee import dispatcher, LOGGER
@@ -17,9 +17,10 @@ REPORT_GROUP = 5
 
 @run_async
 @user_admin
-def report_setting(bot: Bot, update: Update, args: List[str]):
+def report_setting(update, context):
     chat = update.effective_chat  # type: Optional[Chat]
     msg = update.effective_message  # type: Optional[Message]
+    args = context.args
 
     if chat.type == chat.PRIVATE:
         if len(args) >= 1:
@@ -52,7 +53,7 @@ def report_setting(bot: Bot, update: Update, args: List[str]):
 @run_async
 @user_not_admin
 @loggable
-def report(bot: Bot, update: Update) -> str:
+def report(update, context) -> str:
     message = update.effective_message  # type: Optional[Message]
     chat = update.effective_chat  # type: Optional[Chat]
     user = update.effective_user  # type: Optional[User]
@@ -82,23 +83,23 @@ def report(bot: Bot, update: Update) -> str:
 
             should_forward = False
             keyboard = []
-            messages.reply_text(reported, reply_markup=keyboard, parse_mode=ParseMode.HTML)
+            messages.reply_text(reported, parse_mode=ParseMode.HTML)
         else:
             reported = "Reported {} to admins. I've notified the admins!".format(mention_html(reported_user.id,
-                                                                                       reported_user.first_name))
+                                                                                        reported_user.first_name))
             msg = "{} is calling for admins in \"{}\"!".format(mention_html(user.id, user.first_name),
                                                                html.escape(chat_name))
             link = ""
             should_forward = True
             keyboard = []
-            messages.reply_text(reported, reply_markup=keyboard, parse_mode=ParseMode.HTML)
+            messages.reply_text(reported, parse_mode=ParseMode.HTML)
         for admin in admin_list:
             if admin.user.is_bot:  # can't message bots
                 continue
 
             if sql.user_should_report(admin.user.id):
                 try:
-                    bot.send_message(admin.user.id, msg + link, parse_mode=ParseMode.HTML)
+                    context.bot.send_message(admin.user.id, msg + link, parse_mode=ParseMode.HTML)
                     if should_forward:
                         message.reply_to_message.forward(admin.user.id)
 
@@ -151,7 +152,7 @@ admins don't need to report, or be reported!
 """
 REPORT_HANDLER = CommandHandler("report", report, filters=Filters.group)
 SETTING_HANDLER = CommandHandler("reports", report_setting, pass_args=True)
-ADMIN_REPORT_HANDLER = RegexHandler("(?i)@admin(s)?", report)
+ADMIN_REPORT_HANDLER = MessageHandler(Filters.regex("(?i)@admin(s)?"), report)
 
 dispatcher.add_handler(REPORT_HANDLER, REPORT_GROUP)
 dispatcher.add_handler(ADMIN_REPORT_HANDLER, REPORT_GROUP)

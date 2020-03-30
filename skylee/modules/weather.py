@@ -8,7 +8,8 @@ from skylee import dispatcher, updater, API_WEATHER as APPID
 from skylee.modules.disable import DisableAbleCommandHandler
 
 @run_async
-def weather(bot, update, args):
+def weather(update, context):
+    args = context.args
     if len(args) == 0:
         reply = f'Write a location to check the weather.'
         del_msg = update.effective_message.reply_text("{}".format(reply),

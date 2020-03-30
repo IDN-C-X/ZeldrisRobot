@@ -46,7 +46,7 @@ def check_flood(update, context) -> str:
                 " {} has been banned!".format(mention_html(user.id, user.first_name))
     try:
         keyboard = []
-        msg.reply_text(reply, reply_markup=keyboard, parse_mode=ParseMode.HTML)
+        msg.reply_text(reply, parse_mode=ParseMode.HTML)
         msg.delete()
 
         log = "<b>{}:</b>" \

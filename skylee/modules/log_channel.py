@@ -29,7 +29,11 @@ if is_module_loaded(FILENAME):
                                                                                            message.message_id)
                 log_chat = sql.get_chat_log_channel(chat.id)
                 if log_chat:
-                    send_log(context.bot, log_chat, chat.id, result)
+                   try:
+                       send_log(context.bot, log_chat, chat.id, result)
+                   except Unauthorized:
+                        sql.stop_chat_logging(chat.id)
+
             elif result == "":
                 pass
             else:
@@ -97,7 +101,7 @@ if is_module_loaded(FILENAME):
                                      chat.title or chat.first_name))
             except Unauthorized as excp:
                 if excp.message == "Forbidden: bot is not a member of the channel chat":
-                    bot.send_message(chat.id, "Successfully set log channel!")
+                    context.bot.send_message(chat.id, "Successfully set log channel!")
                 else:
                     LOGGER.exception("ERROR in setting the log channel.")
 

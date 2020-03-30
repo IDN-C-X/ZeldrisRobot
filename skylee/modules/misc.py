@@ -11,7 +11,7 @@ from telegram.ext import CommandHandler, run_async, Filters
 from telegram.utils.helpers import escape_markdown, mention_html
 
 from skylee import dispatcher, OWNER_ID, SUDO_USERS, SUPPORT_USERS, WHITELIST_USERS, BAN_STICKER
-from skylee.__main__ import STATS, USER_INFO
+from skylee.__main__ import STATS, USER_INFO, GDPR
 from skylee.modules.disable import DisableAbleCommandHandler
 from skylee.modules.helper_funcs.extraction import extract_user
 from skylee.modules.helper_funcs.filters import CustomFilters

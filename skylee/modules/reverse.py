@@ -22,13 +22,14 @@ opener.addheaders = [('User-agent', useragent)]
 
 
 @run_async
-def reverse(bot: Bot, update: Update, args: List[str]):
+def reverse(update, context):
     if os.path.isfile("okgoogle.png"):
         os.remove("okgoogle.png")
 
     msg = update.effective_message
     chat_id = update.effective_chat.id
     rtmid = msg.message_id
+    args = context.args
     imagename = "okgoogle.png"
 
     reply = msg.reply_to_message
@@ -42,7 +43,7 @@ def reverse(bot: Bot, update: Update, args: List[str]):
         else:
             msg.reply_text("Reply to an image or sticker to lookup.")
             return
-        image_file = bot.get_file(file_id)
+        image_file = context.bot.get_file(file_id)
         image_file.download(imagename)
         if args:
             txt = args[0]
@@ -92,10 +93,10 @@ def reverse(bot: Bot, update: Update, args: List[str]):
         fetchUrl = response.headers['Location']
 
         if response != 400:
-            xx = bot.send_message(chat_id, "Image was successfully uploaded to Google."
+            xx = context.bot.send_message(chat_id, "Image was successfully uploaded to Google."
                                   "\nParsing source now. Maybe.", reply_to_message_id=rtmid)
         else:
-            xx = bot.send_message(chat_id, "Google told me to go away.", reply_to_message_id=rtmid)
+            xx = context.bot.send_message(chat_id, "Google told me to go away.", reply_to_message_id=rtmid)
             return
 
         os.remove(imagename)
@@ -123,7 +124,7 @@ def reverse(bot: Bot, update: Update, args: List[str]):
             lmao = InputMediaPhoto(media=str(link))
             imglinks.append(lmao)
 
-        bot.send_media_group(chat_id=chat_id, media=imglinks, reply_to_message_id=rtmid)
+        context.bot.send_media_group(chat_id=chat_id, media=imglinks, reply_to_message_id=rtmid)
         xx.edit_text(f"[{guess}]({fetchUrl})\n[Visually similar images]({imgspage})", parse_mode='Markdown', disable_web_page_preview=True)
     except TelegramError as e:
         print(e)

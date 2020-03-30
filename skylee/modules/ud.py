@@ -7,7 +7,7 @@ from skylee import dispatcher
 from requests import get
 
 @run_async
-def ud(bot: Bot, update: Update):
+def ud(update, context):
     try:
         message = update.effective_message
         text = message.text[len('/ud '):]
