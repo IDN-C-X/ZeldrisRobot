@@ -10,7 +10,7 @@ from telegram.ext import MessageHandler, Filters, CommandHandler, run_async, Cal
 from telegram.utils.helpers import mention_html
 
 import skylee.modules.sql.welcome_sql as sql
-from skylee import dispatcher, OWNER_ID, LOGGER
+from skylee import dispatcher, OWNER_ID, LOGGER, MESSAGE_DUMP
 from skylee.modules.helper_funcs.chat_status import user_admin, is_user_ban_protected
 from skylee.modules.helper_funcs.misc import build_keyboard, revert_buttons
 from skylee.modules.helper_funcs.msg_types import get_welcome_type
@@ -101,8 +101,13 @@ def new_member(update, context):
             # Make bot greet admins
             elif new_mem.id == context.bot.id:
                 update.effective_message.reply_text("Hey {}, I'm {}! Thank you for adding me to {}" 
-                " and be sure to join our [channel](t.me/skyleeupdates) to know more about updates and tricks!".format(user.first_name, bot.first_name, chat_name))
+                " and be sure to join our channel: @skyleeupdates  to know more about updates and tricks!".format(user.first_name, context.bot.first_name, chat_name))
 
+                context.bot.send_message(
+                    MESSAGE_DUMP,
+                    "skylee have been added to {} with ID: <pre>{}</pre>".format(
+                        chat.title, chat.id),
+                    parse_mode=ParseMode.HTML)
             else:
                 # If welcome message is media, send with appropriate function
                 if welc_type != sql.Types.TEXT and welc_type != sql.Types.BUTTON_TEXT:
