@@ -4,7 +4,7 @@ import re
 from typing import Optional, List
 
 from telegram import Message, Chat, Update, Bot, User, CallbackQuery
-from telegram import ParseMode, InlineKeyboardMarkup, InlineKeyboardButton
+from telegram import ParseMode, InlineKeyboardMarkup, InlineKeyboardButton, ChatPermissions
 from telegram.error import BadRequest
 from telegram.ext import MessageHandler, Filters, CommandHandler, run_async, CallbackQueryHandler
 from telegram.utils.helpers import mention_html
@@ -150,12 +150,13 @@ def new_member(update, context):
                     continue
                 #Join welcome: soft mute
                 if welc_mutes == "soft":
-                    bot.restrict_chat_member(chat.id, new_mem.id, 
+                    context.bot.restrict_chat_member(chat.id, new_mem.id,
+                     permissions=ChatPermissions(
                                              can_send_messages=True, 
                                              can_send_media_messages=False, 
                                              can_send_other_messages=False, 
                                              can_add_web_page_previews=False, 
-                                             until_date=(int(time.time() + 24 * 60 * 60)))
+                                             until_date=(int(time.time() + 24 * 60 * 60))))
                 #Join welcome: strong mute
                 if welc_mutes == "strong":
                     new_join_mem = "[{}](tg://user?id={})".format(new_mem.first_name, user.id)
@@ -163,10 +164,11 @@ def new_member(update, context):
                          reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton(text="Yes, I'm a human", 
                          callback_data="user_join_({})".format(new_mem.id))]]), parse_mode=ParseMode.MARKDOWN)
                     context.bot.restrict_chat_member(chat.id, new_mem.id, 
+                    permissions=ChatPermissions(
                                              can_send_messages=False, 
                                              can_send_media_messages=False, 
                                              can_send_other_messages=False, 
-                                             can_add_web_page_previews=False)
+                                             can_add_web_page_previews=False))
         prev_welc = sql.get_clean_pref(chat.id)
         if prev_welc:
             try:
@@ -490,10 +492,10 @@ def user_button(update, context):
 
     if join_user == user.id:
         query.answer(text="Yus! You're a human, Unmuted!")
-        context.bot.restrict_chat_member(chat.id, user.id, can_send_messages=True, 
+        context.bot.restrict_chat_member(chat.id, user.id, permissions=ChatPermissions(can_send_messages=True, 
                                                    can_send_media_messages=True, 
                                                    can_send_other_messages=True, 
-                                                   can_add_web_page_previews=True)
+                                                   can_add_web_page_previews=True))
         context.bot.deleteMessage(chat.id, message.message_id)
         db_checks
     else:
