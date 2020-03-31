@@ -2,6 +2,7 @@ import html
 from typing import Optional, List
 
 from telegram import Message, Chat, Update, Bot, User
+from telegram import ChatPermissions
 from telegram.error import BadRequest
 from telegram.ext import CommandHandler, Filters
 from telegram.ext.dispatcher import run_async
@@ -18,12 +19,13 @@ from skylee.modules.log_channel import loggable
 @bot_admin
 @user_admin
 @loggable
-def mute(bot: Bot, update: Update, args: List[str]) -> str:
+def mute(update, context):
     chat = update.effective_chat  # type: Optional[Chat]
     user = update.effective_user  # type: Optional[User]
     message = update.effective_message  # type: Optional[Message]
+    args = context.args
     
-    if user_can_ban(chat, user, bot.id) == False:
+    if user_can_ban(chat, user, context.bot.id) == False:
     	message.reply_text("You don't have enough rights to restrict someone from talking!")
     	return ""
 
@@ -32,7 +34,7 @@ def mute(bot: Bot, update: Update, args: List[str]) -> str:
         message.reply_text("You'll need to either give me a username to mute, or reply to someone to be muted.")
         return ""
 
-    if user_id == bot.id:
+    if user_id == context.bot.id:
         message.reply_text("I'm not muting myself!")
         return ""
 
@@ -43,7 +45,7 @@ def mute(bot: Bot, update: Update, args: List[str]) -> str:
             message.reply_text("Afraid I can't stop an admin from talking!")
 
         elif member.can_send_messages is None or member.can_send_messages:
-            bot.restrict_chat_member(chat.id, user_id, can_send_messages=False)
+            context.bot.restrict_chat_member(chat.id, user_id, permissions=ChatPermissions(can_send_messages=False))
             message.reply_text("👍🏻 muted! 🤐")
             return "<b>{}:</b>" \
                    "\n#MUTE" \
@@ -64,12 +66,13 @@ def mute(bot: Bot, update: Update, args: List[str]) -> str:
 @bot_admin
 @user_admin
 @loggable
-def unmute(bot: Bot, update: Update, args: List[str]) -> str:
+def unmute(update, context):
     chat = update.effective_chat  # type: Optional[Chat]
     user = update.effective_user  # type: Optional[User]
     message = update.effective_message  # type: Optional[Message]
+    args = context.args
     
-    if user_can_ban(chat, user, bot.id) == False:
+    if user_can_ban(chat, user, context.bot.id) == False:
     	message.reply_text("You don't have enough rights to unmute people")
     	return ""
 
@@ -85,12 +88,14 @@ def unmute(bot: Bot, update: Update, args: List[str]) -> str:
                 and member.can_send_other_messages and member.can_add_web_page_previews:
             message.reply_text("This user already has the right to speak.")
         else:
-            bot.restrict_chat_member(chat.id, int(user_id),
-                                     can_send_messages=True,
-                                     can_send_media_messages=True,
-                                     can_send_other_messages=True,
-                                     can_add_web_page_previews=True)
-            message.reply_text("Unmuted!")
+            context.bot.restrict_chat_member(chat.id, int(user_id),
+                                        permissions=ChatPermissions(
+                                         can_send_messages=True,
+                                         can_send_media_messages=True,
+                                         can_send_other_messages=True,
+                                         can_add_web_page_previews=True)
+                                        )
+            message.reply_text("Yep! this user can talk.")
             return "<b>{}:</b>" \
                    "\n#UNMUTE" \
                    "\n<b>Admin:</b> {}" \
@@ -109,12 +114,13 @@ def unmute(bot: Bot, update: Update, args: List[str]) -> str:
 @can_restrict
 @user_admin
 @loggable
-def temp_mute(bot: Bot, update: Update, args: List[str]) -> str:
+def temp_mute(update, context):
     chat = update.effective_chat  # type: Optional[Chat]
     user = update.effective_user  # type: Optional[User]
     message = update.effective_message  # type: Optional[Message]
+    args = context.args
     
-    if user_can_ban(chat, user, bot.id) == False:
+    if user_can_ban(chat, user, context.bot.id) == False:
     	message.reply_text("You don't have enough rights to restrict someone from talking!")
     	return ""
 
@@ -137,7 +143,7 @@ def temp_mute(bot: Bot, update: Update, args: List[str]) -> str:
         message.reply_text("I really wish I could mute admins...")
         return ""
 
-    if user_id == bot.id:
+    if user_id == context.bot.id:
         message.reply_text("I'm not gonna MUTE myself, are you crazy?")
         return ""
 
@@ -169,7 +175,7 @@ def temp_mute(bot: Bot, update: Update, args: List[str]) -> str:
 
     try:
         if member.can_send_messages is None or member.can_send_messages:
-            bot.restrict_chat_member(chat.id, user_id, until_date=mutetime, can_send_messages=False)
+            context.bot.restrict_chat_member(chat.id, user_id, until_date=mutetime, permissions=ChatPermissions(can_send_messages=False))
             message.reply_text("shut up! 😠 Muted for {}!".format(time_val))
             return log
         else:
@@ -202,7 +208,7 @@ An example of temporarily mute someone:
 `/tmute @username 2h`; This mutes a user for 2 hours.
 """
 
-__mod_name__ = "Mute"
+__mod_name__ = "Muting"
 
 MUTE_HANDLER = CommandHandler("mute", mute, pass_args=True, filters=Filters.group)
 UNMUTE_HANDLER = CommandHandler("unmute", unmute, pass_args=True, filters=Filters.group)
