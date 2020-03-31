@@ -161,7 +161,7 @@ def new_member(update, context):
                 if welc_mutes == "strong":
                     new_join_mem = "[{}](tg://user?id={})".format(new_mem.first_name, user.id)
                     msg.reply_text("{},\nClick the button below to prove you're human".format(new_join_mem),
-                         reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton(text="Yes, I'm a human", 
+                         reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton(text="Yus, I'm a human", 
                          callback_data="user_join_({})".format(new_mem.id))]]), parse_mode=ParseMode.MARKDOWN)
                     context.bot.restrict_chat_member(chat.id, new_mem.id, 
                     permissions=ChatPermissions(
@@ -492,7 +492,8 @@ def user_button(update, context):
 
     if join_user == user.id:
         query.answer(text="Yus! You're a human, Unmuted!")
-        context.bot.restrict_chat_member(chat.id, user.id, permissions=ChatPermissions(can_send_messages=True, 
+        context.bot.restrict_chat_member(chat.id, user.id, permissions=ChatPermissions
+                                                  (can_send_messages=True, 
                                                    can_send_media_messages=True, 
                                                    can_send_other_messages=True, 
                                                    can_add_web_page_previews=True))
