@@ -9,7 +9,7 @@ from skylee.modules.helper_funcs.filters import CustomFilters
 
 
 @run_async
-def ping(bot: Bot, update: Update):
+def ping(update, context):
     tg_api = ping3('api.telegram.org', count=4)
     google = ping3('google.com', count=4)
     text = "*Pong!*\n"
@@ -35,7 +35,7 @@ def speed_convert(size):
     return f"{round(size, 2)} {units[zero]}"
 
 @run_async
-def get_bot_ip(bot: Bot, update: Update):
+def get_bot_ip(update, context):
     """ Sends the bot's IP address, so as to be able to ssh in if necessary.
         OWNER ONLY.
     """
@@ -45,7 +45,7 @@ def get_bot_ip(bot: Bot, update: Update):
 
 
 @run_async
-def speedtst(bot: Bot, update: Update):
+def speedtst(update, context):
     test = speedtest.Speedtest()
     test.get_best_server()
     test.download()
@@ -68,4 +68,3 @@ SPEED_HANDLER = CommandHandler("speedtest", speedtst, filters=CustomFilters.sudo
 dispatcher.add_handler(IP_HANDLER)
 dispatcher.add_handler(SPEED_HANDLER)
 dispatcher.add_handler(PING_HANDLER)
-

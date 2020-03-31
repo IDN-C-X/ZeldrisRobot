@@ -82,11 +82,11 @@ def warn(user: User, chat: Chat, reason: str, message: Message, warner: User = N
                                                                   user.id, reason, num_warns, limit)
 
     try:
-        message.reply_text(reply, reply_markup=keyboard, parse_mode=ParseMode.HTML)
+        message.reply_text(reply, parse_mode=ParseMode.HTML)
     except BadRequest as excp:
         if excp.message == "Reply message not found":
             # Do not reply
-            message.reply_text(reply, reply_markup=keyboard, parse_mode=ParseMode.HTML, quote=False)
+            message.reply_text(reply, parse_mode=ParseMode.HTML, quote=False)
         else:
             raise
     return log_reason

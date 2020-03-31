@@ -13,8 +13,9 @@ from skylee.modules.helper_funcs.extraction import extract_user
 
 
 @run_async
-def about_me(bot: Bot, update: Update, args: List[str]):
+def about_me(update, context):
     message = update.effective_message  # type: Optional[Message]
+    args = context.args
     user_id = extract_user(message, args)
 
     if user_id:
@@ -35,7 +36,7 @@ def about_me(bot: Bot, update: Update, args: List[str]):
 
 
 @run_async
-def set_about_me(bot: Bot, update: Update):
+def set_about_me(update, context):
     message = update.effective_message  # type: Optional[Message]
     user_id = message.from_user.id
     text = message.text
@@ -50,8 +51,9 @@ def set_about_me(bot: Bot, update: Update):
 
 
 @run_async
-def about_bio(bot: Bot, update: Update, args: List[str]):
+def about_bio(update, context):
     message = update.effective_message  # type: Optional[Message]
+    args = context.args
 
     user_id = extract_user(message, args)
     if user_id:
@@ -72,7 +74,7 @@ def about_bio(bot: Bot, update: Update, args: List[str]):
 
 
 @run_async
-def set_about_bio(bot: Bot, update: Update):
+def set_about_bio(update, context):
     message = update.effective_message  # type: Optional[Message]
     sender = update.effective_user  # type: Optional[User]
     if message.reply_to_message:
@@ -81,7 +83,7 @@ def set_about_bio(bot: Bot, update: Update):
         if user_id == message.from_user.id:
             message.reply_text("Are you looking to change your own ... ?? That 's it.")
             return
-        elif user_id == bot.id and sender.id not in SUDO_USERS:
+        elif user_id == context.bot.id and sender.id not in SUDO_USERS:
             message.reply_text(" Only SUDO USERS can change my information.")
             return
 

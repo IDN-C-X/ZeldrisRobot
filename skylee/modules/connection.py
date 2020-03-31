@@ -116,7 +116,7 @@ def disconnect_chat(update, context):
         if disconnection_status:
             sql.disconnected_chat = update.effective_message.reply_text("Disconnected from chat!")
             #Rebuild user's keyboard
-            keyboard(bot, update)
+            keyboard(context.bot, update)
         else:
            update.effective_message.reply_text("Disconnection unsuccessfull!")
     else:
