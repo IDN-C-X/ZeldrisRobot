@@ -5,7 +5,7 @@ from telegram import MessageEntity
 from telegram.ext import Filters, MessageHandler, run_async
 
 from skylee import dispatcher
-from skylee.modules.disable import DisableAbleCommandHandler
+from skylee.modules.disable import DisableAbleCommandHandler, DisableAbleMessageHandler
 from skylee.modules.sql import afk_sql as sql
 from skylee.modules.users import get_user_id
 
@@ -82,7 +82,7 @@ When marked as AFK, any mentions will be replied to with a message to say you're
 __mod_name__ = "AFK"
 
 AFK_HANDLER = DisableAbleCommandHandler("afk", afk)
-AFK_REGEX_HANDLER = MessageHandler(Filters.regex("(?i)brb"), afk)
+AFK_REGEX_HANDLER = DisableAbleMessageHandler(Filters.regex("(?i)brb"), afk, friendly="afk")
 NO_AFK_HANDLER = MessageHandler(Filters.all & Filters.group & ~Filters.update.edited_message, no_longer_afk)
 AFK_REPLY_HANDLER = MessageHandler(Filters.entity(MessageEntity.MENTION) | Filters.entity(MessageEntity.TEXT_MENTION),
                                    reply_afk)
