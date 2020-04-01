@@ -18,23 +18,17 @@ Alternatively, [contact my reporter bot on telegram](https://t.me/YumiUzo_bot)! 
 
 Skittbot for Stickers module and memes in extras module.
 
-@1maverick1 for many stuffs.
+1maverick1 for many stuffs.
 
-@AyraHikari for weather modules and some other stuffs.
+AyraHikari for weather modules and some other stuffs.
 
-@RealAkito for reverse search modules.
+RealAkito for reverse search modules.
 
-@nitanmarcel for chat blacklist // whitelist
+MrYacha for connections module
 
-@MrYacha for connections
+ATechnoHazard for many stuffs
 
-@ATechnoHazard for many stuffs
-
-@nunopenim for webtools
-
-@corsicanu for android modules
-
-@Loli-Killer for /settitle command
+corsicanu and nunopenim for android modules
 
 Any other missing Credits can be seen in commits!
 

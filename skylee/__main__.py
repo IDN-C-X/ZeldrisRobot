@@ -385,28 +385,28 @@ def is_chat_allowed(update, context):
     if len(WHITELIST_CHATS) != 0:
         chat_id = update.effective_message.chat_id
         if chat_id not in WHITELIST_CHATS:
-            bot.send_message(chat_id=update.message.chat_id,
+            context.bot.send_message(chat_id=update.message.chat_id,
                              text='Unallowed chat! Leaving...')
             try:
-                bot.leave_chat(chat_id)
+                context.bot.leave_chat(chat_id)
             finally:
                 raise DispatcherHandlerStop
     if len(BLACKLIST_CHATS) != 0:
         chat_id = update.effective_message.chat_id
         if chat_id in BLACKLIST_CHATS:
-            bot.send_message(chat_id=update.message.chat_id,
+            context.bot.send_message(chat_id=update.message.chat_id,
                              text='Unallowed chat! Leaving...')
             try:
-                bot.leave_chat(chat_id)
+                context.bot.leave_chat(chat_id)
             finally:
                 raise DispatcherHandlerStop
     if len(WHITELIST_CHATS) != 0 and len(BLACKLIST_CHATS) != 0:
         chat_id = update.effective_message.chat_id
         if chat_id in BLACKLIST_CHATS:
-            bot.send_message(chat_id=update.message.chat_id,
+            context.bot.send_message(chat_id=update.message.chat_id,
                              text='Unallowed chat, leaving')
             try:
-                bot.leave_chat(chat_id)
+                context.bot.leave_chat(chat_id)
             finally:
                 raise DispatcherHandlerStop
     else:
