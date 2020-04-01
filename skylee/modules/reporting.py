@@ -82,8 +82,8 @@ def report(update, context) -> str:
 
 
             should_forward = False
-            keyboard = []
-            messages.reply_text(reported, parse_mode=ParseMode.HTML)
+            keyboard = None
+            messages.reply_text(reported, reply_markup=keyboard, parse_mode=ParseMode.HTML)
         else:
             reported = "Reported {} to admins. I've notified the admins!".format(mention_html(reported_user.id,
                                                                                         reported_user.first_name))
@@ -91,8 +91,8 @@ def report(update, context) -> str:
                                                                html.escape(chat_name))
             link = ""
             should_forward = True
-            keyboard = []
-            messages.reply_text(reported, parse_mode=ParseMode.HTML)
+            keyboard = None
+            messages.reply_text(reported, reply_markup=keyboard, parse_mode=ParseMode.HTML)
         for admin in admin_list:
             if admin.user.is_bot:  # can't message bots
                 continue
