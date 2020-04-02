@@ -9,9 +9,10 @@ from telegram.ext.dispatcher import run_async
 from telegram.utils.helpers import mention_html
 
 from skylee import dispatcher, LOGGER
-from skylee.modules.helper_funcs.chat_status import bot_admin, user_admin, is_user_admin, can_restrict, user_can_ban
+from skylee.modules.helper_funcs.chat_status import bot_admin, user_admin, is_user_admin, can_restrict
 from skylee.modules.helper_funcs.extraction import extract_user, extract_user_and_text
 from skylee.modules.helper_funcs.string_handling import extract_time
+from skylee.modules.helper_funcs.admin_rights import user_can_ban
 from skylee.modules.log_channel import loggable
 
 

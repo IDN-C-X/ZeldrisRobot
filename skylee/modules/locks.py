@@ -209,7 +209,7 @@ def unlock(update, context) -> str:
 
 @run_async
 @user_not_admin
-def del_lockables(update, context):
+def del_lockables(update, context) -> str:
 	chat = update.effective_chat  # type: Optional[Chat]
 	message = update.effective_message  # type: Optional[Message]
 	

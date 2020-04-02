@@ -11,8 +11,9 @@ from telegram.utils.helpers import escape_markdown, mention_html
 
 from skylee import dispatcher, TOKEN
 from skylee.modules.disable import DisableAbleCommandHandler
-from skylee.modules.helper_funcs.chat_status import bot_admin, can_promote, user_admin, can_pin, user_can_promote, user_can_pin
+from skylee.modules.helper_funcs.chat_status import bot_admin, can_promote, user_admin, can_pin
 from skylee.modules.helper_funcs.extraction import extract_user, extract_user_and_text
+from skylee.modules.helper_funcs.admin_rights import user_can_pin, user_can_promote
 from skylee.modules.log_channel import loggable
 
 
