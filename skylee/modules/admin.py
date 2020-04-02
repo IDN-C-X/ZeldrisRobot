@@ -40,11 +40,11 @@ def promote(update, context):
 
     user_member = chat.get_member(user_id)
     if user_member.status == 'administrator' or user_member.status == 'creator':
-        message.reply_text("How am I meant to promote someone that's already an admin?")
+        message.reply_text("Bruh! this guy is already an admin?")
         return ""
 
     if user_id == context.bot.id:
-        message.reply_text("I can't promote myself! Get an admin to do it for me.")
+        message.reply_text("I wish, if i could promote myself!")
         return ""
 
     # set same perms as bot - bot can't assign higher perms than itself!
@@ -90,15 +90,15 @@ def demote(update, context):
 
     user_member = chat.get_member(user_id)
     if user_member.status == 'creator':
-        message.reply_text("i can't demote someone who created this group.... 🙄")
+        message.reply_text("I'm not gonna demote Creator this group.... 🙄")
         return ""
 
     if not user_member.status == 'administrator':
-        message.reply_text("I Can't demote someone who wasna't promoted!")
+        message.reply_text("How I'm supposed to demote someone who wasn't promoted!")
         return ""
 
     if user_id == context.bot.id:
-        message.reply_text("I can't demote myself! Get an admin to do it for me.")
+        message.reply_text("Yeahhh... Not gonna demote myself!")
         return ""
 
     try:
@@ -119,7 +119,7 @@ def demote(update, context):
                                           mention_html(user_member.user.id, user_member.user.first_name))
 
     except BadRequest:
-        message.reply_text("Could not demote. I might not be admin, or the admin status was appointed by another "
+        message.reply_text("Failed to demote. I might not be admin, or the admin status was appointed by another "
                            "user, so I can't act upon them!")
         return ""
 

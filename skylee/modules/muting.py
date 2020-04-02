@@ -36,14 +36,14 @@ def mute(update, context):
         return ""
 
     if user_id == context.bot.id:
-        message.reply_text("I'm not muting myself!")
+        message.reply_text("Yeahh... I'm not muting myself!")
         return ""
 
     member = chat.get_member(int(user_id))
 
     if member:
         if is_user_admin(chat, user_id, member=member):
-            message.reply_text("Afraid I can't stop an admin from talking!")
+            message.reply_text("Well damn i can't stop an admin from talking!")
 
         elif member.can_send_messages is None or member.can_send_messages:
             context.bot.restrict_chat_member(chat.id, user_id, permissions=ChatPermissions(can_send_messages=False))
@@ -56,7 +56,7 @@ def mute(update, context):
                                               mention_html(member.user.id, member.user.first_name))
 
         else:
-            message.reply_text("This user is already muted!")
+            message.reply_text("This user is already taped 🤐")
     else:
         message.reply_text("This user isn't in the chat!")
 
@@ -96,7 +96,7 @@ def unmute(update, context):
                                          can_send_other_messages=True,
                                          can_add_web_page_previews=True)
                                         )
-            message.reply_text("Yep! this user can talk.")
+            message.reply_text("Yep! this user can start talking again...")
             return "<b>{}:</b>" \
                    "\n#UNMUTE" \
                    "\n<b>Admin:</b> {}" \
@@ -177,7 +177,7 @@ def temp_mute(update, context):
     try:
         if member.can_send_messages is None or member.can_send_messages:
             context.bot.restrict_chat_member(chat.id, user_id, until_date=mutetime, permissions=ChatPermissions(can_send_messages=False))
-            message.reply_text("shut up! 😠 Muted for {}!".format(time_val))
+            message.reply_text("shut up! 🤐 Muted for {}!".format(time_val))
             return log
         else:
             message.reply_text("This user is already muted.")
@@ -185,7 +185,7 @@ def temp_mute(update, context):
     except BadRequest as excp:
         if excp.message == "Reply message not found":
             # Do not reply
-            message.reply_text("shut up! 😠 Muted for {}!".format(time_val), quote=False)
+            message.reply_text("shut up! 🤐 Muted for {}!".format(time_val), quote=False)
             return log
         else:
             LOGGER.warning(update)

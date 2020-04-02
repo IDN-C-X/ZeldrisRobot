@@ -271,7 +271,7 @@ def welcome(update, context):
 
         elif args[0].lower() in ("off", "no"):
             sql.set_welc_preference(str(chat.id), False)
-            update.effective_message.reply_text("I'm sulking, not saying hello anymore.")
+            update.effective_message.reply_text("I'm sulking, not gonna greet anymore.")
 
         else:
             # idek what you're writing, say yes or no

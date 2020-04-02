@@ -34,7 +34,7 @@ def ban(update, context):
     user_id, reason = extract_user_and_text(message, args)
 
     if not user_id:
-        message.reply_text("You don't seem to be referring to a user.")
+        message.reply_text("Dude! atleast refer some user to ban...")
         return ""
 
     try:
@@ -47,11 +47,11 @@ def ban(update, context):
             raise
 
     if is_user_ban_protected(chat, user_id, member):
-        message.reply_text("Why should i ban someone who is admin!...")
+        message.reply_text("Wow! let's start banning Admins themselves?...")
         return ""
 
     if user_id == context.bot.id:
-        message.reply_text("I'm not gonna BAN myself, are you crazy?")
+        message.reply_text("I'm not gonna BAN myself, are you crazy or wot?")
         return ""
 
     log = "<b>{}:</b>" \
@@ -67,7 +67,7 @@ def ban(update, context):
     try:
         chat.kick_member(user_id)
         #context.bot.send_sticker(chat.id, BAN_STICKER)  # banhammer marie sticker
-        context.bot.sendMessage(chat.id, "Banned! {}.".format(mention_html(member.user.id, member.user.first_name)), parse_mode=ParseMode.HTML)
+        context.bot.sendMessage(chat.id, "Goodbye {}.".format(mention_html(member.user.id, member.user.first_name)), parse_mode=ParseMode.HTML)
         return log
 
     except BadRequest as excp:
@@ -102,7 +102,7 @@ def temp_ban(update, context):
     user_id, reason = extract_user_and_text(message, args)
 
     if not user_id:
-        message.reply_text("You don't seem to be referring to a user.")
+        message.reply_text("Dude! atleast refer some user to ban...")
         return ""
 
     try:
@@ -115,11 +115,11 @@ def temp_ban(update, context):
             raise
 
     if is_user_ban_protected(chat, user_id, member):
-        message.reply_text("Why should i ban someone who is admin!...")
+        message.reply_text("Wow! let's start banning Admins themselves?...")
         return ""
 
     if user_id == context.bot.id:
-        message.reply_text("I'm not gonna BAN myself, are you crazy?")
+        message.reply_text("I'm not gonna BAN myself, are you crazy or wot?")
         return ""
 
     if not reason:
@@ -160,7 +160,7 @@ def temp_ban(update, context):
     except BadRequest as excp:
         if excp.message == "Reply message not found":
             # Do not reply
-            message.reply_text("Banned! User will be banned for {}.".format(time_val), quote=False)
+            message.reply_text("Goodbye.. we'll meet after {}.".format(time_val), quote=False)
             return log
         else:
             LOGGER.warning(update)
@@ -201,7 +201,7 @@ def kick(update, context):
             raise
 
     if is_user_ban_protected(chat, user_id):
-        message.reply_text("I really wish I could kick admins...")
+        message.reply_text("Yeahh... let's start kicking admins?")
         return ""
 
     if user_id == context.bot.id:
@@ -211,7 +211,7 @@ def kick(update, context):
     res = chat.unban_member(user_id)  # unban on current user = kick
     if res:
         #context.bot.send_sticker(chat.id, BAN_STICKER)  # banhammer marie sticker
-        context.bot.sendMessage(chat.id, "Kicked! {}.".format(mention_html(member.user.id, member.user.first_name)), parse_mode=ParseMode.HTML)
+        context.bot.sendMessage(chat.id, "Getout! {}.".format(mention_html(member.user.id, member.user.first_name)), parse_mode=ParseMode.HTML)
         log = "<b>{}:</b>" \
               "\n#KICKED" \
               "\n<b>Admin:</b> {}" \
@@ -306,11 +306,11 @@ def unban(update, context):
         return ""
 
     if is_user_in_chat(chat, user_id):
-        message.reply_text("Why are you trying to unban someone that's already in the chat?")
+        message.reply_text("Why are you trying to unban someone who's already in this chat?")
         return ""
 
     chat.unban_member(user_id)
-    message.reply_text("Yep, this user can join!")
+    message.reply_text("Yep, this user can join again!")
 
     log = "<b>{}:</b>" \
           "\n#UNBANNED" \

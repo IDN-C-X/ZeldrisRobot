@@ -22,7 +22,7 @@ def afk(update, context):
         reason = ""
 
     sql.set_afk(update.effective_user.id, reason)
-    update.effective_message.reply_text("{} is away from the keyboard ! ".format(update.effective_user.first_name))
+    update.effective_message.reply_text("Cya 👋 {} ! ".format(update.effective_user.first_name))
 
 
 @run_async
@@ -34,7 +34,7 @@ def no_longer_afk(update, context):
 
     res = sql.rm_afk(user.id)
     if res:
-        update.effective_message.reply_text("{} Not far from the keyboard now !".format(update.effective_user.first_name))
+        update.effective_message.reply_text("{} Welcome back!".format(update.effective_user.first_name))
 
 
 @run_async
@@ -62,7 +62,7 @@ def reply_afk(update, context):
                 valid, reason = sql.check_afk_status(user_id)
                 if valid:
                     if not reason:
-                        res = "{} is AFK!".format(fst_name)
+                        res = "Hang on... {} is AFK!".format(fst_name)
                     else:
                         res = "{} is AFK! says its because of:\n{}".format(fst_name, reason)
                     message.reply_text(res)
