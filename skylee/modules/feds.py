@@ -631,7 +631,7 @@ def fed_ban(update, context):
 
 	fed_chats = sql.all_fed_chats(fed_id)
 	# Will send to current chat
-	ccontext.bot.send_message(chat.id, "<b>FedBan reason updated</b>" \
+	context.bot.send_message(chat.id, "<b>FedBan reason updated</b>" \
 							"\n<b>Federation:</b> {}" \
 							"\n<b>Federation Admin:</b> {}" \
 							"\n<b>User:</b> {}" \
