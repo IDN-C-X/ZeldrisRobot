@@ -124,9 +124,9 @@ def get(bot, update, notename, show_none=True, no_format=False):
 def cmd_get(update, context):
     args = context.args
     if len(args) >= 2 and args[1].lower() == "noformat":
-        get(context.bot, update, args[0], show_none=True, no_format=True)
+        get(context.bot, update, args[0].lower(), show_none=True, no_format=True)
     elif len(args) >= 1:
-        get(context.bot, update, args[0], show_none=True)
+        get(context.bot, update, args[0].lower(), show_none=True)
     else:
         update.effective_message.reply_text("Get rekt")
 
@@ -135,7 +135,7 @@ def cmd_get(update, context):
 def hash_get(update, context):
     message = update.effective_message.text
     fst_word = message.split()[0]
-    no_hash = fst_word[1:]
+    no_hash = fst_word[1:].lower()
     get(context.bot, update, no_hash, show_none=False)
 
 
@@ -159,6 +159,7 @@ def save(update, context):
 
 
     note_name, text, data_type, content, buttons = get_note_type(msg)
+    note_name = note_name.lower()
 
     if data_type is None:
         msg.reply_text("Dude, there's no note")
@@ -194,7 +195,7 @@ def clear(update, context):
             chat_name = chat.title
 
     if len(args) >= 1:
-        notename = args[0]
+        notename = args[0].lower()
 
         if sql.rm_note(chat_id, notename):
             update.effective_message.reply_text("Note for '`{note_name}`' has been deleted!".format(note_name=note_name), parse_mode=ParseMode.MARKDOWN)
@@ -224,7 +225,7 @@ def list_notes(update, context):
     note_list = sql.get_all_chat_notes(chat_id)
     des = "You can get notes by using `/get notename`, or `#notename`.\n"
     for note in note_list:
-        note_name = (" × `{}`\n".format(note.name))
+        note_name = " × `{}`\n".format(note.name.lower())
         if len(msg) + len(note_name) > MAX_MESSAGE_LENGTH:
             update.effective_message.reply_text(msg, parse_mode=ParseMode.MARKDOWN)
             msg = ""
