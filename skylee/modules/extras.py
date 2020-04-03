@@ -1,14 +1,18 @@
 import random, re
+from random import randint
+import requests as r
+from time import sleep
 import wikipedia
 from typing import Optional, List
-from random import randint
+
 from telegram import Message, Update, Bot, User
 from telegram import MessageEntity, InlineKeyboardMarkup, InlineKeyboardButton
 from telegram.ext import Filters, CommandHandler, MessageHandler, run_async
 from telegram import TelegramError, Chat, Message
 from telegram.error import BadRequest
+
 from skylee.modules.helper_funcs.filters import CustomFilters
-from skylee import dispatcher, OWNER_ID
+from skylee import dispatcher, OWNER_ID, WALL_API
 from skylee.modules.disable import DisableAbleCommandHandler
 
 #Abuse strings credits @NotAMemeBot
@@ -166,13 +170,47 @@ def getlink(update, context):
     message.reply_text(links)
 
 
+@run_async
+def wall(update, context):
+    chat_id = update.effective_chat.id
+    msg = update.effective_message
+    msg_id = update.effective_message.message_id
+    args = context.args
+    query = " ".join(args)
+    if not query:
+        msg.reply_text("Please enter a query!")
+        return
+    else:
+        caption = query
+        term = query.replace(" ", "%20")
+        json_rep = r.get(f"https://wall.alphacoders.com/api2.0/get.php?auth={WALL_API}&method=search&term={term}").json()
+        if not json_rep.get("success"):
+            msg.reply_text("An error occurred!")
+        else:
+            wallpapers = json_rep.get("wallpapers")
+            if not wallpapers:
+                msg.reply_text("No results found! Refine your search.")
+                return
+            else:
+                index = randint(0, len(wallpapers)-1) # Choose random index
+                wallpaper = wallpapers[index]
+                wallpaper = wallpaper.get("url_image")
+                wallpaper = wallpaper.replace("\\", "")
+                context.bot.send_photo(chat_id, photo=wallpaper, caption='Preview',
+                reply_to_message_id=msg_id, timeout=60)
+                context.bot.send_document(chat_id, document=wallpaper,
+                filename='wallpaper', caption=caption, reply_to_message_id=msg_id,
+                timeout=60)
+
+
 __help__ = """
 Some random extra commands for fun!
 
  - /shrug : get shrug 🤷
  - /decide : Randomly answers yes/no/maybe
  - /abuse : Abuses the retard!
- - /wiki  : Search the wikipedia articles.
+ - /wiki : Search the wikipedia articles.
+ - /wall <query> : Get random wallpapers directly from bot! 
 """
 
 __mod_name__ = "Extras"
@@ -184,7 +222,7 @@ ABUSE_HANDLER = DisableAbleCommandHandler("abuse", abuse)
 
 GETLINK_HANDLER = CommandHandler("getlink", getlink, pass_args=True, filters=Filters.user(OWNER_ID))
 WIKI_HANDLER = DisableAbleCommandHandler("wiki", wiki)
-
+WALLPAPER_HANDLER = DisableAbleCommandHandler("wall", wall, pass_args=True)
 
 dispatcher.add_handler(SHRUG_HANDLER)
 dispatcher.add_handler(DECIDE_HANDLER)
@@ -192,3 +230,4 @@ dispatcher.add_handler(ABUSE_HANDLER)
 dispatcher.add_handler(SNIPE_HANDLER)
 dispatcher.add_handler(WIKI_HANDLER)
 dispatcher.add_handler(GETLINK_HANDLER)
+dispatcher.add_handler(WALLPAPER_HANDLER)

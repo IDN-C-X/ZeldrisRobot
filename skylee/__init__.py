@@ -69,6 +69,7 @@ if ENV:
     BAN_STICKER = os.environ.get('BAN_STICKER', 'CAADAgADOwADPPEcAXkko5EB3YGYAg')
     CUSTOM_CMD = os.environ.get('CUSTOM_CMD', False)
     API_WEATHER = os.environ.get('API_OPENWEATHER', None)
+    WALL_API = os.environ.get('WALL_API', None)
 
 else:
     from skylee.config import Development as Config
@@ -120,6 +121,7 @@ else:
     #ALLOW_EXCL = Config.ALLOW_EXCL
     CUSTOM_CMD = Config.CUSTOM_CMD
     API_WEATHER = Config.API_OPENWEATHER
+    WALL_API = Config.WALL_API
 
 
 SUDO_USERS.add(OWNER_ID)
