@@ -10,6 +10,7 @@ from telegram.utils.helpers import mention_html
 from skylee import dispatcher, LOGGER
 from skylee.modules.disable import DisableAbleCommandHandler
 from skylee.modules.helper_funcs.chat_status import user_admin, can_delete
+from skylee.modules.helper_funcs.admin_rights import user_can_delete
 from skylee.modules.log_channel import loggable
 
 
@@ -22,6 +23,9 @@ def purge(update, context):
     if msg.reply_to_message:
         user = update.effective_user  # type: Optional[User]
         chat = update.effective_chat  # type: Optional[Chat]
+        if user_can_delete(chat, user, context.bot.id) == False:
+           msg.reply_text("You don't have enough rights to delete message!")
+           return ""
         if can_delete(chat, context.bot.id):
             message_id = msg.reply_to_message.message_id
             delete_to = msg.message_id - 1
@@ -73,6 +77,10 @@ def del_message(update, context) -> str:
     if update.effective_message.reply_to_message:
         user = update.effective_user  # type: Optional[User]
         chat = update.effective_chat  # type: Optional[Chat]
+        message = update.effective_message  # type: Optional[Message]
+        if user_can_delete(chat, user, context.bot.id) == False:
+           message.reply_text("You don't have enough rights to delete message!")
+           return ""
         if can_delete(chat, context.bot.id):
             update.effective_message.reply_to_message.delete()
             update.effective_message.delete()
