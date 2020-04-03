@@ -162,7 +162,7 @@ def save(update, context):
     note_name = note_name.lower()
 
     if data_type is None:
-        msg.reply_text("Dude, there's no note")
+        msg.reply_text("Bruh! there's no note")
         return
 
     if len(text.strip()) == 0:
@@ -171,7 +171,7 @@ def save(update, context):
     sql.add_note_to_db(chat_id, note_name, text, data_type, buttons=buttons, file=content)
 
     msg.reply_text(
-        "Yas! Saved `{note_name}` for *{chat_name}*.\nGet it with `/get {note_name}`, or `#{note_name}`".format(note_name=note_name, chat_name=chat_name), parse_mode=ParseMode.MARKDOWN)
+        "Yus! added `{note_name}` to *{chat_name}*'s notes.\nGet it with `/get {note_name}`, or `#{note_name}`!".format(note_name=note_name, chat_name=chat_name), parse_mode=ParseMode.MARKDOWN)
 
 
 @run_async
@@ -198,9 +198,9 @@ def clear(update, context):
         notename = args[0].lower()
 
         if sql.rm_note(chat_id, notename):
-            update.effective_message.reply_text("Note for '`{note_name}`' has been deleted!".format(note_name=note_name), parse_mode=ParseMode.MARKDOWN)
+            update.effective_message.reply_text("Successfully deleted '`{note_name}`' from {chat_name}!".format(note_name=note_name, chat_name=chat_name), parse_mode=ParseMode.MARKDOWN)
         else:
-            update.effective_message.reply_text("Unfortunately, There is no such notes saved on {chat_name}!".format(chat_name=chat_name))
+            update.effective_message.reply_text("There is no such notes saved in {chat_name}!".format(chat_name=chat_name))
 
 
 @run_async
