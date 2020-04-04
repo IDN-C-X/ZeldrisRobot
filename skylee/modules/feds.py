@@ -1193,10 +1193,11 @@ def fed_chats(update, context):
 													caption="Here is a list of all the chats that joined the federation {}.".format(info['fname']))
 
 @run_async
-def fed_import_bans(update, context, chat_data):
+def fed_import_bans(update, context):
 	chat = update.effective_chat  # type: Optional[Chat]
 	user = update.effective_user  # type: Optional[User]
 	msg = update.effective_message  # type: Optional[Message]
+	chat_data = context.chat_data
 
 	if chat.type == 'private':
 		send_message(update.effective_message, "This command is specific to the group, not to the PM! ")
