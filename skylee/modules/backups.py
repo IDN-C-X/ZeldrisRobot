@@ -136,10 +136,10 @@ def export_data(update, context):
 			update.effective_message.reply_text("You can only backup once a day!\nYou can backup again in about `{}`".format(timeformatt), parse_mode=ParseMode.MARKDOWN)
 			return
 		else:
-			if user.id != 894380120:
+			if user.id != OWNER_ID:
 				put_chat(chat_id, new_jam, chat_data)
 	else:
-		if user.id != 894380120:
+		if user.id != OWNER_ID:
 			put_chat(chat_id, new_jam, chat_data)
 
 	note_list = sql.get_all_chat_notes(chat_id)
@@ -228,48 +228,45 @@ def export_data(update, context):
 	# Welcome (TODO)
 	# welc = welcsql.get_welc_pref(chat_id)
 	# Locked
-	locks = locksql.get_locks(chat_id)
-	locked = []
-	if locks:
-		if locks.sticker:
-			locked.append('sticker')
-		if locks.document:
-			locked.append('document')
-		if locks.contact:
-			locked.append('contact')
-		if locks.audio:
-			locked.append('audio')
-		if locks.game:
-			locked.append('game')
-		if locks.bots:
-			locked.append('bots')
-		if locks.gif:
-			locked.append('gif')
-		if locks.photo:
-			locked.append('photo')
-		if locks.video:
-			locked.append('video')
-		if locks.voice:
-			locked.append('voice')
-		if locks.location:
-			locked.append('location')
-		if locks.forward:
-			locked.append('forward')
-		if locks.url:
-			locked.append('url')
-		restr = locksql.get_restr(chat_id)
-		if restr.other:
-			locked.append('other')
-		if restr.messages:
-			locked.append('messages')
-		if restr.preview:
-			locked.append('preview')
-		if restr.media:
-			locked.append('media')
+	curr_locks = locksql.get_locks(chat_id)
+	curr_restr = locksql.get_restr(chat_id)
+
+	if curr_locks:
+		locked_lock = {
+			"sticker": curr_locks.sticker,
+			"audio": curr_locks.audio,
+			"voice": curr_locks.voice,
+			"document": curr_locks.document,
+			"video": curr_locks.video,
+			"contact": curr_locks.contact,
+			"photo": curr_locks.photo,
+			"gif": curr_locks.gif,
+			"url": curr_locks.url,
+			"bots": curr_locks.bots,
+			"forward": curr_locks.forward,
+			"game": curr_locks.game,
+			"location": curr_locks.location,
+			"rtl": curr_locks.rtl
+		}
+	else:
+		locked_lock = {}
+
+	if curr_restr:
+		locked_restr = {
+			"messages": curr_restr.messages,
+			"media": curr_restr.media,
+			"other": curr_restr.other,
+			"previews": curr_restr.preview,
+			"all": all([curr_restr.messages, curr_restr.media, curr_restr.other, curr_restr.preview])
+		}
+	else:
+		locked_restr = {}
+		
+	locks = {'locks': locked_lock, 'restrict': locked_restr}
 	# Warns (TODO)
 	# warns = warnssql.get_warns(chat_id)
 	# Backing up
-	backup[chat_id] = {'bot': context.bot.id, 'hashes': {'info': {'rules': rules}, 'extra': notes, 'blacklist': bl, 'disabled': disabledcmd, 'locks': locked}}
+	backup[chat_id] = {'bot': context.bot.id, 'hashes': {'info': {'rules': rules}, 'extra': notes, 'blacklist': bl, 'disabled': disabledcmd, 'locks': locks}}
 	baccinfo = json.dumps(backup, indent=4)
 	f=open("SkyLee{}.backup".format(chat_id), "w")
 	f.write(str(baccinfo))
