@@ -151,6 +151,7 @@ __help__ = """
 Actions are available with connected groups:
  • View and edit notes
  • View and edit filters
+ • Export and Imports of chat backup
  • More in future!
 
  - /connect <chatid>: Connect to remote chat
