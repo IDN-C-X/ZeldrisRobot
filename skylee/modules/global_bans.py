@@ -92,7 +92,7 @@ def gban(update, context):
 
         return
 
-    message.reply_text("*Blows dust off of banhammer* 😉")
+    message.reply_text("Beginning of Global Ban for {} \nWith ID <code>{}</code> !".format(mention_html(user_chat.id, user_chat.first_name), user_chat.id), parse_mode=ParseMode.HTML)
 
     banner = update.effective_user  # type: Optional[User]
     context.bot.sendMessage(MESSAGE_DUMP,
@@ -109,31 +109,31 @@ def gban(update, context):
 
     sql.gban_user(user_id, user_chat.username or user_chat.first_name, reason)
 
-    chats = get_all_chats()
-    for chat in chats:
-        chat_id = chat.chat_id
-
-        # Check if this group has disabled gbans
-        if not sql.does_chat_gban(chat_id):
-            continue
-
-        try:
-            context.bot.kick_chat_member(chat_id, user_id)
-        except BadRequest as excp:
-            if excp.message in GBAN_ERRORS:
-                pass
-            else:
-                message.reply_text("Could not gban due to: {}".format(excp.message))
-                bot.sendMessage(MESSAGE_DUMP, "Could not gban due to: {}".format(excp.message))
-                sql.ungban_user(user_id)
-                return
-        except TelegramError:
-            pass
-
-    context.bot.sendMessage(MESSAGE_DUMP,
-                   "{} has been successfully gbanned!".format(mention_html(user_chat.id, user_chat.first_name)),
-                 parse_mode=ParseMode.HTML)
-    message.reply_text("Person has been \"Dealt with\".")
+#    chats = get_all_chats()
+#    for chat in chats:
+#        chat_id = chat.chat_id
+#
+#        # Check if this group has disabled gbans
+#        if not sql.does_chat_gban(chat_id):
+#            continue
+#
+#        try:
+#            context.bot.kick_chat_member(chat_id, user_id)
+#        except BadRequest as excp:
+#            if excp.message in GBAN_ERRORS:
+#                pass
+#            else:
+#                message.reply_text("Could not gban due to: {}".format(excp.message))
+#                bot.sendMessage(MESSAGE_DUMP, "Could not gban due to: {}".format(excp.message))
+#                sql.ungban_user(user_id)
+#                return
+#        except TelegramError:
+#            pass
+#
+#    context.bot.sendMessage(MESSAGE_DUMP,
+#                   "{} has been successfully gbanned!".format(mention_html(user_chat.id, user_chat.first_name)),
+#                 parse_mode=ParseMode.HTML)
+#    message.reply_text("Person has been \"Dealt with\".")
 
 
 @run_async
@@ -226,7 +226,7 @@ def check_and_ban(update, user_id, should_message=True):
     if spmban:
         update.effective_chat.kick_member(user_id)
         if should_message:
-            update.effective_message.reply_markdown("**This user is detected as potential Spambot by SpamWatch and have been Banned!**\n\nPlease visit @SpamWatchSupport to know more or Appeal!")
+            update.effective_message.reply_markdown("**This user is detected as potential Spambot by SpamWatch and have been removed!**\n\nPlease visit @SpamWatchSupport to know more or Appeal!")
             return
         else:
             return
@@ -239,7 +239,7 @@ def check_and_ban(update, user_id, should_message=True):
             if not greason:
                 greason = "No reason given"
 
-            update.effective_message.reply_text(f"*This user was GBanned! so, have been Banned from chat.*\nReason: `{greason}`", parse_mode=ParseMode.MARKDOWN)
+            update.effective_message.reply_text(f"*This user was GBanned! so, have been removed from chat.*\nReason: `{greason}`", parse_mode=ParseMode.MARKDOWN)
 
             return
 
