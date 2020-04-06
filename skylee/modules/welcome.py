@@ -159,10 +159,10 @@ def new_member(update, context):
                                              until_date=(int(time.time() + 24 * 60 * 60))))
                 #Join welcome: strong mute
                 if welc_mutes == "strong":
-                    new_join_mem = "[{}](tg://user?id={})".format(new_mem.first_name, user.id)
-                    msg.reply_text("{},\nClick the button below to prove you're human".format(new_join_mem),
+                    new_join_mem = "Hey {}!".format(mention_html(user.id, new_mem.first_name))
+                    msg.reply_text("{}\nClick the button below to start talking.".format(new_join_mem),
                          reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton(text="Yus, I'm a human", 
-                         callback_data="user_join_({})".format(new_mem.id))]]), parse_mode=ParseMode.MARKDOWN)
+                         callback_data="user_join_({})".format(new_mem.id))]]), parse_mode=ParseMode.HTML)
                     context.bot.restrict_chat_member(chat.id, new_mem.id, 
                     permissions=ChatPermissions(
                                              can_send_messages=False, 
