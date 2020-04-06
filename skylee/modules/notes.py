@@ -249,7 +249,7 @@ def list_notes(update, context):
             msg = ""
         msg += note_name
 
-    if msg == "*List of notes in {}:*\n":
+    if not note_list:
         update.effective_message.reply_text("No notes in this chat!")
 
     elif len(msg) != 0:
