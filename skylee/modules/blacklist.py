@@ -140,7 +140,7 @@ def __chat_settings__(chat_id, user_id):
 
 
 def __stats__():
-    return "{} blacklist triggers, across {} chats.".format(sql.num_blacklist_filters(),
+    return "× {} blacklist triggers, across {} chats.".format(sql.num_blacklist_filters(),
                                                             sql.num_blacklist_filter_chats())
 def __import_data__(chat_id, data):
     # set chat blacklist

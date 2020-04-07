@@ -289,7 +289,7 @@ def gbanstat(update, context):
 
 
 def __stats__():
-    return "{} gbanned users.".format(sql.num_gbanned_users())
+    return "× {} gbanned users.".format(sql.num_gbanned_users())
 
 
 def __user_info__(user_id):
