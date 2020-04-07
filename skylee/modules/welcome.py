@@ -156,6 +156,9 @@ def new_member(update, context):
                                              can_send_media_messages=False, 
                                              can_send_other_messages=False,
                                              can_invite_users=False,
+                                             can_pin_messages=False,
+                                             can_send_polls=False,
+                                             can_change_info=False,
                                              can_add_web_page_previews=False, 
                                              until_date=(int(time.time() + 24 * 60 * 60))))
                 #Join welcome: strong mute
@@ -168,6 +171,9 @@ def new_member(update, context):
                     permissions=ChatPermissions(
                                              can_send_messages=False,
                                              can_invite_users=False,
+                                             can_pin_messages=False,
+                                             can_send_polls=False,
+                                             can_change_info=False,
                                              can_send_media_messages=False, 
                                              can_send_other_messages=False, 
                                              can_add_web_page_previews=False))
@@ -497,6 +503,9 @@ def user_button(update, context):
         context.bot.restrict_chat_member(chat.id, user.id, permissions=ChatPermissions
                                                   (can_send_messages=True,
                                                    can_invite_users=True,
+                                                   can_pin_messages=True,
+                                                   can_send_polls=True,
+                                                   can_change_info=True,
                                                    can_send_media_messages=True, 
                                                    can_send_other_messages=True, 
                                                    can_add_web_page_previews=True))
