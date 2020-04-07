@@ -101,7 +101,7 @@ def new_member(update, context):
             # Make bot greet admins
             elif new_mem.id == context.bot.id:
                 update.effective_message.reply_text("Hey {}, I'm {}! Thank you for adding me to {}" 
-                " and be sure to join our channel: @skyleeupdates  to know more about updates and tricks!".format(user.first_name, context.bot.first_name, chat_name))
+                " and be sure to join our channel: @skyleeupdates to know more about updates and tricks!".format(user.first_name, context.bot.first_name, chat_name))
 
                 context.bot.send_message(
                     MESSAGE_DUMP,
@@ -154,7 +154,8 @@ def new_member(update, context):
                      permissions=ChatPermissions(
                                              can_send_messages=True, 
                                              can_send_media_messages=False, 
-                                             can_send_other_messages=False, 
+                                             can_send_other_messages=False,
+                                             can_invite_users=False,
                                              can_add_web_page_previews=False, 
                                              until_date=(int(time.time() + 24 * 60 * 60))))
                 #Join welcome: strong mute
@@ -165,7 +166,8 @@ def new_member(update, context):
                          callback_data="user_join_({})".format(new_mem.id))]]), parse_mode=ParseMode.HTML)
                     context.bot.restrict_chat_member(chat.id, new_mem.id, 
                     permissions=ChatPermissions(
-                                             can_send_messages=False, 
+                                             can_send_messages=False,
+                                             can_invite_users=False,
                                              can_send_media_messages=False, 
                                              can_send_other_messages=False, 
                                              can_add_web_page_previews=False))
@@ -493,7 +495,8 @@ def user_button(update, context):
     if join_user == user.id:
         query.answer(text="Yus! You're a human, Unmuted!")
         context.bot.restrict_chat_member(chat.id, user.id, permissions=ChatPermissions
-                                                  (can_send_messages=True, 
+                                                  (can_send_messages=True,
+                                                   can_invite_users=True,
                                                    can_send_media_messages=True, 
                                                    can_send_other_messages=True, 
                                                    can_add_web_page_previews=True))
