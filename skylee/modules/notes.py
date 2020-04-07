@@ -250,7 +250,7 @@ def list_notes(update, context):
         msg += note_name
 
     if not note_list:
-        update.effective_message.reply_text("No notes in this chat!")
+        update.effective_message.reply_text("No notes saved here!")
 
     elif len(msg) != 0:
         update.effective_message.reply_text(msg.format(chat_name) + des, parse_mode=ParseMode.MARKDOWN)
