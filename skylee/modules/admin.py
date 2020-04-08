@@ -316,7 +316,7 @@ INVITE_HANDLER = CommandHandler("invitelink", invite, filters=Filters.group)
 PROMOTE_HANDLER = CommandHandler("promote", promote, pass_args=True, filters=Filters.group)
 DEMOTE_HANDLER = CommandHandler("demote", demote, pass_args=True, filters=Filters.group)
 
-SET_TITLE_HANDLER = CommandHandler("settitle", set_title, pass_args=True)
+SET_TITLE_HANDLER = DisableAbleCommandHandler("settitle", set_title, pass_args=True)
 
 ADMINLIST_HANDLER = DisableAbleCommandHandler("adminlist", adminlist, filters=Filters.group)
 
