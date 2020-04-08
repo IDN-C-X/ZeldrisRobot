@@ -1,9 +1,11 @@
 import random, re
-from random import randint
 import requests as r
-from time import sleep
 import wikipedia
+
+from time import sleep
 from typing import Optional, List
+from requests import get
+from random import randint
 
 from telegram import Message, Update, Bot, User
 from telegram import MessageEntity, InlineKeyboardMarkup, InlineKeyboardButton
@@ -202,6 +204,17 @@ def wall(update, context):
                 filename='wallpaper', caption=caption, reply_to_message_id=msg_id,
                 timeout=60)
 
+@run_async
+def ud(update, context):
+    try:
+        message = update.effective_message
+        text = message.text[len('/ud '):]
+        results = get(f'http://api.urbandictionary.com/v0/define?term={text}').json()
+        reply_text = f'Word: {text}\nDefinition: {results["list"][0]["definition"]}'
+    except IndexError:
+        reply_text = f'Word: {text}\nResults: Sorry could not find any matching results!'
+    return message.reply_text(reply_text)
+
 
 __help__ = """
 Some random extra commands for fun!
@@ -210,7 +223,8 @@ Some random extra commands for fun!
  - /decide : Randomly answers yes/no/maybe
  - /abuse : Abuses the retard!
  - /wiki : Search the wikipedia articles.
- - /wall <query> : Get random wallpapers directly from bot! 
+ - /wall <query> : Get random wallpapers!
+ - /ud <query> : Search stuffs in urban dictionary. 
 """
 
 __mod_name__ = "Extras"
@@ -223,6 +237,7 @@ ABUSE_HANDLER = DisableAbleCommandHandler("abuse", abuse)
 GETLINK_HANDLER = CommandHandler("getlink", getlink, pass_args=True, filters=Filters.user(OWNER_ID))
 WIKI_HANDLER = DisableAbleCommandHandler("wiki", wiki)
 WALLPAPER_HANDLER = DisableAbleCommandHandler("wall", wall, pass_args=True)
+UD_HANDLER = DisableAbleCommandHandler("ud", ud)
 
 dispatcher.add_handler(SHRUG_HANDLER)
 dispatcher.add_handler(DECIDE_HANDLER)
@@ -231,3 +246,4 @@ dispatcher.add_handler(SNIPE_HANDLER)
 dispatcher.add_handler(WIKI_HANDLER)
 dispatcher.add_handler(GETLINK_HANDLER)
 dispatcher.add_handler(WALLPAPER_HANDLER)
+dispatcher.add_handler(UD_HANDLER)
