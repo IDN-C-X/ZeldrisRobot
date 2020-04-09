@@ -1,6 +1,5 @@
 from typing import Optional, List
 from gtts import gTTS
-from datetime import datetime
 import re
 
 from telegram import ChatAction
@@ -31,11 +30,13 @@ def gtrans(update, context):
         lol.reply_text("Error! text might have emojis or invalid language code.")
 
 
+@run_async
 def gtts(update, context):
-    current_time = datetime.strftime(datetime.now(), "%d.%m.%Y %H:%M:%S")
-    filename = datetime.now().strftime("%d%m%y-%H%M%S%f")
+    args = context.args
     try:
-        reply = update.effective_message.reply_to_message.text
+        reply = " ".join(args)
+        if not reply:
+            reply = update.effective_message.reply_to_message.text
         update.message.chat.send_action(ChatAction.RECORD_AUDIO)
         tts = gTTS(reply)
         tts.save("skylee.mp3")
@@ -49,21 +50,7 @@ def gtts(update, context):
         with open("skylee.mp3", "rb") as speech:
             update.message.reply_voice(speech, quote=False)
     except :
-        args = context.args
-        reply = " ".join(args)
-        update.message.chat.send_action(ChatAction.RECORD_AUDIO)
-        tts = gTTS(reply)
-        tts.save("skylee.mp3")
-        with open("skylee.mp3", "rb") as x:
-            linelist = list(x)
-            linecount = len(linelist)
-        if linecount == 1:
-            update.message.chat.send_action(ChatAction.RECORD_AUDIO)
-            tts = gTTS(reply)
-            tts.save("skylee.mp3")
-        with open("skylee.mp3", "rb") as speech:
-            update.message.reply_voice(speech, quote=False)
-
+            update.effective_message.reply_text("Reply to some message or enter some text to convert it into audio format!")
 
 
 __help__ = """
