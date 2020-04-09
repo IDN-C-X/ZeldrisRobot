@@ -220,7 +220,7 @@ Examples of time value: 4m = 4 minutes, 3h = 3 hours, 6d = 6 days, 5w = 5 weeks.
             sql.set_flood_strength(chat_id, 4, str(args[1]))
         elif args[0].lower() == 'tmute':
             if len(args) == 1:
-                teks = """It looks like you tried to set time value for antiflood but you didn't sspecified time; Try, `/setfloodmode tmute <timevalue>`.
+                teks = """It looks like you tried to set time value for antiflood but you didn't specified time; Try, `/setfloodmode tmute <timevalue>`.
 
 Examples of time value: 4m = 4 minutes, 3h = 3 hours, 6d = 6 days, 5w = 5 weeks."""
                 send_message(update.effective_message, teks, parse_mode="markdown")
