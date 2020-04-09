@@ -154,6 +154,7 @@ This allows you to connect to a chat's database, and add things to it without th
 Actions are available with connected groups:
  • View and edit notes
  • View and edit filters
+ • Set and control AntiFlood settings
  • Export and Imports of chat backup
  • More in future!
 
