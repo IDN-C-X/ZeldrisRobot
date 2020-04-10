@@ -209,7 +209,7 @@ def gbanlist(update, context):
         update.effective_message.reply_text("There aren't any gbanned users! You're kinder than I expected...")
         return
 
-    banfile = 'Screw these guys.\n'
+    banfile = 'List of retards.\n'
     for user in banned_users:
         banfile += "[x] {} - {}\n".format(user["name"], user["user_id"])
         if user["reason"]:
@@ -239,7 +239,7 @@ def check_and_ban(update, user_id, should_message=True):
             if not greason:
                 greason = "No reason given"
 
-            update.effective_message.reply_text(f"*This user was GBanned! so, have been removed from chat.*\nReason: `{greason}`", parse_mode=ParseMode.MARKDOWN)
+            update.effective_message.reply_text(f"*This user was GBanned and have been removed from chat!*\n\n*Reason*: `{greason}`", parse_mode=ParseMode.MARKDOWN)
 
             return
 
