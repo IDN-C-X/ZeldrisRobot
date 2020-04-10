@@ -21,6 +21,7 @@ from skylee.modules.log_channel import loggable
 from skylee.modules.sql import users_sql
 from skylee.modules.connection import connected
 
+from skylee.modules.helper_funcs.alternate import send_message
 
 ad = AlphabetDetector()
 
@@ -36,6 +37,7 @@ LOCK_TYPES = {'audio': Filters.audio,
 			  'game': Filters.game,
 			  'location': Filters.location,
 			  'rtl': 'rtl',
+			  'button': 'button'
 			  }
 
 
@@ -112,6 +114,7 @@ def unrestr_members(bot, chat_id, members, messages=True, media=True, other=True
 def locktypes(update, context):
 	update.effective_message.reply_text("\n - ".join(["Locks: "] + list(LOCK_TYPES) + list(LOCK_CHAT_RESTRICTION)))
 
+
 @run_async
 @user_admin
 @loggable
@@ -125,38 +128,64 @@ def lock(update, context) -> str:
 		if len(args) >= 1:
 			ltype = args[0].lower()
 			if ltype in LOCK_TYPES:
+				# Connection check
+				conn = connected(context.bot, update, chat, user.id, need_admin=True)
+				if conn:
+					chat = dispatcher.bot.getChat(conn)
+					chat_id = conn
+					chat_name = chat.title
+					text = ("Locked all {} messages for non-admins in {}!".format(ltype, chat_name))
+				else:
+					if update.effective_message.chat.type == "private":
+						send_message(update.effective_message, "This command is meant to use in group not in PM")
+						return ""
 					chat = update.effective_chat
 					chat_id = update.effective_chat.id
 					chat_name = update.effective_message.chat.title
-					message = update.effective_message
-					sql.update_lock(chat.id, ltype, locked=True)
-					message.reply_text("Locked {} messages for all non-admins!".format(ltype))
-					return "<b>{}:</b>" \
+					text = ("Locked all {} messages for non-admins!".format(ltype))
+				sql.update_lock(chat.id, ltype, locked=True)
+				send_message(update.effective_message, text, parse_mode="markdown")
+
+				return "<b>{}:</b>" \
 					   "\n#LOCK" \
 					   "\n<b>Admin:</b> {}" \
 					   "\nLocked <code>{}</code>.".format(html.escape(chat.title),
 														  mention_html(user.id, user.first_name), ltype)
 
 			elif ltype in LOCK_CHAT_RESTRICTION:
+				# Connection check
+				conn = connected(context.bot, update, chat, user.id, need_admin=True)
+				if conn:
+					chat = dispatcher.bot.getChat(conn)
+					chat_id = conn
+					chat_name = chat.title
+					text = ("Locked {} for all non-admins in {}!".format(ltype, chat_name))
+				else:
+					if update.effective_message.chat.type == "private":
+						send_message(update.effective_message, "This command is meant to use in group not in PM")
+						return ""
 					chat = update.effective_chat
 					chat_id = update.effective_chat.id
 					chat_name = update.effective_message.chat.title
-					current_permission = context.bot.getChat(chat_id).permissions
-					context.bot.set_chat_permissions(chat_id=chat_id, permissions=get_permission_list(eval(str(current_permission)), LOCK_CHAT_RESTRICTION[ltype.lower()]))
-					message.reply_text("Locked {} for all non-admins!".format(ltype))
-					return "<b>{}:</b>" \
+					text = ("Locked {} for all non-admins!".format(ltype))
+				
+				current_permission = context.bot.getChat(chat_id).permissions
+				context.bot.set_chat_permissions(chat_id=chat_id, permissions=get_permission_list(eval(str(current_permission)), LOCK_CHAT_RESTRICTION[ltype.lower()]))
+
+				send_message(update.effective_message, text, parse_mode="markdown")
+				return "<b>{}:</b>" \
 					   "\n#Permission_LOCK" \
 					   "\n<b>Admin:</b> {}" \
 					   "\nLocked <code>{}</code>.".format(html.escape(chat.title),
 														  mention_html(user.id, user.first_name), ltype)
 
 			else:
-				message.reply_text("What are you trying to lock...? Try /locktypes for the list of lockables")
+				send_message(update.effective_message, "What are you trying to lock...? Try /locktypes for the list of lockables")
 		else:
-		   message.reply_text("What are you trying to lock...?")
+		   send_message(update.effective_message, "What are you trying to lock...?")
 
 	else:
-		message.reply_text("I'm not an administrator, or haven't got enough rights.")
+		send_message(update.effective_message, "I am not administrator or haven't got enough rights.")
 
 	return ""
 
@@ -173,43 +202,68 @@ def unlock(update, context) -> str:
 		if len(args) >= 1:
 			ltype = args[0].lower()
 			if ltype in LOCK_TYPES:
+				# Connection check
+				conn = connected(context.bot, update, chat, user.id, need_admin=True)
+				if conn:
+					chat = dispatcher.bot.getChat(conn)
+					chat_id = conn
+					chat_name = chat.title
+					text = ("Unlocked {} messages for everyone in {}!".format(ltype, chat_name))
+				else:
+					if update.effective_message.chat.type == "private":
+						send_message(update.effective_message, "This command is meant to use in group not in PM")
+						return ""
 					chat = update.effective_chat
 					chat_id = update.effective_chat.id
 					chat_name = update.effective_message.chat.title
-					message = update.effective_message
-					sql.update_lock(chat.id, ltype, locked=False)
-					message.reply_text("Unlocked {} for everyone!".format(ltype))
-					return "<b>{}:</b>" \
+					text = ("Unlocked {} messages for everyone!".format(ltype))
+				sql.update_lock(chat.id, ltype, locked=False)
+				send_message(update.effective_message, text, parse_mode="markdown")
+				return "<b>{}:</b>" \
 					   "\n#UNLOCK" \
 					   "\n<b>Admin:</b> {}" \
 					   "\nUnlocked <code>{}</code>.".format(html.escape(chat.title),
 															mention_html(user.id, user.first_name), ltype)
 
 			elif ltype in UNLOCK_CHAT_RESTRICTION:
+				# Connection check
+				conn = connected(context.bot, update, chat, user.id, need_admin=True)
+				if conn:
+					chat = dispatcher.bot.getChat(conn)
+					chat_id = conn
+					chat_name = chat.title
+					text = ("Unlocked {} for everyone in {}!".format(ltype, chat_name))
+				else:
+					if update.effective_message.chat.type == "private":
+						send_message(update.effective_message, "This command is meant to use in group not in PM")
+						return ""
 					chat = update.effective_chat
 					chat_id = update.effective_chat.id
 					chat_name = update.effective_message.chat.title
-					message = update.effective_message
-					current_permission = context.bot.getChat(chat_id).permissions
-					context.bot.set_chat_permissions(chat_id=chat_id, permissions=get_permission_list(eval(str(current_permission)), UNLOCK_CHAT_RESTRICTION[ltype.lower()]))
-					message.reply_text("Unlocked {} for everyone!".format(ltype))
-					return "<b>{}:</b>" \
+					text = ("Unlocked {} for everyone!".format(ltype))
+				
+				current_permission = context.bot.getChat(chat_id).permissions
+				context.bot.set_chat_permissions(chat_id=chat_id, permissions=get_permission_list(eval(str(current_permission)), UNLOCK_CHAT_RESTRICTION[ltype.lower()]))
+
+				send_message(update.effective_message, text, parse_mode="markdown")
+				
+				return "<b>{}:</b>" \
 					   "\n#UNLOCK" \
 					   "\n<b>Admin:</b> {}" \
 					   "\nUnlocked <code>{}</code>.".format(html.escape(chat.title),
 															mention_html(user.id, user.first_name), ltype)
 			else:
-				message.reply_text("What are you trying to unlock...? Try /locktypes for the list of lockables")
+				send_message(update.effective_message, "What are you trying to unlock...? Try /locktypes for the list of lockables.")
 
 		else:
-			message.reply_text("What are you trying to unlock...?")
+			send_message(update.effective_message, "What are you trying to unlock...?")
 
 	return ""
 
 
 @run_async
 @user_not_admin
-def del_lockables(update, context) -> str:
+def del_lockables(update, context):
 	chat = update.effective_chat  # type: Optional[Chat]
 	message = update.effective_message  # type: Optional[Message]
 	
@@ -236,18 +290,30 @@ def del_lockables(update, context) -> str:
 								pass
 							else:
 								LOGGER.exception("ERROR in lockables")
+			continue
+		if lockable == "button":
+			if sql.is_locked(chat.id, lockable) and can_delete(chat, context.bot.id):
+				if message.reply_markup and message.reply_markup.inline_keyboard:
+					try:
+						message.delete()
+					except BadRequest as excp:
+						if excp.message == "Message to delete not found":
+							pass
+						else:
+							LOGGER.exception("ERROR in lockables")
+			continue
 		if filter(update) and sql.is_locked(chat.id, lockable) and can_delete(chat, context.bot.id):
 			if lockable == "bots":
 				new_members = update.effective_message.new_chat_members
 				for new_mem in new_members:
 					if new_mem.is_bot:
 						if not is_bot_admin(chat, context.bot.id):
-							message.reply_text("I see a bot, and I've been told to stop them joining... "
-                                               "but I'm not admin!")
+							send_message(update.effective_message, "I see a bot and I've been told to stop them from joining..."
+											   "but I'm not admin!")
 							return
 
 						chat.kick_member(new_mem.id)
-						message.reply_text("Only admins are allowed to add bots to this chat! Get outta here.")
+						send_message(update.effective_message, "Only admins are allowed to add bots in this chat! Get outta here.")
 			else:
 				try:
 					message.delete()
@@ -282,6 +348,7 @@ def build_lock_message(chat_id):
 			locklist.append("game = `{}`".format(locks.game))
 			locklist.append("location = `{}`".format(locks.location))
 			locklist.append("rtl = `{}`".format(locks.rtl))
+			locklist.append("button = `{}`".format(locks.button))
 	permissions = dispatcher.bot.get_chat(chat_id).permissions
 	permslist.append("messages = `{}`".format(permissions.can_send_messages))
 	permslist.append("media = `{}`".format(permissions.can_send_media_messages))
@@ -298,7 +365,7 @@ def build_lock_message(chat_id):
 		# Building lock list string
 		for x in locklist:
 			res += "\n - {}".format(x)
-	res += "\n\n*" + "These are current chat permissions:" + "*"
+	res += "\n\n*" + "These are the current chat permissions:" + "*"
 	for x in permslist:
 		res += "\n - {}".format(x)
 	return res
@@ -309,12 +376,27 @@ def build_lock_message(chat_id):
 def list_locks(update, context):
 	chat = update.effective_chat  # type: Optional[Chat]
 	user = update.effective_user
-	chat_id = update.effective_chat.id
-	chat_name = update.effective_message.chat.title
+
+	# Connection check
+	conn = connected(context.bot, update, chat, user.id, need_admin=True)
+	if conn:
+		chat = dispatcher.bot.getChat(conn)
+		chat_id = conn
+		chat_name = chat.title
+	else:
+		if update.effective_message.chat.type == "private":
+			send_message(update.effective_message, "This command is meant to use in group not in PM")
+			return ""
+		chat = update.effective_chat
+		chat_id = update.effective_chat.id
+		chat_name = update.effective_message.chat.title
 
 	res = build_lock_message(chat.id)
+	if conn:
+		res = res.replace('Locks in', '*{}*'.format(chat_name))
 
-	update.effective_message.reply_text(res, parse_mode=ParseMode.MARKDOWN)
+	send_message(update.effective_message, res, parse_mode=ParseMode.MARKDOWN)
+
 
 
 def get_permission_list(current, new):
@@ -348,30 +430,7 @@ def __chat_settings__(chat_id, user_id):
 	return build_lock_message(chat_id)
 
 
-__help__ = """
-Do stickers annoy you? or want to avoid people sharing links? or pictures? \
-You're in the right place!
-
-The locks module allows you to lock away some common items in the \
-telegram world; the bot will automatically delete them!
-
- - /locktypes: Lists all possible locktypes
-
-*Admin only:*
- - /lock <type>: Lock items of a certain type (not available in private)
- - /unlock <type>: Unlock items of a certain type (not available in private)
- - /locks: The current list of locks in this chat.
-
-Locks can be used to restrict a group's users.
-eg:
-Locking urls will auto-delete all messages with urls which haven't been whitelisted, locking stickers will restrict all \
-non-admin users from sending stickers, etc.
-Locking bots will stop non-admins from adding bots to the chat.
-
-Note:
- - Unlocking permission *info* will allow members (non-admins) to change the group information, such as the description or the group name
- - Unlocking permission *pin* will allow members (non-admins) to pinned a message in a group
-"""
+__help__ = "locks_help"
 
 __mod_name__ = "Locks"
 

@@ -124,7 +124,7 @@ def gban(update, context):
 #                pass
 #            else:
 #                message.reply_text("Could not gban due to: {}".format(excp.message))
-#                bot.sendMessage(MESSAGE_DUMP, "Could not gban due to: {}".format(excp.message))
+#                context.bot.sendMessage(MESSAGE_DUMP, "Could not gban due to: {}".format(excp.message))
 #                sql.ungban_user(user_id)
 #                return
 #        except TelegramError:
