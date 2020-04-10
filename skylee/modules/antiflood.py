@@ -62,8 +62,8 @@ def check_flood(update, context) -> str:
             context.bot.restrict_chat_member(chat.id, user.id, until_date=mutetime, permissions=ChatPermissions(can_send_messages=False))
             execstrings = ("Muted for {}".format(getvalue))
             tag = "TMUTE"
-        send_message(update.effective_message, "Wonderful, I like to leave flooding to natural disasters but you, "
-                       "you were just a disappointment {}!".format(execstrings))
+        send_message(update.effective_message, "Great, I like to leave flooding to natural disasters but you, "
+                       "you were just a disappointment. {}!".format(execstrings))
 
         return "<b>{}:</b>" \
                "\n#{}" \
@@ -180,6 +180,7 @@ def flood(update, context):
 
 @run_async
 @user_admin
+@loggable
 def set_flood_mode(update, context):
     chat = update.effective_chat  # type: Optional[Chat]
     user = update.effective_user  # type: Optional[User]
