@@ -134,6 +134,8 @@ if sw_token == None:
     LOGGER.warning("Invalid spamwatch api")
 else:
     spamwtc = spamwatch.Client(sw_token)
+
+
 updater = tg.Updater(TOKEN, workers=WORKERS, use_context=True)
 
 dispatcher = updater.dispatcher
