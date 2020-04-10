@@ -19,6 +19,7 @@ from skylee.modules.helper_funcs.misc import split_message
 from skylee.modules.helper_funcs.string_handling import split_quotes
 from skylee.modules.log_channel import loggable
 from skylee.modules.sql import warns_sql as sql
+from skylee.modules.sql import users_sql as sql_user
 
 WARN_HANDLER_GROUP = 9
 CURRENT_WARNING_FILTER_STRING = "<b>Current warning filters in this chat:</b>\n"
@@ -206,6 +207,7 @@ def warns(update, context):
     args = context.args
     user_id = extract_user(message, args) or update.effective_user.id
     result = sql.get_warns(user_id, chat.id)
+    num = 1
     if result and result[0] != 0:
         num_warns, reasons = result
         limit, soft_warn = sql.get_warn_setting(chat.id)
@@ -213,7 +215,8 @@ def warns(update, context):
         if reasons:
             text = "This user has {}/{} warnings, for the following reasons:".format(num_warns, limit)
             for reason in reasons:
-                text += "\n - {}".format(reason)
+                text += "\n {}. {}".format(num, reason)
+                num += 1
 
             msgs = split_message(text)
             for msg in msgs:
