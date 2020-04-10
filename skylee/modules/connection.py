@@ -155,6 +155,7 @@ Actions are available with connected groups:
  • View and edit notes
  • View and edit filters
  • Set and control AntiFlood settings
+ • Set locks and unlocks in chat
  • Export and Imports of chat backup
  • More in future!
 
