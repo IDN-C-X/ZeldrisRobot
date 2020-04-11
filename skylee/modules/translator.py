@@ -2,9 +2,7 @@ from typing import Optional, List
 from gtts import gTTS
 import re
 
-from telegram import ChatAction
-from telegram import Message, Update, Bot, User
-from telegram import MessageEntity
+from telegram import Message, Update, Bot, User, ChatAction, MessageEntity, ParseMode
 from telegram.ext import Filters, MessageHandler, run_async
 
 from skylee import dispatcher, LOGGER
@@ -12,22 +10,28 @@ from skylee.modules.disable import DisableAbleCommandHandler
 
 from googletrans import Translator
 
-#Translator based on google translate API
+TR_HELP = """ Reply to some message with language code to translate it into your's.
+              \nLike `/tr en` to translate some message of other language into English!
+              \nYou can get list of languages and their codes by clicking [here](https://www.science.co.il/language/Codes.php).
+"""
 
 @run_async
 def gtrans(update, context):
+    msg = update.effective_message
     args = context.args
-    oky = " ".join(args)
-    lol = update.effective_message
-    to_translate_text = lol.reply_to_message.text
+    lang = " ".join(args)
+    if not lang:
+       msg.reply_text(TR_HELP, parse_mode=ParseMode.MARKDOWN, disable_web_page_preview=True)
+       return
+    to_translate_text = msg.reply_to_message.text
     translator = Translator()
     try:
-        translated = translator.translate(to_translate_text, dest=oky)
-        oof = translated.src
+        translated = translator.translate(to_translate_text, dest=lang)
+        trl = translated.src
         results = translated.text
-        lol.reply_text("Translated from {} to {}.\n {}".format(oof, oky, results))
+        msg.reply_text("Translated from {} to {}.\n {}".format(trl, lang, results))
     except :
-        lol.reply_text("Error! text might have emojis or invalid language code.")
+        msg.reply_text("Error! text might have emojis or invalid language code.")
 
 
 @run_async
