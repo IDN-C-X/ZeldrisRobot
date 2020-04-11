@@ -189,7 +189,7 @@ def save(update, context):
     sql.add_note_to_db(chat_id, note_name, text, data_type, buttons=buttons, file=content)
 
     msg.reply_text(
-        "Okay! saved `{note_name}` in *{chat_name}*.\nGet it with `/get {note_name}`, or `#{note_name}`!".format(note_name=note_name, chat_name=chat_name), parse_mode=ParseMode.MARKDOWN)
+        "Saved '`{note_name}`' in *{chat_name}*.\nGet it with `/get {note_name}`, or `#{note_name}`!".format(note_name=note_name, chat_name=chat_name), parse_mode=ParseMode.MARKDOWN)
 
 
 @run_async

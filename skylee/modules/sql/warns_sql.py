@@ -79,7 +79,7 @@ def warn_user(user_id, chat_id, reason=None):
             
         warned_user.num_warns += 1
         
-        if reason is "":
+        if reason == "":
             reason = "No reason given."
             
         if reason:
