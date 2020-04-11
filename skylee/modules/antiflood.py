@@ -234,7 +234,7 @@ Examples of time value: 4m = 4 minutes, 3h = 3 hours, 6d = 6 days, 5w = 5 weeks.
         if conn:
             text = msg.reply_text("Exceeding consecutive flood limit will result in {} in {}!".format(settypeflood, chat_name))
         else:
-            text = msg.reply_text("Exceeding consecutive foood limit will result in {}!".format(settypeflood))
+            text = msg.reply_text("Exceeding consecutive flood limit will result in {}!".format(settypeflood))
         send_message(update.effective_message, text, parse_mode="markdown")
         return "<b>{}:</b>\n" \
                 "<b>Admin:</b> {}\n" \
