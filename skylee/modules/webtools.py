@@ -1,5 +1,10 @@
 import speedtest
 import requests
+
+from psutil import cpu_percent, virtual_memory
+from platform import python_version
+from telegram import __version__
+from spamwatch import __version__ as __sw__
 from pythonping import ping as ping3
 from telegram import Message, Chat, Update, Bot, MessageEntity
 from telegram import ParseMode
@@ -61,10 +66,26 @@ def speedtst(update, context):
                    "ISP "
                    f"{result['client']['isp']}")
 
+@run_async
+def system_status(update, context):
+    msg = update.effective_message
+    mem = virtual_memory()
+    cpu = str(cpu_percent())
+    status = "*System is online & running!*\n\n"
+    status += "*CPU usage:* "+cpu+" %\n"
+    status += "*Memory used:* "+str(mem[2])+" %\n\n"
+    status += "*Python version:* "+python_version()+"\n"
+    status += "*Library version:* "+str(__version__)+"\n"
+    status += "*Spamwatch API:* "+str(__sw__)+"\n"
+    msg.reply_text(status, parse_mode=ParseMode.MARKDOWN)
+
+
 IP_HANDLER = CommandHandler("ip", get_bot_ip, filters=Filters.chat(OWNER_ID))
 PING_HANDLER = CommandHandler("ping", ping, filters=CustomFilters.sudo_filter)
 SPEED_HANDLER = CommandHandler("speedtest", speedtst, filters=CustomFilters.sudo_filter) 
+SYS_STATUS_HANDLER = CommandHandler("sysinfo", system_status, filters=CustomFilters.sudo_filter)
 
 dispatcher.add_handler(IP_HANDLER)
 dispatcher.add_handler(SPEED_HANDLER)
 dispatcher.add_handler(PING_HANDLER)
+dispatcher.add_handler(SYS_STATUS_HANDLER)
