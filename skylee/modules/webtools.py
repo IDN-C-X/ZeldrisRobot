@@ -1,7 +1,8 @@
 import speedtest
 import requests
+import datetime
 
-from psutil import cpu_percent, virtual_memory
+from psutil import cpu_percent, virtual_memory, disk_usage, boot_time
 from platform import python_version
 from telegram import __version__
 from spamwatch import __version__ as __sw__
@@ -70,10 +71,13 @@ def speedtst(update, context):
 def system_status(update, context):
     msg = update.effective_message
     mem = virtual_memory()
-    cpu = str(cpu_percent())
-    status = "*System is online & running!*\n\n"
-    status += "*CPU usage:* "+cpu+" %\n"
-    status += "*Memory used:* "+str(mem[2])+" %\n\n"
+    cpu = cpu_percent()
+    disk = disk_usage('/')
+    uptime = datetime.datetime.fromtimestamp(boot_time()).strftime("%Y-%m-%d %H:%M:%S")
+    status = "*System uptime:* "+str(uptime)+"\n\n"
+    status += "*CPU usage:* "+str(cpu)+" %\n"
+    status += "*Ram usage:* "+str(mem[2])+" %\n"
+    status += "*Storage used:* "+str(disk[3])+" %\n\n"
     status += "*Python version:* "+python_version()+"\n"
     status += "*Library version:* "+str(__version__)+"\n"
     status += "*Spamwatch API:* "+str(__sw__)+"\n"
