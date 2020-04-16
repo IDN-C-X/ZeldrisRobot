@@ -1,11 +1,11 @@
-# SKYLEE-BOT
+# SKYLEEBOT
 
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/843cdeb7f4124dd39eb3930939478259)](https://app.codacy.com/manual/starry69/skyleebot?utm_source=github.com&utm_medium=referral&utm_content=starry69/skyleebot&utm_campaign=Badge_Grade_Dashboard)
 
 A modular telegram Python bot running on python3 with an sqlalchemy database.
 
 Originally a simple group management bot with multiple admin features, it has evolved, becoming extremely modular and 
-simple to use. Note that this is a fork of the well-known Telegram-bot of it's time @BanhammerMarie_bot from Paul Larson.
+simple to use. Note that this project uses well-known Telegram-bot of it's time @BanhammerMarie_bot from Paul Larson as it's base.
 
 Can be found on telegram as [Skylee](https://t.me/skylee_bot).
 
@@ -57,7 +57,7 @@ defaults set in the sample_config, hence making it easier to upgrade.
 
 An example `config.py` file could be:
 ```
-from tg_bot.sample_config import Config
+from skylee.sample_config import Config
 
 
 class Development(Config):
@@ -69,7 +69,7 @@ class Development(Config):
     USE_MESSAGE_DUMP = True
     SUDO_USERS = [18673980, 83489514]  # List of id's for users which have sudo access to the bot.
     LOAD = []
-    NO_LOAD = ['translation']
+    NO_LOAD = []
 ```
 
 If you can't have a config.py file (EG on heroku), it is also possible to use environment variables.
@@ -173,7 +173,7 @@ All that is needed is that your .py file be in the modules folder.
 
 To add commands, make sure to import the dispatcher via
 
-`from tg_bot import dispatcher`.
+`from skylee import dispatcher`.
 
 You can then add commands using the usual
 
