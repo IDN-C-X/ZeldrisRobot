@@ -11,10 +11,6 @@ from skylee.modules.disable import DisableAbleCommandHandler
 
 from googletrans import Translator
 
-TR_HELP = """ Reply to some message with language code to translate it into your's.
-              \nLike `/tr en` to translate some message of other language into English!
-              \nYou can get list of languages and their codes by clicking [here](https://www.science.co.il/language/Codes.php).
-"""
 
 @run_async
 def gtrans(update, context):
@@ -22,8 +18,7 @@ def gtrans(update, context):
     args = context.args
     lang = " ".join(args)
     if not lang:
-       msg.reply_text(TR_HELP, parse_mode=ParseMode.MARKDOWN, disable_web_page_preview=True)
-       return
+       lang = "en"
     to_translate_text = msg.reply_to_message.text
     translator = Translator()
     try:
@@ -60,8 +55,9 @@ def gtts(update, context):
 
 
 __help__ = """
-- /tr <lang> - To translate to your language!
-- /tts <reply> - To some message to convert it into audio format! 
+- /tr - To translate to your language, by default language is set to english, use `/tr <lang code>` for some other language!
+
+- /tts - To some message to convert it into audio format! 
 """
 __mod_name__ = "Translate"
 
