@@ -1,6 +1,7 @@
 from typing import Optional, List
 from gtts import gTTS
 import re
+import os
 
 from telegram import Message, Update, Bot, User, ChatAction, MessageEntity, ParseMode
 from telegram.ext import Filters, MessageHandler, run_async
@@ -53,6 +54,7 @@ def gtts(update, context):
             tts.save("skylee.mp3")
         with open("skylee.mp3", "rb") as speech:
             update.message.reply_voice(speech, quote=False)
+            os.remove("skylee.mp3")
     except :
             update.effective_message.reply_text("Reply to some message or enter some text to convert it into audio format!")
 
