@@ -152,10 +152,12 @@ Sometimes, you just want to add some notes and filters to a group chat, but you 
 This allows you to connect to a chat's database, and add things to it without the commands appearing in chat! For obvious reasons, you need to be an admin to add things; but any member in the group can view your data.
 
 Actions are available with connected groups:
- • View and edit notes
- • View and edit filters
+	
+ • View and edit Notes
+ • View and edit Filters
  • Set and control AntiFlood settings
- • Set locks and unlocks in chat
+ • Set Locks and Unlocks in chat
+ • Enable and Disable commands in chat
  • Export and Imports of chat backup
  • More in future!
 

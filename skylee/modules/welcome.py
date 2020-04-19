@@ -10,6 +10,7 @@ from telegram.ext import MessageHandler, Filters, CommandHandler, run_async, Cal
 from telegram.utils.helpers import mention_html
 
 import skylee.modules.sql.welcome_sql as sql
+from skylee.modules.sql.global_bans_sql import is_user_gbanned
 from skylee import dispatcher, OWNER_ID, LOGGER, MESSAGE_DUMP
 from skylee.modules.helper_funcs.chat_status import user_admin, is_user_ban_protected
 from skylee.modules.helper_funcs.misc import build_keyboard, revert_buttons
@@ -93,6 +94,10 @@ def new_member(update, context):
         sent = None
         new_members = update.effective_message.new_chat_members
         for new_mem in new_members:
+
+            if is_user_gbanned(new_mem.id):
+                return
+
             # Give the owner a special welcome
             if new_mem.id == OWNER_ID:
                 update.effective_message.reply_text("Master is in the houseeee, let's get this party started!")
@@ -195,6 +200,10 @@ def left_member(update, context):
     if should_goodbye:
         left_mem = update.effective_message.left_chat_member
         if left_mem:
+
+            if is_user_gbanned(left_mem.id):
+                return
+
             # Ignore bot being kicked
             if left_mem.id == context.bot.id:
                 return
