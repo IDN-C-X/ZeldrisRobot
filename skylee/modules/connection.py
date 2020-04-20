@@ -254,7 +254,7 @@ def connect_button(update, context):
             if connection_status:
                 conn_chat = dispatcher.bot.getChat(connected(context.bot, update, chat, user.id, need_admin=False))
                 chat_name = conn_chat.title
-                query.message.edit_text("Successfully connected to *{}*. \nUse /connection to check available commands.".format(chat_name), parse_mode=ParseMode.MARKDOWN)
+                query.message.edit_text("Successfully connected to *{}*. \nUse `/helpconnect` to check available commands.".format(chat_name), parse_mode=ParseMode.MARKDOWN)
                 sql.add_history_conn(user.id, str(conn_chat.id), chat_name)
             else:
                 query.message.edit_text("Connection failed!")
@@ -273,6 +273,10 @@ def connect_button(update, context):
         query.message.edit_text("Closed.\nTo open again, type /connect")
     else:
         connect_chat(update, context)
+
+
+__mod_name__ = "Connection"
+
 
 __help__ = """
 Sometimes, you just want to add some notes and filters to a group chat, but you don't want everyone to see; This is where connections come in...
@@ -300,6 +304,3 @@ dispatcher.add_handler(DISCONNECT_CHAT_HANDLER)
 dispatcher.add_handler(ALLOW_CONNECTIONS_HANDLER)
 dispatcher.add_handler(HELP_CONNECT_CHAT_HANDLER)
 dispatcher.add_handler(CONNECT_BTN_HANDLER)
-
-__mod_name__ = "Connection"
-__handlers__ = [CONNECT_CHAT_HANDLER, CONNECTION_CHAT_HANDLER, DISCONNECT_CHAT_HANDLER, ALLOW_CONNECTIONS_HANDLER, HELP_CONNECT_CHAT_HANDLER, CONNECT_BTN_HANDLER]

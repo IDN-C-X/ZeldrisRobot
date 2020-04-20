@@ -1,6 +1,7 @@
 import speedtest
 import requests
 import datetime
+import platform
 
 from psutil import cpu_percent, virtual_memory, disk_usage, boot_time
 from platform import python_version
@@ -69,19 +70,28 @@ def speedtst(update, context):
 
 @run_async
 def system_status(update, context):
-    msg = update.effective_message
+    uptime = datetime.datetime.fromtimestamp(boot_time()).strftime("%Y-%m-%d %H:%M:%S")
+    status = "*=======[ SYSTEM INFO ]=======*\n\n"
+    status += "*System uptime:* "+str(uptime)+"\n"
+
+    uname = platform.uname()
+    status += "*System:* "+str(uname.system)+"\n"
+    status += "*Node name:* "+str(uname.node)+"\n"
+    status += "*Release:* "+str(uname.release)+"\n"
+    status += "*Version:* "+str(uname.version)+"\n"
+    status += "*Machine:* "+str(uname.machine)+"\n"
+    status += "*Processor:* "+str(uname.processor)+"\n\n"
+
     mem = virtual_memory()
     cpu = cpu_percent()
     disk = disk_usage('/')
-    uptime = datetime.datetime.fromtimestamp(boot_time()).strftime("%Y-%m-%d %H:%M:%S")
-    status = "*System uptime:* "+str(uptime)+"\n\n"
     status += "*CPU usage:* "+str(cpu)+" %\n"
     status += "*Ram usage:* "+str(mem[2])+" %\n"
     status += "*Storage used:* "+str(disk[3])+" %\n\n"
     status += "*Python version:* "+python_version()+"\n"
     status += "*Library version:* "+str(__version__)+"\n"
     status += "*Spamwatch API:* "+str(__sw__)+"\n"
-    msg.reply_text(status, parse_mode=ParseMode.MARKDOWN)
+    update.effective_message.reply_text(status, parse_mode=ParseMode.MARKDOWN)
 
 
 IP_HANDLER = CommandHandler("ip", get_bot_ip, filters=Filters.chat(OWNER_ID))
