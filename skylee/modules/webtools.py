@@ -71,7 +71,7 @@ def speedtst(update, context):
 @run_async
 def system_status(update, context):
     uptime = datetime.datetime.fromtimestamp(boot_time()).strftime("%Y-%m-%d %H:%M:%S")
-    status = "<b>=======[ SYSTEM INFO ]=======</b>\n\n"
+    status = "<b>======[ SYSTEM INFO ]======</b>\n\n"
     status += "<b>System uptime:</b> <code>"+str(uptime)+"</code>\n"
 
     uname = platform.uname()
@@ -91,7 +91,7 @@ def system_status(update, context):
     status += "<b>Python version:</b> <code>"+python_version()+"</code>\n"
     status += "<b>Library version:</b> <code>"+str(__version__)+"</code>\n"
     status += "<b>Spamwatch API:</b> <code>"+str(__sw__)+"</code>\n"
-    update.effective_message.reply_text(status, parse_mode=ParseMode.HTML)
+    context.bot.sendMessage(update.effective_chat.id, status, parse_mode=ParseMode.HTML)
 
 
 IP_HANDLER = CommandHandler("ip", get_bot_ip, filters=Filters.chat(OWNER_ID))

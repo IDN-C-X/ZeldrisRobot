@@ -148,6 +148,7 @@ def wiki(update, context):
         except wikipedia.exceptions.DisambiguationError as eet:
             update.effective_message.reply_text(f"⚠ Error\n There are too many query! Express it more!\nPossible query result:\n{eet}")
 
+@run_async
 def getlink(update, context):
     args = context.args
     message = update.effective_message
@@ -218,6 +219,7 @@ def ud(update, context):
 
 # Bug reporting module for x00td ports grp...
 
+@run_async
 def ports_bug(update, context):
     message = update.effective_message
     user = update.effective_user
