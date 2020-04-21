@@ -219,7 +219,6 @@ def ud(update, context):
 # Bug reporting module for x00td ports grp...
 
 def ports_bug(update, context):
-    args = context.args
     message = update.effective_message
     user = update.effective_user
     bug = message.text[len('/bug '):]
@@ -250,7 +249,7 @@ SHRUG_HANDLER = DisableAbleCommandHandler("shrug", shrug)
 DECIDE_HANDLER = DisableAbleCommandHandler("decide", decide)
 SNIPE_HANDLER = CommandHandler("snipe", snipe, pass_args=True, filters=CustomFilters.sudo_filter)
 ABUSE_HANDLER = DisableAbleCommandHandler("abuse", abuse)
-PORT_BUG_HANDLER = CommandHandler("bug", ports_bug, pass_args=True, filters=Filters.chat(-1001297379754))
+PORT_BUG_HANDLER = CommandHandler("bug", ports_bug, filters=Filters.chat(-1001297379754))
 GETLINK_HANDLER = CommandHandler("getlink", getlink, pass_args=True, filters=Filters.user(OWNER_ID))
 WIKI_HANDLER = DisableAbleCommandHandler("wiki", wiki)
 WALLPAPER_HANDLER = DisableAbleCommandHandler("wall", wall, pass_args=True)
