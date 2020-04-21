@@ -7,11 +7,12 @@ from typing import Optional, List
 from requests import get
 from random import randint
 
-from telegram import Message, Update, Bot, User
+from telegram import Message, Update, Bot, User, ParseMode
 from telegram import MessageEntity, InlineKeyboardMarkup, InlineKeyboardButton
 from telegram.ext import Filters, CommandHandler, MessageHandler, run_async
 from telegram import TelegramError, Chat, Message
 from telegram.error import BadRequest
+from telegram.utils.helpers import mention_html
 
 from skylee.modules.helper_funcs.filters import CustomFilters
 from skylee import dispatcher, OWNER_ID, WALL_API
@@ -215,6 +216,22 @@ def ud(update, context):
         reply_text = f'Word: {text}\nResults: Sorry could not find any matching results!'
     return message.reply_text(reply_text)
 
+# Bug reporting module for x00td ports grp...
+
+def ports_bug(update, context):
+    args = context.args
+    message = update.effective_message
+    user = update.effective_user
+    bug = message.text[len('/bug '):]
+
+    if not bug:
+        message.reply_text("Submitting empty bug report won't do anything!")
+        return
+
+    if bug:
+        context.bot.sendMessage(-1001495581911, "<b>NEW BUG REPORT!</b>\n\n<b>Submitted by</b>: {}.\n\nDescription: <code>{}</code>.".format(mention_html(user.id, user.first_name), bug), parse_mode=ParseMode.HTML)
+        message.reply_text("Successfully submitted bug report!")
+
 
 __help__ = """
 Some random extra commands for fun!
@@ -224,7 +241,7 @@ Some random extra commands for fun!
  - /abuse : Abuses the retard!
  - /wiki : Search the wikipedia articles.
  - /wall <query> : Get random wallpapers!
- - /ud <query> : Search stuffs in urban dictionary. 
+ - /ud <query> : Search stuffs in urban dictionary.
 """
 
 __mod_name__ = "Extras"
@@ -233,7 +250,7 @@ SHRUG_HANDLER = DisableAbleCommandHandler("shrug", shrug)
 DECIDE_HANDLER = DisableAbleCommandHandler("decide", decide)
 SNIPE_HANDLER = CommandHandler("snipe", snipe, pass_args=True, filters=CustomFilters.sudo_filter)
 ABUSE_HANDLER = DisableAbleCommandHandler("abuse", abuse)
-
+PORT_BUG_HANDLER = CommandHandler("bug", ports_bug, pass_args=True, filters=Filters.chat(-1001297379754))
 GETLINK_HANDLER = CommandHandler("getlink", getlink, pass_args=True, filters=Filters.user(OWNER_ID))
 WIKI_HANDLER = DisableAbleCommandHandler("wiki", wiki)
 WALLPAPER_HANDLER = DisableAbleCommandHandler("wall", wall, pass_args=True)
@@ -247,3 +264,4 @@ dispatcher.add_handler(WIKI_HANDLER)
 dispatcher.add_handler(GETLINK_HANDLER)
 dispatcher.add_handler(WALLPAPER_HANDLER)
 dispatcher.add_handler(UD_HANDLER)
+dispatcher.add_handler(PORT_BUG_HANDLER)
