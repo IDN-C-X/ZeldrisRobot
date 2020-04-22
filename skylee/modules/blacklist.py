@@ -19,6 +19,7 @@ BASE_BLACKLIST_STRING = "Current <b>blacklisted</b> words:\n"
 
 
 @run_async
+@user_admin
 def blacklist(update, context):
     msg = update.effective_message  # type: Optional[Message]
     chat = update.effective_chat  # type: Optional[Chat]
