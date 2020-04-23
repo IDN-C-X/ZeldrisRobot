@@ -1,286 +1,26 @@
 import html
 import json
-import random
+import random, re
+import wikipedia
 from datetime import datetime
 from typing import Optional, List
-
+from requests import get
 import requests
-from telegram import Message, Chat, Update, Bot, MessageEntity
-from telegram import ParseMode
+
+from random import randint
+import requests as r
+from time import sleep
+
+from telegram import Message, Chat, Update, Bot, MessageEntity, InlineKeyboardMarkup, InlineKeyboardButton, ParseMode
 from telegram.ext import CommandHandler, run_async, Filters
 from telegram.utils.helpers import escape_markdown, mention_html
+from telegram.error import BadRequest
 
-from skylee import dispatcher, OWNER_ID, SUDO_USERS, SUPPORT_USERS, WHITELIST_USERS, BAN_STICKER
+from skylee import dispatcher, OWNER_ID, SUDO_USERS, SUPPORT_USERS, WHITELIST_USERS, WALL_API
 from skylee.__main__ import STATS, USER_INFO, GDPR
 from skylee.modules.disable import DisableAbleCommandHandler
 from skylee.modules.helper_funcs.extraction import extract_user
 from skylee.modules.helper_funcs.filters import CustomFilters
-
-RUN_STRINGS = (
-    "Where do you think you're going?",
-    "Huh? what? did they get away?",
-    "ZZzzZZzz... Huh? what? oh, just them again, nevermind.",
-    "Get back here!",
-    "Not so fast...",
-    "Look out for the wall!",
-    "Don't leave me alone with them!!",
-    "You run, you die.",
-    "Jokes on you, I'm everywhere",
-    "You're gonna regret that...",
-    "You could also try /kickme, I hear that's fun.",
-    "Go bother someone else, no-one here cares.",
-    "You can run, but you can't hide.",
-    "Is that all you've got?",
-    "I'm behind you...",
-    "You've got company!",
-    "We can do this the easy way, or the hard way.",
-    "You just don't get it, do you?",
-    "Yeah, you better run!",
-    "Please, remind me how much I care?",
-    "I'd run faster if I were you.",
-    "That's definitely the droid we're looking for.",
-    "May the odds be ever in your favour.",
-    "Famous last words.",
-    "And they disappeared forever, never to be seen again.",
-    "\"Oh, look at me! I'm so cool, I can run from a bot!\" - this person",
-    "Yeah yeah, just tap /kickme already.",
-    "Here, take this ring and head to Mordor while you're at it.",
-    "Legend has it, they're still running...",
-    "Unlike Harry Potter, your parents can't protect you from me.",
-    "Fear leads to anger. Anger leads to hate. Hate leads to suffering. If you keep running in fear, you might "
-    "be the next Vader.",
-    "Multiple calculations later, I have decided my interest in your shenanigans is exactly 0.",
-    "Legend has it, they're still running.",
-    "Keep it up, not sure we want you here anyway.",
-    "You're a wiza- Oh. Wait. You're not Harry, keep moving.",
-    "NO RUNNING IN THE HALLWAYS!",
-    "Hasta la vista, baby.",
-    "Who let the dogs out?",
-    "It's funny, because no one cares.",
-    "Ah, what a waste. I liked that one.",
-    "Frankly, my dear, I don't give a damn.",
-    "My milkshake brings all the boys to yard... So run faster!",
-    "You can't HANDLE the truth!",
-    "A long time ago, in a galaxy far far away... Someone would've cared about that. Not anymore though.",
-    "Hey, look at them! They're running from the inevitable banhammer... Cute.",
-    "Han shot first. So will I.",
-    "What are you running after, a white rabbit?",
-    "As The Doctor would say... RUN!",
-)
-
-SLAP_TEMPLATES = (
-    "{user1} {hits} {user2} with a {item}.",
-    "{user1} {hits} {user2} in the face with a {item}.",
-    "{user1} {hits} {user2} around a bit with a {item}.",
-    "{user1} {throws} a {item} at {user2}.",
-    "{user1} grabs a {item} and {throws} it at {user2}'s face.",
-    "{user1} launches a {item} in {user2}'s general direction.",
-    "{user1} starts slapping {user2} silly with a {item}.",
-    "{user1} pins {user2} down and repeatedly {hits} them with a {item}.",
-    "{user1} grabs up a {item} and {hits} {user2} with it.",
-    "{user1} ties {user2} to a chair and {throws} a {item} at them.",
-    "{user1} gave a friendly push to help {user2} learn to swim in lava."
-    "{user1} {hits} {user2} with a glue filled hands.",
-    "{user1} slams the metal door at {user2}.",
-    "{user1} thundersmacks {user2} with lightning bolt.",
-    "{user1} gave a friendly push to help {user2} learn to swim in a wild ocean.",
-    "{user1} {throws} {user2} into shark infested water.",
-)
-
-PUNCH_TEMPLATES = (
-    "{user1} {punches} {user2} with a {item}.",
-    "{user1} {punches} {user2} in the face with a {item}.",
-    "{user1} {punches} {user2} around a bit with a {item}.",
-    "{user1} {punches} {user2} on their face. 👊",
-)
-
-HUG_TEMPLATES = (
-    "{user1} {hug} {user2}.",
-    "{user1} {hug} {user2} warmly.",
-    "{user1} {hug} {user2} with a love. 💘",
-    "{user1} {hug} {user2} with kindness.",
-)
-
-ITEMS = (
-    "cast iron skillet",
-    "large trout",
-    "baseball bat",
-    "cricket bat",
-    "wooden cane",
-    "nail",
-    "printer",
-    "shovel",
-    "CRT monitor",
-    "physics textbook",
-    "toaster",
-    "portrait of Richard Stallman",
-    "television",
-    "five ton truck",
-    "roll of duct tape",
-    "book",
-    "laptop",
-    "old television",
-    "sack of rocks",
-    "rainbow trout",
-    "rubber chicken",
-    "spiked bat",
-    "fire extinguisher",
-    "heavy rock",
-    "chunk of dirt",
-    "beehive",
-    "piece of rotten meat",
-    "bear",
-    "ton of bricks",
-)
-
-THROW = (
-    "throws",
-    "flings",
-    "chucks",
-    "hurls",
-)
-
-HIT = (
-    "hits",
-    "whacks",
-    "slaps",
-    "smacks",
-    "bashes",
-)
-
-PUNCH = (
-    "punch",
-    "punched",
-    "smack",
-)
-
-HUG = (
-    "hugs",
-    "hugged",
-    "kissed",
-    "pinches",
-)
-GMAPS_LOC = "https://maps.googleapis.com/maps/api/geocode/json"
-GMAPS_TIME = "https://maps.googleapis.com/maps/api/timezone/json"
-
-
-@run_async
-def runs(update, context):
-    update.effective_message.reply_text(random.choice(RUN_STRINGS))
-
-
-@run_async
-def slap(update, context):
-    args = context.args
-    msg = update.effective_message  # type: Optional[Message]
-
-    # reply to correct message
-    reply_text = msg.reply_to_message.reply_text if msg.reply_to_message else msg.reply_text
-
-    # get user who sent message
-    if msg.from_user.username:
-        curr_user = "@" + escape_markdown(msg.from_user.username)
-    else:
-        curr_user = "[{}](tg://user?id={})".format(msg.from_user.first_name, msg.from_user.id)
-
-    user_id = extract_user(update.effective_message, args)
-    if user_id:
-        slapped_user = context.bot.get_chat(user_id)
-        user1 = curr_user
-        if slapped_user.username:
-            user2 = "@" + escape_markdown(slapped_user.username)
-        else:
-            user2 = "[{}](tg://user?id={})".format(slapped_user.first_name,
-                                                   slapped_user.id)
-
-    # if no target found, bot targets the sender
-    else:
-        user1 = "[{}](tg://user?id={})".format(context.bot.first_name, context.bot.id)
-        user2 = curr_user
-
-    temp = random.choice(SLAP_TEMPLATES)
-    item = random.choice(ITEMS)
-    hit = random.choice(HIT)
-    throw = random.choice(THROW)
-
-    repl = temp.format(user1=user1, user2=user2, item=item, hits=hit, throws=throw)
-
-    reply_text(repl, parse_mode=ParseMode.MARKDOWN)
-
-@run_async
-def punch(update, context):
-    args = context.args
-    msg = update.effective_message  # type: Optional[Message]
-
-    # reply to correct message
-    reply_text = msg.reply_to_message.reply_text if msg.reply_to_message else msg.reply_text
-
-    # get user who sent message
-    if msg.from_user.username:
-        curr_user = "@" + escape_markdown(msg.from_user.username)
-    else:
-        curr_user = "[{}](tg://user?id={})".format(msg.from_user.first_name, msg.from_user.id)
-
-    user_id = extract_user(update.effective_message, args)
-    if user_id:
-        punched_user = context.bot.get_chat(user_id)
-        user1 = curr_user
-        if punched_user.username:
-            user2 = "@" + escape_markdown(punched_user.username)
-        else:
-            user2 = "[{}](tg://user?id={})".format(punched_user.first_name,
-                                                   punched_user.id)
-
-    # if no target found, bot targets the sender
-    else:
-        user1 = "[{}](tg://user?id={})".format(context.bot.first_name, context.bot.id)
-        user2 = curr_user
-
-    temp = random.choice(PUNCH_TEMPLATES)
-    item = random.choice(ITEMS)
-    punch = random.choice(PUNCH)
-
-    repl = temp.format(user1=user1, user2=user2, item=item, punches=punch)
-
-    reply_text(repl, parse_mode=ParseMode.MARKDOWN)
-
-
-
-@run_async
-def hug(update, context):
-    args = context.args
-    msg = update.effective_message  # type: Optional[Message]
-
-    # reply to correct message
-    reply_text = msg.reply_to_message.reply_text if msg.reply_to_message else msg.reply_text
-
-    # get user who sent message
-    if msg.from_user.username:
-        curr_user = "@" + escape_markdown(msg.from_user.username)
-    else:
-        curr_user = "[{}](tg://user?id={})".format(msg.from_user.first_name, msg.from_user.id)
-
-    user_id = extract_user(update.effective_message, args)
-    if user_id:
-        hugged_user = context.bot.get_chat(user_id)
-        user1 = curr_user
-        if hugged_user.username:
-            user2 = "@" + escape_markdown(hugged_user.username)
-        else:
-            user2 = "[{}](tg://user?id={})".format(hugged_user.first_name,
-                                                   hugged_user.id)
-
-    # if no target found, bot targets the sender
-    else:
-        user1 = "Awwh! [{}](tg://user?id={})".format(context.bot.first_name, context.bot.id)
-        user2 = curr_user
-
-    temp = random.choice(HUG_TEMPLATES)
-    hug = random.choice(HUG)
-
-    repl = temp.format(user1=user1, user2=user2, hug=hug)
-
-    reply_text(repl, parse_mode=ParseMode.MARKDOWN)
 
 
 @run_async
@@ -436,90 +176,131 @@ def markdown_help(update, context):
                                         "[URL](example.com) [button](buttonurl:github.com) "
                                         "[button2](buttonurl://google.com:same)")
 
+@run_async
+def wiki(update, context):
+    kueri = re.split(pattern="wiki", string=update.effective_message.text)
+    wikipedia.set_lang("en")
+    if len(str(kueri[1])) == 0:
+        update.effective_message.reply_text("Enter keywords!")
+    else:
+        try:
+            pertama = update.effective_message.reply_text("🔄 Loading...")
+            keyboard = InlineKeyboardMarkup([[InlineKeyboardButton(text="🔧 More Info...", url=wikipedia.page(kueri).url)]])
+            context.bot.editMessageText(chat_id=update.effective_chat.id, message_id=pertama.message_id, text=wikipedia.summary(kueri, sentences=10), reply_markup=keyboard)
+        except wikipedia.PageError as e:
+            update.effective_message.reply_text(f"⚠ Error: {e}")
+        except BadRequest as et :
+            update.effective_message.reply_text(f"⚠ Error: {et}")
+        except wikipedia.exceptions.DisambiguationError as eet:
+            update.effective_message.reply_text(f"⚠ Error\n There are too many query! Express it more!\nPossible query result:\n{eet}")
+
+
+def ud(update, context):
+    try:
+        message = update.effective_message
+        text = message.text[len('/ud '):]
+        results = get(f'http://api.urbandictionary.com/v0/define?term={text}').json()
+        reply_text = f'Word: {text}\nDefinition: {results["list"][0]["definition"]}'
+    except IndexError:
+        reply_text = f'Word: {text}\nResults: Sorry could not find any matching results!'
+    return message.reply_text(reply_text)
+
+@run_async
+def wall(update, context):
+    chat_id = update.effective_chat.id
+    msg = update.effective_message
+    msg_id = update.effective_message.message_id
+    args = context.args
+    query = " ".join(args)
+    if not query:
+        msg.reply_text("Please enter a query!")
+        return
+    else:
+        caption = query
+        term = query.replace(" ", "%20")
+        json_rep = r.get(f"https://wall.alphacoders.com/api2.0/get.php?auth={WALL_API}&method=search&term={term}").json()
+        if BadRequest:
+            msg.reply_text("An error occurred!")
+        else:
+            wallpapers = json_rep.get("wallpapers")
+            if not wallpapers:
+                msg.reply_text("No results found! Refine your search.")
+                return
+            else:
+                index = randint(0, len(wallpapers)-1) # Choose random index
+                wallpaper = wallpapers[index]
+                wallpaper = wallpaper.get("url_image")
+                wallpaper = wallpaper.replace("\\", "")
+                context.bot.send_photo(chat_id, photo=wallpaper, caption='Preview',
+                reply_to_message_id=msg_id, timeout=60)
+                context.bot.send_document(chat_id, document=wallpaper,
+                filename='wallpaper', caption=caption, reply_to_message_id=msg_id,
+                timeout=60)
+
+@run_async
+def getlink(update, context):
+    args = context.args
+    message = update.effective_message
+    if args:
+        pattern = re.compile(r'-\d+')
+    else:
+        message.reply_text("You don't seem to be referring to any chats.")
+    links = "Invite link(s):\n"
+    for chat_id in pattern.findall(message.text):
+        try:
+            chat = context.bot.getChat(chat_id)
+            bot_member = chat.get_member(context.bot.id)
+            if bot_member.can_invite_users:
+                invitelink = context.bot.exportChatInviteLink(chat_id)
+                links += str(chat_id) + ":\n" + invitelink + "\n"
+            else:
+                links += str(chat_id) + ":\nI don't have access to the invite link." + "\n"
+        except BadRequest as excp:
+                links += str(chat_id) + ":\n" + excp.message + "\n"
+        except TelegramError as excp:
+                links += str(chat_id) + ":\n" + excp.message + "\n"
+
+    message.reply_text(links)
+
 
 @run_async
 def stats(update, context):
     update.effective_message.reply_text("Current stats:\n" + "\n".join([mod.__stats__() for mod in STATS]))
 
-@run_async
-def stickerid(update, context):
-    msg = update.effective_message
-    if msg.reply_to_message and msg.reply_to_message.sticker:
-        update.effective_message.reply_text("Hello " +
-                                            "[{}](tg://user?id={})".format(msg.from_user.first_name, msg.from_user.id)
-                                            + ", The sticker id you are replying is :\n```" + 
-                                            escape_markdown(msg.reply_to_message.sticker.file_id) + "```",
-                                            parse_mode=ParseMode.MARKDOWN)
-    else:
-        update.effective_message.reply_text("Hello " + "[{}](tg://user?id={})".format(msg.from_user.first_name,
-                                            msg.from_user.id) + ", Please reply to sticker message to get id sticker",
-                                            parse_mode=ParseMode.MARKDOWN)
-@run_async
-def getsticker(update, context):
-    msg = update.effective_message
-    chat_id = update.effective_chat.id
-    if msg.reply_to_message and msg.reply_to_message.sticker:
-        context.bot.sendChatAction(chat_id, "typing")
-        update.effective_message.reply_text("Hello " + "[{}](tg://user?id={})".format(msg.from_user.first_name,
-                                            msg.from_user.id) + ", Please check the file you requested below."
-                                            "\nPlease use this feature wisely!",
-                                            parse_mode=ParseMode.MARKDOWN)
-        context.bot.sendChatAction(chat_id, "upload_document")
-        file_id = msg.reply_to_message.sticker.file_id
-        newFile = context.bot.get_file(file_id)
-        newFile.download('sticker.png')
-        context.bot.sendDocument(chat_id, document=open('sticker.png', 'rb'))
-        context.bot.sendChatAction(chat_id, "upload_photo")
-        context.bot.send_photo(chat_id, photo=open('sticker.png', 'rb'))
-
-    else:
-        context.bot.sendChatAction(chat_id, "typing")
-        update.effective_message.reply_text("Hello " + "[{}](tg://user?id={})".format(msg.from_user.first_name,
-                                            msg.from_user.id) + ", Please reply to sticker message to get sticker image",
-                                            parse_mode=ParseMode.MARKDOWN)
 
 # /ip is for private use
 __help__ = """
 An "odds and ends" module for small, simple commands which don't really fit anywhere
 
  - /id: Get the current group id. If used by replying to a message, gets that user's id.
- - /runs: Reply a random string from an array of replies.
- - /slap: Slap a user, or get slapped if not a reply.
- - /warm: Hug a user warmly, or get hugged if not a reply.
- - /punch: Punch a user, or get punched if not a reply.
  - /info: Get information about a user.
+ - /wiki : Search wikipedia articles.
+ - /ud <query> : Search stuffs in urban dictionary.
+ - /wall <query> : Get random wallpapers directly from bot! 
  - /gdpr: Deletes your information from the bot's database. Private chats only.
  - /markdownhelp: Quick summary of how markdown works in telegram - can only be called in private chats.
 """
 
-__mod_name__ = "Misc"
+__mod_name__ = "Miscs"
 
 ID_HANDLER = DisableAbleCommandHandler("id", get_id, pass_args=True)
-RUNS_HANDLER = DisableAbleCommandHandler("runs", runs)
-SLAP_HANDLER = DisableAbleCommandHandler("slap", slap, pass_args=True)
-PUNCH_HANDLER = DisableAbleCommandHandler("punch", punch, pass_args=True)
-HUG_HANDLER = DisableAbleCommandHandler("warm", hug, pass_args=True)
 INFO_HANDLER = DisableAbleCommandHandler("info", info, pass_args=True)
-
 ECHO_HANDLER = CommandHandler("echo", echo, filters=CustomFilters.sudo_filter)
 MD_HELP_HANDLER = CommandHandler("markdownhelp", markdown_help, filters=Filters.private)
-
 STATS_HANDLER = CommandHandler("stats", stats, filters=Filters.user(OWNER_ID))
 GDPR_HANDLER = CommandHandler("gdpr", gdpr, filters=Filters.private)
+WIKI_HANDLER = DisableAbleCommandHandler("wiki", wiki)
+WALLPAPER_HANDLER = DisableAbleCommandHandler("wall", wall, pass_args=True)
+UD_HANDLER = DisableAbleCommandHandler("ud", ud)
+GETLINK_HANDLER = CommandHandler("getlink", getlink, pass_args=True, filters=Filters.user(OWNER_ID))
 
-STICKERID_HANDLER = DisableAbleCommandHandler("stickerid", stickerid)
-GETSTICKER_HANDLER = DisableAbleCommandHandler("getsticker", getsticker)
-
-
+dispatcher.add_handler(WALLPAPER_HANDLER)
+dispatcher.add_handler(UD_HANDLER)
 dispatcher.add_handler(ID_HANDLER)
-dispatcher.add_handler(RUNS_HANDLER)
-dispatcher.add_handler(SLAP_HANDLER)
-dispatcher.add_handler(PUNCH_HANDLER)
-dispatcher.add_handler(HUG_HANDLER)
 dispatcher.add_handler(INFO_HANDLER)
 dispatcher.add_handler(ECHO_HANDLER)
 dispatcher.add_handler(MD_HELP_HANDLER)
 dispatcher.add_handler(STATS_HANDLER)
 dispatcher.add_handler(GDPR_HANDLER)
-dispatcher.add_handler(STICKERID_HANDLER)
-dispatcher.add_handler(GETSTICKER_HANDLER)
+dispatcher.add_handler(WIKI_HANDLER)
+dispatcher.add_handler(GETLINK_HANDLER)

@@ -204,6 +204,45 @@ def makepack_internal(update, context, msg, user, png_sticker, emoji, packname, 
         msg.reply_text("Failed to create sticker pack. Possibly due to blek mejik.")
 
 
+@run_async
+def getsticker(update, context):
+    msg = update.effective_message
+    chat_id = update.effective_chat.id
+    if msg.reply_to_message and msg.reply_to_message.sticker:
+        context.bot.sendChatAction(chat_id, "typing")
+        update.effective_message.reply_text("Hello " + "[{}](tg://user?id={})".format(msg.from_user.first_name,
+                                            msg.from_user.id) + ", Please check the file you requested below."
+                                            "\nPlease use this feature wisely!",
+                                            parse_mode=ParseMode.MARKDOWN)
+        context.bot.sendChatAction(chat_id, "upload_document")
+        file_id = msg.reply_to_message.sticker.file_id
+        newFile = context.bot.get_file(file_id)
+        newFile.download('sticker.png')
+        context.bot.sendDocument(chat_id, document=open('sticker.png', 'rb'))
+        context.bot.sendChatAction(chat_id, "upload_photo")
+        context.bot.send_photo(chat_id, photo=open('sticker.png', 'rb'))
+
+    else:
+        context.bot.sendChatAction(chat_id, "typing")
+        update.effective_message.reply_text("Hello " + "[{}](tg://user?id={})".format(msg.from_user.first_name,
+                                            msg.from_user.id) + ", Please reply to sticker message to get sticker image",
+                                            parse_mode=ParseMode.MARKDOWN)
+
+@run_async
+def stickerid(update, context):
+    msg = update.effective_message
+    if msg.reply_to_message and msg.reply_to_message.sticker:
+        update.effective_message.reply_text("Hello " +
+                                            "[{}](tg://user?id={})".format(msg.from_user.first_name, msg.from_user.id)
+                                            + ", The sticker id you are replying is :\n```" + 
+                                            escape_markdown(msg.reply_to_message.sticker.file_id) + "```",
+                                            parse_mode=ParseMode.MARKDOWN)
+    else:
+        update.effective_message.reply_text("Hello " + "[{}](tg://user?id={})".format(msg.from_user.first_name,
+                                            msg.from_user.id) + ", Please reply to sticker message to get id sticker",
+                                            parse_mode=ParseMode.MARKDOWN)
+
+
 __help__ = """
 Kanging Stickers made easy with stickers module!
 
@@ -214,5 +253,9 @@ Kanging Stickers made easy with stickers module!
 
 __mod_name__ = "Stickers"
 KANG_HANDLER = DisableAbleCommandHandler("kang", kang, pass_args=True, admin_ok=True)
+STICKERID_HANDLER = DisableAbleCommandHandler("stickerid", stickerid)
+GETSTICKER_HANDLER = DisableAbleCommandHandler("getsticker", getsticker)
 
-dispatcher.add_handler(KANG_HANDLER) 
+dispatcher.add_handler(KANG_HANDLER)
+dispatcher.add_handler(STICKERID_HANDLER)
+dispatcher.add_handler(GETSTICKER_HANDLER)
