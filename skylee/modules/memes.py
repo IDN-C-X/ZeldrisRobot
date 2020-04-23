@@ -14,14 +14,14 @@ from telegram.utils.helpers import mention_html, escape_markdown
 
 from skylee.modules.helper_funcs.extraction import extract_user
 from skylee.modules.helper_funcs.filters import CustomFilters
-from skylee.modules.helper_funcs.fun_strings import RUN_STRINGS, SLAP_TEMPLATES, PUNCH_TEMPLATES, HUG_TEMPLATES, ITEMS, THROW, HIT, PUNCH, HUG, ABUSE_STRINGS
-from skylee import dispatcher, OWNER_ID, WALL_API
+from skylee import dispatcher, OWNER_ID, SUDO_USERS, SUPPORT_USERS, WALL_API
 from skylee.modules.disable import DisableAbleCommandHandler
 
+import skylee.modules.helper_funcs.fun_strings as fun
 
 @run_async
 def runs(update, context):
-    update.effective_message.reply_text(random.choice(RUN_STRINGS))
+    update.effective_message.reply_text(random.choice(fun.RUN_STRINGS))
 
 
 @run_async
@@ -53,10 +53,10 @@ def slap(update, context):
         user1 = "[{}](tg://user?id={})".format(context.bot.first_name, context.bot.id)
         user2 = curr_user
 
-    temp = random.choice(SLAP_TEMPLATES)
-    item = random.choice(ITEMS)
-    hit = random.choice(HIT)
-    throw = random.choice(THROW)
+    temp = random.choice(fun.SLAP_TEMPLATES)
+    item = random.choice(fun.ITEMS)
+    hit = random.choice(fun.HIT)
+    throw = random.choice(fun.THROW)
 
     repl = temp.format(user1=user1, user2=user2, item=item, hits=hit, throws=throw)
 
@@ -91,9 +91,9 @@ def punch(update, context):
         user1 = "[{}](tg://user?id={})".format(context.bot.first_name, context.bot.id)
         user2 = curr_user
 
-    temp = random.choice(PUNCH_TEMPLATES)
-    item = random.choice(ITEMS)
-    punch = random.choice(PUNCH)
+    temp = random.choice(fun.PUNCH_TEMPLATES)
+    item = random.choice(fun.ITEMS)
+    punch = random.choice(fun.PUNCH)
 
     repl = temp.format(user1=user1, user2=user2, item=item, punches=punch)
 
@@ -130,8 +130,8 @@ def hug(update, context):
         user1 = "Awwh! [{}](tg://user?id={})".format(context.bot.first_name, context.bot.id)
         user2 = curr_user
 
-    temp = random.choice(HUG_TEMPLATES)
-    hug = random.choice(HUG)
+    temp = random.choice(fun.HUG_TEMPLATES)
+    hug = random.choice(fun.HUG)
 
     repl = temp.format(user1=user1, user2=user2, hug=hug)
 
@@ -142,13 +142,13 @@ def hug(update, context):
 def abuse(update, context):
     # reply to correct message
     reply_text = update.effective_message.reply_to_message.reply_text if update.effective_message.reply_to_message else update.effective_message.reply_text
-    reply_text(random.choice(ABUSE_STRINGS))
+    reply_text(random.choice(fun.ABUSE_STRINGS))
 
 @run_async
 def shrug(update, context):
     # reply to correct message
     reply_text = update.effective_message.reply_to_message.reply_text if update.effective_message.reply_to_message else update.effective_message.reply_text
-    reply_text("¯\_(ツ)_/¯")
+    reply_text(r"¯\_(ツ)_/¯")
 
 @run_async
 def decide(update, context):
@@ -159,6 +159,21 @@ def decide(update, context):
             update.message.reply_text("NoU.")
         else:
             update.message.reply_text("Maybe.")
+
+@run_async
+def table(update, context):
+    reply_text = update.effective_message.reply_to_message.reply_text if update.effective_message.reply_to_message else update.effective_message.reply_text
+    reply_text(random.choice(fun.TABLE))
+
+@run_async
+def gbun(update, context):
+    user = update.effective_user
+    chat = update.effective_chat
+
+    if update.effective_message.chat.type == "private":
+       return
+    if int(user.id) in SUDO_USERS or int(user.id) in SUPPORT_USERS:
+       context.bot.sendMessage(chat.id, (random.choice(fun.GBUN)))
 
 @run_async
 def snipe(update, context):
@@ -196,9 +211,10 @@ def ports_bug(update, context):
 __help__ = """
 Some dank memes for ya all!
 
- - /shrug : get shrug 🤷
- - /decide : Randomly answers yes/no/maybe
- - /abuse : Abuses the retard!
+ - /shrug: get shrug XD.
+ - /decide: Randomly answers yes/no/maybe
+ - /abuse: Abuses the retard!
+ - /table: Flips a table...
  - /runs: Reply a random string from an array of replies.
  - /slap: Slap a user, or get slapped if not a reply.
  - /warm: Hug a user warmly, or get hugged if not a reply.
@@ -216,6 +232,9 @@ RUNS_HANDLER = DisableAbleCommandHandler("runs", runs)
 SLAP_HANDLER = DisableAbleCommandHandler("slap", slap, pass_args=True)
 PUNCH_HANDLER = DisableAbleCommandHandler("punch", punch, pass_args=True)
 HUG_HANDLER = DisableAbleCommandHandler("warm", hug, pass_args=True)
+GBUN_HANDLER = CommandHandler("gbun", gbun)
+TABLE_HANDLER = DisableAbleCommandHandler("table", table)
+
 
 dispatcher.add_handler(SHRUG_HANDLER)
 dispatcher.add_handler(DECIDE_HANDLER)
@@ -226,3 +245,5 @@ dispatcher.add_handler(RUNS_HANDLER)
 dispatcher.add_handler(SLAP_HANDLER)
 dispatcher.add_handler(PUNCH_HANDLER)
 dispatcher.add_handler(HUG_HANDLER)
+dispatcher.add_handler(GBUN_HANDLER)
+dispatcher.add_handler(TABLE_HANDLER)
