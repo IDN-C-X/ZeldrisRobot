@@ -105,7 +105,7 @@ def __user_info__(user_id):
     bio = html.escape(sql.get_user_bio(user_id) or "")
     me = html.escape(sql.get_user_me_info(user_id) or "")
     if bio and me:
-        return "<b>About user:</b>\n{me}\n<b>What others say:</b>\n{bio}".format(me=me, bio=bio)
+        return "<b>About user:</b>\n{me}\n\n<b>What others say:</b>\n{bio}".format(me=me, bio=bio)
     elif bio:
         return "<b>What others say:</b>\n{bio}\n".format(me=me, bio=bio)
     elif me:
