@@ -92,7 +92,7 @@ def gban(update, context):
 
         return
 
-    message.reply_text("Beginning of Global Ban for {} \nWith ID <code>{}</code> !".format(mention_html(user_chat.id, user_chat.first_name), user_chat.id), parse_mode=ParseMode.HTML)
+    message.reply_text("<b>Beginning of Global Ban for</b> {} \n<b>With ID</b>: <code>{}</code> \n<b>Reason</b>: <code>{}</code>".format(mention_html(user_chat.id, user_chat.first_name), user_chat.id, reason or "No reason given"), parse_mode=ParseMode.HTML)
 
     banner = update.effective_user  # type: Optional[User]
     context.bot.sendMessage(MESSAGE_DUMP,

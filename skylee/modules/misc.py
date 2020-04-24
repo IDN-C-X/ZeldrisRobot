@@ -75,7 +75,7 @@ def info(update, context):
     else:
         return
 
-    profile = context.bot.get_user_profile_photos(user.id).photos[0][-1]
+    #profile = context.bot.get_user_profile_photos(user.id).photos[0][-1]
 
     text = "<b>USER INFO</b>:" \
            "\n\nID: <code>{}</code>" \
@@ -115,7 +115,12 @@ def info(update, context):
         if mod_info:
             text += "\n\n" + mod_info
 
-    context.bot.send_photo(chat.id, photo=profile, caption=(text), parse_mode=ParseMode.HTML, disable_web_page_preview=True)
+    try:
+        profile = context.bot.get_user_profile_photos(user.id).photos[0][-1]
+        context.bot.send_photo(chat.id, photo=profile, caption=(text), parse_mode=ParseMode.HTML, disable_web_page_preview=True)
+
+    except IndexError:
+        update.effective_message.reply_text(text, parse_mode=ParseMode.HTML, disable_web_page_preview=True)
 
 @run_async
 def echo(update, context):
