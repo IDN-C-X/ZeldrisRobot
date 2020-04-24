@@ -152,13 +152,8 @@ def shrug(update, context):
 
 @run_async
 def decide(update, context):
-        r = randint(1, 100)
-        if r <= 65:
-            update.message.reply_text("Yes.")
-        elif r <= 90:
-            update.message.reply_text("NoU.")
-        else:
-            update.message.reply_text("Maybe.")
+    reply_text = update.effective_message.reply_to_message.reply_text if update.effective_message.reply_to_message else update.effective_message.reply_text
+    reply_text(random.choice(fun.DECIDE))
 
 @run_async
 def table(update, context):
@@ -192,12 +187,19 @@ def snipe(update, context):
             update.effective_message.reply_text("Couldn't send the message. Perhaps I'm not part of that group?")
 
 
-# Bug reporting module for x00td ports grp...
+# Bug reporting module for X00TD PORTS!
+
 @run_async
 def ports_bug(update, context):
     message = update.effective_message
     user = update.effective_user
     bug = message.text[len('/bug '):]
+    chat = update.effective_chat
+
+    PORT_GRP = ['-1001297379754', '-1001469684768']
+
+    if not int(chat.id) in PORT_GRP:
+        return
 
     if not bug:
         message.reply_text("Submitting empty bug report won't do anything!")
@@ -227,7 +229,7 @@ SHRUG_HANDLER = DisableAbleCommandHandler("shrug", shrug)
 DECIDE_HANDLER = DisableAbleCommandHandler("decide", decide)
 SNIPE_HANDLER = CommandHandler("snipe", snipe, pass_args=True, filters=CustomFilters.sudo_filter)
 ABUSE_HANDLER = DisableAbleCommandHandler("abuse", abuse)
-PORT_BUG_HANDLER = CommandHandler("bug", ports_bug, filters=Filters.chat(-1001297379754))
+PORT_BUG_HANDLER = CommandHandler("bug", ports_bug)
 RUNS_HANDLER = DisableAbleCommandHandler("runs", runs)
 SLAP_HANDLER = DisableAbleCommandHandler("slap", slap, pass_args=True)
 PUNCH_HANDLER = DisableAbleCommandHandler("punch", punch, pass_args=True)

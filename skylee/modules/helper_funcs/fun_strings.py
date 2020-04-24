@@ -316,10 +316,16 @@ TABLE = (
 
 GBUN = (
     "Beware! This bot-admeme can gbun you right off the map.",
-    "What if there was 'a' instead of 'u' 👀...",
+    "What if there was 'a' instead of 'u' ...👀",
     "I guess you've forgot spelling of gban maybe...?",
     "OK no!",
     "Don't misuse your powers noob...",
     "Nah, he looks innocent...",
     "Get ready for global bun hammer!"
+)
+
+DECIDE = (
+    "Yes.",
+    "NoU.",
+    "Maybe."
 )
