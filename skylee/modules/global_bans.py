@@ -239,7 +239,7 @@ def check_and_ban(update, user_id, should_message=True):
             if not greason:
                 greason = "No reason given"
 
-            update.effective_message.reply_text(f"*This user was GBanned and have been removed from chat!*\n\n*Reason*: `{greason}`", parse_mode=ParseMode.MARKDOWN)
+            update.effective_message.reply_text(f"*This user was GBanned and have been removed!*\n*Reason*: `{greason}`", parse_mode=ParseMode.MARKDOWN)
 
             return
 
