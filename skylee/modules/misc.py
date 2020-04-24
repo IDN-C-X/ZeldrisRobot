@@ -17,7 +17,7 @@ from telegram.utils.helpers import escape_markdown, mention_html
 from telegram.error import BadRequest
 
 from skylee import dispatcher, OWNER_ID, SUDO_USERS, SUPPORT_USERS, WHITELIST_USERS, WALL_API
-from skylee.__main__ import STATS, USER_INFO, GDPR
+from skylee.__main__ import STATS, USER_INFO, GDPR, USER_INFO
 from skylee.modules.disable import DisableAbleCommandHandler
 from skylee.modules.helper_funcs.extraction import extract_user
 from skylee.modules.helper_funcs.filters import CustomFilters
@@ -103,13 +103,10 @@ def info(update, context):
                         "That means I'm not allowed to ban/kick them."
 
     for mod in USER_INFO:
-        if mod.__mod_name__ == "Users":
-            continue
-
         try:
-            mod_info = mod.__user_info__(user.id)
+            mod_info = mod.__user_info__(user.id).strip()
         except TypeError:
-            mod_info = mod.__user_info__(user.id, chat.id)
+            mod_info = mod.__user_info__(user.id, chat.id).strip()
         if mod_info:
             text += "\n\n" + mod_info
 
