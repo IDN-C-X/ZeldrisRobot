@@ -75,8 +75,6 @@ def info(update, context):
     else:
         return
 
-    #profile = context.bot.get_user_profile_photos(user.id).photos[0][-1]
-
     text = "<b>USER INFO</b>:" \
            "\n\nID: <code>{}</code>" \
            "\nFirst Name: {}".format(user.id, html.escape(user.first_name))
