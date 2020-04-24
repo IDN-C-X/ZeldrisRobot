@@ -171,6 +171,11 @@ def gbun(update, context):
        context.bot.sendMessage(chat.id, (random.choice(fun.GBUN)))
 
 @run_async
+def dice(update, context):
+    chat = update.effective_chat
+    context.bot.sendDice(chat.id)
+
+@run_async
 def snipe(update, context):
     args = context.args
     try:
@@ -219,6 +224,7 @@ Some dank memes for ya all!
  - /table: Flips a table...
  - /runs: Reply a random string from an array of replies.
  - /slap: Slap a user, or get slapped if not a reply.
+ - /dice: Sends a dice which returns randomly from 1 to 6!
  - /warm: Hug a user warmly, or get hugged if not a reply.
  - /punch: Punch a user, or get punched if not a reply.
 """
@@ -236,7 +242,7 @@ PUNCH_HANDLER = DisableAbleCommandHandler("punch", punch, pass_args=True)
 HUG_HANDLER = DisableAbleCommandHandler("warm", hug, pass_args=True)
 GBUN_HANDLER = CommandHandler("gbun", gbun)
 TABLE_HANDLER = DisableAbleCommandHandler("table", table)
-
+DICE_HANDLER = DisableAbleCommandHandler("dice", dice)
 
 dispatcher.add_handler(SHRUG_HANDLER)
 dispatcher.add_handler(DECIDE_HANDLER)
@@ -249,3 +255,4 @@ dispatcher.add_handler(PUNCH_HANDLER)
 dispatcher.add_handler(HUG_HANDLER)
 dispatcher.add_handler(GBUN_HANDLER)
 dispatcher.add_handler(TABLE_HANDLER)
+dispatcher.add_handler(DICE_HANDLER)
