@@ -271,15 +271,12 @@ def set_title(update, context):
     if len(title) > 16:
         message.reply_text("The title length is longer than 16 characters.\nTruncating it to 16 characters.")
 
-    result = requests.post(f"https://api.telegram.org/bot{TOKEN}/setChatAdministratorCustomTitle?chat_id={chat.id}&user_id={user_id}&custom_title={title}")
-    status = result.json()["ok"]
+    try:
+        context.bot.set_chat_administrator_custom_title(chat.id, user_id, title)
+        message.reply_text("Sucessfully set title for <b>{}</b> to <code>{}</code>!".format(user_member.user.first_name or user_id, title[:16]), parse_mode=ParseMode.HTML)
 
-    if status == True:
-        context.bot.sendMessage(chat.id, "Sucessfully set title for <code>{}</code> to <code>{}</code>!".format(user_member.user.first_name or user_id, title[:16]), parse_mode=ParseMode.HTML)
-    else:
-        description = result.json()["description"]
-        if description == "Bad Request: not enough rights to change custom title of the user":
-            message.reply_text("I can't set custom title for admins that I didn't promote!")
+    except BadRequest:
+        message.reply_text("I can't set custom title for admins that I didn't promote!")
 
 
 def __chat_settings__(chat_id, user_id):
