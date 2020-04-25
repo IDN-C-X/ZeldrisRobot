@@ -1714,10 +1714,10 @@ def __user_info__(user_id, chat_id):
 			text = "This user is the admin of the current Federation: <b>{}</b>.".format(infoname)
 
 		elif fban:
-			text = "Banned in current Fed: <b>Yes</b>"
-			text += "\n<b>Reason:</b> {}".format(fbanreason)
+			text = "<b>Banned in current Fed</b>: Yes"
+			text += "\n<b>Reason</b>: {}".format(fbanreason)
 		else:
-			text = "Banned in current Fed: <b>No</b>"
+			text = "<b>Banned in current Fed</b>: No"
 	else:
 		text = ""
 	return text

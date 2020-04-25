@@ -161,6 +161,10 @@ def table(update, context):
     reply_text(random.choice(fun.TABLE))
 
 @run_async
+def dice(update, context):
+    context.bot.sendDice(update.effective_chat.id)
+
+@run_async
 def gbun(update, context):
     user = update.effective_user
     chat = update.effective_chat
@@ -169,11 +173,6 @@ def gbun(update, context):
        return
     if int(user.id) in SUDO_USERS or int(user.id) in SUPPORT_USERS:
        context.bot.sendMessage(chat.id, (random.choice(fun.GBUN)))
-
-@run_async
-def dice(update, context):
-    chat = update.effective_chat
-    context.bot.sendDice(chat.id)
 
 @run_async
 def snipe(update, context):
