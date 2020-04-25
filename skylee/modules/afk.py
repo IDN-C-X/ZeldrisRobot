@@ -50,7 +50,7 @@ def reply_afk(update, context):
             if ent.type == MessageEntity.TEXT_MENTION:
                 user_id = ent.user.id
                 fst_name = ent.user.first_name
-                
+
             elif ent.type == MessageEntity.MENTION:
                 user_id = get_user_id(message.text[ent.offset:ent.offset + ent.length])
                 if not user_id:
@@ -62,8 +62,8 @@ def reply_afk(update, context):
                     print("Error in afk can't get user id {}".format(user_id))
                     return
                 fst_name = chat.first_name
-                
-            else:   
+
+            else:
                 return
 
             if sql.is_afk(user_id):
@@ -75,6 +75,17 @@ def reply_afk(update, context):
                         res = "{} is away from keyboard! says it's because of: \n{}".format(fst_name, reason)
                     send_message(update.effective_message, res)
 
+
+def __user_info__(user_id):
+    is_afk = sql.is_afk(user_id)
+
+    text = "<b>Currently AFK</b>: {}"
+    if is_afk:
+        text = text.format("Yes")
+
+    else:
+        text = text.format("No")
+    return text
 
 def __gdpr__(user_id):
     sql.rm_afk(user_id)
