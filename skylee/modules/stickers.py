@@ -191,7 +191,7 @@ def makepack_internal(update, context, msg, user, png_sticker, emoji, packname, 
                            parse_mode=ParseMode.MARKDOWN)
         elif e.message == "Peer_id_invalid":
             msg.reply_text("Contact me in PM first.", reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton(
-                text="Start", url=f"t.me/{bot.username}")]]))
+                text="Start", url=f"t.me/{context.bot.username}")]]))
         elif e.message == "Internal Server Error: created sticker set not found (500)":
                 msg.reply_text("Sticker pack successfully created. Get it [here](t.me/addstickers/%s)" % packname,
                        parse_mode=ParseMode.MARKDOWN)
