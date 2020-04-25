@@ -16,7 +16,7 @@ from telegram.ext import CommandHandler, run_async, Filters
 from telegram.utils.helpers import escape_markdown, mention_html
 from telegram.error import BadRequest
 
-from skylee import dispatcher, OWNER_ID, SUDO_USERS, SUPPORT_USERS, WHITELIST_USERS, WALL_API
+from skylee import dispatcher, OWNER_ID, SUDO_USERS, SUPPORT_USERS, WHITELIST_USERS, WALL_API, TOKEN
 from skylee.__main__ import STATS, USER_INFO, GDPR
 from skylee.modules.disable import DisableAbleCommandHandler
 from skylee.modules.helper_funcs.extraction import extract_user
@@ -103,6 +103,17 @@ def info(update, context):
     elif user.id in WHITELIST_USERS:
         text += "\n\nThis person has been whitelisted! " \
                     "That means I'm not allowed to ban/kick them."
+
+    try:
+        user_member = chat.get_member(user.id)
+        if user_member.status == 'administrator':
+            result = requests.post(f"https://api.telegram.org/bot{TOKEN}/getChatMember?chat_id={chat.id}&user_id={user.id}")
+            result = result.json()["result"]
+            if "custom_title" in result.keys():
+                custom_title = result['custom_title']
+                text += f"\n\nThis user has custom title <b>{custom_title}</b> in this chat."
+    except BadRequest:
+        pass
 
     for mod in USER_INFO:
         try:
