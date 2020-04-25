@@ -75,6 +75,8 @@ def info(update, context):
     else:
         return
 
+    del_msg = msg.reply_text("Hold tight while I steal some data from <b>FBI Database</b>...", parse_mode=ParseMode.HTML)
+
     text = "<b>USER INFO</b>:" \
            "\n\nID: <code>{}</code>" \
            "\nFirst Name: {}".format(user.id, html.escape(user.first_name))
@@ -127,10 +129,11 @@ def info(update, context):
         profile = context.bot.get_user_profile_photos(user.id).photos[0][-1]
         context.bot.sendChatAction(chat.id, "upload_photo")
         context.bot.send_photo(chat.id, photo=profile, caption=(text), parse_mode=ParseMode.HTML, disable_web_page_preview=True)
-
+        del_msg.delete()
     except IndexError:
         context.bot.sendChatAction(chat.id, "typing")
-        update.effective_message.reply_text(text, parse_mode=ParseMode.HTML, disable_web_page_preview=True)
+        msg.reply_text(text, parse_mode=ParseMode.HTML, disable_web_page_preview=True)
+        del_msg.delete()
 
 @run_async
 def echo(update, context):
