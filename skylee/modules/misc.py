@@ -87,20 +87,22 @@ def info(update, context):
 
     text += "\nPermanent user link: {}".format(mention_html(user.id, "link"))
 
+    text += "\nNumber of profile pics: {}".format(context.bot.get_user_profile_photos(user.id).total_count)
+
     if user.id == OWNER_ID:
         text += "\n\nAye this guy is my owner - I would never do anything against him!"
 
     elif user.id in SUDO_USERS:
-        text += "\nThis person is one of my sudo users! " \
+        text += "\n\nThis person is one of my sudo users! " \
                     "Nearly as powerful as my owner - so watch it."
 
     elif user.id in SUPPORT_USERS:
-        text += "\nThis person is one of my support users! " \
-                        "Not quite a sudo user, but can still gban you off the map."
+        text += "\n\nThis person is one of my support users! " \
+                    "Not quite a sudo user, but can still gban you off the map."
 
     elif user.id in WHITELIST_USERS:
-        text += "\nThis person has been whitelisted! " \
-                        "That means I'm not allowed to ban/kick them."
+        text += "\n\nThis person has been whitelisted! " \
+                    "That means I'm not allowed to ban/kick them."
 
     for mod in USER_INFO:
         try:
@@ -112,9 +114,11 @@ def info(update, context):
 
     try:
         profile = context.bot.get_user_profile_photos(user.id).photos[0][-1]
+        context.bot.sendChatAction(chat.id, "upload_photo")
         context.bot.send_photo(chat.id, photo=profile, caption=(text), parse_mode=ParseMode.HTML, disable_web_page_preview=True)
 
     except IndexError:
+        context.bot.sendChatAction(chat.id, "typing")
         update.effective_message.reply_text(text, parse_mode=ParseMode.HTML, disable_web_page_preview=True)
 
 @run_async
