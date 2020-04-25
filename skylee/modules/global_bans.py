@@ -103,8 +103,7 @@ def gban(update, context):
                      "\n<b>New Reason:</b> {}".format(mention_html(banner.id, banner.first_name),
                                               mention_html(user_chat.id, user_chat.first_name or "Deleted Account"), 
                                                            user_chat.id, old_reason, new_reason), 
-                parse_mode=ParseMode.HTML
-            )
+                parse_mode=ParseMode.HTML)
 
 
             message.reply_text("This user is already gbanned, for the following reason:\n"

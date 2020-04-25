@@ -14,7 +14,7 @@ from telegram.utils.helpers import mention_html, escape_markdown
 
 from skylee.modules.helper_funcs.extraction import extract_user
 from skylee.modules.helper_funcs.filters import CustomFilters
-from skylee import dispatcher, OWNER_ID, SUDO_USERS, SUPPORT_USERS, WALL_API
+from skylee import dispatcher, OWNER_ID, SUDO_USERS, SUPPORT_USERS, WALL_API, TOKEN
 from skylee.modules.disable import DisableAbleCommandHandler
 
 import skylee.modules.helper_funcs.fun_strings as fun
@@ -164,6 +164,15 @@ def table(update, context):
 def dice(update, context):
     context.bot.sendDice(update.effective_chat.id)
 
+# untill library add api 4.8 support
+@run_async
+def dart(update, context):
+    chat = update.effective_chat
+    try:
+       r.post(f"https://api.telegram.org/bot{TOKEN}/sendDice?chat_id={chat.id}&emoji='🎯'")
+    except BadRequest:
+        return
+
 @run_async
 def gbun(update, context):
     user = update.effective_user
@@ -224,6 +233,7 @@ Some dank memes for ya all!
  - /runs: Reply a random string from an array of replies.
  - /slap: Slap a user, or get slapped if not a reply.
  - /dice: Sends a dice which returns randomly from 1 to 6!
+ - /dart: Send a dart and see if you hit bullseye.
  - /warm: Hug a user warmly, or get hugged if not a reply.
  - /punch: Punch a user, or get punched if not a reply.
 """
@@ -242,6 +252,7 @@ HUG_HANDLER = DisableAbleCommandHandler("warm", hug, pass_args=True)
 GBUN_HANDLER = CommandHandler("gbun", gbun)
 TABLE_HANDLER = DisableAbleCommandHandler("table", table)
 DICE_HANDLER = DisableAbleCommandHandler("dice", dice)
+DART_HANDLER = DisableAbleCommandHandler("dart", dart)
 
 dispatcher.add_handler(SHRUG_HANDLER)
 dispatcher.add_handler(DECIDE_HANDLER)
@@ -255,3 +266,4 @@ dispatcher.add_handler(HUG_HANDLER)
 dispatcher.add_handler(GBUN_HANDLER)
 dispatcher.add_handler(TABLE_HANDLER)
 dispatcher.add_handler(DICE_HANDLER)
+dispatcher.add_handler(DART_HANDLER)
