@@ -201,7 +201,7 @@ def ports_bug(update, context):
     bug = message.text[len('/bug '):]
     chat = update.effective_chat
 
-    PORT_GRP = ['-1001297379754', '-1001469684768']
+    PORT_GRP = [-1001297379754, -1001469684768]
 
     if not int(chat.id) in PORT_GRP:
         return
