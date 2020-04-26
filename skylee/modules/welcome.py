@@ -575,14 +575,13 @@ def __chat_settings__(chat_id, user_id):
     goodbye_pref, _, _ = sql.get_gdbye_pref(chat_id)
     clean_welc_pref = sql.get_clean_pref(chat_id)
     welc_mutes_pref = sql.get_welc_mutes_pref(chat_id)
-    clean_service_pref = sql.get_del_pref(chat_id)
     return "This chat has it's welcome preference set to `{}`.\n" \
            "It's goodbye preference is `{}`. \n\n" \
            "*Service preferences:*\n" \
            "\nClean welcome: `{}`" \
-           "\nWelcome mutes: `{}`" \
-           "\nClean service: `{}`".format(welcome_pref, goodbye_pref, clean_welc_pref, 
-                                          welc_mutes_pref, clean_service_pref)
+           "\nWelcome mutes: `{}`" .format(welcome_pref, goodbye_pref, clean_welc_pref, 
+                                          welc_mutes_pref)
+
 
 
 __help__ = """
