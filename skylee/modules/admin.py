@@ -13,6 +13,7 @@ from skylee.modules.disable import DisableAbleCommandHandler
 from skylee.modules.helper_funcs.chat_status import bot_admin, can_promote, user_admin, can_pin
 from skylee.modules.helper_funcs.extraction import extract_user, extract_user_and_text
 from skylee.modules.helper_funcs.admin_rights import user_can_pin, user_can_promote
+from skylee.modules.connection import connected
 from skylee.modules.log_channel import loggable
 
 
@@ -31,7 +32,7 @@ def promote(update, context):
     if user_can_promote(chat, user, context.bot.id) == False:
     	message.reply_text("You don't have enough rights to promote someone!")
     	return ""
-    	
+
     user_id = extract_user(message, args)
     if not user_id:
         message.reply_text("mention one.... 🤷🏻‍♂.")
@@ -137,7 +138,7 @@ def pin(update, context):
     is_group = chat.type != "private" and chat.type != "channel"
 
     prev_message = update.effective_message.reply_to_message
-    
+
     if user_can_pin(chat, user, context.bot.id) == False:
     	message.reply_text("You don't have enough rights to pin a message!")
     	return ""
@@ -171,7 +172,7 @@ def unpin(update, context):
     chat = update.effective_chat
     user = update.effective_user  # type: Optional[User]
     message = update.effective_message  # type: Optional[Message]
-    
+
     if user_can_pin(chat, user, context.bot.id) == False:
     	message.reply_text("You don't have enough rights to unpin a message!")
     	return ""
@@ -194,18 +195,35 @@ def unpin(update, context):
 @bot_admin
 @user_admin
 def invite(update, context):
-    chat = update.effective_chat  # type: Optional[Chat]
-    if chat.username:
-        update.effective_message.reply_text(chat.username)
-    elif chat.type == chat.SUPERGROUP or chat.type == chat.CHANNEL:
-        bot_member = chat.get_member(context.bot.id)
-        if bot_member.can_invite_users:
-            invitelink = context.bot.exportChatInviteLink(chat.id)
-            update.effective_message.reply_text(invitelink)
+        user = update.effective_user
+        msg = update.effective_message
+        chat = update.effective_chat
+        args = context.args
+
+        conn = connected(context.bot, update, chat, user.id, need_admin=True)
+        if conn:
+                chat = dispatcher.bot.getChat(conn)
+                chat_id = conn
+                chat_name = dispatcher.bot.getChat(conn).title
         else:
-            update.effective_message.reply_text("I don't have access to the invite link, try changing my permissions!")
-    else:
-        update.effective_message.reply_text("I can only give you invite links for supergroups and channels, sorry!")
+                if msg.chat.type == "private":
+                        msg.reply_text("This command is meant to use in chat not in PM")
+                        return ""
+                chat = update.effective_chat
+                chat_id = update.effective_chat.id
+                chat_name = update.effective_message.chat.title
+
+        if chat.username:
+                msg.reply_text(chat.username)
+        elif chat.type == chat.SUPERGROUP or chat.type == chat.CHANNEL:
+                bot_member = chat.get_member(context.bot.id)
+                if bot_member.can_invite_users:
+                        invitelink = context.bot.exportChatInviteLink(chat.id)
+                        msg.reply_text(invitelink)
+                else:
+                        msg.reply_text("I don't have access to the invite link, try changing my permissions!")
+        else:
+                msg.reply_text("I can only give you invite links for supergroups and channels, sorry!")
 
 
 @run_async
@@ -288,15 +306,15 @@ Lazy to promote or demote someone for admins? Want to see basic information abou
 All stuff about chatroom such as admin lists, pinning or grabbing an invite link can be \
 done easily using the bot.
 
- - /adminlist: list of admins in the chat
+ × /adminlist: list of admins in the chat
 
 *Admin only:*
- - /pin: Silently pins the message replied to - add 'loud','notify' or `violent` to give notificaton to users.
- - /unpin: Unpins the currently pinned message
- - /invitelink: Gets private chat's invitelink
- - /promote: Promotes the user replied to
- - /demote: Demotes the user replied to
- - /settitle: Sets a custom title for an admin which is promoted by bot
+ × /pin: Silently pins the message replied to - add 'loud','notify' or `violent` to give notificaton to users.
+ × /unpin: Unpins the currently pinned message
+ × /invitelink: Gets private chat's invitelink
+ × /promote: Promotes the user replied to
+ × /demote: Demotes the user replied to
+ × /settitle: Sets a custom title for an admin which is promoted by bot
 
 An example of promoting someone to admins:
 `/promote @username`; this promotes a user to admins.
@@ -307,7 +325,7 @@ __mod_name__ = "Admin"
 PIN_HANDLER = CommandHandler("pin", pin, pass_args=True, filters=Filters.group)
 UNPIN_HANDLER = CommandHandler("unpin", unpin, filters=Filters.group)
 
-INVITE_HANDLER = CommandHandler("invitelink", invite, filters=Filters.group)
+INVITE_HANDLER = CommandHandler("invitelink", invite)#, filters=Filters.group)
 
 PROMOTE_HANDLER = CommandHandler("promote", promote, pass_args=True, filters=Filters.group)
 DEMOTE_HANDLER = CommandHandler("demote", demote, pass_args=True, filters=Filters.group)

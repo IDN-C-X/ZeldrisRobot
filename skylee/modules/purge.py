@@ -108,9 +108,9 @@ Deleting messages made easy with this command. Bot purges \
 messages all together or individually.
 
 *Admin only:*
- - /del: Deletes the message you replied to
- - /purge: Deletes all messages between this and the replied to message.
- - /purge <integer X>: Deletes the replied message, and X messages following it.
+ × /del: Deletes the message you replied to
+ × /purge: Deletes all messages between this and the replied to message.
+ × /purge <integer X>: Deletes the replied message, and X messages following it.
 """
 
 __mod_name__ = "Purges"

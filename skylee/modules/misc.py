@@ -292,13 +292,14 @@ def stats(update, context):
 __help__ = """
 An "odds and ends" module for small, simple commands which don't really fit anywhere
 
- - /id: Get the current group id. If used by replying to a message, gets that user's id.
- - /info: Get information about a user.
- - /wiki : Search wikipedia articles.
- - /ud <query> : Search stuffs in urban dictionary.
- - /wall <query> : Get random wallpapers directly from bot! 
- - /gdpr: Deletes your information from the bot's database. Private chats only.
- - /markdownhelp: Quick summary of how markdown works in telegram - can only be called in private chats.
+ × /id: Get the current group id. If used by replying to a message, gets that user's id.
+ × /info: Get information about a user.
+ × /wiki : Search wikipedia articles.
+ × /ud <query> : Search stuffs in urban dictionary.
+ × /wall <query> : Get random wallpapers directly from bot! 
+ × /reverse : Reverse searches image or stickers on google.
+ × /gdpr: Deletes your information from the bot's database. Private chats only.
+ × /markdownhelp: Quick summary of how markdown works in telegram - can only be called in private chats.
 """
 
 __mod_name__ = "Miscs"

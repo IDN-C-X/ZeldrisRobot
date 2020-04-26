@@ -589,18 +589,18 @@ __help__ = """
 {}
 
 *Admin only:*
- - /welcome <on/off>: enable/disable Welcome messages.
- - /welcome: Shows current welcome settings.
- - /welcome noformat: Shows current welcome settings, without the formatting - useful to recycle your welcome messages!
- - /goodbye -> Same usage and args as /welcome.
- - /setwelcome <sometext>: Sets a custom welcome message. If used replying to media, uses that media.
- - /setgoodbye <sometext>: Sets a custom goodbye message. If used replying to media, uses that media.
- - /resetwelcome: Resets to the default welcome message.
- - /resetgoodbye: Resets to the default goodbye message.
- - /cleanwelcome <on/off>: On new member, try to delete the previous welcome message to avoid spamming the chat.
- - /welcomemute <off/soft/strong>: All users that join, get muted; a button gets added to the welcome message for them to unmute themselves. \
+ × /welcome <on/off>: enable/disable Welcome messages.
+ × /welcome: Shows current welcome settings.
+ × /welcome noformat: Shows current welcome settings, without the formatting - useful to recycle your welcome messages!
+ × /goodbye -> Same usage and args as /welcome.
+ × /setwelcome <sometext>: Sets a custom welcome message. If used replying to media, uses that media.
+ × /setgoodbye <sometext>: Sets a custom goodbye message. If used replying to media, uses that media.
+ × /resetwelcome: Resets to the default welcome message.
+ × /resetgoodbye: Resets to the default goodbye message.
+ × /cleanwelcome <on/off>: On new member, try to delete the previous welcome message to avoid spamming the chat.
+ × /welcomemute <off/soft/strong>: All users that join, get muted; a button gets added to the welcome message for them to unmute themselves. \
 This proves they aren't a bot! soft - restricts users ability to post media for 24 hours. strong - mutes on join until they prove they're not bots.
- - /welcomehelp: View more formatting information for custom welcome/goodbye messages.
+ × /welcomehelp: View more formatting information for custom welcome/goodbye messages.
 
 Buttons in welcome messages are made easy, everyone hates URLs visible. With button links you can make your chats look more \
 tidy and simplified.

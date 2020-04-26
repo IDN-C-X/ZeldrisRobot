@@ -26,7 +26,7 @@ def ban(update, context):
     user = update.effective_user  # type: Optional[User]
     message = update.effective_message  # type: Optional[Message]
     args = context.args
-    
+
     if user_can_ban(chat, user, context.bot.id) == False:
     	message.reply_text("You don't have enough rights to ban users!")
     	return ""
@@ -94,7 +94,7 @@ def temp_ban(update, context):
     user = update.effective_user  # type: Optional[User]
     message = update.effective_message  # type: Optional[Message]
     args = context.args
-    
+
     if user_can_ban(chat, user, context.bot.id) == False:
     	message.reply_text("You don't have enough rights to temporarily ban someone!")
     	return ""
@@ -181,7 +181,7 @@ def kick(update, context):
     user = update.effective_user  # type: Optional[User]
     message = update.effective_message  # type: Optional[Message]
     args = context.args
-    
+
     if user_can_ban(chat, user, context.bot.id) == False:
     	message.reply_text("You don't have enough rights to kick users!")
     	return ""
@@ -282,7 +282,7 @@ def unban(update, context):
     user = update.effective_user  # type: Optional[User]
     chat = update.effective_chat  # type: Optional[Chat]
     args = context.args
-    
+
     if user_can_ban(chat, user, context.bot.id) == False:
     	message.reply_text("You don't have enough rights to unban people here!")
     	return ""
@@ -330,13 +330,13 @@ __help__ = """
 Some people need to be publicly banned; spammers, annoyances, or just trolls.
 This module allows you to do that easily, by exposing some common actions, so everyone will see!
 
- - /kickme: Kicks the user who issued the command
- - /banme: Bans the user who issued the command
+ × /kickme: Kicks the user who issued the command
+ × /banme: Bans the user who issued the command
 *Admin only:*
- - /ban <userhandle>: Bans a user. (via handle, or reply)
- - /tban <userhandle> x(m/h/d): Bans a user for x time. (via handle, or reply). m = minutes, h = hours, d = days.
- - /unban <userhandle>: Unbans a user. (via handle, or reply)
- - /kick <userhandle>: Kicks a user, (via handle, or reply)
+ × /ban <userhandle>: Bans a user. (via handle, or reply)
+ × /tban <userhandle> x(m/h/d): Bans a user for x time. (via handle, or reply). m = minutes, h = hours, d = days.
+ × /unban <userhandle>: Unbans a user. (via handle, or reply)
+ × /kick <userhandle>: Kicks a user, (via handle, or reply)
 
 An example of temporarily banning someone:
 `/tban @username 2h`; this bans a user for 2 hours.

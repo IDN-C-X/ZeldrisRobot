@@ -226,16 +226,16 @@ def ports_bug(update, context):
 __help__ = """
 Some dank memes for ya all!
 
- - /shrug: get shrug XD.
- - /decide: Randomly answers yes/no/maybe
- - /abuse: Abuses the retard!
- - /table: Flips a table...
- - /runs: Reply a random string from an array of replies.
- - /slap: Slap a user, or get slapped if not a reply.
- - /dice: Sends a dice which returns randomly from 1 to 6!
- - /dart: Send a dart and see if you hit bullseye.
- - /warm: Hug a user warmly, or get hugged if not a reply.
- - /punch: Punch a user, or get punched if not a reply.
+ × /shrug: get shrug XD.
+ × /decide: Randomly answers yes/no/maybe
+ × /abuse: Abuses the retard!
+ × /table: Flips a table...
+ × /runs: Reply a random string from an array of replies.
+ × /slap: Slap a user, or get slapped if not a reply.
+ × /dice: Sends a dice which returns randomly from 1 to 6!
+ × /dart: Send a dart and see if you hit bullseye.
+ × /warm: Hug a user warmly, or get hugged if not a reply.
+ × /punch: Punch a user, or get punched if not a reply.
 """
 
 __mod_name__ = "Memes"

@@ -55,9 +55,9 @@ def gtts(update, context):
 
 
 __help__ = """
-- /tr - To translate to your language, by default language is set to english, use `/tr <lang code>` for some other language!
+× /tr - To translate to your language, by default language is set to english, use `/tr <lang code>` for some other language!
 
-- /tts - To some message to convert it into audio format! 
+× /tts - To some message to convert it into audio format! 
 """
 __mod_name__ = "Translate"
 

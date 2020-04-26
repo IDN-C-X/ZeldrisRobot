@@ -182,12 +182,6 @@ def scam(imgspage, lim):
     return imglinks
 
 
-__help__ = """
-- /reverse: Does a reverse search for the replied image!
-"""
-
-__mod_name__ = "Reverse Search "
-
 REVERSE_HANDLER = DisableAbleCommandHandler("reverse", reverse, pass_args=True, admin_ok=True)
 
 dispatcher.add_handler(REVERSE_HANDLER)

@@ -153,15 +153,15 @@ Log channels can help you keep track of exactly what the other admins are doing.
 Bans, Mutes, warns, notes - everything can be moderated.
 
 *Admin only:*
-- /logchannel: Get log channel info
-- /setlog: Set the log channel.
-- /unsetlog: Unset the log channel.
+× /logchannel: Get log channel info
+× /setlog: Set the log channel.
+× /unsetlog: Unset the log channel.
 
 Setting the log channel is done by:
-- Add the bot to your channel, as an admin. This is done via the "add administrators" tab.
-- Send /setlog to your channel.
-- Forward the /setlog command to the group you wish to be logged.
-- Congratulations! All is set!
+× Add the bot to your channel, as an admin. This is done via the "add administrators" tab.
+× Send /setlog to your channel.
+× Forward the /setlog command to the group you wish to be logged.
+× Congratulations! All is set!
 """
 
     __mod_name__ = "Log Channels"
