@@ -213,6 +213,7 @@ CONN_HELP = """
  • View and edit Filters.
  • Get invite link of chat.
  • Set and control AntiFlood settings.
+ • Set and control Blacklist settings.
  • Set Locks and Unlocks in chat.
  • Enable and Disable commands in chat.
  • Export and Imports of chat backup.
