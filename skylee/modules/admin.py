@@ -311,7 +311,7 @@ def setchatpic(update,context):
 
     user_member = chat.get_member(user.id)
     if user_member.can_change_info == False:
-       msg.reply_text("You don't have rights to change group info!")
+       msg.reply_text("You are missing right to change group info!")
        return
 
     if msg.reply_to_message:
@@ -320,19 +320,20 @@ def setchatpic(update,context):
        elif msg.reply_to_message.document:
           pic_id = msg.reply_to_message.document.file_id
        else:
-          msg.reply_text("Unsupported file format!")
+          msg.reply_text("You can only set some photo as chat pic!")
           return
+       tpic = context.bot.get_file(pic_id)
+       tpic.download('gpic.png')
        try:
-          tpic = context.bot.get_file(pic_id)
-          tpic.download('gpic.png')
           context.bot.set_chat_photo(int(chat.id), photo=open('gpic.png', 'rb'))
           msg.reply_text("Successfully set new chatpic!")
-          os.remove('gpic.png')
        except:
           msg.reply_text("This is already one of your group's profile pic, try uploading it again if you still wanna set it.")
-
+       finally:
+          if os.path.isfile('gpic.png'):
+             os.remove("gpic.png")
     else:
-          msg.reply_text("Reply to some photo to set new chat pic!")
+          msg.reply_text("Reply to some photo or file to set new chat pic!")
 
 
 @run_async
@@ -353,7 +354,7 @@ def rmchatpic(update, context):
        msg.reply_text("You don't have enough rights to delete group photo")
        return
     try:
-        context.bot.delete_chat_photo(chat.id)
+        context.bot.delete_chat_photo(int(chat.id))
         msg.reply_text("Successfully deleted chat's profile photo!")
     except BadRequest:
        msg.reply_text("Error! can't delete profile photo")
