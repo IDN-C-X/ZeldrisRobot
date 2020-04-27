@@ -1,8 +1,8 @@
 import html
+import os
 from typing import Optional, List
 
-from telegram import Message, Chat, Update, Bot, User
-from telegram import ParseMode
+from telegram import Message, Chat, Update, Bot, User, ParseMode
 from telegram.error import BadRequest
 from telegram.ext import CommandHandler, Filters
 from telegram.ext.dispatcher import run_async
@@ -296,6 +296,70 @@ def set_title(update, context):
         message.reply_text("I can't set custom title for admins that I didn't promote!")
 
 
+@run_async
+@bot_admin
+@user_admin
+def setchatpic(update,context):
+    chat = update.effective_chat
+    msg = update.effective_message
+    user = update.effective_user
+
+    bot_member = chat.get_member(context.bot.id)
+    if bot_member.can_change_info == False:
+       msg.reply_text("I don't have enough rights to change this chat's photo, make sure i have rights to change chat info!")
+       return
+
+    user_member = chat.get_member(user.id)
+    if user_member.can_change_info == False:
+       msg.reply_text("You don't have rights to change group info!")
+       return
+
+    if msg.reply_to_message:
+       if msg.reply_to_message.photo:
+          pic_id = msg.reply_to_message.photo[-1].file_id
+       elif msg.reply_to_message.document:
+          pic_id = msg.reply_to_message.document.file_id
+       else:
+          msg.reply_text("Unsupported file format!")
+          return
+       try:
+          tpic = context.bot.get_file(pic_id)
+          tpic.download('gpic.png')
+          context.bot.set_chat_photo(int(chat.id), photo=open('gpic.png', 'rb'))
+          msg.reply_text("Successfully set new chatpic!")
+          os.remove('gpic.png')
+       except:
+          msg.reply_text("This is already one of your group's profile pic, try uploading it again if you still wanna set it.")
+
+    else:
+          msg.reply_text("Reply to some photo to set new chat pic!")
+
+
+@run_async
+@bot_admin
+@user_admin
+def rmchatpic(update, context):
+    chat = update.effective_chat
+    msg = update.effective_message
+    user = update.effective_user
+
+    bot_member = chat.get_member(context.bot.id)
+    if bot_member.can_change_info == False:
+       msg.reply_text("I don't have enough rights to remove chat profile, make sure i've rights to change group info!")
+       return
+
+    user_member = chat.get_member(user.id)
+    if user_member.can_change_info == False:
+       msg.reply_text("You don't have enough rights to delete group photo")
+       return
+    try:
+        context.bot.delete_chat_photo(chat.id)
+        msg.reply_text("Successfully deleted chat's profile photo!")
+    except BadRequest:
+       msg.reply_text("Error! can't delete profile photo")
+
+
+
 def __chat_settings__(chat_id, user_id):
     return "You are *admin*: `{}`".format(
         dispatcher.bot.get_chat_member(chat_id, user_id).status in ("administrator", "creator"))
@@ -315,6 +379,8 @@ done easily using the bot.
  × /promote: Promotes the user replied to
  × /demote: Demotes the user replied to
  × /settitle: Sets a custom title for an admin which is promoted by bot
+ × /setgpic: As a reply to file or photo to set group profile pic!
+ × /delgpic: Same as above but to remove group profile pic.
 
 An example of promoting someone to admins:
 `/promote @username`; this promotes a user to admins.
@@ -325,13 +391,14 @@ __mod_name__ = "Admin"
 PIN_HANDLER = CommandHandler("pin", pin, pass_args=True, filters=Filters.group)
 UNPIN_HANDLER = CommandHandler("unpin", unpin, filters=Filters.group)
 
-INVITE_HANDLER = CommandHandler("invitelink", invite)#, filters=Filters.group)
+INVITE_HANDLER = CommandHandler("invitelink", invite)
+CHAT_PIC_HANDLER = CommandHandler("setgpic", setchatpic, filters=Filters.group)
+DEL_CHAT_PIC_HANDLER = CommandHandler("delgpic", rmchatpic, filters=Filters.group)
 
 PROMOTE_HANDLER = CommandHandler("promote", promote, pass_args=True, filters=Filters.group)
 DEMOTE_HANDLER = CommandHandler("demote", demote, pass_args=True, filters=Filters.group)
 
 SET_TITLE_HANDLER = DisableAbleCommandHandler("settitle", set_title, pass_args=True)
-
 ADMINLIST_HANDLER = DisableAbleCommandHandler("adminlist", adminlist, filters=Filters.group)
 
 dispatcher.add_handler(PIN_HANDLER)
@@ -341,3 +408,5 @@ dispatcher.add_handler(PROMOTE_HANDLER)
 dispatcher.add_handler(DEMOTE_HANDLER)
 dispatcher.add_handler(ADMINLIST_HANDLER)
 dispatcher.add_handler(SET_TITLE_HANDLER)
+dispatcher.add_handler(CHAT_PIC_HANDLER)
+dispatcher.add_handler(DEL_CHAT_PIC_HANDLER)
