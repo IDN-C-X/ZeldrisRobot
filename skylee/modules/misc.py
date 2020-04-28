@@ -129,11 +129,12 @@ def info(update, context):
         profile = context.bot.get_user_profile_photos(user.id).photos[0][-1]
         context.bot.sendChatAction(chat.id, "upload_photo")
         context.bot.send_photo(chat.id, photo=profile, caption=(text), parse_mode=ParseMode.HTML, disable_web_page_preview=True)
-        del_msg.delete()
     except IndexError:
         context.bot.sendChatAction(chat.id, "typing")
         msg.reply_text(text, parse_mode=ParseMode.HTML, disable_web_page_preview=True)
+    finally:
         del_msg.delete()
+
 
 @run_async
 def echo(update, context):

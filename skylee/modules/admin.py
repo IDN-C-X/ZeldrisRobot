@@ -360,6 +360,36 @@ def rmchatpic(update, context):
        msg.reply_text("Error! can't delete profile photo")
 
 
+@run_async
+@bot_admin
+@user_admin
+def setchat_title(update, context):
+    chat = update.effective_chat
+    msg = update.effective_message
+    user = update.effective_user
+    args = context.args
+
+    bot_member = chat.get_member(context.bot.id)
+    if bot_member.can_change_info == False:
+       msg.reply_text("I don't have rights to change chat info!")
+       return
+
+    user_member = chat.get_member(user.id)
+    if user_member.can_change_info == False:
+       msg.reply_text("You don't have enough rights to change chat info!")
+       return
+
+    title = " ".join(args)
+    if not title:
+       msg.reply_text("Enter some text to set new title in your chat!")
+       return
+
+    try:
+       context.bot.set_chat_title(int(chat.id), str(title))
+       msg.reply_text(f"Successfully set <b>{title}</b> as new chat title!", parse_mode=ParseMode.HTML)
+    except:
+           return
+
 
 def __chat_settings__(chat_id, user_id):
     return "You are *admin*: `{}`".format(
@@ -375,13 +405,14 @@ done easily using the bot.
 
 *Admin only:*
  × /pin: Silently pins the message replied to - add 'loud','notify' or `violent` to give notificaton to users.
- × /unpin: Unpins the currently pinned message
- × /invitelink: Gets private chat's invitelink
- × /promote: Promotes the user replied to
- × /demote: Demotes the user replied to
- × /settitle: Sets a custom title for an admin which is promoted by bot
+ × /unpin: Unpins the currently pinned message.
+ × /invitelink: Gets private chat's invitelink.
+ × /promote: Promotes the user replied to.
+ × /demote: Demotes the user replied to.
+ × /settitle: Sets a custom title for an admin which is promoted by bot.
  × /setgpic: As a reply to file or photo to set group profile pic!
  × /delgpic: Same as above but to remove group profile pic.
+ × /setgtitle: Sets new chat title in your group.
 
 An example of promoting someone to admins:
 `/promote @username`; this promotes a user to admins.
@@ -395,6 +426,7 @@ UNPIN_HANDLER = CommandHandler("unpin", unpin, filters=Filters.group)
 INVITE_HANDLER = CommandHandler("invitelink", invite)
 CHAT_PIC_HANDLER = CommandHandler("setgpic", setchatpic, filters=Filters.group)
 DEL_CHAT_PIC_HANDLER = CommandHandler("delgpic", rmchatpic, filters=Filters.group)
+SETCHAT_TITLE_HANDLER = CommandHandler("setgtitle", setchat_title, filters=Filters.group)
 
 PROMOTE_HANDLER = CommandHandler("promote", promote, pass_args=True, filters=Filters.group)
 DEMOTE_HANDLER = CommandHandler("demote", demote, pass_args=True, filters=Filters.group)
@@ -411,3 +443,4 @@ dispatcher.add_handler(ADMINLIST_HANDLER)
 dispatcher.add_handler(SET_TITLE_HANDLER)
 dispatcher.add_handler(CHAT_PIC_HANDLER)
 dispatcher.add_handler(DEL_CHAT_PIC_HANDLER)
+dispatcher.add_handler(SETCHAT_TITLE_HANDLER)
