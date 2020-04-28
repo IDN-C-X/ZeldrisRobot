@@ -412,7 +412,7 @@ done easily using the bot.
  × /settitle: Sets a custom title for an admin which is promoted by bot.
  × /setgpic: As a reply to file or photo to set group profile pic!
  × /delgpic: Same as above but to remove group profile pic.
- × /setgtitle: Sets new chat title in your group.
+ × /setgtitle <newtitle>: Sets new chat title in your group.
 
 An example of promoting someone to admins:
 `/promote @username`; this promotes a user to admins.
