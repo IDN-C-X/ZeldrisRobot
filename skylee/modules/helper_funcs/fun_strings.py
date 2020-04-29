@@ -332,7 +332,7 @@ DECIDE = (
 )
 
 # AFK strings credits: PaperPlaneExtended!
-AFK = (
+AFKRPL = (
     "<b>{}</b> is busy right now. Please talk in a bag and when they come back you can just give him the bag!",
     "<b>{}</b> is away right now. If you need anything, leave a message after the beep:\n<code>beeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeep</code>!",
     "You just missed <b>{}</b>, next time aim better.",
@@ -346,3 +346,22 @@ AFK = (
     "{} is away from the keyboard at the moment, but if you'll scream loud enough at your screen, they might just hear you."
 )
 
+NOAFK = (
+    '{} is here!',
+    '{} is back!',
+    '{} is now in the chat!',
+    '{} is awake!',
+    '{} is back online!',
+    '{} is finally here!',
+    'Welcome back! {}',
+    'OwO {} is here!'
+)
+
+AFK = (
+    "Cya 👋 {}!",
+    "Byebye {}.",
+    "See you later {}!",
+    "Goodbye {} You’re dead to me now.",
+    "Come back soon {}!",
+    "Kthnxbye {}.."
+)

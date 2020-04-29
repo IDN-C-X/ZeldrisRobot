@@ -27,7 +27,8 @@ def afk(update, context):
         reason = ""
 
     sql.set_afk(update.effective_user.id, reason)
-    send_message(update.effective_message, f"Cya 👋 {update.effective_user.first_name}!")
+    afkstr = random.choice(fun.AFK)
+    update.effective_message.reply_text(afkstr.format(update.effective_user.first_name))
 
 
 @run_async
@@ -39,7 +40,8 @@ def no_longer_afk(update, context):
 
     res = sql.rm_afk(user.id)
     if res:
-        send_message(update.effective_message, f"Welcome back {user.first_name}!")
+       noafkstr = random.choice(fun.NOAFK)
+       update.effective_message.reply_text(noafkstr.format(user.first_name))
 
 
 @run_async
@@ -72,8 +74,8 @@ def reply_afk(update, context):
                 valid, reason = sql.check_afk_status(user_id)
                 if valid:
                     if not reason:
-                        afkstr = random.choice(fun.AFK)
-                        res = afkstr.format(fst_name)
+                        rplafkstr = random.choice(fun.AFKRPL)
+                        res = rplafkstr.format(fst_name)
                     else:
                         res = f"<b>{fst_name}</b> is away from keyboard! says it's because of \n{reason}"
                     send_message(update.effective_message, res, parse_mode=ParseMode.HTML)

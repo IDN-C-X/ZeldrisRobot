@@ -253,7 +253,7 @@ def check_and_ban(update, user_id, should_message=True):
     if spmban:
         update.effective_chat.kick_member(user_id)
         if should_message:
-            update.effective_message.reply_markdown("**This user is detected as potential Spambot by SpamWatch and have been removed!**\n\nPlease visit @SpamWatchSupport to know more or Appeal!")
+            update.effective_message.reply_markdown("*This user is detected as potential Spambot by SpamWatch and have been removed!*\nVisit @SpamWatchSupport to Appeal!")
             return
         else:
             return
@@ -266,7 +266,7 @@ def check_and_ban(update, user_id, should_message=True):
             if not greason:
                 greason = "No reason given"
 
-            update.effective_message.reply_text(f"*This user was GBanned and have been removed!*\n*Reason*: `{greason}`", parse_mode=ParseMode.MARKDOWN)
+            update.effective_message.reply_text(f"*Alert! this user was GBanned and have been removed!*\n*Reason*: {greason}", parse_mode=ParseMode.MARKDOWN)
 
             return
 
