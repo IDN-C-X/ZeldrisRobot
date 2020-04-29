@@ -1,12 +1,14 @@
+import random
 import threading
+import skylee.modules.helper_funcs.fun_strings as fun
 
 from sqlalchemy import Column, String, Boolean, UnicodeText, Integer, BigInteger
 
 from skylee.modules.helper_funcs.msg_types import Types
 from skylee.modules.sql import SESSION, BASE
 
-DEFAULT_WELCOME = "Hey {first}, how are you?"
-DEFAULT_GOODBYE = "Nice knowing ya!"
+DEFAULT_WELCOME = random.choice(fun.WELCOME)
+DEFAULT_GOODBYE = random.choice(fun.GOODBYE)
 
 
 class Welcome(BASE):

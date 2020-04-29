@@ -148,7 +148,7 @@ def abuse(update, context):
 def shrug(update, context):
     # reply to correct message
     reply_text = update.effective_message.reply_to_message.reply_text if update.effective_message.reply_to_message else update.effective_message.reply_text
-    reply_text(r"¯\_(ツ)_/¯")
+    reply_text(random.choice(fun.SHGS))
 
 @run_async
 def decide(update, context):
@@ -159,6 +159,11 @@ def decide(update, context):
 def table(update, context):
     reply_text = update.effective_message.reply_to_message.reply_text if update.effective_message.reply_to_message else update.effective_message.reply_text
     reply_text(random.choice(fun.TABLE))
+
+@run_async
+def cri(update, context):
+    reply_text = update.effective_message.reply_to_message.reply_text if update.effective_message.reply_to_message else update.effective_message.reply_text
+    reply_text(random.choice(fun.CRI))
 
 @run_async
 def dice(update, context):
@@ -226,7 +231,7 @@ def ports_bug(update, context):
 __help__ = """
 Some dank memes for ya all!
 
- × /shrug: get shrug XD.
+ × /shrug | /cri: Get shrug or (ToT)!
  × /decide: Randomly answers yes/no/maybe
  × /abuse: Abuses the retard!
  × /table: Flips a table...
@@ -253,6 +258,7 @@ GBUN_HANDLER = CommandHandler("gbun", gbun)
 TABLE_HANDLER = DisableAbleCommandHandler("table", table)
 DICE_HANDLER = DisableAbleCommandHandler("dice", dice)
 DART_HANDLER = DisableAbleCommandHandler("dart", dart)
+CRI_HANDLER = DisableAbleCommandHandler("cri", cri)
 
 dispatcher.add_handler(SHRUG_HANDLER)
 dispatcher.add_handler(DECIDE_HANDLER)
@@ -267,3 +273,4 @@ dispatcher.add_handler(GBUN_HANDLER)
 dispatcher.add_handler(TABLE_HANDLER)
 dispatcher.add_handler(DICE_HANDLER)
 dispatcher.add_handler(DART_HANDLER)
+dispatcher.add_handler(CRI_HANDLER)
