@@ -313,7 +313,7 @@ def setchatpic(update,context):
     if user_member.can_change_info == False:
        msg.reply_text("You are missing right to change group info!")
        return
-
+    dlmsg = msg.reply_text("Hold on...")
     if msg.reply_to_message:
        if msg.reply_to_message.photo:
           pic_id = msg.reply_to_message.photo[-1].file_id
@@ -330,6 +330,7 @@ def setchatpic(update,context):
        except:
           msg.reply_text("This is already one of your group's profile pic, try uploading it again if you still wanna set it.")
        finally:
+          dlmsg.delete()
           if os.path.isfile('gpic.png'):
              os.remove("gpic.png")
     else:
