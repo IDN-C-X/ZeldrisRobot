@@ -313,7 +313,6 @@ def setchatpic(update,context):
     if user_member.can_change_info == False:
        msg.reply_text("You are missing right to change group info!")
        return
-    dlmsg = msg.reply_text("Hold on...")
     if msg.reply_to_message:
        if msg.reply_to_message.photo:
           pic_id = msg.reply_to_message.photo[-1].file_id
@@ -322,6 +321,7 @@ def setchatpic(update,context):
        else:
           msg.reply_text("You can only set some photo as chat pic!")
           return
+       dlmsg = msg.reply_text("Hold on...")
        tpic = context.bot.get_file(pic_id)
        tpic.download('gpic.png')
        try:
