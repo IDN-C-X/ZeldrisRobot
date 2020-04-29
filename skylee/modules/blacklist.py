@@ -97,7 +97,7 @@ def add_blacklist(update, context):
 			send_message(update.effective_message, "Added blacklist trigger: <code>{}</code> in <b>{}</b>!".format(len(to_blacklist), chat_name), parse_mode=ParseMode.HTML)
 
 	else:
-		send_message(update.effective_message, "Tell me which words you would like to remove from blacklist.")
+		send_message(update.effective_message, "Tell me which words you would like to add in blacklist.")
 
 
 @run_async
