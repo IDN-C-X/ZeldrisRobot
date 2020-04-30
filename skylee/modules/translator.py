@@ -61,5 +61,5 @@ __help__ = """
 """
 __mod_name__ = "Translate"
 
-dispatcher.add_handler(DisableAbleCommandHandler("tr", gtrans, pass_args=True))
+dispatcher.add_handler(DisableAbleCommandHandler(["tr", "tl"], gtrans, pass_args=True))
 dispatcher.add_handler(DisableAbleCommandHandler("tts", gtts, pass_args=True))

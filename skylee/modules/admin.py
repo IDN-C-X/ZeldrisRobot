@@ -405,7 +405,7 @@ done easily using the bot.
  × /adminlist: list of admins in the chat
 
 *Admin only:*
- × /pin: Silently pins the message replied to - add 'loud','notify' or `violent` to give notificaton to users.
+ × /pin: Silently pins the message replied to - add `loud`, `notify` or `violent` to give notificaton to users.
  × /unpin: Unpins the currently pinned message.
  × /invitelink: Gets private chat's invitelink.
  × /promote: Promotes the user replied to.
