@@ -540,10 +540,10 @@ def cleanservice(update, context):
             var = args[0]
             if (var == "no" or var == "off"):
                 sql.set_clean_service(chat.id, False)
-                update.effective_message.reply_text(f"Turned off service messages cleaning.")
+                update.effective_message.reply_text("Turned off service messages cleaning.")
             elif (var == "yes" or var == "on"):
                 sql.set_clean_service(chat.id, True)
-                update.effective_message.reply_text(f"Turned on service messages cleaning!")
+                update.effective_message.reply_text("Turned on service messages cleaning!")
             else:
                 update.effective_message.reply_text("Invalid option",
                     parse_mode=ParseMode.MARKDOWN)
