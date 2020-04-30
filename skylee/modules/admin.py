@@ -13,6 +13,7 @@ from skylee.modules.disable import DisableAbleCommandHandler
 from skylee.modules.helper_funcs.chat_status import bot_admin, can_promote, user_admin, can_pin
 from skylee.modules.helper_funcs.extraction import extract_user, extract_user_and_text
 from skylee.modules.helper_funcs.admin_rights import user_can_pin, user_can_promote
+from skylee.modules.helper_funcs.alternate import typing_action
 from skylee.modules.connection import connected
 from skylee.modules.log_channel import loggable
 
@@ -22,6 +23,7 @@ from skylee.modules.log_channel import loggable
 @can_promote
 @user_admin
 @loggable
+@typing_action
 def promote(update, context):
     chat_id = update.effective_chat.id
     message = update.effective_message  # type: Optional[Message]
@@ -73,6 +75,7 @@ def promote(update, context):
 @can_promote
 @user_admin
 @loggable
+@typing_action
 def demote(update, context):
     chat = update.effective_chat  # type: Optional[Chat]
     message = update.effective_message  # type: Optional[Message]
@@ -129,6 +132,7 @@ def demote(update, context):
 @can_pin
 @user_admin
 @loggable
+@typing_action
 def pin(update, context):
     args = context.args
     user = update.effective_user  # type: Optional[User]
@@ -167,6 +171,7 @@ def pin(update, context):
 @can_pin
 @user_admin
 @loggable
+@typing_action
 def unpin(update, context):
     args = context.args
     chat = update.effective_chat
@@ -194,6 +199,7 @@ def unpin(update, context):
 @run_async
 @bot_admin
 @user_admin
+@typing_action
 def invite(update, context):
         user = update.effective_user
         msg = update.effective_message
@@ -227,6 +233,7 @@ def invite(update, context):
 
 
 @run_async
+@typing_action
 def adminlist(update, context):
     administrators = update.effective_chat.get_administrators()
     text = "Admins in *{}*:".format(update.effective_chat.title or "this chat")
@@ -254,6 +261,7 @@ def adminlist(update, context):
 @bot_admin
 @can_promote
 @user_admin
+@typing_action
 def set_title(update, context):
     args = context.args
     chat = update.effective_chat
@@ -299,6 +307,7 @@ def set_title(update, context):
 @run_async
 @bot_admin
 @user_admin
+@typing_action
 def setchatpic(update,context):
     chat = update.effective_chat
     msg = update.effective_message
@@ -340,6 +349,7 @@ def setchatpic(update,context):
 @run_async
 @bot_admin
 @user_admin
+@typing_action
 def rmchatpic(update, context):
     chat = update.effective_chat
     msg = update.effective_message
@@ -364,6 +374,7 @@ def rmchatpic(update, context):
 @run_async
 @bot_admin
 @user_admin
+@typing_action
 def setchat_title(update, context):
     chat = update.effective_chat
     msg = update.effective_message

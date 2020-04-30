@@ -8,11 +8,13 @@ from telegram.ext import Filters, MessageHandler, run_async
 
 from skylee import dispatcher, LOGGER
 from skylee.modules.disable import DisableAbleCommandHandler
+from skylee.modules.helper_funcs.alternate import typing_action
 
 from googletrans import Translator
 
 
 @run_async
+@typing_action
 def gtrans(update, context):
     msg = update.effective_message
     args = context.args

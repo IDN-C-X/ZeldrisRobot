@@ -14,13 +14,14 @@ from skylee.modules.helper_funcs import chat_status
 from skylee.modules.helper_funcs.extraction import extract_user, extract_user_and_text
 from skylee.modules.helper_funcs.string_handling import extract_time
 
-from skylee.modules.helper_funcs.alternate import send_message
+from skylee.modules.helper_funcs.alternate import send_message, typing_action
 
 user_admin = chat_status.user_admin
 
 
 @user_admin
 @run_async
+@typing_action
 def allow_connections(update, context) -> str:
 
     chat = update.effective_chat
@@ -48,6 +49,7 @@ def allow_connections(update, context) -> str:
 
 
 @run_async
+@typing_action
 def connection_chat(update, context):
 
     chat = update.effective_chat
@@ -72,6 +74,7 @@ def connection_chat(update, context):
 
 
 @run_async
+@typing_action
 def connect_chat(update, context):
 
     chat = update.effective_chat

@@ -13,6 +13,7 @@ from skylee.modules.helper_funcs.chat_status import bot_admin, user_admin, is_us
 from skylee.modules.helper_funcs.extraction import extract_user, extract_user_and_text
 from skylee.modules.helper_funcs.string_handling import extract_time
 from skylee.modules.helper_funcs.admin_rights import user_can_ban
+from skylee.modules.helper_funcs.alternate import typing_action
 from skylee.modules.log_channel import loggable
 
 
@@ -20,6 +21,7 @@ from skylee.modules.log_channel import loggable
 @bot_admin
 @user_admin
 @loggable
+@typing_action
 def mute(update, context):
     chat = update.effective_chat  # type: Optional[Chat]
     user = update.effective_user  # type: Optional[User]
@@ -67,6 +69,7 @@ def mute(update, context):
 @bot_admin
 @user_admin
 @loggable
+@typing_action
 def unmute(update, context):
     chat = update.effective_chat  # type: Optional[Chat]
     user = update.effective_user  # type: Optional[User]
@@ -118,6 +121,7 @@ def unmute(update, context):
 @can_restrict
 @user_admin
 @loggable
+@typing_action
 def temp_mute(update, context):
     chat = update.effective_chat  # type: Optional[Chat]
     user = update.effective_user  # type: Optional[User]

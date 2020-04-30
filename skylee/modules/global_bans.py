@@ -2,7 +2,7 @@ import html
 from io import BytesIO
 from typing import Optional, List
 
-from telegram import Message, Update, Bot, User, Chat, ParseMode
+from telegram import Message, Update, Bot, User, Chat, ParseMode, ChatAction
 from telegram.error import BadRequest, TelegramError
 from telegram.ext import run_async, CommandHandler, MessageHandler, Filters
 from telegram.utils.helpers import mention_html
@@ -12,7 +12,7 @@ from skylee import dispatcher, OWNER_ID, SUDO_USERS, SUPPORT_USERS, STRICT_GBAN,
 from skylee.modules.helper_funcs.chat_status import user_admin, is_user_admin
 from skylee.modules.helper_funcs.extraction import extract_user, extract_user_and_text
 from skylee.modules.helper_funcs.filters import CustomFilters
-from skylee.modules.helper_funcs.misc import send_to_list
+from skylee.modules.helper_funcs.alternate import typing_action, send_action
 from skylee.modules.sql.users_sql import get_all_chats
 
 GBAN_ENFORCE_GROUP = 6
@@ -45,6 +45,7 @@ UNGBAN_ERRORS = {
 
 
 @run_async
+@typing_action
 def gban(update, context):
     message = update.effective_message  # type: Optional[Message]
     args = context.args
@@ -164,6 +165,7 @@ def gban(update, context):
 
 
 @run_async
+@typing_action
 def ungban(update, context):
     message = update.effective_message  # type: Optional[Message]
     args = context.args
@@ -229,6 +231,7 @@ def ungban(update, context):
 
 
 @run_async
+@send_action(ChatAction.UPLOAD_DOCUMENT)
 def gbanlist(update, context):
     banned_users = sql.get_gban_list()
 
@@ -295,6 +298,7 @@ def enforce_gban(update, context):
 
 @run_async
 @user_admin
+@typing_action
 def gbanstat(update, context):
     args = context.args
     if len(args) > 0:

@@ -9,6 +9,7 @@ from telegram.utils.helpers import mention_html
 
 from skylee import dispatcher, LOGGER
 from skylee.modules.helper_funcs.chat_status import user_not_admin, user_admin
+from skylee.modules.helper_funcs.alternate import typing_action
 from skylee.modules.log_channel import loggable
 from skylee.modules.sql import reporting_sql as sql
 
@@ -17,6 +18,7 @@ REPORT_GROUP = 5
 
 @run_async
 @user_admin
+@typing_action
 def report_setting(update, context):
     chat = update.effective_chat  # type: Optional[Chat]
     msg = update.effective_message  # type: Optional[Message]
@@ -53,6 +55,7 @@ def report_setting(update, context):
 @run_async
 @user_not_admin
 @loggable
+@typing_action
 def report(update, context) -> str:
     message = update.effective_message  # type: Optional[Message]
     chat = update.effective_chat  # type: Optional[Chat]

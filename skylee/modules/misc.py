@@ -11,7 +11,7 @@ from random import randint
 import requests as r
 from time import sleep
 
-from telegram import Message, Chat, Update, Bot, MessageEntity, InlineKeyboardMarkup, InlineKeyboardButton, ParseMode
+from telegram import Message, Chat, Update, Bot, MessageEntity, InlineKeyboardMarkup, InlineKeyboardButton, ParseMode, ChatAction
 from telegram.ext import CommandHandler, run_async, Filters
 from telegram.utils.helpers import escape_markdown, mention_html
 from telegram.error import BadRequest
@@ -21,9 +21,11 @@ from skylee.__main__ import STATS, USER_INFO, GDPR
 from skylee.modules.disable import DisableAbleCommandHandler
 from skylee.modules.helper_funcs.extraction import extract_user
 from skylee.modules.helper_funcs.filters import CustomFilters
+from skylee.modules.helper_funcs.alternate import typing_action, send_action
 
 
 @run_async
+@typing_action
 def get_id(update, context):
     args = context.args
     user_id = extract_user(update.effective_message, args)
@@ -54,6 +56,7 @@ def get_id(update, context):
 
 
 @run_async
+@typing_action
 def info(update, context):
     args = context.args
     msg = update.effective_message  # type: Optional[Message]
@@ -137,6 +140,7 @@ def info(update, context):
 
 
 @run_async
+@typing_action
 def echo(update, context):
     args = update.effective_message.text.split(None, 1)
     message = update.effective_message
@@ -148,6 +152,7 @@ def echo(update, context):
 
 
 @run_async
+@typing_action
 def gdpr(update, context):
     update.effective_message.reply_text("Deleting identifiable data...")
     for mod in GDPR:
@@ -189,6 +194,7 @@ Keep in mind that your message <b>MUST</b> contain some text other than just a b
 
 
 @run_async
+@typing_action
 def markdown_help(update, context):
     update.effective_message.reply_text(MARKDOWN_HELP, parse_mode=ParseMode.HTML)
     update.effective_message.reply_text("Try forwarding the following message to me, and you'll see!")
@@ -197,6 +203,7 @@ def markdown_help(update, context):
                                         "[button2](buttonurl://google.com:same)")
 
 @run_async
+@typing_action
 def wiki(update, context):
     kueri = re.split(pattern="wiki", string=update.effective_message.text)
     wikipedia.set_lang("en")
@@ -214,7 +221,8 @@ def wiki(update, context):
         except wikipedia.exceptions.DisambiguationError as eet:
             update.effective_message.reply_text(f"⚠ Error\n There are too many query! Express it more!\nPossible query result:\n{eet}")
 
-
+@run_async
+@typing_action
 def ud(update, context):
     try:
         message = update.effective_message
@@ -225,7 +233,9 @@ def ud(update, context):
         reply_text = f'Word: {text}\nResults: Sorry could not find any matching results!'
     return message.reply_text(reply_text)
 
+
 @run_async
+@send_action(ChatAction.UPLOAD_PHOTO)
 def wall(update, context):
     chat_id = update.effective_chat.id
     msg = update.effective_message
@@ -259,6 +269,7 @@ def wall(update, context):
                 timeout=60)
 
 @run_async
+@typing_action
 def getlink(update, context):
     args = context.args
     message = update.effective_message

@@ -15,6 +15,7 @@ from skylee.modules.helper_funcs.extraction import extract_text
 from skylee.modules.helper_funcs.filters import CustomFilters
 from skylee.modules.helper_funcs.misc import build_keyboard
 from skylee.modules.helper_funcs.string_handling import split_quotes, button_markdown_parser
+from skylee.modules.helper_funcs.alternate import typing_action
 from skylee.modules.sql import cust_filters_sql as sql
 
 from skylee.modules.connection import connected
@@ -24,6 +25,7 @@ BASIC_FILTER_STRING = "*Filters in {}:*\n"
 
 
 @run_async
+@typing_action
 def list_handlers(update, context):
     chat = update.effective_chat  # type: Optional[Chat]
     user = update.effective_user  # type: Optional[User]

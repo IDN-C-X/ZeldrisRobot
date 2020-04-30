@@ -16,6 +16,7 @@ from skylee.modules.helper_funcs.chat_status import user_admin
 from skylee.modules.helper_funcs.misc import build_keyboard, revert_buttons
 from skylee.modules.helper_funcs.msg_types import get_note_type
 from skylee.modules.helper_funcs.string_handling import escape_invalid_curly_brackets
+from skylee.modules.helper_funcs.alternate import typing_action
 from skylee.modules.connection import connected
 
 FILE_MATCHER = re.compile(r"^###file_id(!photo)?###:(.*?)(?:\s|$)")
@@ -139,6 +140,7 @@ def get(bot, update, notename, show_none=True, no_format=False):
 
 
 @run_async
+@typing_action
 def cmd_get(update, context):
     args = context.args
     if len(args) >= 2 and args[1].lower() == "noformat":
@@ -159,6 +161,7 @@ def hash_get(update, context):
 
 @run_async
 @user_admin
+@typing_action
 def save(update, context):
     chat = update.effective_chat  # type: Optional[Chat]
     user = update.effective_user  # type: Optional[User]
@@ -194,6 +197,7 @@ def save(update, context):
 
 @run_async
 @user_admin
+@typing_action
 def clear(update, context):
     args = context.args
     chat = update.effective_chat  # type: Optional[Chat]
@@ -222,6 +226,7 @@ def clear(update, context):
 
 
 @run_async
+@typing_action
 def list_notes(update, context):
     chat_id = update.effective_chat.id
     chat = update.effective_chat  # type: Optional[Chat]

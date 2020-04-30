@@ -14,17 +14,20 @@ from telegram.utils.helpers import mention_html, escape_markdown
 
 from skylee.modules.helper_funcs.extraction import extract_user
 from skylee.modules.helper_funcs.filters import CustomFilters
+from skylee.modules.helper_funcs.alternate import typing_action
 from skylee import dispatcher, OWNER_ID, SUDO_USERS, SUPPORT_USERS, WALL_API, TOKEN
 from skylee.modules.disable import DisableAbleCommandHandler
 
 import skylee.modules.helper_funcs.fun_strings as fun
 
 @run_async
+@typing_action
 def runs(update, context):
     update.effective_message.reply_text(random.choice(fun.RUN_STRINGS))
 
 
 @run_async
+@typing_action
 def slap(update, context):
     args = context.args
     msg = update.effective_message  # type: Optional[Message]
@@ -62,7 +65,9 @@ def slap(update, context):
 
     reply_text(repl, parse_mode=ParseMode.MARKDOWN)
 
+
 @run_async
+@typing_action
 def punch(update, context):
     args = context.args
     msg = update.effective_message  # type: Optional[Message]
@@ -102,6 +107,7 @@ def punch(update, context):
 
 
 @run_async
+@typing_action
 def hug(update, context):
     args = context.args
     msg = update.effective_message  # type: Optional[Message]
@@ -139,38 +145,45 @@ def hug(update, context):
 
 
 @run_async
+@typing_action
 def abuse(update, context):
     # reply to correct message
     reply_text = update.effective_message.reply_to_message.reply_text if update.effective_message.reply_to_message else update.effective_message.reply_text
     reply_text(random.choice(fun.ABUSE_STRINGS))
 
 @run_async
+@typing_action
 def shrug(update, context):
     # reply to correct message
     reply_text = update.effective_message.reply_to_message.reply_text if update.effective_message.reply_to_message else update.effective_message.reply_text
     reply_text(random.choice(fun.SHGS))
 
 @run_async
+@typing_action
 def decide(update, context):
     reply_text = update.effective_message.reply_to_message.reply_text if update.effective_message.reply_to_message else update.effective_message.reply_text
     reply_text(random.choice(fun.DECIDE))
 
 @run_async
+@typing_action
 def table(update, context):
     reply_text = update.effective_message.reply_to_message.reply_text if update.effective_message.reply_to_message else update.effective_message.reply_text
     reply_text(random.choice(fun.TABLE))
 
 @run_async
+@typing_action
 def cri(update, context):
     reply_text = update.effective_message.reply_to_message.reply_text if update.effective_message.reply_to_message else update.effective_message.reply_text
     reply_text(random.choice(fun.CRI))
 
 @run_async
+@typing_action
 def dice(update, context):
     context.bot.sendDice(update.effective_chat.id)
 
 # untill library add api 4.8 support
 @run_async
+@typing_action
 def dart(update, context):
     chat = update.effective_chat
     try:
@@ -179,6 +192,7 @@ def dart(update, context):
         return
 
 @run_async
+@typing_action
 def gbun(update, context):
     user = update.effective_user
     chat = update.effective_chat
@@ -189,6 +203,7 @@ def gbun(update, context):
        context.bot.sendMessage(chat.id, (random.choice(fun.GBUN)))
 
 @run_async
+@typing_action
 def snipe(update, context):
     args = context.args
     try:
@@ -208,6 +223,7 @@ def snipe(update, context):
 # Bug reporting module for X00TD PORTS!
 
 @run_async
+@typing_action
 def ports_bug(update, context):
     message = update.effective_message
     user = update.effective_user

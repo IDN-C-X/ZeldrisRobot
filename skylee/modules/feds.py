@@ -12,7 +12,7 @@ from time import sleep
 
 from future.utils import string_types
 from telegram.error import BadRequest, TelegramError, Unauthorized
-from telegram import ParseMode, Update, Bot, Chat, User, MessageEntity, InlineKeyboardMarkup, InlineKeyboardButton
+from telegram import ParseMode, Update, Bot, Chat, User, MessageEntity, InlineKeyboardMarkup, InlineKeyboardButton, ChatAction
 from telegram.ext import run_async, CommandHandler, MessageHandler, Filters, CallbackQueryHandler
 from telegram.utils.helpers import escape_markdown, mention_html, mention_markdown
 
@@ -27,7 +27,7 @@ from skylee.modules.disable import DisableAbleCommandHandler
 import skylee.modules.sql.feds_sql as sql
 
 from skylee.modules.connection import connected
-from skylee.modules.helper_funcs.alternate import send_message
+from skylee.modules.helper_funcs.alternate import send_message, typing_action, send_action
 # Hello bot owner, I spended for feds many hours of my life, Please don't remove this if you still respect MrYacha and peaktogoo and AyraHikari too
 # Federation by MrYacha 2018-2019
 # Federation rework by Mizukito Akito 2019
@@ -71,6 +71,7 @@ UNFBAN_ERRORS = {
 }
 
 @run_async
+@typing_action
 def new_fed(update, context):
 	chat = update.effective_chat  # type: Optional[Chat]
 	user = update.effective_user  # type: Optional[User]
@@ -110,6 +111,7 @@ def new_fed(update, context):
 		update.effective_message.reply_text("Please write down the name of the federation")
 
 @run_async
+@typing_action
 def del_fed(update, context):
 	chat = update.effective_chat  # type: Optional[Chat]
 	user = update.effective_user  # type: Optional[User]
@@ -142,6 +144,7 @@ def del_fed(update, context):
 						[InlineKeyboardButton(text="Cancel", callback_data="rmfed_cancel")]]))
 
 @run_async
+@typing_action
 def fed_chat(update, context):
 	chat = update.effective_chat  # type: Optional[Chat]
 	user = update.effective_user  # type: Optional[User]
@@ -166,6 +169,7 @@ def fed_chat(update, context):
 	update.effective_message.reply_text(text, parse_mode=ParseMode.HTML)
 
 @run_async
+@typing_action
 def join_fed(update, context):
 	chat = update.effective_chat  # type: Optional[Chat]
 	user = update.effective_user  # type: Optional[User]
@@ -213,6 +217,7 @@ def join_fed(update, context):
 		message.reply_text("This chat has joined the federation: {}!".format(getfed['fname']))
 
 @run_async
+@typing_action
 def leave_fed(update, context):
 	chat = update.effective_chat  # type: Optional[Chat]
 	user = update.effective_user  # type: Optional[User]
@@ -240,6 +245,7 @@ def leave_fed(update, context):
 		update.effective_message.reply_text("Only group creators can use this command!")
 
 @run_async
+@typing_action
 def user_join_fed(update, context):
 	chat = update.effective_chat  # type: Optional[Chat]
 	user = update.effective_user  # type: Optional[User]
@@ -289,6 +295,7 @@ def user_join_fed(update, context):
 
 
 @run_async
+@typing_action
 def user_demote_fed(update, context):
 	chat = update.effective_chat  # type: Optional[Chat]
 	user = update.effective_user  # type: Optional[User]
@@ -335,6 +342,7 @@ def user_demote_fed(update, context):
 		return
 
 @run_async
+@typing_action
 def fed_info(update, context):
 	chat = update.effective_chat  # type: Optional[Chat]
 	user = update.effective_user  # type: Optional[User]
@@ -379,6 +387,7 @@ def fed_info(update, context):
 	update.effective_message.reply_text(text, parse_mode=ParseMode.HTML)
 
 @run_async
+@typing_action
 def fed_admin(update, context):
 
 	chat = update.effective_chat  # type: Optional[Chat]
@@ -425,6 +434,7 @@ def fed_admin(update, context):
 
 
 @run_async
+@typing_action
 def fed_ban(update, context):
 
 	chat = update.effective_chat  # type: Optional[Chat]
@@ -721,6 +731,7 @@ def fed_ban(update, context):
 
 
 @run_async
+@typing_action
 def unfban(update, context):
 	chat = update.effective_chat  # type: Optional[Chat]
 	user = update.effective_user  # type: Optional[User]
@@ -891,6 +902,7 @@ def unfban(update, context):
 
 
 @run_async
+@typing_action
 def set_frules(update, context):
 
 	chat = update.effective_chat  # type: Optional[Chat]
@@ -936,6 +948,7 @@ def set_frules(update, context):
 
 
 @run_async
+@typing_action
 def get_frules(update, context):
 	chat = update.effective_chat  # type: Optional[Chat]
 	args = context.args
@@ -956,6 +969,7 @@ def get_frules(update, context):
 
 
 @run_async
+@typing_action
 def fed_broadcast(update, context):
 	msg = update.effective_message  # type: Optional[Message]
 	user = update.effective_user  # type: Optional[User]
@@ -1005,6 +1019,7 @@ def fed_broadcast(update, context):
 		update.effective_message.reply_text(send_text)
 
 @run_async
+@send_action(ChatAction.UPLOAD_DOCUMENT)
 def fed_ban_list(update, context):
 	chat = update.effective_chat  # type: Optional[Chat]
 	user = update.effective_user  # type: Optional[User]
@@ -1122,6 +1137,7 @@ def fed_ban_list(update, context):
 													caption="The following is a list of users who are currently fbanned in the Federation {}.".format(info['fname']))
 
 @run_async
+@typing_action
 def fed_notif(update, context):
 	chat = update.effective_chat  # type: Optional[Chat]
 	user = update.effective_user  # type: Optional[User]
@@ -1147,6 +1163,7 @@ def fed_notif(update, context):
 		msg.reply_text("Your current Federation report preferences: `{}`".format(getreport), parse_mode="markdown")
 
 @run_async
+@typing_action
 def fed_chats(update, context):
 	chat = update.effective_chat  # type: Optional[Chat]
 	user = update.effective_user  # type: Optional[User]
@@ -1193,6 +1210,7 @@ def fed_chats(update, context):
 													caption="Here is a list of all the chats that joined the federation {}.".format(info['fname']))
 
 @run_async
+@typing_action
 def fed_import_bans(update, context):
 	chat = update.effective_chat  # type: Optional[Chat]
 	user = update.effective_user  # type: Optional[User]
@@ -1390,6 +1408,7 @@ def del_fed_button(update, context):
 			query.message.edit_text("You have removed your Federation! Now all the Groups that are connected with `{}` do not have a Federation.".format(getfed['fname']), parse_mode='markdown')
 
 @run_async
+@typing_action
 def fed_stat_user(update, context):
 	chat = update.effective_chat  # type: Optional[Chat]
 	user = update.effective_user  # type: Optional[User]
@@ -1475,6 +1494,7 @@ def fed_stat_user(update, context):
 
 
 @run_async
+@typing_action
 def set_fed_log(update, context):
 	chat = update.effective_chat  # type: Optional[Chat]
 	user = update.effective_user  # type: Optional[User]
@@ -1501,6 +1521,7 @@ def set_fed_log(update, context):
 		send_message(update.effective_message, "You have not provided your federated ID!")
 
 @run_async
+@typing_action
 def unset_fed_log(update, context):
 	chat = update.effective_chat  # type: Optional[Chat]
 	user = update.effective_user  # type: Optional[User]
@@ -1528,6 +1549,7 @@ def unset_fed_log(update, context):
 
 
 @run_async
+@typing_action
 def subs_feds(update, context):
 	chat = update.effective_chat  # type: Optional[Chat]
 	user = update.effective_user  # type: Optional[User]
@@ -1567,6 +1589,7 @@ def subs_feds(update, context):
 		send_message(update.effective_message, "You have not provided your federated ID!")
 
 @run_async
+@typing_action
 def unsubs_feds(update, context):
 	chat = update.effective_chat  # type: Optional[Chat]
 	user = update.effective_user  # type: Optional[User]
@@ -1606,6 +1629,7 @@ def unsubs_feds(update, context):
 		send_message(update.effective_message, "You have not provided your federated ID!")
 
 @run_async
+@typing_action
 def get_myfedsubs(update, context):
 	chat = update.effective_chat  # type: Optional[Chat]
 	user = update.effective_user  # type: Optional[User]
@@ -1640,6 +1664,7 @@ def get_myfedsubs(update, context):
 		send_message(update.effective_message, listfed, parse_mode="markdown")
 
 @run_async
+@typing_action
 def get_myfeds_list(update, context):
 	chat = update.effective_chat  # type: Optional[Chat]
 	user = update.effective_user  # type: Optional[User]

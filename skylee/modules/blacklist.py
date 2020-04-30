@@ -19,12 +19,13 @@ from skylee.modules.warns import warn
 from skylee.modules.helper_funcs.string_handling import extract_time
 from skylee.modules.connection import connected
 
-from skylee.modules.helper_funcs.alternate import send_message
+from skylee.modules.helper_funcs.alternate import send_message, typing_action
 
 BLACKLIST_GROUP = 11
 
 
 @run_async
+@typing_action
 def blacklist(update, context):
 	msg = update.effective_message  # type: Optional[Message]
 	chat = update.effective_chat  # type: Optional[Chat]
@@ -66,6 +67,7 @@ def blacklist(update, context):
 
 @run_async
 @user_admin
+@typing_action
 def add_blacklist(update, context):
 	msg = update.effective_message  # type: Optional[Message]
 	chat = update.effective_chat  # type: Optional[Chat]
@@ -102,6 +104,7 @@ def add_blacklist(update, context):
 
 @run_async
 @user_admin
+@typing_action
 def unblacklist(update, context):
 	msg = update.effective_message  # type: Optional[Message]
 	chat = update.effective_chat  # type: Optional[Chat]
@@ -155,6 +158,7 @@ def unblacklist(update, context):
 @run_async
 @loggable
 @user_admin
+@typing_action
 def blacklist_mode(update, context):
 	chat = update.effective_chat  # type: Optional[Chat]
 	user = update.effective_user  # type: Optional[User]

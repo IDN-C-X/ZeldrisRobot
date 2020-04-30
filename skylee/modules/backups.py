@@ -13,6 +13,7 @@ from skylee.__main__ import DATA_IMPORT
 from skylee.modules.helper_funcs.chat_status import user_admin
 from skylee.modules.helper_funcs.misc import build_keyboard, revert_buttons
 from skylee.modules.helper_funcs.msg_types import get_note_type
+from skylee.modules.helper_funcs.alternate import typing_action
 from skylee.modules.rules import get_rules
 import skylee.modules.sql.rules_sql as rulessql
 from skylee.modules.sql import warns_sql as warnssql
@@ -25,6 +26,7 @@ from skylee.modules.connection import connected
 
 @run_async
 @user_admin
+@typing_action
 def import_data(update, context):
 	msg = update.effective_message  # type: Optional[Message]
 	chat = update.effective_chat  # type: Optional[Chat]

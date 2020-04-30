@@ -17,6 +17,7 @@ from skylee.modules.helper_funcs.extraction import extract_text, extract_user_an
 from skylee.modules.helper_funcs.filters import CustomFilters
 from skylee.modules.helper_funcs.misc import split_message
 from skylee.modules.helper_funcs.string_handling import split_quotes
+from skylee.modules.helper_funcs.alternate import typing_action
 from skylee.modules.log_channel import loggable
 from skylee.modules.sql import warns_sql as sql
 from skylee.modules.sql import users_sql as sql_user
@@ -129,6 +130,7 @@ def button(update, context):
 @user_admin
 @can_restrict
 @loggable
+@typing_action
 def warn_user(update, context):
     message = update.effective_message  # type: Optional[Message]
     chat = update.effective_chat  # type: Optional[Chat]
@@ -150,6 +152,7 @@ def warn_user(update, context):
 @user_admin
 @bot_admin
 @loggable
+@typing_action
 def reset_warns(update, context):
     message = update.effective_message  # type: Optional[Message]
     chat = update.effective_chat  # type: Optional[Chat]
@@ -176,6 +179,7 @@ def reset_warns(update, context):
 @user_admin
 @bot_admin
 @loggable
+@typing_action
 def remove_warns(update, context):
     message = update.effective_message  # type: Optional[Message]
     chat = update.effective_chat  # type: Optional[Chat]
@@ -201,6 +205,7 @@ def remove_warns(update, context):
 
 
 @run_async
+@typing_action
 def warns(update, context):
     message = update.effective_message  # type: Optional[Message]
     chat = update.effective_chat  # type: Optional[Chat]
@@ -337,6 +342,7 @@ def reply_filter(update, context) -> str:
 @run_async
 @user_admin
 @loggable
+@typing_action
 def set_warn_limit(update, context) -> str:
     chat = update.effective_chat  # type: Optional[Chat]
     user = update.effective_user  # type: Optional[User]
@@ -365,6 +371,7 @@ def set_warn_limit(update, context) -> str:
 
 @run_async
 @user_admin
+@typing_action
 def set_warn_strength(update, context):
     chat = update.effective_chat  # type: Optional[Chat]
     user = update.effective_user  # type: Optional[User]

@@ -11,7 +11,7 @@ from skylee.modules.disable import DisableAbleCommandHandler, DisableAbleMessage
 from skylee.modules.sql import afk_sql as sql
 from skylee.modules.users import get_user_id
 
-from skylee.modules.helper_funcs.alternate import send_message
+from skylee.modules.helper_funcs.alternate import send_message, typing_action
 import skylee.modules.helper_funcs.fun_strings as fun
 
 AFK_GROUP = 7
@@ -19,6 +19,7 @@ AFK_REPLY_GROUP = 8
 
 
 @run_async
+@typing_action
 def afk(update, context):
     args = update.effective_message.text.split(None, 1)
     if len(args) >= 2:
@@ -32,6 +33,7 @@ def afk(update, context):
 
 
 @run_async
+@typing_action
 def no_longer_afk(update, context):
     user = update.effective_user  # type: Optional[User]
 
@@ -45,6 +47,7 @@ def no_longer_afk(update, context):
 
 
 @run_async
+@typing_action
 def reply_afk(update, context):
     message = update.effective_message  # type: Optional[Message]
 

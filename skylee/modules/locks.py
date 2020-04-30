@@ -21,7 +21,7 @@ from skylee.modules.log_channel import loggable
 from skylee.modules.sql import users_sql
 from skylee.modules.connection import connected
 
-from skylee.modules.helper_funcs.alternate import send_message
+from skylee.modules.helper_funcs.alternate import send_message, typing_action
 
 ad = AlphabetDetector()
 
@@ -118,6 +118,7 @@ def locktypes(update, context):
 @run_async
 @user_admin
 @loggable
+@typing_action
 def lock(update, context) -> str:
 	args = context.args
 	chat = update.effective_chat  # type: Optional[Chat]
@@ -193,6 +194,7 @@ def lock(update, context) -> str:
 @run_async
 @user_admin
 @loggable
+@typing_action
 def unlock(update, context) -> str:
 	args = context.args
 	chat = update.effective_chat  # type: Optional[Chat]
@@ -373,6 +375,7 @@ def build_lock_message(chat_id):
 
 @run_async
 @user_admin
+@typing_action
 def list_locks(update, context):
 	chat = update.effective_chat  # type: Optional[Chat]
 	user = update.effective_user

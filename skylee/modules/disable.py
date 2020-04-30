@@ -8,7 +8,7 @@ from telegram.utils.helpers import escape_markdown
 from skylee import dispatcher
 from skylee.modules.helper_funcs.handlers import CMD_STARTERS
 from skylee.modules.helper_funcs.misc import is_module_loaded
-from skylee.modules.helper_funcs.alternate import send_message
+from skylee.modules.helper_funcs.alternate import send_message, typing_action
 from skylee.modules.connection import connected
 
 FILENAME = __name__.rsplit(".", 1)[-1]
@@ -84,6 +84,7 @@ if is_module_loaded(FILENAME):
 
     @run_async
     @user_admin
+    @typing_action
     def disable(update, context):
         chat = update.effective_chat  # type: Optional[Chat]
         user = update.effective_user
@@ -125,6 +126,7 @@ if is_module_loaded(FILENAME):
 
     @run_async
     @user_admin
+    @typing_action
     def enable(update, context):
         chat = update.effective_chat  # type: Optional[Chat]
         user = update.effective_user
@@ -164,6 +166,7 @@ if is_module_loaded(FILENAME):
 
     @run_async
     @user_admin
+    @typing_action
     def list_cmds(update, context):
         if DISABLE_CMDS + DISABLE_OTHER:
             result = ""
@@ -188,6 +191,7 @@ if is_module_loaded(FILENAME):
 
 
     @run_async
+    @typing_action
     def commands(update, context):
         chat = update.effective_chat
         user = update.effective_user

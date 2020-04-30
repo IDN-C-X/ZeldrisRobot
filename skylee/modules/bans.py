@@ -13,6 +13,7 @@ from skylee.modules.helper_funcs.chat_status import bot_admin, user_admin, is_us
 from skylee.modules.helper_funcs.extraction import extract_user_and_text
 from skylee.modules.helper_funcs.string_handling import extract_time
 from skylee.modules.helper_funcs.admin_rights import user_can_ban
+from skylee.modules.helper_funcs.alternate import typing_action
 from skylee.modules.log_channel import loggable
 
 
@@ -21,6 +22,7 @@ from skylee.modules.log_channel import loggable
 @can_restrict
 @user_admin
 @loggable
+@typing_action
 def ban(update, context):
     chat = update.effective_chat  # type: Optional[Chat]
     user = update.effective_user  # type: Optional[User]
@@ -89,6 +91,7 @@ def ban(update, context):
 @can_restrict
 @user_admin
 @loggable
+@typing_action
 def temp_ban(update, context):
     chat = update.effective_chat  # type: Optional[Chat]
     user = update.effective_user  # type: Optional[User]
@@ -176,6 +179,7 @@ def temp_ban(update, context):
 @can_restrict
 @user_admin
 @loggable
+@typing_action
 def kick(update, context):
     chat = update.effective_chat  # type: Optional[Chat]
     user = update.effective_user  # type: Optional[User]
@@ -234,6 +238,7 @@ def kick(update, context):
 @bot_admin
 @can_restrict
 @loggable
+@typing_action
 def banme(update, context):
     user_id = update.effective_message.from_user.id
     chat = update.effective_chat
@@ -259,6 +264,7 @@ def banme(update, context):
 @run_async
 @bot_admin
 @can_restrict
+@typing_action
 def kickme(update, context):
     user_id = update.effective_message.from_user.id
     if is_user_admin(update.effective_chat, user_id):
@@ -277,6 +283,7 @@ def kickme(update, context):
 @can_restrict
 @user_admin
 @loggable
+@typing_action
 def unban(update, context):
     message = update.effective_message  # type: Optional[Message]
     user = update.effective_user  # type: Optional[User]

@@ -10,9 +10,11 @@ import skylee.modules.sql.userinfo_sql as sql
 from skylee import dispatcher, SUDO_USERS
 from skylee.modules.disable import DisableAbleCommandHandler
 from skylee.modules.helper_funcs.extraction import extract_user
+from skylee.modules.helper_funcs.alternate import typing_action
 
 
 @run_async
+@typing_action
 def about_me(update, context):
     message = update.effective_message  # type: Optional[Message]
     args = context.args
@@ -36,6 +38,7 @@ def about_me(update, context):
 
 
 @run_async
+@typing_action
 def set_about_me(update, context):
     message = update.effective_message  # type: Optional[Message]
     user_id = message.from_user.id
@@ -51,6 +54,7 @@ def set_about_me(update, context):
 
 
 @run_async
+@typing_action
 def about_bio(update, context):
     message = update.effective_message  # type: Optional[Message]
     args = context.args
@@ -74,6 +78,7 @@ def about_bio(update, context):
 
 
 @run_async
+@typing_action
 def set_about_bio(update, context):
     message = update.effective_message  # type: Optional[Message]
     sender = update.effective_user  # type: Optional[User]

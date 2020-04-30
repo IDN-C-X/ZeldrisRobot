@@ -15,6 +15,7 @@ from skylee import dispatcher, OWNER_ID, LOGGER, MESSAGE_DUMP
 from skylee.modules.helper_funcs.chat_status import user_admin, is_user_ban_protected
 from skylee.modules.helper_funcs.misc import build_keyboard, revert_buttons
 from skylee.modules.helper_funcs.msg_types import get_welcome_type
+from skylee.modules.helper_funcs.alternate import typing_action
 from skylee.modules.helper_funcs.string_handling import markdown_parser, \
     escape_invalid_curly_brackets, markdown_to_html
 from skylee.modules.log_channel import loggable
@@ -282,6 +283,7 @@ def left_member(update, context):
 
 @run_async
 @user_admin
+@typing_action
 def welcome(update, context):
     chat = update.effective_chat  # type: Optional[Chat]
     args = context.args
@@ -328,6 +330,7 @@ def welcome(update, context):
 
 @run_async
 @user_admin
+@typing_action
 def goodbye(update, context):
     chat = update.effective_chat  # type: Optional[Chat]
     args = context.args
@@ -376,6 +379,7 @@ def goodbye(update, context):
 @run_async
 @user_admin
 @loggable
+@typing_action
 def set_welcome(update, context) -> str:
     chat = update.effective_chat  # type: Optional[Chat]
     user = update.effective_user  # type: Optional[User]
@@ -400,6 +404,7 @@ def set_welcome(update, context) -> str:
 @run_async
 @user_admin
 @loggable
+@typing_action
 def reset_welcome(update, context) -> str:
     chat = update.effective_chat  # type: Optional[Chat]
     user = update.effective_user  # type: Optional[User]
@@ -415,6 +420,7 @@ def reset_welcome(update, context) -> str:
 @run_async
 @user_admin
 @loggable
+@typing_action
 def set_goodbye(update, context) -> str:
     chat = update.effective_chat  # type: Optional[Chat]
     user = update.effective_user  # type: Optional[User]
@@ -437,6 +443,7 @@ def set_goodbye(update, context) -> str:
 @run_async
 @user_admin
 @loggable
+@typing_action
 def reset_goodbye(update, context) -> str:
     chat = update.effective_chat  # type: Optional[Chat]
     user = update.effective_user  # type: Optional[User]
@@ -451,6 +458,7 @@ def reset_goodbye(update, context) -> str:
 @run_async
 @user_admin
 @loggable
+@typing_action
 def welcomemute(update, context) -> str:
     chat = update.effective_chat  # type: Optional[Chat]
     user = update.effective_user  # type: Optional[User]
@@ -495,6 +503,7 @@ def welcomemute(update, context) -> str:
 @run_async
 @user_admin
 @loggable
+@typing_action
 def clean_welcome(update, context) -> str:
     chat = update.effective_chat  # type: Optional[Chat]
     user = update.effective_user  # type: Optional[User]
@@ -532,6 +541,7 @@ def clean_welcome(update, context) -> str:
 
 run_async
 @user_admin
+@typing_action
 def cleanservice(update, context):
     chat = update.effective_chat  # type: Optional[Chat]
     args = context.args
@@ -613,6 +623,7 @@ WELC_HELP_TXT = "Your group's welcome/goodbye messages can be personalised in mu
 
 @run_async
 @user_admin
+@typing_action
 def welcome_help(update, context):
     update.effective_message.reply_text(WELC_HELP_TXT, parse_mode=ParseMode.MARKDOWN)
 

@@ -16,9 +16,11 @@ from telegram.utils.helpers import escape_markdown
 from skylee import dispatcher
 
 from skylee.modules.disable import DisableAbleCommandHandler
+from skylee.modules.helper_funcs.alternate import typing_action
 
 
 @run_async
+@typing_action
 def kang(update, context):
     msg = update.effective_message
     user = update.effective_user
@@ -229,6 +231,7 @@ def getsticker(update, context):
                                             parse_mode=ParseMode.MARKDOWN)
 
 @run_async
+@typing_action
 def stickerid(update, context):
     msg = update.effective_message
     if msg.reply_to_message and msg.reply_to_message.sticker:

@@ -6,8 +6,10 @@ from telegram.ext import run_async
 
 from skylee import dispatcher, updater, API_WEATHER as APPID
 from skylee.modules.disable import DisableAbleCommandHandler
+from skylee.modules.helper_funcs.alternate import typing_action
 
 @run_async
+@typing_action
 def weather(update, context):
     args = context.args
     if len(args) == 0:
