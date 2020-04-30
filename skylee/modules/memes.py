@@ -16,7 +16,7 @@ from skylee.modules.helper_funcs.extraction import extract_user
 from skylee.modules.helper_funcs.filters import CustomFilters
 from skylee.modules.helper_funcs.alternate import typing_action
 from skylee import dispatcher, OWNER_ID, SUDO_USERS, SUPPORT_USERS, WALL_API, TOKEN
-from skylee.modules.disable import DisableAbleCommandHandler
+from skylee.modules.disable import DisableAbleCommandHandler, DisableAbleMessageHandler
 
 import skylee.modules.helper_funcs.fun_strings as fun
 
@@ -220,6 +220,90 @@ def snipe(update, context):
             update.effective_message.reply_text("Couldn't send the message. Perhaps I'm not part of that group?")
 
 
+@run_async
+@typing_action
+def copypasta(update, context):
+    message = update.effective_message
+    if not message.reply_to_message:
+        message.reply_text("I need a message to make pasta.")
+    else:
+        emojis = ["😂", "😂", "👌", "✌", "💞", "👍", "👌", "💯", "🎶", "👀", "😂", "👓", "👏", "👐", "🍕", "💥", "🍴", "💦", "💦", "🍑", "🍆", "😩", "😏", "👉👌", "👀", "👅", "😩", "🚰"]
+        reply_text = random.choice(emojis)
+        b_char = random.choice(message.reply_to_message.text).lower() # choose a random character in the message to be substituted with 🅱️
+        for c in message.reply_to_message.text:
+            if c == " ":
+                reply_text += random.choice(emojis)
+            elif c in emojis:
+                reply_text += c
+                reply_text += random.choice(emojis)
+            elif c.lower() == b_char:
+                reply_text += "🅱️"
+            else:
+                if bool(random.getrandbits(1)):
+                    reply_text += c.upper()
+                else:
+                    reply_text += c.lower()
+        reply_text += random.choice(emojis)
+        message.reply_to_message.reply_text(reply_text)
+
+
+@run_async
+@typing_action
+def clapmoji(update, context):
+    message = update.effective_message
+    if not message.reply_to_message:
+        message.reply_text("I need a message to clap!")
+    else:
+        reply_text = "👏 "
+        reply_text += message.reply_to_message.text.replace(" ", " 👏 ")
+        reply_text += " 👏"
+        message.reply_to_message.reply_text(reply_text)
+
+
+@run_async
+@typing_action
+def owo(update, context):
+    message = update.effective_message
+    if not message.reply_to_message:
+        message.reply_text("I need a message to meme.")
+    else:
+        faces = ['(・`ω´・)',';;w;;','owo','UwU','>w<','^w^','\(^o\) (/o^)/','( ^ _ ^)∠☆','(ô_ô)','~:o',';____;', '(*^*)', '(>_', '(♥_♥)', '*(^O^)*', '((+_+))']
+        reply_text = re.sub(r'[rl]', "w", message.reply_to_message.text)
+        reply_text = re.sub(r'[ｒｌ]', "ｗ", message.reply_to_message.text)
+        reply_text = re.sub(r'[RL]', 'W', reply_text)
+        reply_text = re.sub(r'[ＲＬ]', 'Ｗ', reply_text)
+        reply_text = re.sub(r'n([aeiouａｅｉｏｕ])', r'ny\1', reply_text)
+        reply_text = re.sub(r'ｎ([ａｅｉｏｕ])', r'ｎｙ\1', reply_text)
+        reply_text = re.sub(r'N([aeiouAEIOU])', r'Ny\1', reply_text)
+        reply_text = re.sub(r'Ｎ([ａｅｉｏｕＡＥＩＯＵ])', r'Ｎｙ\1', reply_text)
+        reply_text = re.sub(r'\!+', ' ' + random.choice(faces), reply_text)
+        reply_text = re.sub(r'！+', ' ' + random.choice(faces), reply_text)
+        reply_text = reply_text.replace("ove", "uv")
+        reply_text = reply_text.replace("ｏｖｅ", "ｕｖ")
+        reply_text += ' ' + random.choice(faces)
+        message.reply_to_message.reply_text(reply_text)
+
+
+@run_async
+@typing_action
+def stretch(update, context):
+    message = update.effective_message
+    if not message.reply_to_message:
+        message.reply_text("I need a message to meme.")
+    else:
+        count = random.randint(3, 10)
+        reply_text = re.sub(r'([aeiouAEIOUａｅｉｏｕＡＥＩＯＵ])', (r'\1' * count), message.reply_to_message.text)
+        message.reply_to_message.reply_text(reply_text)
+
+
+@run_async
+def me_too(update, context):
+    message = update.effective_message
+    if random.randint(0, 100) > 60:
+        reply = random.choice(["Me too thanks", "Haha yes, me too", "Same lol", "Me irl"])
+        message.reply_text(reply)
+
+
 # Bug reporting module for X00TD PORTS!
 
 @run_async
@@ -255,6 +339,10 @@ Some dank memes for ya all!
  × /slap: Slap a user, or get slapped if not a reply.
  × /dice: Sends a dice which returns randomly from 1 to 6!
  × /dart: Send a dart and see if you hit bullseye.
+ × /pasta: Famous copypasta meme, try and see.
+ × /clap: Claps on someones message!
+ × /owo: UwU-fy whole text XD.
+ × /str:  streeeeeeetch iiiiiiit.
  × /warm: Hug a user warmly, or get hugged if not a reply.
  × /punch: Punch a user, or get punched if not a reply.
 """
@@ -275,6 +363,12 @@ TABLE_HANDLER = DisableAbleCommandHandler("table", table)
 DICE_HANDLER = DisableAbleCommandHandler("dice", dice)
 DART_HANDLER = DisableAbleCommandHandler("dart", dart)
 CRI_HANDLER = DisableAbleCommandHandler("cri", cri)
+PASTA_HANDLER = DisableAbleCommandHandler("pasta", copypasta)
+CLAP_HANDLER = DisableAbleCommandHandler("clap", clapmoji)
+OWO_HANDLER = DisableAbleCommandHandler("owo", owo)
+STRECH_HANDLER = DisableAbleCommandHandler("str", stretch)
+MEETOO_HANDLER = DisableAbleMessageHandler(Filters.regex(r"(?i)me too"), me_too)
+
 
 dispatcher.add_handler(SHRUG_HANDLER)
 dispatcher.add_handler(DECIDE_HANDLER)
@@ -290,3 +384,8 @@ dispatcher.add_handler(TABLE_HANDLER)
 dispatcher.add_handler(DICE_HANDLER)
 dispatcher.add_handler(DART_HANDLER)
 dispatcher.add_handler(CRI_HANDLER)
+dispatcher.add_handler(PASTA_HANDLER)
+dispatcher.add_handler(CLAP_HANDLER)
+dispatcher.add_handler(OWO_HANDLER)
+dispatcher.add_handler(STRECH_HANDLER)
+dispatcher.add_handler(MEETOO_HANDLER)
