@@ -2,6 +2,7 @@ import random
 import threading
 import skylee.modules.helper_funcs.fun_strings as fun
 
+from typing import Union
 from sqlalchemy import Column, String, Boolean, UnicodeText, Integer, BigInteger
 
 from skylee.modules.helper_funcs.msg_types import Types
@@ -83,17 +84,30 @@ class WelcomeMuteUsers(BASE):
         self.chat_id = str(chat_id)
         self.human_check = human_check
 
+class CleanServiceSetting(BASE):
+    __tablename__ = "clean_service"
+    chat_id = Column(String(14), primary_key=True)
+    clean_service = Column(Boolean, default=True)
+
+    def __init__(self, chat_id):
+        self.chat_id = str(chat_id)
+
+    def __repr__(self):
+        return "<Chat used clean service ({})>".format(self.chat_id)
+        
 
 Welcome.__table__.create(checkfirst=True)
 WelcomeButtons.__table__.create(checkfirst=True)
 GoodbyeButtons.__table__.create(checkfirst=True)
 WelcomeMute.__table__.create(checkfirst=True)
 WelcomeMuteUsers.__table__.create(checkfirst=True)
+CleanServiceSetting.__table__.create(checkfirst=True)
 
 INSERTION_LOCK = threading.RLock()
 WELC_BTN_LOCK = threading.RLock()
 LEAVE_BTN_LOCK = threading.RLock()
 WM_LOCK = threading.RLock()
+CS_LOCK = threading.RLock()
 
 def welcome_mutes(chat_id):
     try:
@@ -310,7 +324,27 @@ def get_gdbye_buttons(chat_id):
             GoodbyeButtons.id).all()
     finally:
         SESSION.close()
+        
+        
+def clean_service(chat_id: Union[str, int]) -> bool:
+    try:
+        chat_setting = SESSION.query(CleanServiceSetting).get(str(chat_id))
+        if chat_setting:
+            return chat_setting.clean_service
+        return False
+    finally:
+        SESSION.close()
 
+
+def set_clean_service(chat_id: Union[int, str], setting: bool):
+    with CS_LOCK:
+        chat_setting = SESSION.query(CleanServiceSetting).get(str(chat_id))
+        if not chat_setting:
+            chat_setting = CleanServiceSetting(chat_id)
+
+        chat_setting.clean_service = setting
+        SESSION.add(chat_setting)
+        SESSION.commit()
 
 def migrate_chat(old_chat_id, new_chat_id):
     with INSERTION_LOCK:
