@@ -2,6 +2,7 @@ from typing import Optional, List
 from gtts import gTTS
 import re
 import os
+from emoji import UNICODE_EMOJI
 
 from telegram import Message, Update, Bot, User, ChatAction, MessageEntity, ParseMode
 from telegram.ext import Filters, MessageHandler, run_async
@@ -21,15 +22,20 @@ def gtrans(update, context):
     lang = " ".join(args)
     if not lang:
        lang = "en"
-    to_translate_text = msg.reply_to_message.text
+    translate_text = msg.reply_to_message.text
+    ignore_text = UNICODE_EMOJI.keys()
+    for emoji in ignore_text:
+        if emoji in translate_text:
+           translate_text = translate_text.replace(emoji, '')
+
     translator = Translator()
     try:
-        translated = translator.translate(to_translate_text, dest=lang)
+        translated = translator.translate(translate_text, dest=lang)
         trl = translated.src
         results = translated.text
         msg.reply_text("Translated from {} to {}.\n {}".format(trl, lang, results))
     except :
-        msg.reply_text("Error! text might have emojis or invalid language code.")
+        msg.reply_text("Error! invalid language code.")
 
 
 @run_async

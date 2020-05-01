@@ -11,7 +11,7 @@ from telegram.ext.dispatcher import run_async, DispatcherHandlerStop, Dispatcher
 from telegram.utils.helpers import escape_markdown
 
 from skylee import dispatcher, updater, TOKEN, WEBHOOK, OWNER_ID, CERT_PATH, PORT, URL, LOGGER, \
-     CUSTOM_CMD, BLACKLIST_CHATS, WHITELIST_CHATS
+     BLACKLIST_CHATS, WHITELIST_CHATS
 # needed to dynamically load modules
 # NOTE: Module order is not guaranteed, specify that in the config file!
 from skylee.modules import ALL_MODULES
