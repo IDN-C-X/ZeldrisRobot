@@ -305,6 +305,8 @@ __help__ = """
 An "odds and ends" module for small, simple commands which don't really fit anywhere
 
  × /id: Get the current group id. If used by replying to a message, gets that user's id.
+ × /afk <reason>: Mark yourself as AFK.
+ × brb <reason>: Same as the afk command - but not a command.
  × /info: Get information about a user.
  × /wiki : Search wikipedia articles.
  × /ud <query> : Search stuffs in urban dictionary.
