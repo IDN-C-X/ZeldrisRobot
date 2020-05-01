@@ -17,11 +17,13 @@ from skylee import dispatcher, updater, TOKEN, WEBHOOK, OWNER_ID, CERT_PATH, POR
 from skylee.modules import ALL_MODULES
 from skylee.modules.helper_funcs.chat_status import is_user_admin
 from skylee.modules.helper_funcs.misc import paginate_modules
+from skylee.modules.helper_funcs.alternate import typing_action
+
 
 PM_START_TEXT = """
 Hey there! my name is sкyℓєє. If you have any questions on how to use me, Click Help button!
 
-I'm group manager bot made with 🧡 by [This Guy](tg://user?id=894380120). I'm built in python3, using the \
+I'm group manager bot made by [This Guy](tg://user?id={}). I'm built in python3, using the \
 python-telegram-bot library, and am fully opensource - you can find what makes me tick \
 [here](www.github.com/starry69/skyleebot)!
 
@@ -32,7 +34,7 @@ buttons = [[
 InlineKeyboardButton(text="Add to Group 👥", url="t.me/skylee_bot?startgroup=true"),
 InlineKeyboardButton(text="Updates 📢", url="https://t.me/skyleeupdates")
                   ]]
-                  
+
 buttons += [[InlineKeyboardButton(text="Help & Commands ❔", callback_data="help_back")]]
 
 
@@ -42,16 +44,12 @@ I'm a modular group management bot with a few fun extras! Have a look at the fol
 the things I can help you with.
 
 *Main* commands available:
- - /start: Starts the bot
- - /help: PM's you this message.
- - /help <module name>: PM's you info about that module.
- - /settings:
-   - in PM: will send you your settings for all supported modules.
+ × /start: Starts the bot
+ × /help: PM's you this message.
+ × /help <module name>: PM's you info about that module.
+ × /settings: in PM: will send you your settings for all supported modules.
    - in a group: will redirect you to pm, with all that chat's settings.
-
-{}
-And the following:
-""".format(dispatcher.bot.first_name, "" if not CUSTOM_CMD else "\nAll commands can either be used with / or !.\n")
+ \nClick on the buttons below to get documentation about specific modules!""".format(dispatcher.bot.first_name)
 
 IMPORTED = {}
 MIGRATEABLE = []
@@ -124,6 +122,7 @@ def test(update, context):
 
 
 @run_async
+@typing_action
 def start(update, context):
     if update.effective_chat.type == "private":
         args = context.args
@@ -144,7 +143,7 @@ def start(update, context):
                 IMPORTED["rules"].send_rules(update, args[0], from_pm=True)
 
         else:
-            update.effective_message.reply_text(PM_START_TEXT, reply_markup=InlineKeyboardMarkup(buttons), parse_mode=ParseMode.MARKDOWN, disable_web_page_preview=True)
+            update.effective_message.reply_text(PM_START_TEXT.format(OWNER_ID), reply_markup=InlineKeyboardMarkup(buttons), parse_mode=ParseMode.MARKDOWN, disable_web_page_preview=True)
     else:
         update.effective_message.reply_text("Sending you a warm hi & wishing your day is a happy one!")
 
@@ -224,6 +223,7 @@ def help_button(update, context):
 
 
 @run_async
+@typing_action
 def get_help(update, context):
     chat = update.effective_chat  # type: Optional[Chat]
     args = update.effective_message.text.split(None, 1)
@@ -342,6 +342,7 @@ def settings_button(update, context):
 
 
 @run_async
+@typing_action
 def get_settings(update, context):
     chat = update.effective_chat  # type: Optional[Chat]
     user = update.effective_user  # type: Optional[User]
