@@ -20,12 +20,12 @@ from skylee.modules.helper_funcs.misc import paginate_modules
 from skylee.modules.helper_funcs.alternate import typing_action
 
 
-PM_START_TEXT = """
-Hey there! my name is sкyℓєє. If you have any questions on how to use me, Click Help button!
+PM_START_TEXT = f"""
+Hey there! my name is *{dispatcher.bot.first_name}*. If you have any questions on how to use me, Click Help button.
 
-I'm group manager bot made by [This Guy](tg://user?id={}). I'm built in python3, using the \
+I'm a group management bot built in python3, using the \
 python-telegram-bot library, and am fully opensource - you can find what makes me tick \
-[here](www.github.com/starry69/skyleebot)!
+[here](www.github.com/starry69/skyleebot).
 
 Wanna Add me to your Group? Just click the button below!
 """
@@ -38,8 +38,8 @@ InlineKeyboardButton(text="Updates 📢", url="https://t.me/skyleeupdates")
 buttons += [[InlineKeyboardButton(text="Help & Commands ❔", callback_data="help_back")]]
 
 
-HELP_STRINGS = """
-Hey there! My name is *{}*.
+HELP_STRINGS = f"""
+Hello there! My name is *{dispatcher.bot.first_name}*.
 I'm a modular group management bot with a few fun extras! Have a look at the following for an idea of some of \
 the things I can help you with.
 
@@ -49,7 +49,8 @@ the things I can help you with.
  × /help <module name>: PM's you info about that module.
  × /settings: in PM: will send you your settings for all supported modules.
    - in a group: will redirect you to pm, with all that chat's settings.
- \nClick on the buttons below to get documentation about specific modules!""".format(dispatcher.bot.first_name)
+ \nClick on the buttons below to get documentation about specific modules!"""
+
 
 IMPORTED = {}
 MIGRATEABLE = []
@@ -143,7 +144,7 @@ def start(update, context):
                 IMPORTED["rules"].send_rules(update, args[0], from_pm=True)
 
         else:
-            update.effective_message.reply_text(PM_START_TEXT.format(OWNER_ID), reply_markup=InlineKeyboardMarkup(buttons), parse_mode=ParseMode.MARKDOWN, disable_web_page_preview=True)
+            update.effective_message.reply_text(PM_START_TEXT, reply_markup=InlineKeyboardMarkup(buttons), parse_mode=ParseMode.MARKDOWN, disable_web_page_preview=True)
     else:
         update.effective_message.reply_text("Sending you a warm hi & wishing your day is a happy one!")
 
