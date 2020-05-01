@@ -135,6 +135,14 @@ def gban(update, context):
                                                            user_chat.id, reason or "No reason given"),
                 parse_mode=ParseMode.HTML)
 
+
+    try:
+        bot.kick_chat_member(chat.id, user_chat.id)
+    except BadRequest as excp:
+        if excp.message in GBAN_ERRORS:
+            pass
+
+
     sql.gban_user(user_id, user_chat.username or user_chat.first_name, reason)
 
 #    chats = get_all_chats()
@@ -252,14 +260,19 @@ def gbanlist(update, context):
 
 
 def check_and_ban(update, user_id, should_message=True):
-    spmban = spamwtc.get_ban(int(user_id))
-    if spmban:
-        update.effective_chat.kick_member(user_id)
-        if should_message:
-            update.effective_message.reply_markdown("*This user is detected as potential Spambot by SpamWatch and have been removed!*\nVisit @SpamWatchSupport to Appeal!")
-            return
-        else:
-            return
+
+    try:
+       spmban = spamwtc.get_ban(int(user_id))
+       if spmban:
+           update.effective_chat.kick_member(user_id)
+           if should_message:
+              update.effective_message.reply_markdown("*This user is detected as potential Spambot by SpamWatch and have been removed!*\nVisit @SpamWatchSupport to Appeal!")
+              return
+           else:
+              return
+
+    except:
+        pass
 
     if sql.is_user_gbanned(user_id):
         update.effective_chat.kick_member(user_id)
