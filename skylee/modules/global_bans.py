@@ -137,7 +137,7 @@ def gban(update, context):
 
 
     try:
-        bot.kick_chat_member(chat.id, user_chat.id)
+        context.bot.kick_chat_member(chat.id, user_chat.id)
     except BadRequest as excp:
         if excp.message in GBAN_ERRORS:
             pass
