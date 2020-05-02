@@ -48,6 +48,7 @@ UNGBAN_ERRORS = {
 @typing_action
 def gban(update, context):
     message = update.effective_message  # type: Optional[Message]
+    chat = update.effective_chat
     args = context.args
     user_id, reason = extract_user_and_text(message, args)
 
