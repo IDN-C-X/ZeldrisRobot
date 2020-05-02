@@ -11,12 +11,22 @@ from random import randint
 import requests as r
 from time import sleep
 
-from telegram import Message, Chat, Update, Bot, MessageEntity, InlineKeyboardMarkup, InlineKeyboardButton, ParseMode, ChatAction
+from telegram import (Message,
+                      Chat,
+                      Update,
+                      Bot,
+                      MessageEntity,
+                      InlineKeyboardMarkup,
+                      InlineKeyboardButton,
+                      ParseMode,
+                      ChatAction,
+                      TelegramError)
+
 from telegram.ext import CommandHandler, run_async, Filters
 from telegram.utils.helpers import escape_markdown, mention_html
 from telegram.error import BadRequest
 
-from skylee import dispatcher, OWNER_ID, SUDO_USERS, SUPPORT_USERS, WHITELIST_USERS, WALL_API, TOKEN
+from skylee import dispatcher, OWNER_ID, SUDO_USERS, SUPPORT_USERS, WHITELIST_USERS, WALL_API
 from skylee.__main__ import STATS, USER_INFO, GDPR
 from skylee.modules.disable import DisableAbleCommandHandler
 from skylee.modules.helper_funcs.extraction import extract_user
