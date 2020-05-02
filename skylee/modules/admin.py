@@ -313,15 +313,11 @@ def setchatpic(update,context):
     msg = update.effective_message
     user = update.effective_user
 
-    bot_member = chat.get_member(context.bot.id)
-    if bot_member.can_change_info == False:
-       msg.reply_text("I don't have enough rights to change this chat's photo, make sure i have rights to change chat info!")
-       return
-
     user_member = chat.get_member(user.id)
     if user_member.can_change_info == False:
        msg.reply_text("You are missing right to change group info!")
        return
+
     if msg.reply_to_message:
        if msg.reply_to_message.photo:
           pic_id = msg.reply_to_message.photo[-1].file_id
@@ -334,10 +330,11 @@ def setchatpic(update,context):
        tpic = context.bot.get_file(pic_id)
        tpic.download('gpic.png')
        try:
-          context.bot.set_chat_photo(int(chat.id), photo=open('gpic.png', 'rb'))
-          msg.reply_text("Successfully set new chatpic!")
-       except:
-          msg.reply_text("This is already one of your group's profile pic, try uploading it again if you still wanna set it.")
+          with open('gpic.png', 'rb') as chatp:
+               context.bot.set_chat_photo(int(chat.id), photo=chatp)
+               msg.reply_text("Successfully set new chatpic!")
+       except BadRequest as excp:
+          msg.reply_text(f"Error! {excp.message}")
        finally:
           dlmsg.delete()
           if os.path.isfile('gpic.png'):
@@ -355,11 +352,6 @@ def rmchatpic(update, context):
     msg = update.effective_message
     user = update.effective_user
 
-    bot_member = chat.get_member(context.bot.id)
-    if bot_member.can_change_info == False:
-       msg.reply_text("I don't have enough rights to remove chat profile, make sure i've rights to change group info!")
-       return
-
     user_member = chat.get_member(user.id)
     if user_member.can_change_info == False:
        msg.reply_text("You don't have enough rights to delete group photo")
@@ -367,8 +359,9 @@ def rmchatpic(update, context):
     try:
         context.bot.delete_chat_photo(int(chat.id))
         msg.reply_text("Successfully deleted chat's profile photo!")
-    except BadRequest:
-       msg.reply_text("Error! can't delete profile photo")
+    except BadRequest as excp:
+       msg.reply_text(f"Error! {excp.message}.")
+       return
 
 
 @run_async
@@ -380,11 +373,6 @@ def setchat_title(update, context):
     msg = update.effective_message
     user = update.effective_user
     args = context.args
-
-    bot_member = chat.get_member(context.bot.id)
-    if bot_member.can_change_info == False:
-       msg.reply_text("I don't have rights to change chat info!")
-       return
 
     user_member = chat.get_member(user.id)
     if user_member.can_change_info == False:
@@ -399,8 +387,9 @@ def setchat_title(update, context):
     try:
        context.bot.set_chat_title(int(chat.id), str(title))
        msg.reply_text(f"Successfully set <b>{title}</b> as new chat title!", parse_mode=ParseMode.HTML)
-    except:
-           return
+    except BadRequest as excp:
+       msg.reply_text(f"Error! {excp.message}.")
+       return
 
 
 def __chat_settings__(chat_id, user_id):

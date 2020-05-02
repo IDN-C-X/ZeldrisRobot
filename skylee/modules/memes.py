@@ -181,15 +181,10 @@ def cri(update, context):
 def dice(update, context):
     context.bot.sendDice(update.effective_chat.id)
 
-# untill library add api 4.8 support
 @run_async
 @typing_action
 def dart(update, context):
-    chat = update.effective_chat
-    try:
-       r.post(f"https://api.telegram.org/bot{TOKEN}/sendDice?chat_id={chat.id}&emoji='🎯'")
-    except BadRequest:
-        return
+    context.bot.sendDice(update.effective_chat.id, emoji='🎯')
 
 @run_async
 @typing_action
