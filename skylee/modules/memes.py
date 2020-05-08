@@ -302,7 +302,6 @@ def me_too(update, context):
 # Bug reporting module for X00TD PORTS!
 
 @run_async
-@typing_action
 def ports_bug(update, context):
     message = update.effective_message
     user = update.effective_user

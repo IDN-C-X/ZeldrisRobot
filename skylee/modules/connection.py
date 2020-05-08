@@ -109,7 +109,7 @@ def connect_chat(update, context):
                 if connection_status:
                     conn_chat = dispatcher.bot.getChat(connected(context.bot, update, chat, user.id, need_admin=False))
                     chat_name = conn_chat.title
-                    send_message(update.effective_message, "Successfully connected to *{}*. \nUse /connection to check available commands.".format(chat_name), parse_mode=ParseMode.MARKDOWN)
+                    send_message(update.effective_message, "Successfully connected to *{}*. \nUse /helpconnect to check available commands.".format(chat_name), parse_mode=ParseMode.MARKDOWN)
                     sql.add_history_conn(user.id, str(conn_chat.id), chat_name)
                 else:
                     send_message(update.effective_message, "Connection failed!")
