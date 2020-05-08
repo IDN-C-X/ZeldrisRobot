@@ -8,8 +8,11 @@ from sqlalchemy import Column, String, Boolean, UnicodeText, Integer, BigInteger
 from skylee.modules.helper_funcs.msg_types import Types
 from skylee.modules.sql import SESSION, BASE
 
-DEFAULT_WELCOME = random.choice(fun.WELCOME)
-DEFAULT_GOODBYE = random.choice(fun.GOODBYE)
+DEFAULT_WELCOME = 'Welcome, {first}. We hope you brought pizza.'
+DEFAULT_GOODBYE = 'Marry and reproduce.'
+
+RANDOM_WEL = fun.WELCOME
+RANDOM_BYE = fun.GOODBYE
 
 
 class Welcome(BASE):
