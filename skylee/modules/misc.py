@@ -7,6 +7,7 @@ from typing import Optional, List
 from requests import get
 import requests
 
+from io import BytesIO
 from random import randint
 import requests as r
 from time import sleep
@@ -302,6 +303,18 @@ def getlink(update, context):
 
 
 @run_async
+def staff_ids(update, context):
+    sfile = 'List of SUDO & SUPPORT users:\n'
+    sfile += f'× SUDO USER IDs; {SUDO_USERS}\n'
+    sfile += f'× SUPPORT USER IDs; {SUPPORT_USERS}'
+    with BytesIO(str.encode(sfile)) as output:
+         output.name = "staff-ids.txt"
+         update.effective_message.reply_document(
+           document=output, filename="staff-ids.txt",
+           caption="Here is the list of SUDO & SUPPORTS users.")
+
+
+@run_async
 def stats(update, context):
     update.effective_message.reply_text("Current stats:\n" + "\n".join([mod.__stats__() for mod in STATS]))
 
@@ -334,6 +347,7 @@ WIKI_HANDLER = DisableAbleCommandHandler("wiki", wiki)
 WALLPAPER_HANDLER = DisableAbleCommandHandler("wall", wall, pass_args=True)
 UD_HANDLER = DisableAbleCommandHandler("ud", ud)
 GETLINK_HANDLER = CommandHandler("getlink", getlink, pass_args=True, filters=Filters.user(OWNER_ID))
+STAFFLIST_HANDLER = CommandHandler("staffids", staff_ids, filters=Filters.user(OWNER_ID))
 
 dispatcher.add_handler(WALLPAPER_HANDLER)
 dispatcher.add_handler(UD_HANDLER)
@@ -345,3 +359,4 @@ dispatcher.add_handler(STATS_HANDLER)
 dispatcher.add_handler(GDPR_HANDLER)
 dispatcher.add_handler(WIKI_HANDLER)
 dispatcher.add_handler(GETLINK_HANDLER)
+dispatcher.add_handler(STAFFLIST_HANDLER)

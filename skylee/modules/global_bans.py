@@ -18,29 +18,43 @@ from skylee.modules.sql.users_sql import get_all_chats
 GBAN_ENFORCE_GROUP = 6
 
 GBAN_ERRORS = {
-    "User is an administrator of the chat",
-    "Chat not found",
-    "Not enough rights to restrict/unrestrict chat member",
-    "User_not_participant",
-    "Peer_id_invalid",
-    "Group chat was deactivated",
-    "Need to be inviter of a user to kick it from a basic group",
-    "Chat_admin_required",
-    "Only the creator of a basic group can kick group administrators",
+    "Bots can't add new chat members",
     "Channel_private",
-    "Not in the chat"
+    "Chat not found",
+    "Can't demote chat creator",
+    "Chat_admin_required",
+    "Group chat was deactivated",
+    "Method is available for supergroup and channel chats only",
+    "Method is available only for supergroups",
+    "Need to be inviter of a user to kick it from a basic group",
+    "Not enough rights to restrict/unrestrict chat member",
+    "Not in the chat",
+    "Only the creator of a basic group can kick group administrators",
+    "Peer_id_invalid",
+    "User is an administrator of the chat",
+    "User_not_participant",
+    "Reply message not found",
+    "Can't remove chat owner"
 }
 
 UNGBAN_ERRORS = {
-    "User is an administrator of the chat",
-    "Chat not found",
-    "Not enough rights to restrict/unrestrict chat member",
-    "User_not_participant",
-    "Method is available for supergroup and channel chats only",
-    "Not in the chat",
+    "Bots can't add new chat members",
     "Channel_private",
+    "Chat not found",
+    "Can't demote chat creator",
     "Chat_admin_required",
+    "Group chat was deactivated",
+    "Method is available for supergroup and channel chats only",
+    "Method is available only for supergroups",
+    "Need to be inviter of a user to kick it from a basic group",
+    "Not enough rights to restrict/unrestrict chat member",
+    "Not in the chat",
+    "Only the creator of a basic group can kick group administrators",
     "Peer_id_invalid",
+    "User is an administrator of the chat",
+    "User_not_participant",
+    "Reply message not found",
+    "User not found"
 }
 
 
