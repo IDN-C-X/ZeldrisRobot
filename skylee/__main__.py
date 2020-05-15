@@ -15,6 +15,7 @@ from skylee import dispatcher, updater, TOKEN, WEBHOOK, OWNER_ID, CERT_PATH, POR
 # needed to dynamically load modules
 # NOTE: Module order is not guaranteed, specify that in the config file!
 from skylee.modules import ALL_MODULES
+from skylee.modules.purge import client
 from skylee.modules.helper_funcs.chat_status import is_user_admin
 from skylee.modules.helper_funcs.misc import paginate_modules
 from skylee.modules.helper_funcs.alternate import typing_action
@@ -450,14 +451,19 @@ def main():
                                     certificate=open(CERT_PATH, 'rb'))
         else:
             updater.bot.set_webhook(url=URL + TOKEN)
+            client.run_until_disconnected()
 
     else:
         LOGGER.info("Using long polling.")
         updater.start_polling(timeout=15, read_latency=4)
+        client.run_until_disconnected()
 
     updater.idle()
 
 
 if __name__ == '__main__':
     LOGGER.info("Successfully loaded modules: " + str(ALL_MODULES))
+    client.start(bot_token=TOKEN)
     main()
+
+

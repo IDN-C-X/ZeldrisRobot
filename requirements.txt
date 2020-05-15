@@ -1,6 +1,7 @@
 future
 emoji
 requests
+telethon
 sqlalchemy
 python-telegram-bot==12.7
 psycopg2-binary

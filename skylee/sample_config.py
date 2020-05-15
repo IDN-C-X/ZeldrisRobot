@@ -13,6 +13,8 @@ class Config(object):
     API_KEY = ""
     OWNER_ID = "" # If you dont know, run the bot and do /id in your private chat with it
     OWNER_USERNAME = ""
+    TELETHON_HASH = None # for purge stuffs
+    TELETHON_ID = None
 
     # RECOMMENDED
     SQLALCHEMY_DATABASE_URI = 'sqldbtype://username:pw@hostname:port/db_name'  # needed for any database modules

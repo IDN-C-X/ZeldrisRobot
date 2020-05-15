@@ -70,6 +70,8 @@ if ENV:
     CUSTOM_CMD = os.environ.get('CUSTOM_CMD', False)
     API_WEATHER = os.environ.get('API_OPENWEATHER', None)
     WALL_API = os.environ.get('WALL_API', None)
+    TELETHON_ID = int(os.environ.get('TL_APP_ID', None))
+    TELETHON_HASH = os.environ.get('TL_HASH', None)
 
 else:
     from skylee.config import Development as Config
@@ -122,7 +124,8 @@ else:
     CUSTOM_CMD = Config.CUSTOM_CMD
     API_WEATHER = Config.API_OPENWEATHER
     WALL_API = Config.WALL_API
-
+    TELETHON_HASH = Config.TELETHON_HASH
+    TELETHON_ID = Config.TELETHON_ID
 
 SUDO_USERS.add(OWNER_ID)
 
