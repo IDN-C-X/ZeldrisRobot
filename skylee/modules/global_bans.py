@@ -126,12 +126,16 @@ def gban(update, context):
                                "<code>{}</code>\n"
                                "I've gone and updated it with your new reason!".format(html.escape(old_reason)),
                                parse_mode=ParseMode.HTML)
+
         else:
             message.reply_text("This user is already gbanned, but had no reason set; I've gone and updated it!")
 
         return
 
-    message.reply_text("<b>Beginning of Global Ban for</b> {} \n<b>With ID</b>: <code>{}</code> \n<b>Reason</b>: <code>{}</code>".format(mention_html(user_chat.id, user_chat.first_name), user_chat.id, reason or "No reason given"), parse_mode=ParseMode.HTML)
+    message.reply_text(f"<b>Beginning of Global Ban for</b> {mention_html(user_chat.id, user_chat.first_name)}"
+                       f"\n<b>With ID</b>: <code>{user_chat.id}</code>"
+                       f"\n<b>Reason</b>: <code>{reason or 'No reason given'}</code>",
+            parse_mode=ParseMode.HTML)
 
     banner = update.effective_user
     bannerid = banner.id
@@ -382,7 +386,8 @@ Spam shield uses @Spamwatch API and Global bans to remove Spammers as much as po
 
 *What is SpamWatch?*
 
-SpamWatch maintains a large constantly updated ban-list of spambots, trolls, bitcoin spammers and unsavoury characters. Skylee will constantly help banning spammers off from your group automatically So, you don't have to worry about spammers storming your group.
+SpamWatch maintains a large constantly updated ban-list of spambots, trolls, bitcoin spammers and unsavoury characters.
+Skylee will constantly help banning spammers off from your group automatically So, you don't have to worry about spammers storming your group.
 """
 
 __mod_name__ = "Spam Shield"
