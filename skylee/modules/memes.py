@@ -16,7 +16,7 @@ from skylee.modules.helper_funcs.extraction import extract_user
 from skylee.modules.helper_funcs.filters import CustomFilters
 from skylee.modules.helper_funcs.alternate import typing_action
 from skylee import dispatcher, OWNER_ID, SUDO_USERS, SUPPORT_USERS, WALL_API, TOKEN
-from skylee.modules.disable import DisableAbleCommandHandler, DisableAbleMessageHandler
+from skylee.modules.disable import DisableAbleCommandHandler
 
 import skylee.modules.helper_funcs.fun_strings as fun
 
@@ -361,7 +361,7 @@ PASTA_HANDLER = DisableAbleCommandHandler("pasta", copypasta)
 CLAP_HANDLER = DisableAbleCommandHandler("clap", clapmoji)
 OWO_HANDLER = DisableAbleCommandHandler("owo", owo)
 STRECH_HANDLER = DisableAbleCommandHandler("str", stretch)
-MEETOO_HANDLER = DisableAbleMessageHandler(Filters.regex(r"(?i)me too"), me_too)
+MEETOO_HANDLER = MessageHandler(Filters.regex(r"(?i)me too"), me_too)
 
 
 dispatcher.add_handler(SHRUG_HANDLER)

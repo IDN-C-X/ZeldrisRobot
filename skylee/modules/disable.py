@@ -166,12 +166,12 @@ if is_module_loaded(FILENAME):
 
     @run_async
     @user_admin
-    @typing_action
+    #@typing_action
     def list_cmds(update, context):
         if DISABLE_CMDS + DISABLE_OTHER:
             result = ""
             for cmd in set(DISABLE_CMDS + DISABLE_OTHER):
-                result += " - `{}`\n".format(escape_markdown(cmd))
+                result += " - `{}`\n".format(escape_markdown(str(cmd)))
             update.effective_message.reply_text("The following commands are toggleable:\n{}".format(result),
                                                 parse_mode=ParseMode.MARKDOWN)
         else:

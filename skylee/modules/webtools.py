@@ -53,24 +53,28 @@ def get_bot_ip(update, context):
     update.message.reply_text(res.text)
 
 
-
 @run_async
 @typing_action
 def speedtst(update, context):
+    message = update.effective_message
+    ed_msg = message.reply_text("Running high speed test . . .")
     test = speedtest.Speedtest()
     test.get_best_server()
     test.download()
     test.upload()
     test.results.share()
     result = test.results.dict()
-    update.effective_message.reply_text("Download "
+    context.bot.editMessageText(
+                   "Download "
                    f"{speed_convert(result['download'])} \n"
                    "Upload "
                    f"{speed_convert(result['upload'])} \n"
                    "Ping "
                    f"{result['ping']} \n"
                    "ISP "
-                   f"{result['client']['isp']}")
+                   f"{result['client']['isp']}",
+                   update.effective_chat.id, ed_msg.message_id)
+
 
 
 @run_async
