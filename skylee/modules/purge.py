@@ -1,6 +1,6 @@
-import time
-from skylee import dispatcher, LOGGER, SUDO_USERS, TELETHON_ID, TELETHON_HASH
+from skylee import SUDO_USERS, TELETHON_ID, TELETHON_HASH
 
+import asyncio
 from telethon import events
 from telethon import TelegramClient
 from telethon.tl.types import ChannelParticipantsAdmins
@@ -11,18 +11,19 @@ client = TelegramClient('skylee', api_id, api_hash)
 
 # Check if user has admin rights
 async def is_administrator(user_id: int, message):
-    status = False
+    admin = False
     async for user in client.iter_participants(message.chat_id,
                              filter=ChannelParticipantsAdmins):
         if user_id == user.id or user_id in SUDO_USERS:
-            status = True
+            admin = True
             break
-    return status
+    return admin
 
 
-@client.on(events.NewMessage(pattern='/purge'))
+@client.on(events.NewMessage(pattern='^/purge'))
 async def purge(event):
         chat = event.chat_id
+        msgs = []
 
         if not await is_administrator(user_id=event.from_id, message=event):
            await event.reply("You're not an admin!")
@@ -32,11 +33,9 @@ async def purge(event):
         if not msg:
            await event.reply("Reply to a message to select where to start purging from.")
 
-        msgs = []
         msg_id = msg.id
         to_delete = event.message.id - 1
         await event.client.delete_messages(chat, event.message.id)
-
         msgs.append(event.reply_to_msg_id)
         for m_id in range(to_delete, msg_id - 1, -1):
             msgs.append(m_id)
@@ -45,12 +44,14 @@ async def purge(event):
                msgs = []
 
         await event.client.delete_messages(chat, msgs)
-        text = "Flash purge complete!"
-        await event.respond(text, parse_mode='md')
+        del_res = await event.client.send_message(
+        event.chat_id, "`Flash purge complete!`")
 
+        await asyncio.sleep(2)
+        await del_res.delete()
 
 @client.on(events.NewMessage(pattern="^/del$"))
-async def delet(event):
+async def delete_msg(event):
 
     if not await is_administrator(user_id=event.from_id, message=event):
         await event.reply("You're not an admin!")
