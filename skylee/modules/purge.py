@@ -32,6 +32,7 @@ async def purge(event):
         msg = await event.get_reply_message()
         if not msg:
            await event.reply("Reply to a message to select where to start purging from.")
+           return
 
         msg_id = msg.id
         to_delete = event.message.id - 1

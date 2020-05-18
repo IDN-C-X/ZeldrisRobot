@@ -178,13 +178,20 @@ def cri(update, context):
 
 @run_async
 @typing_action
-def dice(update, context):
-    context.bot.sendDice(update.effective_chat.id)
+def recite(update, context):
+    reply_text = update.effective_message.reply_to_message.reply_text if update.effective_message.reply_to_message else update.effective_message.reply_text
+    reply_text(random.choice(fun.BEING_LOGICAL))
 
 @run_async
 @typing_action
-def dart(update, context):
-    context.bot.sendDice(update.effective_chat.id, emoji='🎯')
+def kill(update, context):
+    msg = update.effective_message.reply_text("Target selected . . .")
+    chars = fun.KILL
+    try:
+       for i in range(13):
+           msg.edit_text(chars[i%12])
+    except IndexError:
+        pass
 
 @run_async
 @typing_action
@@ -331,12 +338,12 @@ Some dank memes for ya all!
  × /table: Flips a table...
  × /runs: Reply a random string from an array of replies.
  × /slap: Slap a user, or get slapped if not a reply.
- × /dice: Sends a dice which returns randomly from 1 to 6!
- × /dart: Send a dart and see if you hit bullseye.
  × /pasta: Famous copypasta meme, try and see.
  × /clap: Claps on someones message!
  × /owo: UwU-fy whole text XD.
- × /str:  streeeeeeetch iiiiiiit.
+ × /kill: Kills the target user.
+ × /recite: Logical quotes to change your life.
+ × /stretch:  streeeeeeetch iiiiiiit.
  × /warm: Hug a user warmly, or get hugged if not a reply.
  × /punch: Punch a user, or get punched if not a reply.
 """
@@ -354,15 +361,14 @@ PUNCH_HANDLER = DisableAbleCommandHandler("punch", punch, pass_args=True)
 HUG_HANDLER = DisableAbleCommandHandler("warm", hug, pass_args=True)
 GBUN_HANDLER = CommandHandler("gbun", gbun)
 TABLE_HANDLER = DisableAbleCommandHandler("table", table)
-DICE_HANDLER = DisableAbleCommandHandler("dice", dice)
-DART_HANDLER = DisableAbleCommandHandler("dart", dart)
 CRI_HANDLER = DisableAbleCommandHandler("cri", cri)
 PASTA_HANDLER = DisableAbleCommandHandler("pasta", copypasta)
 CLAP_HANDLER = DisableAbleCommandHandler("clap", clapmoji)
 OWO_HANDLER = DisableAbleCommandHandler("owo", owo)
-STRECH_HANDLER = DisableAbleCommandHandler("str", stretch)
+STRECH_HANDLER = DisableAbleCommandHandler("stretch", stretch)
 MEETOO_HANDLER = MessageHandler(Filters.regex(r"(?i)me too"), me_too)
-
+KILL_HANDLER = DisableAbleCommandHandler("kill", kill)
+RECITE_HANDLER = DisableAbleCommandHandler("recite", recite)
 
 dispatcher.add_handler(SHRUG_HANDLER)
 dispatcher.add_handler(DECIDE_HANDLER)
@@ -375,8 +381,8 @@ dispatcher.add_handler(PUNCH_HANDLER)
 dispatcher.add_handler(HUG_HANDLER)
 dispatcher.add_handler(GBUN_HANDLER)
 dispatcher.add_handler(TABLE_HANDLER)
-dispatcher.add_handler(DICE_HANDLER)
-dispatcher.add_handler(DART_HANDLER)
+dispatcher.add_handler(KILL_HANDLER)
+dispatcher.add_handler(RECITE_HANDLER)
 dispatcher.add_handler(CRI_HANDLER)
 dispatcher.add_handler(PASTA_HANDLER)
 dispatcher.add_handler(CLAP_HANDLER)
