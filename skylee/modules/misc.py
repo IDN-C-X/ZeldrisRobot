@@ -231,14 +231,21 @@ def wiki(update, context):
 @run_async
 @typing_action
 def ud(update, context):
+    msg = update.effective_message
+    args = context.args
+    text = " ".join(args).lower()
+    if not text:
+       msg.reply_text("Please enter keywords to search!")
+       return
+    elif text == 'starry':
+       msg.reply_text("Fek off bitch!")
+       return
     try:
-        message = update.effective_message
-        text = message.text[len('/ud '):]
         results = get(f'http://api.urbandictionary.com/v0/define?term={text}').json()
         reply_text = f'Word: {text}\nDefinition: {results["list"][0]["definition"]}'
     except IndexError:
         reply_text = f'Word: {text}\nResults: Sorry could not find any matching results!'
-    return message.reply_text(reply_text)
+    return msg.reply_text(reply_text)
 
 
 @run_async
