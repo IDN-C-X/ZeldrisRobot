@@ -46,7 +46,7 @@ async def purge(event):
 
         await event.client.delete_messages(chat, msgs)
         del_res = await event.client.send_message(
-        event.chat_id, "`Flash purge complete!`")
+        event.chat_id, "Flash purge complete!")
 
         await asyncio.sleep(2)
         await del_res.delete()

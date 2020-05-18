@@ -24,6 +24,7 @@ def weather(update, context):
             if (err.message == "Message to delete not found" ) or (err.message == "Message can't be deleted" ):
                 return
 
+        return
 
     CITY = " ".join(args)
     url = f'https://api.openweathermap.org/data/2.5/weather?q={CITY}&appid={APPID}'
@@ -40,18 +41,24 @@ def weather(update, context):
         except BadRequest as err:
             if (err.message == "Message to delete not found" ) or (err.message == "Message can't be deleted" ):
                 return
-    
-    cityname = result['name']
-    curtemp = result['main']['temp']
-    feels_like = result['main']['feels_like']
-    humidity = result['main']['humidity']
-    wind = result['wind']['speed']
-    weath = result['weather'][0]
-    desc = weath['main']
-    icon = weath['id']
-    condmain = weath['main']
-    conddet = weath['description']
-    country_name = cname[f"{result['sys']['country']}"]
+        return
+
+    try:
+       cityname = result['name']
+       curtemp = result['main']['temp']
+       feels_like = result['main']['feels_like']
+       humidity = result['main']['humidity']
+       wind = result['wind']['speed']
+       weath = result['weather'][0]
+       desc = weath['main']
+       icon = weath['id']
+       condmain = weath['main']
+       conddet = weath['description']
+       country_name = cname[f"{result['sys']['country']}"]
+    except KeyError:
+         update.effective_message.reply_text("Invalid Location!")
+         return
+
     if icon <= 232: # Rain storm
         icon = "⛈"
     elif icon <= 321: # Drizzle
