@@ -184,17 +184,6 @@ def recite(update, context):
 
 @run_async
 @typing_action
-def kill(update, context):
-    msg = update.effective_message.reply_text("Target selected . . .")
-    chars = fun.KILL
-    try:
-       for i in range(13):
-           msg.edit_text(chars[i%12])
-    except IndexError:
-        pass
-
-@run_async
-@typing_action
 def gbun(update, context):
     user = update.effective_user
     chat = update.effective_chat
@@ -341,7 +330,6 @@ Some dank memes for ya all!
  × /pasta: Famous copypasta meme, try and see.
  × /clap: Claps on someones message!
  × /owo: UwU-fy whole text XD.
- × /kill: Kills the target user.
  × /recite: Logical quotes to change your life.
  × /stretch:  streeeeeeetch iiiiiiit.
  × /warm: Hug a user warmly, or get hugged if not a reply.
@@ -367,7 +355,6 @@ CLAP_HANDLER = DisableAbleCommandHandler("clap", clapmoji)
 OWO_HANDLER = DisableAbleCommandHandler("owo", owo)
 STRECH_HANDLER = DisableAbleCommandHandler("stretch", stretch)
 MEETOO_HANDLER = MessageHandler(Filters.regex(r"(?i)me too"), me_too)
-KILL_HANDLER = DisableAbleCommandHandler("kill", kill)
 RECITE_HANDLER = DisableAbleCommandHandler("recite", recite)
 
 dispatcher.add_handler(SHRUG_HANDLER)
@@ -381,7 +368,6 @@ dispatcher.add_handler(PUNCH_HANDLER)
 dispatcher.add_handler(HUG_HANDLER)
 dispatcher.add_handler(GBUN_HANDLER)
 dispatcher.add_handler(TABLE_HANDLER)
-dispatcher.add_handler(KILL_HANDLER)
 dispatcher.add_handler(RECITE_HANDLER)
 dispatcher.add_handler(CRI_HANDLER)
 dispatcher.add_handler(PASTA_HANDLER)
