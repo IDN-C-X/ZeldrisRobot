@@ -101,6 +101,16 @@ def info(update, context):
 
     text += "\nNumber of profile pics: {}".format(context.bot.get_user_profile_photos(user.id).total_count)
 
+    try:
+        spamban = spamwtc.get_ban(int(user.id))
+        if spamban:
+           format = 'Yes'
+        else:
+           format = 'No'
+        text += f"\nBanned in spamwatch: {format}"
+    except:
+        pass
+
     if user.id == OWNER_ID:
         text += "\n\nAye this guy is my owner - I would never do anything against him!"
 
@@ -125,16 +135,6 @@ def info(update, context):
                 custom_title = result['custom_title']
                 text += f"\n\nThis user has custom title <b>{custom_title}</b> in this chat."
     except BadRequest:
-        pass
-
-    try:
-        spamban = spamwtc.get_ban(int(user.id))
-        if spamban:
-           format = 'Yes'
-        else:
-           format = 'No'
-        text += f"\nBanned in spamwatch: {format}"
-    except:
         pass
 
     for mod in USER_INFO:
