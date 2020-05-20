@@ -23,7 +23,7 @@ from telegram.ext import CommandHandler, run_async, Filters
 from telegram.utils.helpers import escape_markdown, mention_html
 from telegram.error import BadRequest
 
-from skylee import dispatcher, OWNER_ID, SUDO_USERS, SUPPORT_USERS, WHITELIST_USERS, WALL_API, TOKEN
+from skylee import dispatcher, OWNER_ID, SUDO_USERS, SUPPORT_USERS, WHITELIST_USERS, WALL_API, TOKEN, spamwtc
 from skylee.__main__ import STATS, USER_INFO, GDPR
 from skylee.modules.disable import DisableAbleCommandHandler
 from skylee.modules.helper_funcs.extraction import extract_user
@@ -125,6 +125,16 @@ def info(update, context):
                 custom_title = result['custom_title']
                 text += f"\n\nThis user has custom title <b>{custom_title}</b> in this chat."
     except BadRequest:
+        pass
+
+    try:
+        spamban = spamwtc.get_ban(int(user.id))
+        if spamban:
+           format = 'Yes'
+        else:
+           format = 'No'
+        text += f"\nBanned in spamwatch: {format}"
+    except:
         pass
 
     for mod in USER_INFO:
@@ -243,6 +253,7 @@ def ud(update, context):
     try:
         results = get(f'http://api.urbandictionary.com/v0/define?term={text}').json()
         reply_text = f'Word: {text}\nDefinition: {results["list"][0]["definition"]}'
+        reply_text += f'\n\nExample: {results["list"][0]["example"]}'
     except IndexError:
         reply_text = f'Word: {text}\nResults: Sorry could not find any matching results!'
     return msg.reply_text(reply_text)
