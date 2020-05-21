@@ -256,7 +256,11 @@ def ud(update, context):
         reply_text += f'\n\nExample: {results["list"][0]["example"]}'
     except IndexError:
         reply_text = f'Word: {text}\nResults: Sorry could not find any matching results!'
-    return msg.reply_text(reply_text)
+    ignore_chars = "[]"
+    reply = reply_text
+    for chars in ignore_chars:
+        reply = reply.replace(chars, "")
+    return msg.reply_text(reply)
 
 
 @run_async
