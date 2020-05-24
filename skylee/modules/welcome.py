@@ -12,7 +12,7 @@ from telegram.utils.helpers import mention_html
 
 import skylee.modules.sql.welcome_sql as sql
 from skylee.modules.sql.global_bans_sql import is_user_gbanned
-from skylee import dispatcher, OWNER_ID, LOGGER, MESSAGE_DUMP
+from skylee import dispatcher, OWNER_ID, LOGGER, MESSAGE_DUMP, spamwtc
 from skylee.modules.helper_funcs.chat_status import user_admin, is_user_ban_protected
 from skylee.modules.helper_funcs.misc import build_keyboard, revert_buttons
 from skylee.modules.helper_funcs.msg_types import get_welcome_type
@@ -118,6 +118,15 @@ def new_member(update, context):
                     pass
                 reply = False
 
+            # Ignore spamwatch banned users
+            try:
+                sw = spamwtc.get_ban(int(new_mem.id))
+                if sw:
+                    return
+            except:
+                pass
+
+            # Ignore gbanned users
             if is_user_gbanned(new_mem.id):
                 return
 
@@ -237,8 +246,17 @@ def left_member(update, context):
         left_mem = update.effective_message.left_chat_member
         if left_mem:
 
+            # Ignore gbanned users
             if is_user_gbanned(left_mem.id):
                 return
+
+            # Ignore spamwatch banned users
+            try:
+                sw = spamwtc.get_ban(int(left_mem.id))
+                if sw:
+                    return
+            except:
+                pass
 
             # Ignore bot being kicked
             if left_mem.id == context.bot.id:
