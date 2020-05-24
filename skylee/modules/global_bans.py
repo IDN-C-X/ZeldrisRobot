@@ -286,7 +286,8 @@ def check_and_ban(update, user_id, should_message=True):
            update.effective_chat.kick_member(user_id)
            if should_message:
               update.effective_message.reply_text(
-              "This person has been detected as spambot by @SpamWatch and has been removed!")
+              f"This person has been detected as spambot by @SpamWatch and has been removed!\nReason: <code>{spmban.reason}</code>",
+              parse_mode=ParseMode.HTML)
               return
            else:
               return
