@@ -159,10 +159,14 @@ def shrug(update, context):
     reply_text(random.choice(fun.SHGS))
 
 @run_async
-@typing_action
 def decide(update, context):
-    reply_text = update.effective_message.reply_to_message.reply_text if update.effective_message.reply_to_message else update.effective_message.reply_text
-    reply_text(random.choice(fun.DECIDE))
+    args = update.effective_message.text.split(None, 1)
+    try:
+       if args[1:]: # Don't reply if no args
+          reply_text = update.effective_message.reply_to_message.reply_text if update.effective_message.reply_to_message else update.effective_message.reply_text
+          reply_text(random.choice(fun.DECIDE))
+    except IndexError:
+        return
 
 @run_async
 @typing_action
@@ -321,8 +325,8 @@ def ports_bug(update, context):
 __help__ = """
 Some dank memes for ya all!
 
- × /shrug | /cri: Get shrug or (ToT)!
- × /decide: Randomly answers yes/no/maybe
+ × /shrug | /cri: Get shrug or ToT.
+ × `skylee? <question>: randomly answer "Yes, No" etc.`
  × /abuse: Abuses the retard!
  × /table: Flips a table...
  × /runs: Reply a random string from an array of replies.
@@ -339,7 +343,7 @@ Some dank memes for ya all!
 __mod_name__ = "Memes"
 
 SHRUG_HANDLER = DisableAbleCommandHandler("shrug", shrug)
-DECIDE_HANDLER = DisableAbleCommandHandler("decide", decide)
+DECIDE_HANDLER = MessageHandler(Filters.regex(r"(?i)^skylee\?"), decide)
 SNIPE_HANDLER = CommandHandler("snipe", snipe, pass_args=True, filters=CustomFilters.sudo_filter)
 ABUSE_HANDLER = DisableAbleCommandHandler("abuse", abuse)
 PORT_BUG_HANDLER = CommandHandler("bug", ports_bug)

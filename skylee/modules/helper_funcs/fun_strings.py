@@ -328,7 +328,8 @@ GBUN = (
 DECIDE = (
     "Yes.",
     "NoU.",
-    "Maybe."
+    "Maybe.",
+    "No."
 )
 
 # AFK strings credits: PaperPlaneExtended!
