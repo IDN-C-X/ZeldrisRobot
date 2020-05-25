@@ -24,7 +24,7 @@ def gtrans(update, context):
     lang = " ".join(args)
     if not lang:
        lang = "en"
-    translate_text = msg.reply_to_message
+    translate_text = msg.reply_to_message.text
     ignore_text = UNICODE_EMOJI.keys()
     for emoji in ignore_text:
         if emoji in translate_text:
