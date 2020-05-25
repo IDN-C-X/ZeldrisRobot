@@ -16,7 +16,7 @@ from skylee.modules.helper_funcs.extraction import extract_user
 from skylee.modules.helper_funcs.filters import CustomFilters
 from skylee.modules.helper_funcs.alternate import typing_action
 from skylee import dispatcher, OWNER_ID, SUDO_USERS, SUPPORT_USERS, WALL_API, TOKEN
-from skylee.modules.disable import DisableAbleCommandHandler
+from skylee.modules.disable import DisableAbleCommandHandler, DisableAbleMessageHandler
 
 import skylee.modules.helper_funcs.fun_strings as fun
 
@@ -294,9 +294,8 @@ def stretch(update, context):
 @run_async
 def me_too(update, context):
     message = update.effective_message
-    if random.randint(0, 100) > 60:
-        reply = random.choice(["Me too thanks", "Haha yes, me too", "Same lol", "Me irl"])
-        message.reply_text(reply)
+    reply = random.choice(["Me too thanks", "Haha yes, me too", "Same lol", "Me irl"])
+    message.reply_text(reply)
 
 
 # Bug reporting module for X00TD PORTS!
@@ -343,7 +342,7 @@ Some dank memes for ya all!
 __mod_name__ = "Memes"
 
 SHRUG_HANDLER = DisableAbleCommandHandler("shrug", shrug)
-DECIDE_HANDLER = MessageHandler(Filters.regex(r"(?i)^skylee\?"), decide)
+DECIDE_HANDLER = DisableAbleMessageHandler(Filters.regex(r"(?i)^skylee\?"), decide, friendly="decide")
 SNIPE_HANDLER = CommandHandler("snipe", snipe, pass_args=True, filters=CustomFilters.sudo_filter)
 ABUSE_HANDLER = DisableAbleCommandHandler("abuse", abuse)
 PORT_BUG_HANDLER = CommandHandler("bug", ports_bug)
@@ -358,7 +357,7 @@ PASTA_HANDLER = DisableAbleCommandHandler("pasta", copypasta)
 CLAP_HANDLER = DisableAbleCommandHandler("clap", clapmoji)
 OWO_HANDLER = DisableAbleCommandHandler("owo", owo)
 STRECH_HANDLER = DisableAbleCommandHandler("stretch", stretch)
-MEETOO_HANDLER = MessageHandler(Filters.regex(r"(?i)me too"), me_too)
+MEETOO_HANDLER = DisableAbleMessageHandler(Filters.regex(r"(?i)me too"), me_too, friendly="metoo")
 RECITE_HANDLER = DisableAbleCommandHandler("recite", recite)
 
 dispatcher.add_handler(SHRUG_HANDLER)
