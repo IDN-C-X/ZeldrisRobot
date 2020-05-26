@@ -153,6 +153,11 @@ def abuse(update, context):
 
 @run_async
 @typing_action
+def dice(update, context):
+    context.bot.sendDice(update.effective_chat.id)
+
+@run_async
+@typing_action
 def shrug(update, context):
     # reply to correct message
     reply_text = update.effective_message.reply_to_message.reply_text if update.effective_message.reply_to_message else update.effective_message.reply_text
@@ -330,6 +335,7 @@ Some dank memes for ya all!
  × /pasta: Famous copypasta meme, try and see.
  × /clap: Claps on someones message!
  × /owo: UwU-fy whole text XD.
+ × /roll: Rolls a dice.
  × /recite: Logical quotes to change your life.
  × /stretch:  streeeeeeetch iiiiiiit.
  × /warm: Hug a user warmly, or get hugged if not a reply.
@@ -356,6 +362,7 @@ OWO_HANDLER = DisableAbleCommandHandler("owo", owo)
 STRECH_HANDLER = DisableAbleCommandHandler("stretch", stretch)
 MEETOO_HANDLER = DisableAbleMessageHandler(Filters.regex(r"(?i)me too"), me_too, friendly="metoo")
 RECITE_HANDLER = DisableAbleCommandHandler("recite", recite)
+DICE_HANDLER = DisableAbleCommandHandler("roll", dice)
 
 dispatcher.add_handler(SHRUG_HANDLER)
 dispatcher.add_handler(DECIDE_HANDLER)
@@ -375,3 +382,4 @@ dispatcher.add_handler(CLAP_HANDLER)
 dispatcher.add_handler(OWO_HANDLER)
 dispatcher.add_handler(STRECH_HANDLER)
 dispatcher.add_handler(MEETOO_HANDLER)
+dispatcher.add_handler(DICE_HANDLER)
