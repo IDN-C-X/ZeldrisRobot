@@ -148,8 +148,9 @@ def new_member(update, context):
             else:
                 # If welcome message is media, send with appropriate function
                 if welc_type != sql.Types.TEXT and welc_type != sql.Types.BUTTON_TEXT:
-                    ENUM_FUNC_MAP[welc_type](chat.id, cust_welcome)
-                    return
+                    sent = ENUM_FUNC_MAP[welc_type](chat.id, cust_welcome)
+                    #print(bool(sent))
+                    continue
                 # else, move on
                 first_name = new_mem.first_name or "PersonWithNoName"  # edge case of empty name - occurs for some bugs.
 
