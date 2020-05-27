@@ -360,7 +360,7 @@ PASTA_HANDLER = DisableAbleCommandHandler("pasta", copypasta)
 CLAP_HANDLER = DisableAbleCommandHandler("clap", clapmoji)
 OWO_HANDLER = DisableAbleCommandHandler("owo", owo)
 STRECH_HANDLER = DisableAbleCommandHandler("stretch", stretch)
-MEETOO_HANDLER = DisableAbleMessageHandler(Filters.regex(r"(?i)me too"), me_too, friendly="metoo")
+MEETOO_HANDLER = DisableAbleMessageHandler(Filters.regex(r"(?i)(me too)"), me_too, friendly="metoo")
 RECITE_HANDLER = DisableAbleCommandHandler("recite", recite)
 DICE_HANDLER = DisableAbleCommandHandler("roll", dice)
 

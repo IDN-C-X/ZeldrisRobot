@@ -102,17 +102,17 @@ def info(update, context):
     text += "\nNumber of profile pics: {}".format(context.bot.get_user_profile_photos(user.id).total_count)
 
     try:
-        spamban = spamwtc.get_ban(int(user.id))
-        if spamban:
-           format = 'Yes'
+        sw = spamwtc.get_ban(int(user.id))
+        if sw:
+           text +='\n\n<b>This person is banned in Spamwatch!</b>'
+           text += f'\nResason: <pre>{sw.reason}</pre>'
         else:
-           format = 'No'
-        text += f"\nBanned in spamwatch: {format}"
+           pass
     except:
-        pass
+        pass # Don't break on exceptions like if api is down?
 
     if user.id == OWNER_ID:
-        text += "\n\nAye this guy is my owner - I would never do anything against him!"
+        text += "\n\nAye this guy is my owner.\nI would never do anything against him!"
 
     elif user.id in SUDO_USERS:
         text += "\n\nThis person is one of my sudo users! " \
