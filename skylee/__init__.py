@@ -2,7 +2,7 @@ import logging
 import os
 import sys
 import spamwatch
-
+from telethon import TelegramClient
 import telegram.ext as tg
 
 # enable logging
@@ -138,6 +138,10 @@ if SPAMWATCH == None:
 else:
    spamwtc = spamwatch.Client(SPAMWATCH)
 
+# Telethon
+api_id = TELETHON_ID
+api_hash = TELETHON_HASH
+client = TelegramClient('skylee', api_id, api_hash)
 
 updater = tg.Updater(TOKEN, workers=WORKERS, use_context=True)
 

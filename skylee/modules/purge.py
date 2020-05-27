@@ -1,13 +1,8 @@
-from skylee import SUDO_USERS, TELETHON_ID, TELETHON_HASH
+from skylee import client, SUDO_USERS
 
 import asyncio
 from telethon import events
-from telethon import TelegramClient
 from telethon.tl.types import ChannelParticipantsAdmins
-
-api_id = TELETHON_ID
-api_hash = TELETHON_HASH
-client = TelegramClient('skylee', api_id, api_hash)
 
 # Check if user has admin rights
 async def is_administrator(user_id: int, message):
@@ -48,7 +43,7 @@ async def purge(event):
         del_res = await event.client.send_message(
         event.chat_id, "Flash purge complete!")
 
-        await asyncio.sleep(2)
+        await asyncio.sleep(4)
         await del_res.delete()
 
 @client.on(events.NewMessage(pattern="^/del$"))
