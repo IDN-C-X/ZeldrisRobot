@@ -1,6 +1,7 @@
 skylee/config.py
 logfile
 skylee.session
+skylee.session-journal
 *.pyc
 .idea/
 .project
