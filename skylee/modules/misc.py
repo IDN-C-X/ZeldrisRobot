@@ -327,7 +327,6 @@ def getlink(update, context):
 def rmemes(update, context):
     msg = update.effective_message
     chat = update.effective_chat
-    args = context.args
 
     SUBREDS = ['meirl', 'dankmemes', 'AdviceAnimals',
                'memes', 'meme', 'memes_of_the_dank',
@@ -347,15 +346,20 @@ def rmemes(update, context):
     rpage = res.get(str('subreddit')) # Subreddit
     title = res.get(str('title')) # Post title
     memeu = res.get(str('url')) # meme pic url
+    plink = res.get(str('postLink'))
 
     caps = f"× <b>Title</b>: {title}\n"
     caps += f"× <b>Subreddit:</b> <pre>r/{rpage}</pre>"
 
+    keyb = [[InlineKeyboardButton(
+           text="Subreddit Postlink 🔗", url=plink)]]
     try:
        context.bot.send_photo(chat.id, photo=memeu,
-                              caption=(caps),
-                              timeout=60,
-                              parse_mode=ParseMode.HTML)
+                   caption=(caps),
+                   reply_markup=InlineKeyboardMarkup(keyb),
+                   timeout=60,
+                   parse_mode=ParseMode.HTML)
+
     except BadRequest as excp:
            return msg.reply_text(f"Error! {excp.message}")
 
