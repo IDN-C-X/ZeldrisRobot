@@ -63,7 +63,6 @@ def get_id(update, context):
 
 
 @run_async
-@typing_action
 def info(update, context):
     args = context.args
     msg = update.effective_message  # type: Optional[Message]
@@ -323,6 +322,43 @@ def getlink(update, context):
 
     message.reply_text(links)
 
+@run_async
+@send_action(ChatAction.UPLOAD_PHOTO)
+def rmemes(update, context):
+    msg = update.effective_message
+    chat = update.effective_chat
+    args = context.args
+
+    SUBREDS = ['meirl', 'dankmemes', 'AdviceAnimals',
+               'memes', 'meme', 'memes_of_the_dank',
+               'PornhubComments', 'teenagers', 'memesIRL',
+               'insanepeoplefacebook', 'terriblefacebookmemes']
+
+    subreddit = random.choice(SUBREDS)
+    res = r.get(
+          f"https://meme-api.herokuapp.com/gimme/{subreddit}")
+
+    if res.status_code != 200: # Like if api is down?
+       msg.reply_text('Sorry some error occurred :(')
+       return
+    else:
+       res = res.json()
+
+    rpage = res.get(str('subreddit')) # Subreddit
+    title = res.get(str('title')) # Post title
+    memeu = res.get(str('url')) # meme pic url
+
+    caps = f"× <b>Title</b>: {title}\n"
+    caps += f"× <b>Subreddit:</b> <pre>r/{rpage}</pre>"
+
+    try:
+       context.bot.send_photo(chat.id, photo=memeu,
+                              caption=(caps),
+                              timeout=60,
+                              parse_mode=ParseMode.HTML)
+    except BadRequest as excp:
+           return msg.reply_text(f"Error! {excp.message}")
+
 
 @run_async
 def staff_ids(update, context):
@@ -350,6 +386,7 @@ An "odds and ends" module for small, simple commands which don't really fit anyw
  × brb <reason>: Same as the afk command - but not a command.
  × /info: Get information about a user.
  × /wiki : Search wikipedia articles.
+ × /rmeme: Sends random meme scraped from reddit.
  × /ud <query> : Search stuffs in urban dictionary.
  × /wall <query> : Get random wallpapers directly from bot! 
  × /reverse : Reverse searches image or stickers on google.
@@ -370,6 +407,8 @@ WALLPAPER_HANDLER = DisableAbleCommandHandler("wall", wall, pass_args=True)
 UD_HANDLER = DisableAbleCommandHandler("ud", ud)
 GETLINK_HANDLER = CommandHandler("getlink", getlink, pass_args=True, filters=Filters.user(OWNER_ID))
 STAFFLIST_HANDLER = CommandHandler("staffids", staff_ids, filters=Filters.user(OWNER_ID))
+REDDIT_MEMES_HANDLER = DisableAbleCommandHandler("rmeme", rmemes)
+
 
 dispatcher.add_handler(WALLPAPER_HANDLER)
 dispatcher.add_handler(UD_HANDLER)
@@ -382,3 +421,4 @@ dispatcher.add_handler(GDPR_HANDLER)
 dispatcher.add_handler(WIKI_HANDLER)
 dispatcher.add_handler(GETLINK_HANDLER)
 dispatcher.add_handler(STAFFLIST_HANDLER)
+dispatcher.add_handler(REDDIT_MEMES_HANDLER)
