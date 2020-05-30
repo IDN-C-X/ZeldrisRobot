@@ -2,17 +2,17 @@ import re
 from io import BytesIO
 from typing import Optional, List
 
-from telegram import MAX_MESSAGE_LENGTH, ParseMode, InlineKeyboardMarkup
+from telegram import MAX_MESSAGE_LENGTH, ParseMode, InlineKeyboardMarkup, InlineKeyboardButton
 from telegram import Message, Update, Bot
 from telegram.error import BadRequest
-from telegram.ext import CommandHandler, MessageHandler, Filters
+from telegram.ext import CommandHandler, MessageHandler, Filters, CallbackQueryHandler
 from telegram.ext.dispatcher import run_async
 from telegram.utils.helpers import escape_markdown, mention_markdown
 
 import skylee.modules.sql.notes_sql as sql
 from skylee import dispatcher, MESSAGE_DUMP, LOGGER
 from skylee.modules.disable import DisableAbleCommandHandler
-from skylee.modules.helper_funcs.chat_status import user_admin
+from skylee.modules.helper_funcs.chat_status import user_admin, user_admin_no_reply
 from skylee.modules.helper_funcs.misc import build_keyboard, revert_buttons
 from skylee.modules.helper_funcs.msg_types import get_note_type
 from skylee.modules.helper_funcs.string_handling import escape_invalid_curly_brackets
@@ -269,27 +269,50 @@ def clear_notes(update, context):
     msg = update.effective_message
 
     chatmem = chat.get_member(user.id)
-    if not chatmem.status == 'creator':
-       msg.reply_text("This command can be only used by chat OWNER!")
-       return
+    if chatmem.status == 'creator':
+       allnotes = sql.get_all_chat_notes(chat.id)
+       if not allnotes:
+           msg.reply_text("No notes saved here what should i delete?")
+           return
+       else:
+            msg.reply_text(
+             "Do you really wanna delete all of the notes??",
+             reply_markup=InlineKeyboardMarkup(
+             [[InlineKeyboardButton(text="Yes I'm sure️", callback_data="rmnotes_true")],
+             [InlineKeyboardButton(text="⚠️ Cancel", callback_data="rmnotes_cancel")]]))
 
-    allnotes = sql.get_all_chat_notes(chat.id)
-    if not allnotes:
-        msg.reply_text("No notes saved here what should i delete?")
-        return
+    else:
+        msg.reply_text("This command can be only used by chat OWNER!")
 
-    count = 0
-    notelist = []
-    for notename in allnotes:
-        count += 1
-        note = notename.name.lower()
-        notelist.append(note)
 
-    for i in notelist:
-        sql.rm_note(chat.id, i)
-    return msg.reply_text(
-           f"Successfully cleaned {count} notes in {chat.title}.")
+@run_async
+@user_admin_no_reply
+def rmbutton(update, context):
+    query = update.callback_query
+    userid = update.effective_user.id
+    match = query.data.split("_")[1]
+    chat = update.effective_chat
 
+    usermem = chat.get_member(userid).status
+
+    if match == 'cancel' and usermem == 'creator':
+       return query.message.edit_text(
+             "Cancelled deletion of notes.")
+
+    elif match == 'true' and usermem == 'creator':
+
+        allnotes = sql.get_all_chat_notes(chat.id)
+        count = 0
+        notelist = []
+        for notename in allnotes:
+            count += 1
+            note = notename.name.lower()
+            notelist.append(note)
+
+        for i in notelist:
+            sql.rm_note(chat.id, i)
+        query.message.edit_text(
+              f"Successfully cleaned {count} notes in {chat.title}.")
 
 
 def __import_data__(chat_id, data):
@@ -435,9 +458,12 @@ DELETE_HANDLER = CommandHandler("clear", clear, pass_args=True)
 LIST_HANDLER = DisableAbleCommandHandler(["notes", "saved"], list_notes, admin_ok=True)
 CLEARALLNOTES_HANDLER = CommandHandler("rmallnotes", clear_notes, filters=Filters.group)
 
+RMBTN_HANDLER = CallbackQueryHandler(rmbutton, pattern=r"rmnotes_")
+
 dispatcher.add_handler(GET_HANDLER)
 dispatcher.add_handler(SAVE_HANDLER)
 dispatcher.add_handler(LIST_HANDLER)
 dispatcher.add_handler(DELETE_HANDLER)
 dispatcher.add_handler(HASH_GET_HANDLER)
 dispatcher.add_handler(CLEARALLNOTES_HANDLER)
+dispatcher.add_handler(RMBTN_HANDLER)
