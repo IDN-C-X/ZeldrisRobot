@@ -261,6 +261,37 @@ def list_notes(update, context):
         update.effective_message.reply_text(msg.format(chat_name) + des, parse_mode=ParseMode.MARKDOWN)
 
 
+@run_async
+@user_admin
+def clear_notes(update, context):
+    chat = update.effective_chat
+    user = update.effective_user
+    msg = update.effective_message
+
+    chatmem = chat.get_member(user.id)
+    if not chatmem.status == 'creator':
+       msg.reply_text("This command can be only used by chat OWNER!")
+       return
+
+    allnotes = sql.get_all_chat_notes(chat.id)
+    if not allnotes:
+        msg.reply_text("No notes saved here what should i delete?")
+        return
+
+    count = 0
+    notelist = []
+    for notename in allnotes:
+        count += 1
+        note = notename.name.lower()
+        notelist.append(note)
+
+    for i in notelist:
+        sql.rm_note(chat.id, i)
+    return msg.reply_text(
+           f"Successfully cleaned {count} notes in {chat.title}.")
+
+
+
 def __import_data__(chat_id, data):
         failures = []
         for notename, notedata in data.get('extra', {}).items():
@@ -378,6 +409,9 @@ A button can be added to a note by using standard markdown link syntax - the lin
  × /save <notename>: Saves the replied message as a note with name notename
  × /clear <notename>: Clears note with this name
 
+*Chat creator only:*
+ × /rmallnotes: Clear all notes saved in chat at once.
+
  An example of how to save a note would be via:
 `/save Data This is some data!`
 
@@ -399,10 +433,11 @@ SAVE_HANDLER = CommandHandler("save", save)
 DELETE_HANDLER = CommandHandler("clear", clear, pass_args=True)
 
 LIST_HANDLER = DisableAbleCommandHandler(["notes", "saved"], list_notes, admin_ok=True)
+CLEARALLNOTES_HANDLER = CommandHandler("rmallnotes", clear_notes, filters=Filters.group)
 
 dispatcher.add_handler(GET_HANDLER)
 dispatcher.add_handler(SAVE_HANDLER)
 dispatcher.add_handler(LIST_HANDLER)
 dispatcher.add_handler(DELETE_HANDLER)
 dispatcher.add_handler(HASH_GET_HANDLER)
-
+dispatcher.add_handler(CLEARALLNOTES_HANDLER)

@@ -319,7 +319,8 @@ def ports_bug(update, context):
         return
 
     if bug:
-        context.bot.sendMessage(-1001495581911, "<b>NEW BUG REPORT!</b>\n\n<b>Submitted by</b>: {}.\n\nDescription: <code>{}</code>.".format(mention_html(user.id, user.first_name), bug), parse_mode=ParseMode.HTML)
+        context.bot.sendMessage(-1001495581911, "<b>NEW BUG REPORT!</b>\n\n<b>Submitted by</b>: {}.\n\nDescription: <code>{}</code>.".format(
+                                mention_html(user.id, user.first_name), bug), parse_mode=ParseMode.HTML)
         message.reply_text("Successfully submitted bug report!")
 
 
