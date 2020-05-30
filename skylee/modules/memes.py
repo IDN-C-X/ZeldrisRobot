@@ -6,7 +6,7 @@ from typing import Optional, List
 from requests import get
 from random import randint
 
-from telegram import Message, Update, Bot, User, ParseMode, MessageEntity
+from telegram import Message, Update, Bot, User, ParseMode, MessageEntity, MAX_MESSAGE_LENGTH
 from telegram.ext import Filters, CommandHandler, MessageHandler, run_async
 from telegram import TelegramError, Chat, Message
 from telegram.error import BadRequest
@@ -286,10 +286,13 @@ def owo(update, context):
 def stretch(update, context):
     message = update.effective_message
     if not message.reply_to_message:
-        message.reply_text("I need a message to meme.")
+        message.reply_text("I need a message to streeeeeeeeetch.")
     else:
         count = random.randint(3, 10)
         reply_text = re.sub(r'([aeiouAEIOUａｅｉｏｕＡＥＩＯＵ])', (r'\1' * count), message.reply_to_message.text)
+        if len(reply_text) >= MAX_MESSAGE_LENGTH:
+           return message.reply_text("Result of this message was too long for telegram!")
+
         message.reply_to_message.reply_text(reply_text)
 
 
