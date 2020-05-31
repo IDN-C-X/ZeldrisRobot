@@ -317,6 +317,20 @@ def me_too(update, context):
     reply = random.choice(["Me too thanks", "Haha yes, me too", "Same lol", "Me irl"])
     message.reply_text(reply)
 
+@run_async
+def goodnight(update, context):
+    message = update.effective_message
+    reply = random.choice(fun.GDNIGHT)
+    message.reply_text(reply,
+    parse_mode=ParseMode.MARKDOWN)
+
+@run_async
+def goodmorning(update, context):
+    message = update.effective_message
+    reply = random.choice(fun.GDMORNING)
+    message.reply_text(reply,
+    parse_mode=ParseMode.MARKDOWN)
+
 
 # Bug reporting module for X00TD PORTS!
 
@@ -343,10 +357,10 @@ def ports_bug(update, context):
 
 
 __help__ = """
-Some dank memes for ya all!
+Some dank memes for fun or whatever!
 
  × /shrug | /cri: Get shrug or ToT.
- × `skylee? <question>: randomly answer "Yes, No" etc.`
+ × /decide: Randomly answer yes no etc.
  × /abuse: Abuses the retard!
  × /table: Flips a table...
  × /runs: Reply a random string from an array of replies.
@@ -359,6 +373,17 @@ Some dank memes for ya all!
  × /stretch:  streeeeeeetch iiiiiiit.
  × /warm: Hug a user warmly, or get hugged if not a reply.
  × /punch: Punch a user, or get punched if not a reply.
+
+*Regex based memes:*
+
+`/decide` can be also used with regex like: `skylee? <question>: randomly answer "Yes, No" etc.`
+
+Some other regex filters are:
+`me too` | `goodmorning` | `goodnight`.
+
+Skylee will reply random strings accordingly when these words are used!
+All regex filters can be disabled incase u don't want... like: `/disable metoo`.
+
 """
 
 __mod_name__ = "Memes"
@@ -383,6 +408,9 @@ MEETOO_HANDLER = DisableAbleMessageHandler(Filters.regex(r"(?i)(me too)"), me_to
 RECITE_HANDLER = DisableAbleCommandHandler("recite", recite)
 DICE_HANDLER = DisableAbleCommandHandler("roll", dice)
 YESNOWTF_HANDLER = DisableAbleCommandHandler("decide", yesnowtf)
+GDMORNING_HANDLER = DisableAbleMessageHandler(Filters.regex(r"(?i)(goodmorning)"), goodmorning, friendly="goodmorning")
+GDNIGHT_HANDLER = DisableAbleMessageHandler(Filters.regex(r"(?i)(goodnight)"), goodnight, friendly="goodnight")
+
 
 dispatcher.add_handler(SHRUG_HANDLER)
 dispatcher.add_handler(DECIDE_HANDLER)
@@ -404,3 +432,5 @@ dispatcher.add_handler(STRECH_HANDLER)
 dispatcher.add_handler(MEETOO_HANDLER)
 dispatcher.add_handler(DICE_HANDLER)
 dispatcher.add_handler(YESNOWTF_HANDLER)
+dispatcher.add_handler(GDMORNING_HANDLER)
+dispatcher.add_handler(GDNIGHT_HANDLER)
