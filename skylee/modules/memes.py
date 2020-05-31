@@ -3,7 +3,6 @@ import requests as r
 
 from time import sleep
 from typing import Optional, List
-from requests import get
 from random import randint
 
 from telegram import Message, Update, Bot, User, ParseMode, MessageEntity, MAX_MESSAGE_LENGTH
@@ -169,6 +168,22 @@ def decide(update, context):
     if len(args) >= 2: # Don't reply if no args
        reply_text = update.effective_message.reply_to_message.reply_text if update.effective_message.reply_to_message else update.effective_message.reply_text
        reply_text(random.choice(fun.DECIDE))
+
+@run_async
+def yesnowtf(update, context):
+    msg = update.effective_message
+    chat = update.effective_chat
+    res = r.get("https://yesno.wtf/api")
+    if res.status_code != 200:
+       msg.reply_text(random.choice(fun.DECIDE))
+    else:
+       res = res.json()
+    try:
+       context.bot.send_animation(chat.id,
+       animation=res["image"],
+       caption=str(res["answer"]).upper())
+    except BadRequest:
+           return
 
 @run_async
 @typing_action
@@ -367,6 +382,7 @@ STRECH_HANDLER = DisableAbleCommandHandler("stretch", stretch)
 MEETOO_HANDLER = DisableAbleMessageHandler(Filters.regex(r"(?i)(me too)"), me_too, friendly="metoo")
 RECITE_HANDLER = DisableAbleCommandHandler("recite", recite)
 DICE_HANDLER = DisableAbleCommandHandler("roll", dice)
+YESNOWTF_HANDLER = DisableAbleCommandHandler("decide", yesnowtf)
 
 dispatcher.add_handler(SHRUG_HANDLER)
 dispatcher.add_handler(DECIDE_HANDLER)
@@ -387,3 +403,4 @@ dispatcher.add_handler(OWO_HANDLER)
 dispatcher.add_handler(STRECH_HANDLER)
 dispatcher.add_handler(MEETOO_HANDLER)
 dispatcher.add_handler(DICE_HANDLER)
+dispatcher.add_handler(YESNOWTF_HANDLER)
