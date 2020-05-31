@@ -175,7 +175,7 @@ def yesnowtf(update, context):
     chat = update.effective_chat
     res = r.get("https://yesno.wtf/api")
     if res.status_code != 200:
-       msg.reply_text(random.choice(fun.DECIDE))
+       return msg.reply_text(random.choice(fun.DECIDE))
     else:
        res = res.json()
     try:
