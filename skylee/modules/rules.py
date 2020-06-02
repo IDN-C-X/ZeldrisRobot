@@ -1,6 +1,6 @@
 from typing import Optional
 
-from telegram import Message, Update, Bot, User
+from telegram import Message, Bot, User
 from telegram import ParseMode, InlineKeyboardMarkup, InlineKeyboardButton
 from telegram.error import BadRequest
 from telegram.ext import CommandHandler, run_async, Filters

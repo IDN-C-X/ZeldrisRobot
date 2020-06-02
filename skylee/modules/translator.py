@@ -1,13 +1,12 @@
 from typing import Optional, List
 from gtts import gTTS
-import re
 import os
 import requests
 import json
 from emoji import UNICODE_EMOJI
 
 from telegram import Message, Update, Bot, User, ChatAction, MessageEntity, ParseMode
-from telegram.ext import Filters, MessageHandler, run_async
+from telegram.ext import MessageHandler, run_async
 
 from skylee import dispatcher, LOGGER
 from skylee.modules.disable import DisableAbleCommandHandler

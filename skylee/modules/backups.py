@@ -5,16 +5,16 @@ from typing import Optional
 from telegram import MAX_MESSAGE_LENGTH, ParseMode, InlineKeyboardMarkup
 from telegram import Message, Chat, Update, Bot
 from telegram.error import BadRequest
-from telegram.ext import CommandHandler, run_async, Filters
+from telegram.ext import CommandHandler, run_async
 
 import skylee.modules.sql.notes_sql as sql
 from skylee import dispatcher, LOGGER, OWNER_ID, SUDO_USERS, MESSAGE_DUMP
 from skylee.__main__ import DATA_IMPORT
 from skylee.modules.helper_funcs.chat_status import user_admin
-from skylee.modules.helper_funcs.misc import build_keyboard, revert_buttons
+from skylee.modules.helper_funcs.misc import revert_buttons
 from skylee.modules.helper_funcs.msg_types import get_note_type
 from skylee.modules.helper_funcs.alternate import typing_action
-from skylee.modules.rules import get_rules
+# from skylee.modules.rules import get_rules
 import skylee.modules.sql.rules_sql as rulessql
 from skylee.modules.sql import warns_sql as warnssql
 import skylee.modules.sql.blacklist_sql as blacklistsql

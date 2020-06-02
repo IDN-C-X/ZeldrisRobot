@@ -13,7 +13,7 @@ from time import sleep
 from future.utils import string_types
 from telegram.error import BadRequest, TelegramError, Unauthorized
 from telegram import ParseMode, Update, Bot, Chat, User, MessageEntity, InlineKeyboardMarkup, InlineKeyboardButton, ChatAction
-from telegram.ext import run_async, CommandHandler, MessageHandler, Filters, CallbackQueryHandler
+from telegram.ext import run_async, CommandHandler, Filters, CallbackQueryHandler
 from telegram.utils.helpers import escape_markdown, mention_html, mention_markdown
 
 from skylee import dispatcher, OWNER_ID, SUDO_USERS, WHITELIST_USERS, MESSAGE_DUMP, LOGGER
@@ -26,7 +26,6 @@ from skylee.modules.disable import DisableAbleCommandHandler
 
 import skylee.modules.sql.feds_sql as sql
 
-from skylee.modules.connection import connected
 from skylee.modules.helper_funcs.alternate import send_message, typing_action, send_action
 # Hello bot owner, I spended for feds many hours of my life, Please don't remove this if you still respect MrYacha and peaktogoo and AyraHikari too
 # Federation by MrYacha 2018-2019
@@ -159,7 +158,6 @@ def fed_chat(update, context):
 		update.effective_message.reply_text("This group is not in any federation!")
 		return
 
-	user = update.effective_user  # type: Optional[Chat]
 	chat = update.effective_chat  # type: Optional[Chat]
 	info = sql.get_fed_info(fed_id)
 
@@ -247,9 +245,8 @@ def leave_fed(update, context):
 @run_async
 @typing_action
 def user_join_fed(update, context):
-	chat = update.effective_chat  # type: Optional[Chat]
-	user = update.effective_user  # type: Optional[User]
-	msg = update.effective_message  # type: Optional[Message]
+	chat = update.effective_chat
+	user = update.effective_user
 	args = context.args
 
 	if chat.type == 'private':

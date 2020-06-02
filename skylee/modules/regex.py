@@ -2,7 +2,7 @@ import re
 import sre_constants
 
 import telegram
-from telegram import Update, Bot
+from telegram import Bot
 from telegram.ext import Filters, run_async
 
 from skylee import dispatcher, LOGGER

@@ -1,4 +1,4 @@
-from typing import Union, List, Optional
+from typing import Union, Optional
 
 from future.utils import string_types
 from telegram import ParseMode, Update, Bot, Chat, User

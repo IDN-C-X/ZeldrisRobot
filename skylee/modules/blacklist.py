@@ -1,8 +1,8 @@
 import html
 import re
-from typing import Optional, List
+from typing import Optional
 
-from telegram import Message, Chat, Update, Bot, ParseMode, ChatPermissions
+from telegram import Message, Chat, Bot, ParseMode, ChatPermissions
 from telegram.error import BadRequest
 from telegram.ext import CommandHandler, MessageHandler, Filters, run_async
 from telegram.utils.helpers import mention_html, escape_markdown
@@ -10,7 +10,6 @@ from telegram.utils.helpers import mention_html, escape_markdown
 import skylee.modules.sql.blacklist_sql as sql
 from skylee import dispatcher, LOGGER, OWNER_ID
 from skylee.modules.disable import DisableAbleCommandHandler
-from telegram.utils.helpers import mention_markdown
 from skylee.modules.helper_funcs.chat_status import user_admin, user_not_admin
 from skylee.modules.helper_funcs.extraction import extract_text
 from skylee.modules.helper_funcs.misc import split_message
@@ -27,9 +26,8 @@ BLACKLIST_GROUP = 11
 @run_async
 @typing_action
 def blacklist(update, context):
-	msg = update.effective_message  # type: Optional[Message]
-	chat = update.effective_chat  # type: Optional[Chat]
-	user = update.effective_user  # type: Optional[User]
+	chat = update.effective_chat
+	user = update.effective_user
 	args = context.args
 	
 	conn = connected(context.bot, update, chat, user.id, need_admin=False)
@@ -69,9 +67,9 @@ def blacklist(update, context):
 @user_admin
 @typing_action
 def add_blacklist(update, context):
-	msg = update.effective_message  # type: Optional[Message]
-	chat = update.effective_chat  # type: Optional[Chat]
-	user = update.effective_user  # type: Optional[User]
+	msg = update.effective_message
+	chat = update.effective_chat
+	user = update.effective_user
 	words = msg.text.split(None, 1)
 
 	conn = connected(context.bot, update, chat, user.id)
@@ -106,9 +104,9 @@ def add_blacklist(update, context):
 @user_admin
 @typing_action
 def unblacklist(update, context):
-	msg = update.effective_message  # type: Optional[Message]
-	chat = update.effective_chat  # type: Optional[Chat]
-	user = update.effective_user  # type: Optional[User]
+	msg = update.effective_message
+	chat = update.effective_chat
+	user = update.effective_user
 	words = msg.text.split(None, 1)
 
 	conn = connected(context.bot, update, chat, user.id)
@@ -160,9 +158,9 @@ def unblacklist(update, context):
 @user_admin
 @typing_action
 def blacklist_mode(update, context):
-	chat = update.effective_chat  # type: Optional[Chat]
-	user = update.effective_user  # type: Optional[User]
-	msg = update.effective_message  # type: Optional[Message]
+	chat = update.effective_chat
+	user = update.effective_user
+	msg = update.effective_message
 	args = context.args
 
 	conn = connected(context.bot, update, chat, user.id, need_admin=True)
@@ -274,8 +272,8 @@ def findall(p, s):
 @run_async
 @user_not_admin
 def del_blacklist(update, context):
-	chat = update.effective_chat  # type: Optional[Chat]
-	message = update.effective_message  # type: Optional[Message]
+	chat = update.effective_chat
+	message = update.effective_message
 	user = update.effective_user
 	bot = context.bot
 	to_match = extract_text(message)

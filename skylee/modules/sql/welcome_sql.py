@@ -1,4 +1,3 @@
-import random
 import threading
 import skylee.modules.helper_funcs.fun_strings as fun
 

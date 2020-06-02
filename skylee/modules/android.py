@@ -4,7 +4,7 @@ from requests import get
 from telegram import Message, Update, Bot, User, Chat, ParseMode, InlineKeyboardMarkup
 from telegram.error import BadRequest
 from telegram.ext import run_async
-from telegram.utils.helpers import escape_markdown, mention_html
+from telegram.utils.helpers import mention_html
 
 from skylee import dispatcher, updater
 from skylee.modules.disable import DisableAbleCommandHandler

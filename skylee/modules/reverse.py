@@ -6,7 +6,6 @@ from urllib.request import urlopen
 from urllib.error import URLError, HTTPError
 from bs4 import BeautifulSoup
 
-from typing import List
 from telegram import ParseMode, InputMediaPhoto, Update, Bot, TelegramError
 from telegram.ext import run_async
 
@@ -133,8 +132,6 @@ def reverse(update, context):
         print(exception)
 
 def ParseSauce(googleurl):
-    """Parse/Scrape the HTML code for the info we want."""
-
     source = opener.open(googleurl).read()
     soup = BeautifulSoup(source, 'html.parser')
 

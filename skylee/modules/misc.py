@@ -2,7 +2,6 @@ import html
 import json
 import random, re
 import wikipedia
-from datetime import datetime
 from typing import Optional, List
 from requests import get
 import requests
@@ -10,7 +9,6 @@ import requests
 from io import BytesIO
 from random import randint
 import requests as r
-from time import sleep
 
 from telegram import (Message,
 Chat, Update, Bot, MessageEntity,

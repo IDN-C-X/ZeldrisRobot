@@ -1,7 +1,7 @@
 from typing import Optional
 import random
 
-from telegram import Message, Update, Bot, User
+from telegram import Message, Bot, User
 from telegram import MessageEntity, ParseMode
 from telegram.error import BadRequest
 from telegram.ext import Filters, MessageHandler, run_async

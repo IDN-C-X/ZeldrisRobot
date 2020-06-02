@@ -1,6 +1,6 @@
 import re
 from io import BytesIO
-from typing import Optional, List
+from typing import Optional
 
 from telegram import MAX_MESSAGE_LENGTH, ParseMode, InlineKeyboardMarkup, InlineKeyboardButton
 from telegram import Message, Update, Bot

@@ -2,9 +2,9 @@ from html import escape
 import time
 import re
 import random
-from typing import Optional, List
+from typing import Optional
 
-from telegram import Message, Chat, Update, Bot, User, CallbackQuery
+from telegram import Message, Chat, Bot, User, CallbackQuery
 from telegram import ParseMode, InlineKeyboardMarkup, InlineKeyboardButton, ChatPermissions
 from telegram.error import BadRequest
 from telegram.ext import MessageHandler, Filters, CommandHandler, run_async, CallbackQueryHandler
@@ -221,7 +221,7 @@ def new_member(update, context):
         if prev_welc:
             try:
                 context.bot.delete_message(chat.id, prev_welc)
-            except BadRequest as excp:
+            except BadRequest:
                 pass
 
             if sent:
