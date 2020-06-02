@@ -261,6 +261,12 @@ def ud(update, context):
         reply = reply.replace(chars, "")
     return msg.reply_text(reply)
 
+@run_async
+@typing_action
+def src(update, context):
+    update.effective_message.reply_text(
+    "Hey there! You can find what makes me click [here](www.github.com/starry69/skyleebot).",
+     parse_mode=ParseMode.MARKDOWN, disable_web_page_preview=True)
 
 @run_async
 @send_action(ChatAction.UPLOAD_PHOTO)
@@ -386,8 +392,6 @@ __help__ = """
 An "odds and ends" module for small, simple commands which don't really fit anywhere
 
  × /id: Get the current group id. If used by replying to a message, gets that user's id.
- × /afk <reason>: Mark yourself as AFK.
- × brb <reason>: Same as the afk command - but not a command.
  × /info: Get information about a user.
  × /wiki : Search wikipedia articles.
  × /rmeme: Sends random meme scraped from reddit.
@@ -412,7 +416,7 @@ UD_HANDLER = DisableAbleCommandHandler("ud", ud)
 GETLINK_HANDLER = CommandHandler("getlink", getlink, pass_args=True, filters=Filters.user(OWNER_ID))
 STAFFLIST_HANDLER = CommandHandler("staffids", staff_ids, filters=Filters.user(OWNER_ID))
 REDDIT_MEMES_HANDLER = DisableAbleCommandHandler("rmeme", rmemes)
-
+SRC_HANDLER = CommandHandler("source", src, filters=Filters.private)
 
 dispatcher.add_handler(WALLPAPER_HANDLER)
 dispatcher.add_handler(UD_HANDLER)
@@ -426,3 +430,4 @@ dispatcher.add_handler(WIKI_HANDLER)
 dispatcher.add_handler(GETLINK_HANDLER)
 dispatcher.add_handler(STAFFLIST_HANDLER)
 dispatcher.add_handler(REDDIT_MEMES_HANDLER)
+dispatcher.add_handler(SRC_HANDLER)

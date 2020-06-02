@@ -300,7 +300,7 @@ will result in restricting that user.
  1w = 1 week
  """
 
-__mod_name__ = "Anti-Flood"
+__mod_name__ = "Antiflood"
 
 FLOOD_BAN_HANDLER = MessageHandler(Filters.all & ~Filters.status_update & Filters.group, check_flood)
 SET_FLOOD_HANDLER = CommandHandler("setflood", set_flood, pass_args=True)#, filters=Filters.group)

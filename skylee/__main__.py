@@ -24,10 +24,8 @@ from skylee.modules.helper_funcs.alternate import typing_action
 PM_START_TEXT = f"""
 Hey there! my name is *{dispatcher.bot.first_name}*. If you have any questions on how to use me, Click Help button.
 
-I'm a group management bot built in python3, using the \
-python-telegram-bot library, and am fully opensource - you can find what makes me tick \
-[here](www.github.com/starry69/skyleebot).
-
+I'm here to make your group management fun and easy!
+i have lots of handy features, such as flood control, a warning system, a note keeping system, and even replies on predetermined filters.
 Wanna Add me to your Group? Just click the button below!
 """
 
@@ -45,7 +43,7 @@ I'm a modular group management bot with a few fun extras! Have a look at the fol
 the things I can help you with.
 
 *Main* commands available:
- × /start: Starts the bot
+ × /start: Starts me, can be used to check i'm alive or no...
  × /help: PM's you this message.
  × /help <module name>: PM's you info about that module.
  × /settings: in PM: will send you your settings for all supported modules.
@@ -145,7 +143,10 @@ def start(update, context):
                 IMPORTED["rules"].send_rules(update, args[0], from_pm=True)
 
         else:
-            update.effective_message.reply_text(PM_START_TEXT, reply_markup=InlineKeyboardMarkup(buttons), parse_mode=ParseMode.MARKDOWN, disable_web_page_preview=True)
+            update.effective_message.reply_photo(
+            open('startpic.jpeg', 'rb'),
+            PM_START_TEXT, reply_markup=InlineKeyboardMarkup(buttons),
+            parse_mode=ParseMode.MARKDOWN, timeout=60)
     else:
         update.effective_message.reply_text("Sending you a warm hi & wishing your day is a happy one!")
 
