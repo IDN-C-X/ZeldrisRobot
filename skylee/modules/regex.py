@@ -10,6 +10,15 @@ from skylee.modules.disable import DisableAbleMessageHandler
 
 DELIMITERS = ("/", ":", "|", "_")
 
+def infinite_checker(repl):
+     regex = [r'\((.{1,}[\+\*]){1,}\)[\+\*].', r'[\(\[].{1,}\{\d(,)?\}[\)\]]\{\d(,)?\}', r'\(.{1,}\)\{.{1,}(,)?\}\(.*\)(\+|\* |\{.*\})']
+     for match in regex:
+          status = re.search(match, repl)
+          if status:
+             return True
+          else:
+             return False
+
 
 def separate_sed(sed_string):
     if len(sed_string) >= 3 and sed_string[1] in DELIMITERS and sed_string.count(sed_string[1]) >= 2:
@@ -68,6 +77,11 @@ def sed(update, context):
             return
 
         try:
+
+            # Protects bot from retarded geys -_-
+            if infinite_checker(repl) == True:
+                return update.effective_message.reply_text("Nice try -_-")
+
             if 'i' in flags and 'g' in flags:
                 text = re.sub(repl, repl_with, to_fix, flags=re.I).strip()
             elif 'i' in flags:
