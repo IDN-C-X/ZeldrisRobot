@@ -563,7 +563,7 @@ def clean_welcome(update, context) -> str:
         return ""
 
 
-run_async
+@run_async
 @user_admin
 @typing_action
 def cleanservice(update, context):
