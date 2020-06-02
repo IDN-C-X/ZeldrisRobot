@@ -1,26 +1,22 @@
 import json, time, os
 from io import BytesIO
-from typing import Optional
 
-from telegram import MAX_MESSAGE_LENGTH, ParseMode, InlineKeyboardMarkup
-from telegram import Message, Chat, Update, Bot
+from telegram import ParseMode, Message, Chat, Bot
 from telegram.error import BadRequest
 from telegram.ext import CommandHandler, run_async
 
 import skylee.modules.sql.notes_sql as sql
-from skylee import dispatcher, LOGGER, OWNER_ID, SUDO_USERS, MESSAGE_DUMP
+from skylee import dispatcher, LOGGER, OWNER_ID, MESSAGE_DUMP
 from skylee.__main__ import DATA_IMPORT
 from skylee.modules.helper_funcs.chat_status import user_admin
-from skylee.modules.helper_funcs.misc import revert_buttons
-from skylee.modules.helper_funcs.msg_types import get_note_type
 from skylee.modules.helper_funcs.alternate import typing_action
 # from skylee.modules.rules import get_rules
 import skylee.modules.sql.rules_sql as rulessql
-from skylee.modules.sql import warns_sql as warnssql
+# from skylee.modules.sql import warns_sql as warnssql
 import skylee.modules.sql.blacklist_sql as blacklistsql
 from skylee.modules.sql import disable_sql as disabledsql
-from skylee.modules.sql import cust_filters_sql as filtersql
-import skylee.modules.sql.welcome_sql as welcsql
+# from skylee.modules.sql import cust_filters_sql as filtersql
+# import skylee.modules.sql.welcome_sql as welcsql
 import skylee.modules.sql.locks_sql as locksql
 from skylee.modules.connection import connected
 
@@ -28,16 +24,15 @@ from skylee.modules.connection import connected
 @user_admin
 @typing_action
 def import_data(update, context):
-	msg = update.effective_message  # type: Optional[Message]
-	chat = update.effective_chat  # type: Optional[Chat]
-	user = update.effective_user  # type: Optional[User]
+	msg = update.effective_message
+	chat = update.effective_chat
+	user = update.effective_user
 	# TODO: allow uploading doc with command, not just as reply
 	# only work with a doc
 
 	conn = connected(context.bot, update, chat, user.id, need_admin=True)
 	if conn:
 		chat = dispatcher.bot.getChat(conn)
-		chat_id = conn
 		chat_name = dispatcher.bot.getChat(conn).title
 	else:
 		if update.effective_message.chat.type == "private":
@@ -45,7 +40,6 @@ def import_data(update, context):
 			return ""
 
 		chat = update.effective_chat
-		chat_id = update.effective_chat.id
 		chat_name = update.effective_message.chat.title
 
 	if msg.reply_to_message and msg.reply_to_message.document:
@@ -73,13 +67,13 @@ def import_data(update, context):
 				else:
 					text = "Backup comes from another chat, I can't return another chat to this chat"
 				return msg.reply_text(text, parse_mode="markdown")
-		except:
+		except Exception:
 			return msg.reply_text("There is problem while importing the data!")
 		# Check if backup is from self
 		try:
-			if str(bot.id) != str(data[str(chat.id)]['bot']):
+			if str(context.bot.id) != str(data[str(chat.id)]['bot']):
 				return msg.reply_text("Backup from another bot that is not suggested might cause the problem, documents, photos, videos, audios, records might not work as it should be.")
-		except:
+		except Exception:
 			pass
 		# Select data source
 		if str(chat.id) in data:
@@ -120,14 +114,14 @@ def export_data(update, context):
 	if conn:
 		chat = dispatcher.bot.getChat(conn)
 		chat_id = conn
-		chat_name = dispatcher.bot.getChat(conn).title
+		# chat_name = dispatcher.bot.getChat(conn).title
 	else:
 		if update.effective_message.chat.type == "private":
 			update.effective_message.reply_text("This command can only be used on group, not PM")
 			return ""
 		chat = update.effective_chat
 		chat_id = update.effective_chat.id
-		chat_name = update.effective_message.chat.title
+		# chat_name = update.effective_message.chat.title
 
 	jam = time.time()
 	new_jam = jam + 10800
@@ -147,7 +141,7 @@ def export_data(update, context):
 	note_list = sql.get_all_chat_notes(chat_id)
 	backup = {}
 	notes = {}
-	button = ""
+	# button = ""
 	buttonlist = []
 	namacat = ""
 	isicat = ""
@@ -157,11 +151,11 @@ def export_data(update, context):
 	# Notes
 	for note in note_list:
 		count += 1
-		getnote = sql.get_note(chat_id, note.name)
+		# getnote = sql.get_note(chat_id, note.name)
 		namacat += '{}<###splitter###>'.format(note.name)
 		if note.msgtype == 1:
 			tombol = sql.get_buttons(chat_id, note.name)
-			keyb = []
+			# keyb = []
 			for btn in tombol:
 				countbtn += 1
 				if btn.same_line:
@@ -263,7 +257,7 @@ def export_data(update, context):
 		}
 	else:
 		locked_restr = {}
-		
+
 	locks = {'locks': locked_lock, 'restrict': locked_restr}
 	# Warns (TODO)
 	# warns = warnssql.get_warns(chat_id)

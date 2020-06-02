@@ -1,20 +1,15 @@
 import random, re
 import requests as r
 
-from time import sleep
-from typing import Optional, List
-from random import randint
-
-from telegram import Message, Update, Bot, User, ParseMode, MessageEntity, MAX_MESSAGE_LENGTH
-from telegram.ext import Filters, CommandHandler, MessageHandler, run_async
-from telegram import TelegramError, Chat, Message
+from telegram import Bot, User, ParseMode, MessageEntity, TelegramError, MAX_MESSAGE_LENGTH
+from telegram.ext import Filters, CommandHandler, run_async
 from telegram.error import BadRequest
 from telegram.utils.helpers import mention_html, escape_markdown
 
 from skylee.modules.helper_funcs.extraction import extract_user
 from skylee.modules.helper_funcs.filters import CustomFilters
 from skylee.modules.helper_funcs.alternate import typing_action
-from skylee import dispatcher, OWNER_ID, SUDO_USERS, SUPPORT_USERS, WALL_API, TOKEN
+from skylee import dispatcher, SUDO_USERS, SUPPORT_USERS, WALL_API, TOKEN, LOGGER
 from skylee.modules.disable import DisableAbleCommandHandler, DisableAbleMessageHandler
 
 import skylee.modules.helper_funcs.fun_strings as fun
@@ -222,13 +217,13 @@ def snipe(update, context):
         chat_id = str(args[0])
         del args[0]
     except TypeError:
-        update.effective_message.reply_text("Please give me a chat to echo to!")     
+        update.effective_message.reply_text("Please give me a chat to echo to!")
     to_send = " ".join(args)
     if len(to_send) >= 2:
         try:
-            context.bot.sendMessage(int(chat_id), str(to_send))        
+            context.bot.sendMessage(int(chat_id), str(to_send))
         except TelegramError:
-            LOGGER.warning("Couldn't send to group %s", str(chat_id))             
+            LOGGER.warning("Couldn't send to group %s", str(chat_id))
             update.effective_message.reply_text("Couldn't send the message. Perhaps I'm not part of that group?")
 
 
