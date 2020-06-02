@@ -133,9 +133,7 @@ def update_lock(chat_id, lock_type, locked):
         elif lock_type == 'rtl':
             curr_perm.rtl = locked
         elif lock_type == 'button':
-            curr_perm.button = locked    
-   
-            
+            curr_perm.button = locked
 
         SESSION.add(curr_perm)
         SESSION.commit()
@@ -200,7 +198,7 @@ def is_locked(chat_id, lock_type):
     elif lock_type == "rtl":
         return curr_perm.rtl
     elif lock_type == "button":
-        return curr_perm.button    
+        return curr_perm.button
 
 
 def is_restr_locked(chat_id, lock_type):

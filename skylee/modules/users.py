@@ -2,8 +2,8 @@ from io import BytesIO
 from time import sleep
 from typing import Optional
 
-from telegram import TelegramError, Chat, Message
-from telegram import Update, Bot
+from telegram import TelegramError, Chat
+from telegram import Update
 from telegram.error import BadRequest
 from telegram.ext import MessageHandler, Filters, CommandHandler
 from telegram.ext.dispatcher import run_async

@@ -1,20 +1,16 @@
-import hashlib
 import os
 import math
 import urllib.request as urllib
 
-from io import BytesIO
 from PIL import Image
+from typing import List
 
-from typing import Optional, List
 from telegram import ParseMode, InlineKeyboardMarkup, InlineKeyboardButton
-from telegram import TelegramError
-from telegram import Update, Bot
-from telegram.ext import CommandHandler, run_async
+from telegram import TelegramError, Bot
+from telegram.ext import run_async
 from telegram.utils.helpers import escape_markdown
 
 from skylee import dispatcher
-
 from skylee.modules.disable import DisableAbleCommandHandler
 from skylee.modules.helper_funcs.alternate import typing_action
 
@@ -109,7 +105,7 @@ def kang(update, context):
         try:
             try:
                 urlemoji = msg.text.split(" ")
-                png_sticker = urlemoji[1] 
+                png_sticker = urlemoji[1]
                 sticker_emoji = urlemoji[2]
             except IndexError:
                 sticker_emoji = "🤔"
@@ -237,7 +233,7 @@ def stickerid(update, context):
     if msg.reply_to_message and msg.reply_to_message.sticker:
         update.effective_message.reply_text("Hello " +
                                             "[{}](tg://user?id={})".format(msg.from_user.first_name, msg.from_user.id)
-                                            + ", The sticker id you are replying is :\n```" + 
+                                            + ", The sticker id you are replying is :\n```" +
                                             escape_markdown(msg.reply_to_message.sticker.file_id) + "```",
                                             parse_mode=ParseMode.MARKDOWN)
     else:

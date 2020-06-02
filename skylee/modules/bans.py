@@ -1,5 +1,5 @@
 import html
-from typing import Optional, List
+from typing import Optional
 
 from telegram import Message, Chat, Update, Bot, User, ParseMode
 from telegram.error import BadRequest

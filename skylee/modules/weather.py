@@ -1,6 +1,6 @@
 import time, requests, json
 from pytz import country_names as cname
-from telegram import Message, Chat, Update, Bot, ParseMode
+from telegram import Message, Chat, ParseMode
 from telegram.error import BadRequest
 from telegram.ext import run_async
 
@@ -50,7 +50,6 @@ def weather(update, context):
        humidity = result['main']['humidity']
        wind = result['wind']['speed']
        weath = result['weather'][0]
-       desc = weath['main']
        icon = weath['id']
        condmain = weath['main']
        conddet = weath['description']

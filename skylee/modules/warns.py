@@ -1,10 +1,10 @@
 import html
 import re
-from typing import Optional, List
+from typing import Optional
 
 import telegram
-from telegram import InlineKeyboardButton, InlineKeyboardMarkup, ParseMode, User, CallbackQuery
-from telegram import Message, Chat, Update, Bot
+from telegram import InlineKeyboardButton, InlineKeyboardMarkup, ParseMode, User
+from telegram import Message, Chat, Update
 from telegram.error import BadRequest
 from telegram.ext import CommandHandler, run_async, DispatcherHandlerStop, MessageHandler, Filters, CallbackQueryHandler
 from telegram.utils.helpers import mention_html
@@ -20,7 +20,6 @@ from skylee.modules.helper_funcs.string_handling import split_quotes
 from skylee.modules.helper_funcs.alternate import typing_action
 from skylee.modules.log_channel import loggable
 from skylee.modules.sql import warns_sql as sql
-from skylee.modules.sql import users_sql as sql_user
 
 WARN_HANDLER_GROUP = 9
 CURRENT_WARNING_FILTER_STRING = "<b>Current warning filters in this chat:</b>\n"
@@ -119,8 +118,7 @@ def button(update, context):
                                                                 mention_html(user_member.user.id, user_member.user.first_name),
                                                                 user_member.user.id)
         else:
-            update.effective_message.edit_text(
-                "User has already has no warns.".format(mention_html(user.id, user.first_name)),
+            update.effective_message.edit_text("User has already has no warns.",
                 parse_mode=ParseMode.HTML)
 
     return ""

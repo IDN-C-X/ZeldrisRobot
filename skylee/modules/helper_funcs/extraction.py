@@ -92,10 +92,10 @@ def extract_text(message) -> str:
 def extract_unt_fedban(message: Message, args: List[str]) -> (Optional[int], Optional[str]):
     prev_message = message.reply_to_message
     split_text = message.text.split(None, 1)
-    
+
     if len(split_text) < 2:
         return id_from_reply(message)  # only option possible
-    
+
     text_to_parse = split_text[1]
 
     text = ""
@@ -105,7 +105,7 @@ def extract_unt_fedban(message: Message, args: List[str]) -> (Optional[int], Opt
         ent = entities[0]
     else:
         ent = None
-        
+
     # if entity offset matches (command end/text start) then all good
     if entities and ent and ent.offset == len(message.text) - len(text_to_parse):
         ent = entities[0]
@@ -117,7 +117,7 @@ def extract_unt_fedban(message: Message, args: List[str]) -> (Optional[int], Opt
         user_id = get_user_id(user)
         if not user_id and not str(user_id).isdigit():
             message.reply_text("I don't have this user's information in my database so, you'll not be able to interact with them"
-                               "Try replying to that person's msg or forward their message so i can act upon them") 
+                               "Try replying to that person's msg or forward their message so i can act upon them")
             return None, None
 
         else:

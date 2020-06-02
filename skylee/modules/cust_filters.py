@@ -1,12 +1,10 @@
 import re
-from typing import Optional
 
 import telegram
-from telegram import ParseMode, InlineKeyboardMarkup, Message, Chat
-from telegram import Update, Bot
+from telegram import ParseMode, InlineKeyboardMarkup, Message
+from telegram import Update
 from telegram.error import BadRequest
 from telegram.ext import CommandHandler, MessageHandler, DispatcherHandlerStop, run_async, Filters
-from telegram.utils.helpers import escape_markdown
 
 from skylee import dispatcher, LOGGER
 from skylee.modules.disable import DisableAbleCommandHandler

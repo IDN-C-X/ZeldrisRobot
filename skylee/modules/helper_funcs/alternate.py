@@ -1,13 +1,9 @@
-import sys
-import traceback
-
 from functools import wraps
-from typing import Optional
 
-from telegram import User, Chat, ChatMember, Update, Bot
+from telegram import User, Chat, ChatMember, Update
 from telegram import error, ChatAction
 
-from skylee import DEL_CMDS, SUDO_USERS, WHITELIST_USERS
+from skylee import DEL_CMDS, SUDO_USERS
 
 
 def send_message(message, text,  *args,**kwargs):

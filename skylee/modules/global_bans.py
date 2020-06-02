@@ -1,8 +1,8 @@
 import html
 from io import BytesIO
-from typing import Optional, List
+from typing import Optional
 
-from telegram import Message, Update, Bot, User, Chat, ParseMode, ChatAction
+from telegram import Update, Bot, User, Chat, ParseMode, ChatAction
 from telegram.error import BadRequest, TelegramError
 from telegram.ext import run_async, CommandHandler, MessageHandler, Filters
 from telegram.utils.helpers import mention_html
@@ -117,8 +117,8 @@ def gban(update, context):
                      "\n<b>ID:</b> <code>{}</code>" \
                      "\n<b>Previous Reason:</b> {}" \
                      "\n<b>New Reason:</b> {}".format(mention_html(banner.id, banner.first_name),
-                                              mention_html(user_chat.id, user_chat.first_name or "Deleted Account"), 
-                                                           user_chat.id, old_reason, new_reason), 
+                                              mention_html(user_chat.id, user_chat.first_name or "Deleted Account"),
+                                                           user_chat.id, old_reason, new_reason),
                 parse_mode=ParseMode.HTML)
 
 
@@ -251,7 +251,7 @@ def ungban(update, context):
     sql.ungban_user(user_id)
 
     context.bot.sendMessage(MESSAGE_DUMP,
-                  "{} has been successfully un-gbanned!".format(mention_html(user_chat.id, 
+                  "{} has been successfully un-gbanned!".format(mention_html(user_chat.id,
                                                                          user_chat.first_name)),
                  parse_mode=ParseMode.HTML)
     message.reply_text("Person has been un-gbanned.")

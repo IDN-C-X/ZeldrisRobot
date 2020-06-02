@@ -1,6 +1,4 @@
 from functools import wraps
-from typing import Optional
-
 from telegram import User, Chat, ChatMember, Update, Bot
 
 from skylee import DEL_CMDS, SUDO_USERS, WHITELIST_USERS
@@ -120,7 +118,7 @@ def user_admin(func):
             update.effective_message.delete()
 
         else:
-            update.effective_message.reply_text("Who dis non-admin telling me what to do?")
+            update.effective_message.reply_text("You're missing admin rights for using this command!")
 
     return is_admin
 

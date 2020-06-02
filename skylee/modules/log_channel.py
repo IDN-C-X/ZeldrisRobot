@@ -1,12 +1,10 @@
 from functools import wraps
-from typing import Optional
-
 from skylee.modules.helper_funcs.misc import is_module_loaded
 
 FILENAME = __name__.rsplit(".", 1)[-1]
 
 if is_module_loaded(FILENAME):
-    from telegram import Bot, Update, ParseMode, Message, Chat
+    from telegram import Bot, Update, ParseMode, Message
     from telegram.error import BadRequest, Unauthorized
     from telegram.ext import CommandHandler, run_async
     from telegram.utils.helpers import escape_markdown
