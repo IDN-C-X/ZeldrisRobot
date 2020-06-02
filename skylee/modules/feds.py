@@ -453,7 +453,7 @@ def fed_ban(update, context):
 
 	user_id, reason = extract_unt_fedban(message, args)
 
-	fban, fbanreason = sql.get_fban_user(fed_id, user_id)
+	fban, fbanreason, fbantime = sql.get_fban_user(fed_id, user_id)
 
 	if not user_id:
 		message.reply_text("You don't seem to be referring to a user")
@@ -779,7 +779,7 @@ def unfban(update, context):
 	else:
 		user_target = fban_user_name
 
-	fban, fbanreason = sql.get_fban_user(fed_id, fban_user_id)
+	fban, fbanreason, fbantime = sql.get_fban_user(fed_id, fban_user_id)
 	if fban == False:
 		message.reply_text("This user is not fbanned!")
 		return
@@ -1696,7 +1696,7 @@ def welcome_fed(update, context):
 	user = update.effective_user  # type: Optional[User]
 
 	fed_id = sql.get_fed_id(chat.id)
-	fban, fbanreason = sql.get_fban_user(fed_id, user.id)
+	fban, fbanreason, fbantime = sql.get_fban_user(fed_id, user.id)
 	if fban:
 		update.effective_message.reply_text("This user is banned in current federation! I will remove him.")
 		context.bot.kick_chat_member(chat.id, user.id)
