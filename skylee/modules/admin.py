@@ -42,11 +42,11 @@ def promote(update, context):
 
     user_member = chat.get_member(user_id)
     if user_member.status == 'administrator' or user_member.status == 'creator':
-        message.reply_text("Bruh! this guy is already an admin?")
+        message.reply_text("This guy is already an admin...!")
         return ""
 
     if user_id == context.bot.id:
-        message.reply_text("I wish, if i could promote myself!")
+        message.reply_text("I hope, if i could promote myself!")
         return ""
 
     # set same perms as bot - bot can't assign higher perms than itself!
@@ -61,7 +61,7 @@ def promote(update, context):
                           can_restrict_members=bot_member.can_restrict_members,
                           can_pin_messages=bot_member.can_pin_messages)
 
-    message.reply_text("promoted🧡")
+    message.reply_text("Promoted🧡")
     return "<b>{}:</b>" \
            "\n#PROMOTED" \
            "\n<b>Admin:</b> {}" \
@@ -97,7 +97,7 @@ def demote(update, context):
         return ""
 
     if not user_member.status == 'administrator':
-        message.reply_text("How I'm supposed to demote someone who wasn't promoted!")
+        message.reply_text("How I'm supposed to demote someone who is not even an admin!")
         return ""
 
     if user_id == context.bot.id:
@@ -144,7 +144,7 @@ def pin(update, context):
     prev_message = update.effective_message.reply_to_message
 
     if user_can_pin(chat, user, context.bot.id) == False:
-    	message.reply_text("You don't have enough rights to pin a message!")
+    	message.reply_text("You are missingrights to pin a message!")
     	return ""
 
     is_silent = True
@@ -179,7 +179,7 @@ def unpin(update, context):
     message = update.effective_message  # type: Optional[Message]
 
     if user_can_pin(chat, user, context.bot.id) == False:
-    	message.reply_text("You don't have enough rights to unpin a message!")
+    	message.reply_text("You are missing rights to unpin a message!")
     	return ""
 
     try:
@@ -326,7 +326,7 @@ def setchatpic(update,context):
        else:
           msg.reply_text("You can only set some photo as chat pic!")
           return
-       dlmsg = msg.reply_text("Hold on...")
+       dlmsg = msg.reply_text("Just a sec...")
        tpic = context.bot.get_file(pic_id)
        tpic.download('gpic.png')
        try:

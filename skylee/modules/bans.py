@@ -36,7 +36,7 @@ def ban(update, context):
     user_id, reason = extract_user_and_text(message, args)
 
     if not user_id:
-        message.reply_text("Dude! atleast refer some user to ban...")
+        message.reply_text("Dude! atleast raefer some user to ban...")
         return ""
 
     try:
@@ -49,7 +49,7 @@ def ban(update, context):
             raise
 
     if is_user_ban_protected(chat, user_id, member):
-        message.reply_text("Wow! let's start banning Admins themselves?...")
+        message.reply_text("I'm not gonna ban an admin, don't make fun of yourself!")
         return ""
 
     if user_id == context.bot.id:
@@ -69,7 +69,8 @@ def ban(update, context):
     try:
         chat.kick_member(user_id)
         #context.bot.send_sticker(chat.id, BAN_STICKER)  # banhammer marie sticker
-        context.bot.sendMessage(chat.id, "Goodbye {}.".format(mention_html(member.user.id, member.user.first_name)), parse_mode=ParseMode.HTML)
+        context.bot.sendMessage(chat.id, "let {} walk the plank.".format(mention_html(member.user.id, member.user.first_name)),
+        parse_mode=ParseMode.HTML)
         return log
 
     except BadRequest as excp:
@@ -215,7 +216,7 @@ def kick(update, context):
     res = chat.unban_member(user_id)  # unban on current user = kick
     if res:
         #context.bot.send_sticker(chat.id, BAN_STICKER)  # banhammer marie sticker
-        context.bot.sendMessage(chat.id, "Getout! {}.".format(mention_html(member.user.id, member.user.first_name)), parse_mode=ParseMode.HTML)
+        context.bot.sendMessage(chat.id, "Untill we meet again {}.".format(mention_html(member.user.id, member.user.first_name)), parse_mode=ParseMode.HTML)
         log = "<b>{}:</b>" \
               "\n#KICKED" \
               "\n<b>Admin:</b> {}" \
@@ -317,7 +318,7 @@ def unban(update, context):
         return ""
 
     chat.unban_member(user_id)
-    message.reply_text("Yep, this user can join again!")
+    message.reply_text("Done, they can join again!")
 
     log = "<b>{}:</b>" \
           "\n#UNBANNED" \
