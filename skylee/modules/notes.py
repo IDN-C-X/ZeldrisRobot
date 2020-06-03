@@ -7,7 +7,7 @@ from telegram import Message, Update, Bot
 from telegram.error import BadRequest
 from telegram.ext import CommandHandler, MessageHandler, Filters, CallbackQueryHandler
 from telegram.ext.dispatcher import run_async
-from telegram.utils.helpers import escape_markdown, mention_markdown
+from telegram.utils.helpers import mention_html
 
 import skylee.modules.sql.notes_sql as sql
 from skylee import dispatcher, MESSAGE_DUMP, LOGGER
@@ -15,7 +15,7 @@ from skylee.modules.disable import DisableAbleCommandHandler
 from skylee.modules.helper_funcs.chat_status import user_admin, user_admin_no_reply
 from skylee.modules.helper_funcs.misc import build_keyboard, revert_buttons
 from skylee.modules.helper_funcs.msg_types import get_note_type
-from skylee.modules.helper_funcs.string_handling import escape_invalid_curly_brackets
+from skylee.modules.helper_funcs.string_handling import escape_invalid_curly_brackets, markdown_to_html
 from skylee.modules.helper_funcs.alternate import typing_action
 from skylee.modules.connection import connected
 
@@ -92,14 +92,15 @@ def get(bot, update, notename, show_none=True, no_format=False):
             VALID_NOTE_FORMATTERS = ['first', 'last', 'fullname', 'username', 'id', 'chatname', 'mention']
             valid_format = escape_invalid_curly_brackets(note.value, VALID_NOTE_FORMATTERS)
             if valid_format:
-                    text = valid_format.format(first=escape_markdown(message.from_user.first_name),
-                                                                              last=escape_markdown(message.from_user.last_name or message.from_user.first_name),
-                                                                              fullname=escape_markdown(" ".join([message.from_user.first_name, message.from_user.last_name] if message.from_user.last_name else [message.from_user.first_name])), username="@" + message.from_user.username if message.from_user.username else mention_markdown(message.from_user.id, message.from_user.first_name), mention=mention_markdown(message.from_user.id, message.from_user.first_name), chatname=escape_markdown(message.chat.title if message.chat.type != "private" else message.from_user.first_name), id=message.from_user.id)
+                    text = valid_format.format(first=message.from_user.first_name,
+                                                                              last=message.from_user.last_name or message.from_user.first_name,
+                                                                              fullname=" ".join([message.from_user.first_name, message.from_user.last_name] if message.from_user.last_name else [message.from_user.first_name]), username="@" + message.from_user.username if message.from_user.username else mention_html(message.from_user.id, message.from_user.first_name), mention=mention_html(message.from_user.id, message.from_user.first_name), chatname=message.chat.title if message.chat.type != "private" else message.from_user.first_name, id=message.from_user.id)
             else:
                     text = ""
 
+            text = markdown_to_html(text)
             keyb = []
-            parseMode = ParseMode.MARKDOWN
+            parseMode = ParseMode.HTML
             buttons = sql.get_buttons(chat_id, notename)
             if no_format:
                 parseMode = None
