@@ -42,7 +42,7 @@ def promote(update, context):
 
     user_member = chat.get_member(user_id)
     if user_member.status == 'administrator' or user_member.status == 'creator':
-        message.reply_text("This guy is already an admin...!")
+        message.reply_text("This person is already an admin...!")
         return ""
 
     if user_id == context.bot.id:
@@ -144,7 +144,7 @@ def pin(update, context):
     prev_message = update.effective_message.reply_to_message
 
     if user_can_pin(chat, user, context.bot.id) == False:
-    	message.reply_text("You are missingrights to pin a message!")
+    	message.reply_text("You are missing rights to pin a message!")
     	return ""
 
     is_silent = True
