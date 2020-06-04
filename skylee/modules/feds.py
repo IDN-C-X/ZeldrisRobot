@@ -73,11 +73,9 @@ def new_fed(update, context):
 	if chat.type != "private":
 		update.effective_message.reply_text("You can your federation in my PM, not in a group.")
 		return
-	if len(message.text) == 1:
-		send_message(update.effective_message, "Please write the name of the federation!")
-		return
-	fednam = message.text.split(None, 1)[1]
-	if not fednam == '':
+	fednam = message.text.split(None, 1)
+	if len(fednam) >= 2:
+		fednam = fednam[1]
 		fed_id = str(uuid.uuid4())
 		fed_name = fednam
 		LOGGER.info(fed_id)
@@ -88,7 +86,7 @@ def new_fed(update, context):
 
 		x = sql.new_fed(user.id, fed_name, fed_id)
 		if not x:
-			update.effective_message.reply_text("Can't federate! Please contact @OnePunchSupport if the problem persists.")
+			update.effective_message.reply_text("Can't federate! Please contact my owner @starryboi if the problem persists.")
 			return
 
 		update.effective_message.reply_text("*You have successfully created a new federation!*"\
