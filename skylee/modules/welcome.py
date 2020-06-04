@@ -1,7 +1,6 @@
 from html import escape
 import time
 import re
-import random
 from typing import Optional
 
 from telegram import Message, Chat, Bot, User, CallbackQuery
@@ -155,8 +154,6 @@ def new_member(update, context):
                 first_name = new_mem.first_name or "PersonWithNoName"  # edge case of empty name - occurs for some bugs.
 
                 if cust_welcome:
-                    if cust_welcome == sql.DEFAULT_WELCOME:
-                        cust_welcome = random.choice(sql.RANDOM_WEL).format(first=first_name)
                     if new_mem.last_name:
                         fullname = "{} {}".format(first_name, new_mem.last_name)
                     else:
@@ -176,13 +173,13 @@ def new_member(update, context):
                     buttons = sql.get_welc_buttons(chat.id)
                     keyb = build_keyboard(buttons)
                 else:
-                    res = random.choice(sql.RANDOM_WEL).format(first=first_name)
+                    res = sql.DEFAULT_WELCOME.format(first=first_name)
                     keyb = []
 
                 keyboard = InlineKeyboardMarkup(keyb)
 
                 sent = send(update, res, keyboard,
-                            random.choice(sql.RANDOM_WEL).format(first=first_name))  # type: Optional[Message]
+                            sql.DEFAULT_WELCOME.format(first=first_name))  # type: Optional[Message]
 
 
                     #User exception from mutes:
@@ -275,8 +272,6 @@ def left_member(update, context):
 
             first_name = left_mem.first_name or "PersonWithNoName"  # edge case of empty name - occurs for some bugs.
             if cust_goodbye:
-                if cust_goodbye == sql.DEFAULT_GOODBYE:
-                    cust_goodbye = random.choice(sql.RANDOM_BYE)
                 if left_mem.last_name:
                     fullname = "{} {}".format(first_name, left_mem.last_name)
                 else:
@@ -297,12 +292,12 @@ def left_member(update, context):
                 keyb = build_keyboard(buttons)
 
             else:
-                res = random.choice(sql.RANDOM_BYE)
+                res = sql.DEFAULT_GOODBYE
                 keyb = []
 
             keyboard = InlineKeyboardMarkup(keyb)
 
-            send(update, res, keyboard, random.choice(sql.RANDOM_BYE))
+            send(update, res, keyboard, sql.DEFAULT_GOODBYE)
 
 
 @run_async
