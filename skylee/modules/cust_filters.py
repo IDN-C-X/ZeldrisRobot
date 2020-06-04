@@ -191,12 +191,6 @@ def reply_filter(update, context):
     if not to_match:
         return
 
-    # my custom thing
-    if message.reply_to_message:
-        message = message.reply_to_message
-    ad_filter = ""
-    # my custom thing
-
     chat_filters = sql.get_chat_triggers(chat.id)
     for keyword in chat_filters:
         pattern = r"( |^|[^\w])" + re.escape(keyword) + r"( |$|[^\w])"
@@ -229,7 +223,7 @@ def reply_filter(update, context):
                     should_preview_disabled = False
 
                 try:
-                    message.reply_text(ad_filter + "\n" + filt.reply, parse_mode=ParseMode.MARKDOWN,
+                    message.reply_text(filt.reply, parse_mode=ParseMode.MARKDOWN,
                                        disable_web_page_preview=should_preview_disabled,
                                        reply_markup=keyboard)
                 except BadRequest as excp:
@@ -249,7 +243,7 @@ def reply_filter(update, context):
 
             else:
                 # LEGACY - all new filters will have has_markdown set to True.
-                message.reply_text(ad_filter + "\n" + filt.reply)
+                message.reply_text(filt.reply)
             break
 
 @run_async
