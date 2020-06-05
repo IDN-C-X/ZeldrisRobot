@@ -1,6 +1,4 @@
 import threading
-import skylee.modules.helper_funcs.fun_strings as fun
-
 from typing import Union
 from sqlalchemy import Column, String, Boolean, UnicodeText, Integer, BigInteger
 
