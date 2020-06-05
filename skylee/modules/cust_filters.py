@@ -1,4 +1,5 @@
 import re
+from html import escape
 from typing import Optional
 
 import telegram
@@ -6,7 +7,7 @@ from telegram import ParseMode, InlineKeyboardMarkup, Message, Chat
 from telegram import Update, Bot
 from telegram.error import BadRequest
 from telegram.ext import CommandHandler, MessageHandler, DispatcherHandlerStop, run_async, Filters
-from telegram.utils.helpers import escape_markdown, mention_markdown
+from telegram.utils.helpers import mention_html, escape_markdown
 
 from skylee import dispatcher, LOGGER
 from skylee.modules.disable import DisableAbleCommandHandler
@@ -15,12 +16,12 @@ from skylee.modules.helper_funcs.extraction import extract_text
 from skylee.modules.helper_funcs.filters import CustomFilters
 from skylee.modules.helper_funcs.misc import build_keyboard_parser
 from skylee.modules.helper_funcs.msg_types import get_filter_type
-from skylee.modules.helper_funcs.string_handling import split_quotes, button_markdown_parser, escape_invalid_curly_brackets
+from skylee.modules.helper_funcs.string_handling import split_quotes, button_markdown_parser, escape_invalid_curly_brackets, markdown_to_html
 from skylee.modules.sql import cust_filters_sql as sql
 
 from skylee.modules.connection import connected
 
-from skylee.modules.helper_funcs.alternate import send_message
+from skylee.modules.helper_funcs.alternate import send_message, typing_action
 
 HANDLER_GROUP = 15
 
@@ -39,6 +40,7 @@ ENUM_FUNC_MAP = {
 
 
 @run_async
+@typing_action
 def list_handlers(update, context):
 	chat = update.effective_chat
 	user = update.effective_user
@@ -77,6 +79,7 @@ def list_handlers(update, context):
 
 # NOT ASYNC BECAUSE DISPATCHER HANDLER RAISED
 @user_admin
+@typing_action
 def filters(update, context):
 	chat = update.effective_chat  # type: Optional[Chat]
 	user = update.effective_user  # type: Optional[User]
@@ -170,6 +173,7 @@ def filters(update, context):
 
 # NOT ASYNC BECAUSE DISPATCHER HANDLER RAISED
 @user_admin
+@typing_action
 def stop_filter(update, context):
 	chat = update.effective_chat  # type: Optional[Chat]
 	user = update.effective_user  # type: Optional[User]
@@ -228,9 +232,9 @@ def reply_filter(update, context):
 				if filt.reply_text:
 					valid_format = escape_invalid_curly_brackets(filt.reply_text, VALID_WELCOME_FORMATTERS)
 					if valid_format:
-						filtext = valid_format.format(first=escape_markdown(message.from_user.first_name),
-													  last=escape_markdown(message.from_user.last_name or message.from_user.first_name),
-													  fullname=escape_markdown(" ".join([message.from_user.first_name, message.from_user.last_name] if message.from_user.last_name else [message.from_user.first_name])), username="@" + message.from_user.username if message.from_user.username else mention_markdown(message.from_user.id, message.from_user.first_name), mention=mention_markdown(message.from_user.id, message.from_user.first_name), chatname=escape_markdown(message.chat.title if message.chat.type != "private" else message.from_user.first_name), id=message.from_user.id)
+						filtext = valid_format.format(first=message.from_user.first_name,
+													  last=message.from_user.last_name or message.from_user.first_name,
+													  fullname=" ".join([message.from_user.first_name, message.from_user.last_name] if message.from_user.last_name else [message.from_user.first_name]), username="@" + escape(message.from_user.username) if message.from_user.username else mention_html(message.from_user.id, message.from_user.first_name), mention=message.from_user.mention_html(), chatname=message.chat.title if message.chat.type != "private" else message.from_user.first_name, id=message.from_user.id)
 					else:
 						filtext = ""
 				else:
@@ -238,17 +242,17 @@ def reply_filter(update, context):
 
 				if filt.file_type in (sql.Types.BUTTON_TEXT, sql.Types.TEXT):
 					try:
-						context.bot.send_message(chat.id, filtext, reply_to_message_id=message.message_id,
-										 parse_mode="markdown", disable_web_page_preview=True,
+						context.bot.send_message(chat.id, markdown_to_html(filtext), reply_to_message_id=message.message_id,
+										 parse_mode=ParseMode.HTML, disable_web_page_preview=True,
 										 reply_markup=keyboard)
 					except BadRequest as excp:
 						error_catch = get_exception(excp, filt, chat)
 						if error_catch == "noreply":
 							try:
-								context.bot.send_message(chat.id, filtext, parse_mode="markdown", disable_web_page_preview=True, reply_markup=keyboard)
+								context.bot.send_message(chat.id, markdown_to_html(filtext), parse_mode=ParseMode.HTML, disable_web_page_preview=True, reply_markup=keyboard)
 							except BadRequest as excp:
 								LOGGER.exception("Error in filters: " + excp.message)
-								send_message(update.effective_message, tl(update.effective_message, get_exception(excp, filt, chat)))
+								send_message(update.effective_message, get_exception(excp, filt, chat))
 								pass
 						else:
 							try:
@@ -257,7 +261,7 @@ def reply_filter(update, context):
 								LOGGER.exception("Failed to send message: " + excp.message)
 								pass
 				else:
-					ENUM_FUNC_MAP[filt.file_type](chat.id, filt.file_id, caption=filtext, reply_to_message_id=message.message_id, parse_mode="markdown", disable_web_page_preview=True, reply_markup=keyboard)
+					ENUM_FUNC_MAP[filt.file_type](chat.id, filt.file_id, caption=markdown_to_html(filtext), reply_to_message_id=message.message_id, parse_mode=ParseMode.HTML, disable_web_page_preview=True, reply_markup=keyboard)
 				break
 			else:
 				if filt.is_sticker:

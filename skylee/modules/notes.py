@@ -1,4 +1,5 @@
 import re, ast
+from html import escape
 from io import BytesIO
 from typing import Optional
 
@@ -94,7 +95,7 @@ def get(bot, update, notename, show_none=True, no_format=False):
             if valid_format:
                     text = valid_format.format(first=message.from_user.first_name,
                                                                               last=message.from_user.last_name or message.from_user.first_name,
-                                                                              fullname=" ".join([message.from_user.first_name, message.from_user.last_name] if message.from_user.last_name else [message.from_user.first_name]), username="@" + message.from_user.username if message.from_user.username else mention_html(message.from_user.id, message.from_user.first_name), mention=mention_html(message.from_user.id, message.from_user.first_name), chatname=message.chat.title if message.chat.type != "private" else message.from_user.first_name, id=message.from_user.id)
+                                                                              fullname=" ".join([message.from_user.first_name, message.from_user.last_name] if message.from_user.last_name else [message.from_user.first_name]), username="@" + escape(message.from_user.username) if message.from_user.username else mention_html(message.from_user.id, message.from_user.first_name), mention=mention_html(message.from_user.id, message.from_user.first_name), chatname=message.chat.title if message.chat.type != "private" else message.from_user.first_name, id=message.from_user.id)
             else:
                     text = ""
 
