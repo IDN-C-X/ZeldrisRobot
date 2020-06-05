@@ -320,6 +320,36 @@ def reply_filter(update, context):
 						pass
 				break
 
+@run_async
+@user_admin
+@typing_action
+def rmall_filters(update, context):
+    chat = update.effective_chat
+    user = update.effective_user
+    msg = update.effective_message
+
+    usermem = chat.get_member(user.id)
+    if not usermem.status == 'creator':
+       msg.reply_text("This command can be only used by chat OWNER!")
+       return
+
+    allfilters = sql.get_chat_triggers(chat.id)
+
+    if not allfilters:
+       msg.reply_text("No filters in this chat, nothing to stop!")
+       return
+
+    count = 0
+    filterlist = []
+    for x in allfilters:
+        count += 1
+        filterlist.append(x)
+
+    for i in filterlist:
+        sql.remove_filter(chat.id, i)
+
+    return msg.reply_text(f"Cleaned {count} filters in {chat.title}")
+
 
 def get_exception(excp, filt, chat):
 	if excp.message == "Unsupported url protocol":
@@ -370,6 +400,7 @@ __mod_name__ = "Filters"
 
 FILTER_HANDLER = CommandHandler("filter", filters)
 STOP_HANDLER = CommandHandler("stop", stop_filter)
+RMALLFILTER_HANDLER = CommandHandler("rmallfilter", rmall_filters,  filters=Filters.group)
 LIST_HANDLER = DisableAbleCommandHandler("filters", list_handlers, admin_ok=True)
 CUST_FILTER_HANDLER = MessageHandler(CustomFilters.has_text & ~Filters.update.edited_message, reply_filter)
 
@@ -377,3 +408,4 @@ dispatcher.add_handler(FILTER_HANDLER)
 dispatcher.add_handler(STOP_HANDLER)
 dispatcher.add_handler(LIST_HANDLER)
 dispatcher.add_handler(CUST_FILTER_HANDLER, HANDLER_GROUP)
+dispatcher.add_handler(RMALLFILTER_HANDLER)
