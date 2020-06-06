@@ -394,6 +394,10 @@ doin?
 
 *Chat creator only:*
  × /rmallfilter: Stop all chat filters at once.
+
+*Note*: Filters also support markdown formatters like: {first}, {last} etc.. and buttons.
+Check `/markdownhelp` to know more!
+
 """
 
 __mod_name__ = "Filters"

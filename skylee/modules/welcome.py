@@ -141,7 +141,7 @@ def new_member(update, context):
 
                 context.bot.send_message(
                     MESSAGE_DUMP,
-                    "skylee have been added to {} with ID: <pre>{}</pre>".format(
+                    "Skylee have been added to <pre>{}</pre> with ID: \n<pre>{}</pre>".format(
                         chat.title, chat.id),
                     parse_mode=ParseMode.HTML)
             else:
