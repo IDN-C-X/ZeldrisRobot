@@ -6,7 +6,7 @@ import telegram
 from telegram import ParseMode, InlineKeyboardMarkup, Message, Chat
 from telegram import Update, Bot
 from telegram.error import BadRequest
-from telegram.ext import CommandHandler, MessageHandler, DispatcherHandlerStop, run_async, Filters
+from telegram.ext import CommandHandler, MessageHandler, DispatcherHandlerStop, run_async, Filters, CallbackContext
 from telegram.utils.helpers import mention_html, escape_markdown
 
 from skylee import dispatcher, LOGGER
@@ -67,7 +67,7 @@ def list_handlers(update, context):
 		return
 
 	for keyword in all_handlers:
-		entry = " - {}\n".format(escape_markdown(keyword))
+		entry = " × `{}`\n".format(escape_markdown(keyword))
 		if len(entry) + len(filter_list) > telegram.MAX_MESSAGE_LENGTH:
 			send_message(update.effective_message, filter_list.format(chat_name), parse_mode=telegram.ParseMode.MARKDOWN)
 			filter_list = entry
@@ -163,11 +163,11 @@ def filters(update, context):
 		send_message(update.effective_message, "Invalid filter!")
 		return
 
-	sql.new_add_filter(chat_id, keyword, text, file_type, file_id, buttons)
+	add = addnew_filter(update, chat_id, keyword, text, file_type, file_id, buttons)
 	# This is an old method
 	# sql.add_filter(chat_id, keyword, content, is_sticker, is_document, is_image, is_audio, is_voice, is_video, buttons)
 
-	send_message(update.effective_message, "Saved filter '{}' in *{}*!".format(keyword, chat_name), parse_mode=telegram.ParseMode.MARKDOWN)
+	if add == True: send_message(update.effective_message, "Saved filter '{}' in *{}*!".format(keyword, chat_name), parse_mode=telegram.ParseMode.MARKDOWN)
 	raise DispatcherHandlerStop
 
 
@@ -361,6 +361,16 @@ def get_exception(excp, filt, chat):
 		LOGGER.exception("Could not parse filter %s in chat %s", str(filt.keyword), str(chat.id))
 		return "This data could not be sent because it is incorrectly formatted."
 
+
+def addnew_filter(update, chat_id, keyword, text, file_type, file_id, buttons):
+    msg = update.effective_message
+    totalfilt = sql.get_chat_triggers(chat_id)
+    if len(totalfilt) >= 50: # Idk why i made this like function....
+       msg.reply_text("You can't have more that fifty filters at once! try removing some before adding new filters.")
+       return False
+    else:
+       sql.new_add_filter(chat_id, keyword, text, file_type, file_id, buttons)
+       return True
 
 def __stats__():
 	return "× {} filters, across {} chats.".format(sql.num_filters(), sql.num_chats())
