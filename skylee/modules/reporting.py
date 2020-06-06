@@ -2,9 +2,9 @@ import html
 from typing import Optional, List
 
 from telegram import Message, Chat, Bot, User, ParseMode
-from telegram import InlineKeyboardMarkup
+from telegram import InlineKeyboardMarkup, InlineKeyboardButton
 from telegram.error import BadRequest, Unauthorized
-from telegram.ext import CommandHandler, MessageHandler, run_async, Filters
+from telegram.ext import CommandHandler, MessageHandler, run_async, Filters, CallbackQueryHandler
 from telegram.utils.helpers import mention_html
 
 from skylee import dispatcher, LOGGER
@@ -55,7 +55,6 @@ def report_setting(update, context):
 @run_async
 @user_not_admin
 @loggable
-@typing_action
 def report(update, context) -> str:
     message = update.effective_message  # type: Optional[Message]
     chat = update.effective_chat  # type: Optional[Chat]
@@ -65,44 +64,54 @@ def report(update, context) -> str:
         reported_user = message.reply_to_message.from_user  # type: Optional[User]
         chat_name = chat.title or chat.first or chat.username
         admin_list = chat.get_administrators()
-        messages = update.effective_message  # type: Optional[Message]
+        messages = update.effective_message
+
+        isadmeme = chat.get_member(reported_user.id).status
+        if isadmeme == 'administrator' or isadmeme == 'creator':
+            return "" # No point of reporting admins!
+
+        if user.id == reported_user.id:
+            message.reply_text("Why the hell you're reporting yourself?")
+            return ""
+
+        if reported_user.id == context.bot.id:
+            message.reply_text("I'm not gonna report myself!")
+            return ""
+
         if chat.username and chat.type == Chat.SUPERGROUP:
 
-            reported = "Reported {} to admins. I've notified the admins!".format(mention_html(reported_user.id,
-                                                                                       reported_user.first_name))
-            msg = "<b>{}:</b>" \
-                  "\n<b>Reported user:</b> {} (<code>{}</code>)" \
-                  "\n<b>Reported by:</b> {} (<code>{}</code>)".format(html.escape(chat.title),
-                                                                      mention_html(
-                                                                          reported_user.id,
-                                                                          reported_user.first_name),
-                                                                      reported_user.id,
-                                                                      mention_html(user.id,
-                                                                                   user.first_name),
-                                                                      user.id)
-            link = "\n<b>Link:</b> " \
-                   "<a href=\"http://telegram.me/{}/{}\">click here</a>".format(chat.username, message.message_id)
+            reported = f"Reported {mention_html(reported_user.id, reported_user.first_name)} to the admins!"
 
-
+            msg = (f"<b>Report from: </b>{html.escape(chat.title)}\n"
+                   f"<b> × Report by:</b> {mention_html(user.id, user.first_name)}(<code>{user.id}</code>)\n"
+                   f"<b> × Reported user:</b> {mention_html(reported_user.id, reported_user.first_name)} (<code>{reported_user.id}</code>)\n")
+            link = f'<b> × Reported message:</b> <a href="https://t.me/{chat.username}/{message.reply_to_message.message_id}">click here</a>'
             should_forward = False
-            keyboard = None
-            messages.reply_text(reported, reply_markup=keyboard, parse_mode=ParseMode.HTML)
+            keyboard = [
+                [InlineKeyboardButton(u"💬 Message", url=f"https://t.me/{chat.username}/{message.reply_to_message.message_id}"),
+                InlineKeyboardButton(u"⚽ Kick",
+                                      callback_data=f"report_{chat.id}=kick={reported_user.id}={reported_user.first_name}")],
+                 [InlineKeyboardButton(u"⛔️ Ban",
+                                      callback_data=f"report_{chat.id}=banned={reported_user.id}={reported_user.first_name}"),
+                InlineKeyboardButton(u"❎ Delete Message",
+                                      callback_data=f"report_{chat.id}=delete={reported_user.id}={message.reply_to_message.message_id}")]
+                        ]
+            reply_markup = InlineKeyboardMarkup(keyboard)
         else:
-            reported = "Reported {} to admins. I've notified the admins!".format(mention_html(reported_user.id,
-                                                                                        reported_user.first_name))
-            msg = "{} is calling for admins in \"{}\"!".format(mention_html(user.id, user.first_name),
-                                                               html.escape(chat_name))
+            reported = f"Reported {mention_html(reported_user.id, reported_user.first_name)} to the admins!"
+
+            msg = f'{mention_html(user.id, user.first_name)} is calling for admins in "{html.escape(chat_name)}"!'
             link = ""
             should_forward = True
-            keyboard = None
-            messages.reply_text(reported, reply_markup=keyboard, parse_mode=ParseMode.HTML)
+
         for admin in admin_list:
             if admin.user.is_bot:  # can't message bots
                 continue
 
             if sql.user_should_report(admin.user.id):
                 try:
-                    context.bot.send_message(admin.user.id, msg + link, parse_mode=ParseMode.HTML)
+                    context.bot.send_message(admin.user.id, msg + link,
+                    reply_markup=reply_markup, parse_mode=ParseMode.HTML)
                     if should_forward:
                         message.reply_to_message.forward(admin.user.id)
 
@@ -112,10 +121,45 @@ def report(update, context) -> str:
                 except Unauthorized:
                     pass
                 except BadRequest as excp:  # TODO: cleanup exceptions
-                    LOGGER.exception("Exception while reporting user")
+                    if excp.message == 'Message_id_invalid':
+                       pass
+                    else:
+                       LOGGER.exception("Exception while reporting user " + excp.message)
+
+        message.reply_to_message.reply_text(reported, parse_mode=ParseMode.HTML)
         return msg
 
     return ""
+
+def report_buttons(update, context):
+    query = update.callback_query
+    splitter = query.data.replace("report_", "").split("=")
+    if splitter[1] == "kick":
+        try:
+            context.bot.kickChatMember(splitter[0], splitter[2])
+            context.bot.unbanChatMember(splitter[0], splitter[2])
+            query.answer("User has been succesfully kicked")
+            return ""
+        except Exception as err:
+            query.answer("⚠️ Failed to kick!")
+            context.bot.sendMessage(text=f"Error: {err}",chat_id=query.message.chat_id,parse_mode=ParseMode.HTML)
+    elif splitter[1] == "banned":
+        try:
+            context.bot.kickChatMember(splitter[0], splitter[2])
+            query.answer("User has been succesfully banned")
+            return ""
+        except Exception as err:
+            context.bot.sendMessage(text=f"Error: {err}",chat_id=query.message.chat_id,parse_mode=ParseMode.HTML)
+            query.answer("⚠️ Failed to Ban")
+    elif splitter[1] == "delete":
+        try:
+            context.bot.deleteMessage(splitter[0], splitter[3])
+            query.answer("Message has been deleted!")
+            return ""
+        except Exception as err:
+            context.bot.sendMessage(text=f"Error: {err}",chat_id=query.message.chat_id,parse_mode=ParseMode.HTML)
+            query.answer("⚠️ Failed to delete message!")
+
 
 
 def __migrate__(old_chat_id, new_chat_id):
@@ -130,7 +174,6 @@ def __chat_settings__(chat_id, user_id):
 def __user_settings__(user_id):
     return "You receive reports from chats you're admin in: `{}`.\nToggle this with /reports in PM.".format(
         sql.user_should_report(user_id))
-
 
 __mod_name__ = "Reporting"
 
@@ -156,8 +199,9 @@ admins don't need to report, or be reported!
 REPORT_HANDLER = CommandHandler("report", report, filters=Filters.group)
 SETTING_HANDLER = CommandHandler("reports", report_setting, pass_args=True)
 ADMIN_REPORT_HANDLER = MessageHandler(Filters.regex("(?i)@admin(s)?"), report)
+REPORT_BUTTON_HANDLER = CallbackQueryHandler(report_buttons, pattern=r"report_")
 
 dispatcher.add_handler(REPORT_HANDLER, REPORT_GROUP)
 dispatcher.add_handler(ADMIN_REPORT_HANDLER, REPORT_GROUP)
 dispatcher.add_handler(SETTING_HANDLER)
-
+dispatcher.add_handler(REPORT_BUTTON_HANDLER)
