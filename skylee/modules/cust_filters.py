@@ -6,7 +6,7 @@ import telegram
 from telegram import ParseMode, InlineKeyboardMarkup, Message, Chat
 from telegram import Update, Bot
 from telegram.error import BadRequest
-from telegram.ext import CommandHandler, MessageHandler, DispatcherHandlerStop, run_async, Filters, CallbackContext
+from telegram.ext import CommandHandler, MessageHandler, DispatcherHandlerStop, run_async, Filters
 from telegram.utils.helpers import mention_html, escape_markdown
 
 from skylee import dispatcher, LOGGER
@@ -350,7 +350,7 @@ def rmall_filters(update, context):
 
     return msg.reply_text(f"Cleaned {count} filters in {chat.title}")
 
-
+# NOT ASYNC NOT A HANDLER
 def get_exception(excp, filt, chat):
 	if excp.message == "Unsupported url protocol":
 		return "You seem to be trying to use the URL protocol which is not supported. Telegram does not support key for multiple protocols, such as tg: //. Please try again!"
@@ -361,7 +361,7 @@ def get_exception(excp, filt, chat):
 		LOGGER.exception("Could not parse filter %s in chat %s", str(filt.keyword), str(chat.id))
 		return "This data could not be sent because it is incorrectly formatted."
 
-
+# NOT ASYNC NOT A HANDLER
 def addnew_filter(update, chat_id, keyword, text, file_type, file_id, buttons):
     msg = update.effective_message
     totalfilt = sql.get_chat_triggers(chat_id)
