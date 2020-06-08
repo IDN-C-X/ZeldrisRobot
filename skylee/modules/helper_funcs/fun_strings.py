@@ -441,7 +441,7 @@ AFK = (
     "Cya 👋 {}!",
     "Byebye {}.",
     "See you later {}!",
-    "Goodbye {} You’re dead to me now.",
+    "Goodbye {}!",
     "Come back soon {}!",
     "Kthnxbye {}.."
 )

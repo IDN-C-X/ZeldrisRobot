@@ -55,6 +55,7 @@ def report_setting(update, context):
 @run_async
 @user_not_admin
 @loggable
+@typing_action
 def report(update, context) -> str:
     message = update.effective_message  # type: Optional[Message]
     chat = update.effective_chat  # type: Optional[Chat]
