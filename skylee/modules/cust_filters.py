@@ -232,9 +232,9 @@ def reply_filter(update, context):
 				if filt.reply_text:
 					valid_format = escape_invalid_curly_brackets(filt.reply_text, VALID_WELCOME_FORMATTERS)
 					if valid_format:
-						filtext = valid_format.format(first=message.from_user.first_name,
-													  last=message.from_user.last_name or message.from_user.first_name,
-													  fullname=" ".join([message.from_user.first_name, message.from_user.last_name] if message.from_user.last_name else [message.from_user.first_name]), username="@" + escape(message.from_user.username) if message.from_user.username else mention_html(message.from_user.id, message.from_user.first_name), mention=message.from_user.mention_html(), chatname=message.chat.title if message.chat.type != "private" else message.from_user.first_name, id=message.from_user.id)
+						filtext = valid_format.format(first=escape(message.from_user.first_name),
+													  last=escape(message.from_user.last_name or message.from_user.first_name),
+													  fullname=" ".join([escape(message.from_user.first_name), escape(message.from_user.last_name)] if message.from_user.last_name else [escape(message.from_user.first_name)]), username="@" + escape(message.from_user.username) if message.from_user.username else mention_html(message.from_user.id, message.from_user.first_name), mention=mention_html(message.from_user.id, message.from_user.first_name), chatname=escape(message.chat.title) if message.chat.type != "private" else escape(message.from_user.first_name), id=message.from_user.id)
 					else:
 						filtext = ""
 				else:
