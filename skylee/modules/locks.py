@@ -1,7 +1,7 @@
 import html
-from typing import Optional, List
+from typing import Optional
 
-from telegram import Message, Chat, Update, Bot, ParseMode, User, MessageEntity
+from telegram import Message, Chat, Bot, ParseMode, MessageEntity
 from telegram import TelegramError, ChatPermissions
 from telegram.error import BadRequest
 from telegram.ext import CommandHandler, MessageHandler, Filters
@@ -13,11 +13,9 @@ from alphabet_detector import AlphabetDetector
 import skylee.modules.sql.locks_sql as sql
 from skylee import dispatcher, SUDO_USERS, LOGGER
 from skylee.modules.disable import DisableAbleCommandHandler
-from skylee.modules.helper_funcs.chat_status import can_delete, is_user_admin, user_not_admin, user_admin, \
-	bot_can_delete, is_bot_admin
-from skylee.modules.helper_funcs.filters import CustomFilters
+from skylee.modules.helper_funcs.chat_status import can_delete, is_user_admin, user_not_admin, \
+	is_bot_admin, user_admin
 from skylee.modules.log_channel import loggable
-from skylee.modules.sql import users_sql
 from skylee.modules.connection import connected
 
 from skylee.modules.helper_funcs.alternate import send_message, typing_action
@@ -121,9 +119,8 @@ def locktypes(update, context):
 @typing_action
 def lock(update, context) -> str:
 	args = context.args
-	chat = update.effective_chat  # type: Optional[Chat]
-	user = update.effective_user  # type: Optional[User]
-	message = update.effective_message  # type: Optional[Message]
+	chat = update.effective_chat
+	user = update.effective_user
 
 	if can_delete(chat, context.bot.id) or update.effective_message.chat.type == "private":
 		if len(args) >= 1:
@@ -169,7 +166,7 @@ def lock(update, context) -> str:
 					chat_id = update.effective_chat.id
 					chat_name = update.effective_message.chat.title
 					text = ("Locked {} for all non-admins!".format(ltype))
-				
+
 				current_permission = context.bot.getChat(chat_id).permissions
 				context.bot.set_chat_permissions(chat_id=chat_id, permissions=get_permission_list(eval(str(current_permission)), LOCK_CHAT_RESTRICTION[ltype.lower()]))
 
@@ -197,9 +194,9 @@ def lock(update, context) -> str:
 @typing_action
 def unlock(update, context) -> str:
 	args = context.args
-	chat = update.effective_chat  # type: Optional[Chat]
-	user = update.effective_user  # type: Optional[User]
-	message = update.effective_message  # type: Optional[Message]
+	chat = update.effective_chat
+	user = update.effective_user
+	message = update.effective_message
 	if is_user_admin(chat, message.from_user.id):
 		if len(args) >= 1:
 			ltype = args[0].lower()
@@ -243,12 +240,12 @@ def unlock(update, context) -> str:
 					chat_id = update.effective_chat.id
 					chat_name = update.effective_message.chat.title
 					text = ("Unlocked {} for everyone!".format(ltype))
-				
+
 				current_permission = context.bot.getChat(chat_id).permissions
 				context.bot.set_chat_permissions(chat_id=chat_id, permissions=get_permission_list(eval(str(current_permission)), UNLOCK_CHAT_RESTRICTION[ltype.lower()]))
 
 				send_message(update.effective_message, text, parse_mode="markdown")
-				
+
 				return "<b>{}:</b>" \
 					   "\n#UNLOCK" \
 					   "\n<b>Admin:</b> {}" \
@@ -268,7 +265,7 @@ def unlock(update, context) -> str:
 def del_lockables(update, context):
 	chat = update.effective_chat  # type: Optional[Chat]
 	message = update.effective_message  # type: Optional[Message]
-	
+
 	for lockable, filter in LOCK_TYPES.items():
 		if lockable == "rtl":
 			if sql.is_locked(chat.id, lockable) and can_delete(chat, context.bot.id):
@@ -385,14 +382,12 @@ def list_locks(update, context):
 	conn = connected(context.bot, update, chat, user.id, need_admin=True)
 	if conn:
 		chat = dispatcher.bot.getChat(conn)
-		chat_id = conn
 		chat_name = chat.title
 	else:
 		if update.effective_message.chat.type == "private":
 			send_message(update.effective_message, "This command is meant to use in group not in PM")
 			return ""
 		chat = update.effective_chat
-		chat_id = update.effective_chat.id
 		chat_name = update.effective_message.chat.title
 
 	res = build_lock_message(chat.id)

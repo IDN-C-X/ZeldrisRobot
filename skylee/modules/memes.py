@@ -1,7 +1,7 @@
 import random, re
 import requests as r
 
-from telegram import Bot, User, ParseMode, MessageEntity, TelegramError, MAX_MESSAGE_LENGTH
+from telegram import User, ParseMode, MessageEntity, TelegramError, MAX_MESSAGE_LENGTH
 from telegram.ext import Filters, CommandHandler, run_async
 from telegram.error import BadRequest
 from telegram.utils.helpers import mention_html, escape_markdown
@@ -9,7 +9,7 @@ from telegram.utils.helpers import mention_html, escape_markdown
 from skylee.modules.helper_funcs.extraction import extract_user
 from skylee.modules.helper_funcs.filters import CustomFilters
 from skylee.modules.helper_funcs.alternate import typing_action
-from skylee import dispatcher, SUDO_USERS, SUPPORT_USERS, WALL_API, TOKEN, LOGGER
+from skylee import dispatcher, SUDO_USERS, SUPPORT_USERS, LOGGER
 from skylee.modules.disable import DisableAbleCommandHandler, DisableAbleMessageHandler
 
 import skylee.modules.helper_funcs.fun_strings as fun
@@ -24,7 +24,7 @@ def runs(update, context):
 @typing_action
 def slap(update, context):
     args = context.args
-    msg = update.effective_message  # type: Optional[Message]
+    msg = update.effective_message
 
     # reply to correct message
     reply_text = msg.reply_to_message.reply_text if msg.reply_to_message else msg.reply_text

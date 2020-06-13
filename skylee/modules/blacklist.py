@@ -1,14 +1,13 @@
 import html
 import re
-from typing import Optional
 
-from telegram import Message, Chat, Bot, ParseMode, ChatPermissions
+from telegram import Chat, Bot, ParseMode, ChatPermissions
 from telegram.error import BadRequest
 from telegram.ext import CommandHandler, MessageHandler, Filters, run_async
-from telegram.utils.helpers import mention_html, escape_markdown
+from telegram.utils.helpers import mention_html
 
 import skylee.modules.sql.blacklist_sql as sql
-from skylee import dispatcher, LOGGER, OWNER_ID
+from skylee import dispatcher, LOGGER
 from skylee.modules.disable import DisableAbleCommandHandler
 from skylee.modules.helper_funcs.chat_status import user_admin, user_not_admin
 from skylee.modules.helper_funcs.extraction import extract_text
@@ -29,7 +28,7 @@ def blacklist(update, context):
 	chat = update.effective_chat
 	user = update.effective_user
 	args = context.args
-	
+
 	conn = connected(context.bot, update, chat, user.id, need_admin=False)
 	if conn:
 		chat_id = conn
@@ -40,7 +39,7 @@ def blacklist(update, context):
 		else:
 			chat_id = update.effective_chat.id
 			chat_name = chat.title
-	
+
 	filter_list = "Current blacklisted words in <b>{}</b>:\n".format(chat_name)
 
 	all_blacklisted = sql.get_chat_blacklist(chat_id)

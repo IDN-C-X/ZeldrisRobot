@@ -1,10 +1,8 @@
 from html import escape
 import time
 import re
-from typing import Optional
 
-from telegram import Message, Chat, Bot, User, CallbackQuery
-from telegram import ParseMode, InlineKeyboardMarkup, InlineKeyboardButton, ChatPermissions
+from telegram import ParseMode, InlineKeyboardMarkup, InlineKeyboardButton, ChatPermissions, CallbackQuery
 from telegram.error import BadRequest
 from telegram.ext import MessageHandler, Filters, CommandHandler, run_async, CallbackQueryHandler
 from telegram.utils.helpers import mention_html
@@ -92,10 +90,10 @@ def send(update, message, keyboard, backup_message):
 
 @run_async
 def new_member(update, context):
-    chat = update.effective_chat  # type: Optional[Chat]
-    user = update.effective_user  # type: Optional[User]
-    msg = update.effective_message # type: Optional[Message]
-    chat_name = chat.title or chat.first or chat.username # type: Optional:[chat name]
+    chat = update.effective_chat
+    user = update.effective_user
+    msg = update.effective_message
+    chat_name = chat.title or chat.first or chat.username
     should_welc, cust_welcome, welc_type = sql.get_welc_pref(chat.id)
     cust_welcome = markdown_to_html(cust_welcome)
     welc_mutes = sql.welcome_mutes(chat.id)
@@ -122,7 +120,7 @@ def new_member(update, context):
                 sw = spamwtc.get_ban(int(new_mem.id))
                 if sw:
                     return
-            except:
+            except Exception:
                 pass
 
             # Ignore gbanned users
@@ -189,14 +187,14 @@ def new_member(update, context):
                 if welc_mutes == "soft":
                     context.bot.restrict_chat_member(chat.id, new_mem.id,
                      permissions=ChatPermissions(
-                                             can_send_messages=True, 
-                                             can_send_media_messages=False, 
+                                             can_send_messages=True,
+                                             can_send_media_messages=False,
                                              can_send_other_messages=False,
                                              can_invite_users=False,
                                              can_pin_messages=False,
                                              can_send_polls=False,
                                              can_change_info=False,
-                                             can_add_web_page_previews=False, 
+                                             can_add_web_page_previews=False,
                                              until_date=(int(time.time() + 24 * 60 * 60))))
                 #Join welcome: strong mute
                 if welc_mutes == "strong":
@@ -204,15 +202,15 @@ def new_member(update, context):
                     msg.reply_text("{}\nClick the button below to start talking.".format(new_join_mem),
                          reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton(text="Yus, I'm a human", 
                          callback_data="user_join_({})".format(new_mem.id))]]), parse_mode=ParseMode.HTML, reply_to_message_id=reply)
-                    context.bot.restrict_chat_member(chat.id, new_mem.id, 
+                    context.bot.restrict_chat_member(chat.id, new_mem.id,
                     permissions=ChatPermissions(
                                              can_send_messages=False,
                                              can_invite_users=False,
                                              can_pin_messages=False,
                                              can_send_polls=False,
                                              can_change_info=False,
-                                             can_send_media_messages=False, 
-                                             can_send_other_messages=False, 
+                                             can_send_media_messages=False,
+                                             can_send_other_messages=False,
                                              can_add_web_page_previews=False))
         prev_welc = sql.get_clean_pref(chat.id)
         if prev_welc:
@@ -607,8 +605,8 @@ def user_button(update, context):
                                                    can_pin_messages=True,
                                                    can_send_polls=True,
                                                    can_change_info=True,
-                                                   can_send_media_messages=True, 
-                                                   can_send_other_messages=True, 
+                                                   can_send_media_messages=True,
+                                                   can_send_other_messages=True,
                                                    can_add_web_page_previews=True))
         context.bot.deleteMessage(chat.id, message.message_id)
         db_checks
@@ -672,7 +670,7 @@ def __chat_settings__(chat_id, user_id):
            "It's goodbye preference is `{}`. \n\n" \
            "*Service preferences:*\n" \
            "\nClean welcome: `{}`" \
-           "\nWelcome mutes: `{}`" .format(welcome_pref, goodbye_pref, clean_welc_pref, 
+           "\nWelcome mutes: `{}`" .format(welcome_pref, goodbye_pref, clean_welc_pref,
                                           welc_mutes_pref)
 
 

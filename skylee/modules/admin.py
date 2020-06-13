@@ -1,8 +1,8 @@
 import html
 import os
-from typing import Optional, List
+from typing import Optional
 
-from telegram import Message, Chat, Update, Bot, User, ParseMode
+from telegram import ParseMode
 from telegram.error import BadRequest
 from telegram.ext import CommandHandler, Filters
 from telegram.ext.dispatcher import run_async
@@ -26,9 +26,9 @@ from skylee.modules.log_channel import loggable
 @typing_action
 def promote(update, context):
     chat_id = update.effective_chat.id
-    message = update.effective_message  # type: Optional[Message]
-    chat = update.effective_chat  # type: Optional[Chat]
-    user = update.effective_user  # type: Optional[User]
+    message = update.effective_message
+    chat = update.effective_chat
+    user = update.effective_user
     args = context.args
 
     if user_can_promote(chat, user, context.bot.id) == False:
@@ -77,9 +77,9 @@ def promote(update, context):
 @loggable
 @typing_action
 def demote(update, context):
-    chat = update.effective_chat  # type: Optional[Chat]
-    message = update.effective_message  # type: Optional[Message]
-    user = update.effective_user  # type: Optional[User]
+    chat = update.effective_chat
+    message = update.effective_message
+    user = update.effective_user
     args = context.args
 
     if user_can_promote(chat, user, context.bot.id) == False:
@@ -135,9 +135,9 @@ def demote(update, context):
 @typing_action
 def pin(update, context):
     args = context.args
-    user = update.effective_user  # type: Optional[User]
-    chat = update.effective_chat  # type: Optional[Chat]
-    message = update.effective_message  # type: Optional[Message]
+    user = update.effective_user
+    chat = update.effective_chat
+    message = update.effective_message
 
     is_group = chat.type != "private" and chat.type != "channel"
 
@@ -173,10 +173,9 @@ def pin(update, context):
 @loggable
 @typing_action
 def unpin(update, context):
-    args = context.args
     chat = update.effective_chat
-    user = update.effective_user  # type: Optional[User]
-    message = update.effective_message  # type: Optional[Message]
+    user = update.effective_user
+    message = update.effective_message
 
     if user_can_pin(chat, user, context.bot.id) == False:
     	message.reply_text("You are missing rights to unpin a message!")
@@ -209,15 +208,11 @@ def invite(update, context):
         conn = connected(context.bot, update, chat, user.id, need_admin=True)
         if conn:
                 chat = dispatcher.bot.getChat(conn)
-                chat_id = conn
-                chat_name = dispatcher.bot.getChat(conn).title
         else:
                 if msg.chat.type == "private":
                         msg.reply_text("This command is meant to use in chat not in PM")
                         return ""
                 chat = update.effective_chat
-                chat_id = update.effective_chat.id
-                chat_name = update.effective_message.chat.title
 
         if chat.username:
                 msg.reply_text(chat.username)
@@ -270,7 +265,7 @@ def set_title(update, context):
     user_id, title = extract_user_and_text(message, args)
     try:
         user_member = chat.get_member(user_id)
-    except:
+    except Exception:
         return
 
     if not user_id:

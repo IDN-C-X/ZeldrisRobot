@@ -1,8 +1,7 @@
 import html
 from io import BytesIO
-from typing import Optional
 
-from telegram import Update, Bot, User, Chat, ParseMode, ChatAction
+from telegram import ParseMode, ChatAction
 from telegram.error import BadRequest, TelegramError
 from telegram.ext import run_async, CommandHandler, MessageHandler, Filters
 from telegram.utils.helpers import mention_html
@@ -61,7 +60,7 @@ UNGBAN_ERRORS = {
 @run_async
 @typing_action
 def gban(update, context):
-    message = update.effective_message  # type: Optional[Message]
+    message = update.effective_message
     chat = update.effective_chat
     args = context.args
     user_id, reason = extract_user_and_text(message, args)
@@ -164,37 +163,10 @@ def gban(update, context):
 
     sql.gban_user(user_id, user_chat.username or user_chat.first_name, reason)
 
-#    chats = get_all_chats()
-#    for chat in chats:
-#        chat_id = chat.chat_id
-#
-#        # Check if this group has disabled gbans
-#        if not sql.does_chat_gban(chat_id):
-#            continue
-#
-#        try:
-#            context.bot.kick_chat_member(chat_id, user_id)
-#        except BadRequest as excp:
-#            if excp.message in GBAN_ERRORS:
-#                pass
-#            else:
-#                message.reply_text("Could not gban due to: {}".format(excp.message))
-#                context.bot.sendMessage(MESSAGE_DUMP, "Could not gban due to: {}".format(excp.message))
-#                sql.ungban_user(user_id)
-#                return
-#        except TelegramError:
-#            pass
-#
-#    context.bot.sendMessage(MESSAGE_DUMP,
-#                   "{} has been successfully gbanned!".format(mention_html(user_chat.id, user_chat.first_name)),
-#                 parse_mode=ParseMode.HTML)
-#    message.reply_text("Person has been \"Dealt with\".")
-
-
 @run_async
 @typing_action
 def ungban(update, context):
-    message = update.effective_message  # type: Optional[Message]
+    message = update.effective_message
     args = context.args
     user_id = extract_user(message, args)
     if not user_id:
@@ -291,7 +263,7 @@ def check_and_ban(update, user_id, should_message=True):
               return
            else:
               return
-    except:
+    except Exception:
         pass
 
     if sql.is_user_gbanned(user_id):
@@ -310,9 +282,9 @@ def check_and_ban(update, user_id, should_message=True):
 def enforce_gban(update, context):
     # Not using @restrict handler to avoid spamming - just ignore if cant gban.
     if sql.does_chat_gban(update.effective_chat.id) and update.effective_chat.get_member(context.bot.id).can_restrict_members:
-        user = update.effective_user  # type: Optional[User]
-        chat = update.effective_chat  # type: Optional[Chat]
-        msg = update.effective_message  # type: Optional[Message]
+        user = update.effective_user
+        chat = update.effective_chat
+        msg = update.effective_message
 
         if user and not is_user_admin(chat, user.id):
             check_and_ban(update, user.id)
@@ -323,7 +295,7 @@ def enforce_gban(update, context):
                 check_and_ban(update, mem.id)
 
         if msg.reply_to_message:
-            user = msg.reply_to_message.from_user  # type: Optional[User]
+            user = msg.reply_to_message.from_user
             if user and not is_user_admin(chat, user.id):
                 check_and_ban(update, user.id, should_message=False)
 

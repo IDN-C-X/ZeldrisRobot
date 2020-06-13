@@ -1,8 +1,8 @@
-from typing import Union, Optional
+from typing import Union
 
 from future.utils import string_types
-from telegram import ParseMode, Update, Bot, Chat, User
-from telegram.ext import CommandHandler, Filters, MessageHandler
+from telegram import ParseMode, Update, Chat, User
+from telegram.ext import CommandHandler, MessageHandler
 from telegram.utils.helpers import escape_markdown
 
 from skylee import dispatcher
@@ -93,14 +93,12 @@ if is_module_loaded(FILENAME):
         conn = connected(context.bot, update, chat, user.id, need_admin=True)
         if conn:
             chat = dispatcher.bot.getChat(conn)
-            chat_id = conn
             chat_name = dispatcher.bot.getChat(conn).title
         else:
             if update.effective_message.chat.type == "private":
                 send_message(update.effective_message, "This command meant to be used in group not in PM")
                 return ""
             chat = update.effective_chat
-            chat_id = update.effective_chat.id
             chat_name = update.effective_message.chat.title
 
         if len(args) >= 1:
@@ -199,14 +197,12 @@ if is_module_loaded(FILENAME):
         if conn:
             chat = dispatcher.bot.getChat(conn)
             chat_id = conn
-            chat_name = dispatcher.bot.getChat(conn).title
         else:
             if update.effective_message.chat.type == "private":
                 send_message(update.effective_message, "This command is meant to use in group not in PM")
                 return ""
             chat = update.effective_chat
             chat_id = update.effective_chat.id
-            chat_name = update.effective_message.chat.title
 
         text = build_curr_disabled(chat.id)
         send_message(update.effective_message, text, parse_mode=ParseMode.MARKDOWN)

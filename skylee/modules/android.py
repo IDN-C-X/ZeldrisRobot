@@ -1,12 +1,11 @@
-import re, html, time
+import html, time
 from bs4 import BeautifulSoup
 from requests import get
-from telegram import Message, Update, Bot, User, Chat, ParseMode, InlineKeyboardMarkup
+from telegram import Update, Bot, User, Chat, ParseMode
 from telegram.error import BadRequest
 from telegram.ext import run_async
-from telegram.utils.helpers import mention_html
 
-from skylee import dispatcher, updater
+from skylee import dispatcher
 from skylee.modules.disable import DisableAbleCommandHandler
 from skylee.modules.helper_funcs.alternate import typing_action
 
@@ -64,7 +63,7 @@ def device(update, context):
         reply += f'<b>{brand} {name}</b>\n' \
             f'Model: <code>{model}</code>\n' \
             f'Codename: <code>{codename}</code>\n\n'
-    except KeyError as err:
+    except KeyError:
         reply = f"Couldn't find info about {device}!\n"
         del_msg = update.effective_message.reply_text("{}".format(reply),
                                parse_mode=ParseMode.MARKDOWN, disable_web_page_preview=True)

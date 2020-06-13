@@ -1,10 +1,8 @@
 import re
 from html import escape
-from typing import Optional
 
 import telegram
-from telegram import ParseMode, InlineKeyboardMarkup, Message, Chat
-from telegram import Update, Bot
+from telegram import ParseMode, InlineKeyboardMarkup, Message
 from telegram.error import BadRequest
 from telegram.ext import CommandHandler, MessageHandler, DispatcherHandlerStop, run_async, Filters
 from telegram.utils.helpers import mention_html, escape_markdown
@@ -81,9 +79,9 @@ def list_handlers(update, context):
 @user_admin
 @typing_action
 def filters(update, context):
-	chat = update.effective_chat  # type: Optional[Chat]
-	user = update.effective_user  # type: Optional[User]
-	msg = update.effective_message  # type: Optional[Message]
+	chat = update.effective_chat
+	user = update.effective_user
+	msg = update.effective_message
 	args = msg.text.split(None, 1)  # use python's maxsplit to separate Cmd, keyword, and reply_text
 
 	conn = connected(context.bot, update, chat, user.id)
@@ -175,8 +173,8 @@ def filters(update, context):
 @user_admin
 @typing_action
 def stop_filter(update, context):
-	chat = update.effective_chat  # type: Optional[Chat]
-	user = update.effective_user  # type: Optional[User]
+	chat = update.effective_chat
+	user = update.effective_user
 	args = update.effective_message.text.split(None, 1)
 
 	conn = connected(context.bot, update, chat, user.id)
@@ -253,10 +251,9 @@ def reply_filter(update, context):
 							except BadRequest as excp:
 								LOGGER.exception("Error in filters: " + excp.message)
 								send_message(update.effective_message, get_exception(excp, filt, chat))
-								pass
 						else:
 							try:
-								send_message(update.effective_message, tl(update.effective_message, get_exception(excp, filt, chat)))
+								send_message(update.effective_message, get_exception(excp, filt, chat))
 							except BadRequest as excp:
 								LOGGER.exception("Failed to send message: " + excp.message)
 								pass
@@ -304,7 +301,7 @@ def reply_filter(update, context):
 								pass
 						else:
 							try:
-								send_message(update.effective_message, tl(update.effective_message, "Catatan ini tidak dapat dikirim karena formatnya salah."))
+								send_message(update.effective_message, "This message couldn't be sent as it's incorrectly formatted.")
 							except BadRequest as excp:
 								LOGGER.exception("Error in filters: " + excp.message)
 								pass
