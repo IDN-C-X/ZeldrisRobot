@@ -1,7 +1,7 @@
 import random, re
 import requests as r
 
-from telegram import User, ParseMode, MessageEntity, TelegramError, MAX_MESSAGE_LENGTH
+from telegram import ParseMode, TelegramError, MAX_MESSAGE_LENGTH
 from telegram.ext import Filters, CommandHandler, run_async
 from telegram.error import BadRequest
 from telegram.utils.helpers import mention_html, escape_markdown

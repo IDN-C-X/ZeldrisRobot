@@ -5,10 +5,10 @@ import requests
 import json
 from emoji import UNICODE_EMOJI
 
-from telegram import Message, Update, Bot, User, ChatAction, MessageEntity, ParseMode
-from telegram.ext import MessageHandler, run_async
+from telegram import ChatAction
+from telegram.ext import run_async
 
-from skylee import dispatcher, LOGGER
+from skylee import dispatcher
 from skylee.modules.disable import DisableAbleCommandHandler
 from skylee.modules.helper_funcs.alternate import typing_action
 

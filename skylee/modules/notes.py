@@ -4,7 +4,7 @@ from io import BytesIO
 from typing import Optional
 
 from telegram import MAX_MESSAGE_LENGTH, ParseMode, InlineKeyboardMarkup, InlineKeyboardButton
-from telegram import Message, Update, Bot
+from telegram import Message
 from telegram.error import BadRequest
 from telegram.ext import CommandHandler, MessageHandler, Filters, CallbackQueryHandler
 from telegram.ext.dispatcher import run_async

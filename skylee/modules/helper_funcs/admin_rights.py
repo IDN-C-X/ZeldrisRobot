@@ -1,4 +1,4 @@
-from telegram import (User, Chat, Update, Bot)
+from telegram import (User, Chat)
 
 def user_can_promote(chat: Chat, user: User, bot_id: int) -> bool:
 	return chat.get_member(user.id).can_promote_members

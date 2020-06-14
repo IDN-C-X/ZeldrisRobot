@@ -8,12 +8,11 @@ import csv
 import os
 
 from telegram.error import BadRequest, TelegramError, Unauthorized
-from telegram import ParseMode, Bot, Chat, User, MessageEntity, InlineKeyboardMarkup, InlineKeyboardButton, ChatAction
+from telegram import ParseMode, Chat, User, MessageEntity, InlineKeyboardMarkup, InlineKeyboardButton, ChatAction
 from telegram.ext import run_async, CommandHandler, CallbackQueryHandler
 from telegram.utils.helpers import mention_html, mention_markdown
 
 from skylee import dispatcher, OWNER_ID, SUDO_USERS, WHITELIST_USERS, MESSAGE_DUMP, LOGGER
-from skylee.modules.helper_funcs.misc import send_to_list
 from skylee.modules.helper_funcs.chat_status import is_user_admin
 from skylee.modules.helper_funcs.extraction import extract_user, extract_unt_fedban, extract_user_fban
 from skylee.modules.helper_funcs.string_handling import markdown_parser
