@@ -1,9 +1,7 @@
 import os
 import math
 import urllib.request as urllib
-
 from PIL import Image
-from typing import List
 
 from telegram import ParseMode, InlineKeyboardMarkup, InlineKeyboardButton
 from telegram import TelegramError

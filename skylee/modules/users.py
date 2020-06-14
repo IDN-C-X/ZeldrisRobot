@@ -2,7 +2,7 @@ from io import BytesIO
 from time import sleep
 from typing import Optional
 
-from telegram import TelegramError, Chat
+from telegram import TelegramError
 from telegram.error import BadRequest
 from telegram.ext import MessageHandler, Filters, CommandHandler
 from telegram.ext.dispatcher import run_async
@@ -66,8 +66,8 @@ def broadcast(update, context):
 
 @run_async
 def log_user(update, context):
-    chat = update.effective_chat  # type: Optional[Chat]
-    msg = update.effective_message  # type: Optional[Message]
+    chat = update.effective_chat
+    msg = update.effective_message
 
     sql.update_user(msg.from_user.id,
                     msg.from_user.username,
