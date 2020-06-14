@@ -1,5 +1,5 @@
 from functools import wraps
-from telegram import User, Chat, ChatMember, Update, Bot
+from telegram import User, Chat, ChatMember
 
 from skylee import DEL_CMDS, SUDO_USERS, WHITELIST_USERS
 

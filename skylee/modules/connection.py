@@ -1,15 +1,13 @@
 import time
 import re
 
-from telegram import Bot, Update, ParseMode, InlineKeyboardMarkup, InlineKeyboardButton
+from telegram import ParseMode, InlineKeyboardMarkup, InlineKeyboardButton
 from telegram.error import BadRequest, Unauthorized
-from telegram.ext import CommandHandler, CallbackQueryHandler, Filters, run_async
-from telegram.utils.helpers import mention_html
+from telegram.ext import CommandHandler, CallbackQueryHandler, run_async
 
 import skylee.modules.sql.connection_sql as sql
 from skylee import dispatcher, SUDO_USERS
 from skylee.modules.helper_funcs import chat_status
-from skylee.modules.helper_funcs.extraction import extract_user, extract_user_and_text
 from skylee.modules.helper_funcs.alternate import send_message, typing_action
 
 user_admin = chat_status.user_admin

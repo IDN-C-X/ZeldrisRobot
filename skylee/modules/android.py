@@ -1,7 +1,7 @@
-import html, time
+import time
 from bs4 import BeautifulSoup
 from requests import get
-from telegram import Update, Bot, User, Chat, ParseMode
+from telegram import ParseMode
 from telegram.error import BadRequest
 from telegram.ext import run_async
 

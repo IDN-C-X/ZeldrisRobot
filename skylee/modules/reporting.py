@@ -1,7 +1,7 @@
 import html
 from typing import Optional, List
 
-from telegram import Message, Chat, Bot, User, ParseMode
+from telegram import Message, Chat, User, ParseMode
 from telegram import InlineKeyboardMarkup, InlineKeyboardButton
 from telegram.error import BadRequest, Unauthorized
 from telegram.ext import CommandHandler, MessageHandler, run_async, Filters, CallbackQueryHandler

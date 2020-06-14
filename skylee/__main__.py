@@ -1,9 +1,8 @@
-import datetime
 import importlib
 import re
 from typing import Optional, List
 
-from telegram import Message, Chat, Bot, User
+from telegram import Message, Chat, User
 from telegram import ParseMode, InlineKeyboardMarkup, InlineKeyboardButton
 from telegram.error import Unauthorized, BadRequest, TimedOut, NetworkError, ChatMigrated, TelegramError
 from telegram.ext import CommandHandler, Filters, MessageHandler, CallbackQueryHandler
