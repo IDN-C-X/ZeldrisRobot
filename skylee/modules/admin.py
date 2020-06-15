@@ -387,6 +387,65 @@ def setchat_title(update, context):
        return
 
 
+@run_async
+@bot_admin
+@user_admin
+@typing_action
+def set_sticker(update, context):
+    msg = update.effective_message
+    chat = update.effective_chat
+    user = update.effective_user
+
+    # check if admin has right to change info!
+    user_member = chat.get_member(user.id)
+    if user_member.can_change_info == False:
+       return msg.reply_text(
+       "You're missing rights to change chat info!")
+
+    if msg.reply_to_message:
+       if not msg.reply_to_message.sticker:
+          return msg.reply_text(
+          "You need to reply to some sticker to set chat sticker set!")
+       stkr = msg.reply_to_message.sticker.set_name
+       try:
+          context.bot.set_chat_sticker_set(chat.id, stkr)
+          msg.reply_text(f"Successfully set new group stickers in {chat.title}!")
+       except BadRequest as excp:
+          msg.reply_text(f"Error! {excp.message}.")
+    else:
+          msg.reply_text("You need to reply to some sticker to set chat sticker set!")
+
+
+@run_async
+@bot_admin
+@user_admin
+@typing_action
+def set_desc(update, context):
+    msg = update.effective_message
+    chat = update.effective_chat
+    user = update.effective_user
+
+    # check if admin has right to change info!
+    user_member = chat.get_member(user.id)
+    if user_member.can_change_info == False:
+       return msg.reply_text(
+       "You're missing rights to change chat info!")
+
+    tesc = msg.text.split(None, 1)
+    if len(tesc) >= 2:
+       desc = tesc[1]
+    else:
+       return msg.reply_text("Setting empty description won't do anything!")
+    try:
+       if len(desc) > 255:
+          return msg.reply_text("Description must needs to be under 255 characters!")
+       context.bot.set_chat_description(chat.id, desc)
+       msg.reply_text(f"Successfully updated chat description in {chat.title}!")
+    except BadRequest as excp:
+       msg.reply_text(f"Error! {excp.message}.")
+
+
+
 def __chat_settings__(chat_id, user_id):
     return "You are *admin*: `{}`".format(
         dispatcher.bot.get_chat_member(chat_id, user_id).status in ("administrator", "creator"))
@@ -409,6 +468,10 @@ done easily using the bot.
  × /setgpic: As a reply to file or photo to set group profile pic!
  × /delgpic: Same as above but to remove group profile pic.
  × /setgtitle <newtitle>: Sets new chat title in your group.
+ × /setsticker: As a reply to some sticker to set it as group sticker set!
+ × /setdescription: <description> Sets new chat description in group.
+
+*Note*: To set group sticker set chat must needs to have min 100 members.
 
 An example of promoting someone to admins:
 `/promote @username`; this promotes a user to admins.
@@ -423,6 +486,8 @@ INVITE_HANDLER = CommandHandler("invitelink", invite)
 CHAT_PIC_HANDLER = CommandHandler("setgpic", setchatpic, filters=Filters.group)
 DEL_CHAT_PIC_HANDLER = CommandHandler("delgpic", rmchatpic, filters=Filters.group)
 SETCHAT_TITLE_HANDLER = CommandHandler("setgtitle", setchat_title, filters=Filters.group)
+SETSTICKET_HANDLER = CommandHandler("setsticker", set_sticker, filters=Filters.group)
+SETDESC_HANDLER = CommandHandler("setdescription", set_desc, filters=Filters.group)
 
 PROMOTE_HANDLER = CommandHandler("promote", promote, pass_args=True, filters=Filters.group)
 DEMOTE_HANDLER = CommandHandler("demote", demote, pass_args=True, filters=Filters.group)
@@ -440,3 +505,5 @@ dispatcher.add_handler(SET_TITLE_HANDLER)
 dispatcher.add_handler(CHAT_PIC_HANDLER)
 dispatcher.add_handler(DEL_CHAT_PIC_HANDLER)
 dispatcher.add_handler(SETCHAT_TITLE_HANDLER)
+dispatcher.add_handler(SETSTICKET_HANDLER)
+dispatcher.add_handler(SETDESC_HANDLER)
