@@ -10,7 +10,7 @@ from telegram.ext import run_async
 
 from skylee import dispatcher
 from skylee.modules.disable import DisableAbleCommandHandler
-from skylee.modules.helper_funcs.alternate import typing_action
+from skylee.modules.helper_funcs.alternate import typing_action, send_action
 
 from googletrans import Translator
 
@@ -40,28 +40,24 @@ def gtrans(update, context):
 
 
 @run_async
+@send_action(ChatAction.RECORD_AUDIO)
 def gtts(update, context):
-    args = context.args
+    msg = update.effective_message
+    reply = " ".join(context.args)
+    if not reply:
+       reply = msg.reply_to_message.text
+       for x in "\n":
+           reply = reply.replace(x, '')
     try:
-        reply = " ".join(args)
-        if not reply:
-            reply = update.effective_message.reply_to_message.text
-        update.message.chat.send_action(ChatAction.RECORD_AUDIO)
-        tts = gTTS(reply)
-        tts.save("skylee.mp3")
-        with open("skylee.mp3", "rb") as x:
-            linelist = list(x)
-            linecount = len(linelist)
-        if linecount == 1:
-            update.message.chat.send_action(ChatAction.RECORD_AUDIO)
-            tts = gTTS(reply)
-            tts.save("skylee.mp3")
-        with open("skylee.mp3", "rb") as speech:
-            update.message.reply_voice(speech, quote=False)
-            os.remove("skylee.mp3")
-    except :
-            update.effective_message.reply_text("Reply to some message or enter some text to convert it into audio format!")
-
+       tts = gTTS(reply)
+       tts.save("skylee.mp3")
+       with open("skylee.mp3", "rb") as speech:
+            msg.reply_audio(speech)
+    except Exception:
+           msg.reply_text("Reply to some message or enter some text to convert it into audio format!")
+    finally:
+       if os.path.isfile("skylee.mp3"):
+          os.remove("skylee.mp3")
 
 # Open API key
 API_KEY = "6ae0c3a0-afdc-4532-a810-82ded0054236"
