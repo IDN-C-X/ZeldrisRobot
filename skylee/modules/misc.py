@@ -253,7 +253,12 @@ def ud(update, context):
     reply = reply_text
     for chars in ignore_chars:
         reply = reply.replace(chars, "")
-    return msg.reply_text(reply)
+    if len(reply) >= 4096:
+        reply = reply[:4096] # max msg lenth of tg.
+    try:
+        msg.reply_text(reply)
+    except BadRequest as err:
+        msg.reply_text(f"Error! {err.message}")
 
 @run_async
 @typing_action
