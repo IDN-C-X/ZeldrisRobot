@@ -45,7 +45,11 @@ def gtts(update, context):
     msg = update.effective_message
     reply = " ".join(context.args)
     if not reply:
-       reply = msg.reply_to_message.text
+       if msg.reply_to_message:
+          reply = msg.reply_to_message.text
+       else:
+          return msg.reply_text(
+          "Reply to some message or enter some text to convert it into audio format!")
        for x in "\n":
            reply = reply.replace(x, '')
     try:
@@ -53,8 +57,6 @@ def gtts(update, context):
        tts.save("skylee.mp3")
        with open("skylee.mp3", "rb") as speech:
             msg.reply_audio(speech)
-    except Exception:
-           msg.reply_text("Reply to some message or enter some text to convert it into audio format!")
     finally:
        if os.path.isfile("skylee.mp3"):
           os.remove("skylee.mp3")
