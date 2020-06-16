@@ -31,7 +31,7 @@ def promote(update, context):
     user = update.effective_user
     args = context.args
 
-    if user_can_promote(chat, user, context.bot.id) == False:
+    if user_can_promote(chat, user, context.bot.id) is False:
     	message.reply_text("You don't have enough rights to promote someone!")
     	return ""
 
@@ -82,7 +82,7 @@ def demote(update, context):
     user = update.effective_user
     args = context.args
 
-    if user_can_promote(chat, user, context.bot.id) == False:
+    if user_can_promote(chat, user, context.bot.id) is False:
     	message.reply_text("You don't have enough rights to demote someone!")
     	return ""
 
@@ -143,7 +143,7 @@ def pin(update, context):
 
     prev_message = update.effective_message.reply_to_message
 
-    if user_can_pin(chat, user, context.bot.id) == False:
+    if user_can_pin(chat, user, context.bot.id) is False:
     	message.reply_text("You are missing rights to pin a message!")
     	return ""
 
@@ -177,7 +177,7 @@ def unpin(update, context):
     user = update.effective_user
     message = update.effective_message
 
-    if user_can_pin(chat, user, context.bot.id) == False:
+    if user_can_pin(chat, user, context.bot.id) is False:
     	message.reply_text("You are missing rights to unpin a message!")
     	return ""
 
@@ -308,7 +308,7 @@ def setchatpic(update,context):
     msg = update.effective_message
     user = update.effective_user
 
-    if user_can_changeinfo(chat, user, context.bot.id) == False:
+    if user_can_changeinfo(chat, user, context.bot.id) is False:
        msg.reply_text("You are missing right to change group info!")
        return
 
@@ -346,7 +346,7 @@ def rmchatpic(update, context):
     msg = update.effective_message
     user = update.effective_user
 
-    if user_can_changeinfo(chat, user, context.bot.id) == False:
+    if user_can_changeinfo(chat, user, context.bot.id) is False:
        msg.reply_text("You don't have enough rights to delete group photo")
        return
     try:
@@ -367,7 +367,7 @@ def setchat_title(update, context):
     user = update.effective_user
     args = context.args
 
-    if user_can_changeinfo(chat, user, context.bot.id) == False:
+    if user_can_changeinfo(chat, user, context.bot.id) is False:
        msg.reply_text("You don't have enough rights to change chat info!")
        return
 
@@ -393,7 +393,7 @@ def set_sticker(update, context):
     chat = update.effective_chat
     user = update.effective_user
 
-    if user_can_changeinfo(chat, user, context.bot.id) == False:
+    if user_can_changeinfo(chat, user, context.bot.id) is False:
        return msg.reply_text(
        "You're missing rights to change chat info!")
 
@@ -422,7 +422,7 @@ def set_desc(update, context):
     chat = update.effective_chat
     user = update.effective_user
 
-    if user_can_changeinfo(chat, user, context.bot.id) == False:
+    if user_can_changeinfo(chat, user, context.bot.id) is False:
        return msg.reply_text(
        "You're missing rights to change chat info!")
 

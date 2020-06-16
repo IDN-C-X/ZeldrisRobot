@@ -28,7 +28,7 @@ def ban(update, context):
     message = update.effective_message  # type: Optional[Message]
     args = context.args
 
-    if user_can_ban(chat, user, context.bot.id) == False:
+    if user_can_ban(chat, user, context.bot.id) is False:
     	message.reply_text("You don't have enough rights to ban users!")
     	return ""
 
@@ -98,7 +98,7 @@ def temp_ban(update, context):
     message = update.effective_message  # type: Optional[Message]
     args = context.args
 
-    if user_can_ban(chat, user, context.bot.id) == False:
+    if user_can_ban(chat, user, context.bot.id) is False:
     	message.reply_text("You don't have enough rights to temporarily ban someone!")
     	return ""
 
@@ -186,7 +186,7 @@ def kick(update, context):
     message = update.effective_message  # type: Optional[Message]
     args = context.args
 
-    if user_can_ban(chat, user, context.bot.id) == False:
+    if user_can_ban(chat, user, context.bot.id) is False:
     	message.reply_text("You don't have enough rights to kick users!")
     	return ""
 
@@ -290,7 +290,7 @@ def unban(update, context):
     chat = update.effective_chat  # type: Optional[Chat]
     args = context.args
 
-    if user_can_ban(chat, user, context.bot.id) == False:
+    if user_can_ban(chat, user, context.bot.id) is False:
     	message.reply_text("You don't have enough rights to unban people here!")
     	return ""
 

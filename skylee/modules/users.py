@@ -99,7 +99,7 @@ def chats(update, context):
 
 @run_async
 def chat_checker(update, context):
-  if update.effective_message.chat.get_member(context.bot.id).can_send_messages == False:
+  if update.effective_message.chat.get_member(context.bot.id).can_send_messages is False:
     context.bot.leaveChat(update.effective_message.chat.id)
 
 def __user_info__(user_id):
