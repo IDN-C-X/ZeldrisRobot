@@ -25,6 +25,9 @@ Hey there! my name is *{dispatcher.bot.first_name}*. If you have any questions o
 
 I'm here to make your group management fun and easy!
 i have lots of handy features, such as flood control, a warning system, a note keeping system, and even replies on predetermined filters.
+
+Any issues or need help related to me? join our group [skylee support chat](https://t.me/skyleebot).
+
 Wanna Add me to your Group? Just click the button below!
 """
 
@@ -148,7 +151,7 @@ def start(update, context):
             update.effective_message.reply_photo(
             "https://telegra.ph/file/4edfb3738a35bdfa1922f.jpg",
             PM_START_TEXT, reply_markup=InlineKeyboardMarkup(buttons),
-            parse_mode=ParseMode.MARKDOWN, timeout=60)
+            parse_mode=ParseMode.MARKDOWN, timeout=60, disable_web_page_preview=True)
     else:
         update.effective_message.reply_text("Sending you a warm hi & wishing your day is a happy one!")
 

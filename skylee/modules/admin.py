@@ -411,6 +411,8 @@ def set_sticker(update, context):
           context.bot.set_chat_sticker_set(chat.id, stkr)
           msg.reply_text(f"Successfully set new group stickers in {chat.title}!")
        except BadRequest as excp:
+          if excp.message == 'Participants_too_few':
+             return msg.reply_text("Sorry, due to telegram restrictions group neeeds to have atleast 100 number of members before they can set chat sticker-set!")
           msg.reply_text(f"Error! {excp.message}.")
     else:
           msg.reply_text("You need to reply to some sticker to set chat sticker set!")

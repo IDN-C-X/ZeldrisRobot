@@ -1,5 +1,4 @@
 import html
-from typing import Optional
 
 from telegram import Message, Chat, ParseMode, MessageEntity
 from telegram import TelegramError, ChatPermissions
