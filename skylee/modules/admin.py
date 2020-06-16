@@ -12,7 +12,7 @@ from skylee import dispatcher
 from skylee.modules.disable import DisableAbleCommandHandler
 from skylee.modules.helper_funcs.chat_status import bot_admin, can_promote, user_admin, can_pin
 from skylee.modules.helper_funcs.extraction import extract_user, extract_user_and_text
-from skylee.modules.helper_funcs.admin_rights import user_can_pin, user_can_promote
+from skylee.modules.helper_funcs.admin_rights import user_can_pin, user_can_promote, user_can_changeinfo
 from skylee.modules.helper_funcs.alternate import typing_action
 from skylee.modules.connection import connected
 from skylee.modules.log_channel import loggable
@@ -308,8 +308,7 @@ def setchatpic(update,context):
     msg = update.effective_message
     user = update.effective_user
 
-    user_member = chat.get_member(user.id)
-    if user_member.can_change_info == False:
+    if user_can_changeinfo(chat, user, context.bot.id) == False:
        msg.reply_text("You are missing right to change group info!")
        return
 
@@ -347,8 +346,7 @@ def rmchatpic(update, context):
     msg = update.effective_message
     user = update.effective_user
 
-    user_member = chat.get_member(user.id)
-    if user_member.can_change_info == False:
+    if user_can_changeinfo(chat, user, context.bot.id) == False:
        msg.reply_text("You don't have enough rights to delete group photo")
        return
     try:
@@ -369,8 +367,7 @@ def setchat_title(update, context):
     user = update.effective_user
     args = context.args
 
-    user_member = chat.get_member(user.id)
-    if user_member.can_change_info == False:
+    if user_can_changeinfo(chat, user, context.bot.id) == False:
        msg.reply_text("You don't have enough rights to change chat info!")
        return
 
@@ -396,9 +393,7 @@ def set_sticker(update, context):
     chat = update.effective_chat
     user = update.effective_user
 
-    # check if admin has right to change info!
-    user_member = chat.get_member(user.id)
-    if user_member.can_change_info == False:
+    if user_can_changeinfo(chat, user, context.bot.id) == False:
        return msg.reply_text(
        "You're missing rights to change chat info!")
 
@@ -427,9 +422,7 @@ def set_desc(update, context):
     chat = update.effective_chat
     user = update.effective_user
 
-    # check if admin has right to change info!
-    user_member = chat.get_member(user.id)
-    if user_member.can_change_info == False:
+    if user_can_changeinfo(chat, user, context.bot.id) == False:
        return msg.reply_text(
        "You're missing rights to change chat info!")
 
