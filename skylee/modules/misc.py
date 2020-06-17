@@ -185,6 +185,7 @@ saved messages are correctly parsed, and to allow you to create buttons.
 - <code>_italic_</code>: wrapping text with '_' will produce italic text
 - <code>*bold*</code>: wrapping text with '*' will produce bold text
 - <code>`code`</code>: wrapping text with '`' will produce monospaced text, also known as 'code'
+- <code>~strike~</code> wrapping text with '~' will produce strikethrough text
 - <code>[sometext](someURL)</code>: this will create a link - the message will just show <code>sometext</code>, \
 and tapping on it will open the page at <code>someURL</code>.
 EG: <code>[test](example.com)</code>
@@ -208,7 +209,7 @@ Keep in mind that your message <b>MUST</b> contain some text other than just a b
 def markdown_help(update, context):
     update.effective_message.reply_text(MARKDOWN_HELP, parse_mode=ParseMode.HTML)
     update.effective_message.reply_text("Try forwarding the following message to me, and you'll see!")
-    update.effective_message.reply_text("/save test This is a markdown test. _italics_, *bold*, `code`, "
+    update.effective_message.reply_text("/save test This is a markdown test. _italics_, *bold*, `code`, ~strike~ "
                                         "[URL](example.com) [button](buttonurl:github.com) "
                                         "[button2](buttonurl://google.com:same)")
 
