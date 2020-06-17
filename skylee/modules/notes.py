@@ -99,7 +99,6 @@ def get(bot, update, notename, show_none=True, no_format=False):
             else:
                     text = ""
 
-            text = markdown_to_html(text)
             keyb = []
             parseMode = ParseMode.HTML
             buttons = sql.get_buttons(chat_id, notename)
@@ -107,6 +106,7 @@ def get(bot, update, notename, show_none=True, no_format=False):
                 parseMode = None
                 text += revert_buttons(buttons)
             else:
+                text = markdown_to_html(text)
                 keyb = build_keyboard(buttons)
 
             keyboard = InlineKeyboardMarkup(keyb)
