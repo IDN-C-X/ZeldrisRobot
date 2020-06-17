@@ -231,25 +231,21 @@ def invite(update, context):
 @typing_action
 def adminlist(update, context):
     administrators = update.effective_chat.get_administrators()
-    text = "Admins in *{}*:".format(update.effective_chat.title or "this chat")
+    text = "Admins in <b>{}</b>:".format(update.effective_chat.title or "this chat")
     for admin in administrators:
         user = admin.user
         status = admin.status
-        name = "[{}](tg://user?id={})".format(user.first_name + " " + (user.last_name or ""), user.id)
-        if user.username:
-            name = "[{}](tg://user?id={})".format(user.first_name + (user.last_name or ""), user.id)
+        name = f"{(mention_html(user.id, user.first_name))}"
         if status == "creator":
-            text += "\n 🔱 Creator:"
-            text += "\n` • `{} \n\n 🔰 Admin:".format(name)
+            text += "\n 🦁 Creator:"
+            text += "\n • {} \n\n 🦊 Admin:".format(name)
     for admin in administrators:
         user = admin.user
         status = admin.status
-        name = "[{}](tg://user?id={})".format(user.first_name + " " + (user.last_name or ""), user.id)
-        if user.username:
-            name = "[{}](tg://user?id={})".format(user.first_name + (user.last_name or ""), user.id)
+        name = f"{(mention_html(user.id, user.first_name))}"
         if status == "administrator":
-            text += "\n` • `{}".format(name)
-    update.effective_message.reply_text(text, parse_mode=ParseMode.MARKDOWN)
+            text += "\n • {}".format(name)
+    update.effective_message.reply_text(text, parse_mode=ParseMode.HTML)
 
 
 @run_async
