@@ -23,6 +23,7 @@ BLACKLIST_GROUP = 11
 
 
 @run_async
+@user_admin
 @typing_action
 def blacklist(update, context):
 	chat = update.effective_chat
