@@ -2,11 +2,12 @@ import os
 import math
 import urllib.request as urllib
 from PIL import Image
+from html import escape
 
 from telegram import ParseMode, InlineKeyboardMarkup, InlineKeyboardButton
 from telegram import TelegramError
 from telegram.ext import run_async
-from telegram.utils.helpers import escape_markdown
+from telegram.utils.helpers import mention_html
 
 from skylee import dispatcher
 from skylee.modules.disable import DisableAbleCommandHandler
@@ -206,10 +207,10 @@ def getsticker(update, context):
     chat_id = update.effective_chat.id
     if msg.reply_to_message and msg.reply_to_message.sticker:
         context.bot.sendChatAction(chat_id, "typing")
-        update.effective_message.reply_text("Hello " + "[{}](tg://user?id={})".format(msg.from_user.first_name,
-                                            msg.from_user.id) + ", Please check the file you requested below."
+        update.effective_message.reply_text("Hello" + f"{mention_html(msg.from_user.id, msg.from_user.first_name)}"
+                                            + ", Please check the file you requested below."
                                             "\nPlease use this feature wisely!",
-                                            parse_mode=ParseMode.MARKDOWN)
+                                            parse_mode=ParseMode.HTML)
         context.bot.sendChatAction(chat_id, "upload_document")
         file_id = msg.reply_to_message.sticker.file_id
         newFile = context.bot.get_file(file_id)
@@ -220,9 +221,9 @@ def getsticker(update, context):
 
     else:
         context.bot.sendChatAction(chat_id, "typing")
-        update.effective_message.reply_text("Hello " + "[{}](tg://user?id={})".format(msg.from_user.first_name,
-                                            msg.from_user.id) + ", Please reply to sticker message to get sticker image",
-                                            parse_mode=ParseMode.MARKDOWN)
+        update.effective_message.reply_text("Hello" + f"{mention_html(msg.from_user.id, msg.from_user.first_name)}"
+                                            + ", Please reply to sticker message to get sticker image",
+                                            parse_mode=ParseMode.HTML)
 
 @run_async
 @typing_action
@@ -230,14 +231,14 @@ def stickerid(update, context):
     msg = update.effective_message
     if msg.reply_to_message and msg.reply_to_message.sticker:
         update.effective_message.reply_text("Hello " +
-                                            "[{}](tg://user?id={})".format(msg.from_user.first_name, msg.from_user.id)
-                                            + ", The sticker id you are replying is :\n```" +
-                                            escape_markdown(msg.reply_to_message.sticker.file_id) + "```",
-                                            parse_mode=ParseMode.MARKDOWN)
+        f"{mention_html(msg.from_user.id, msg.from_user.first_name)}"
+        + ", The sticker id you are replying is :\n <code>" +
+        escape(msg.reply_to_message.sticker.file_id) + "</code>",
+        parse_mode=ParseMode.HTML)
     else:
-        update.effective_message.reply_text("Hello " + "[{}](tg://user?id={})".format(msg.from_user.first_name,
-                                            msg.from_user.id) + ", Please reply to sticker message to get id sticker",
-                                            parse_mode=ParseMode.MARKDOWN)
+        update.effective_message.reply_text("Hello " + f"{mention_html(msg.from_user.id, msg.from_user.first_name)}"
+        + ", Please reply to sticker message to get id sticker",
+        parse_mode=ParseMode.HTML)
 
 
 __help__ = """
