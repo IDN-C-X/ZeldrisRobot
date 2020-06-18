@@ -264,5 +264,5 @@ def markdown_to_html(text):
     text = text.replace("*", "**")
     text = text.replace("`", "```")
     text = text.replace("~", "~~")
-    _html = markdown2.markdown(text, extras=["strike", "ins"])
-    return bleach.clean(_html, tags=['strong', 'em', 'a', 'code', 'pre', 'strike', 'ins'], strip=True)[:-1]
+    _html = markdown2.markdown(text, extras=["strike", "underline"])
+    return bleach.clean(_html, tags=['strong', 'em', 'a', 'code', 'pre', 'strike', 'u'], strip=True)[:-1]
