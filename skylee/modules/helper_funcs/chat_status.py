@@ -2,7 +2,7 @@ from functools import wraps
 from telegram import User, Chat, ChatMember
 
 from skylee import DEL_CMDS, SUDO_USERS, WHITELIST_USERS
-
+from skylee.mwt import MWT
 
 def can_delete(chat: Chat, bot_id: int) -> bool:
     return chat.get_member(bot_id).can_delete_messages
@@ -18,7 +18,7 @@ def is_user_ban_protected(chat: Chat, user_id: int, member: ChatMember = None) -
         member = chat.get_member(user_id)
     return member.status in ('administrator', 'creator')
 
-
+@MWT(timeout=60*5) # Cache admin status for 5 mins to avoid extra requests.
 def is_user_admin(chat: Chat, user_id: int, member: ChatMember = None) -> bool:
     if chat.type == 'private' \
             or user_id in SUDO_USERS \
