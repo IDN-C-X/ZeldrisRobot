@@ -1,4 +1,4 @@
-import importlib
+import importlib, traceback, html, logging, json
 import re
 from typing import Optional, List
 
@@ -156,28 +156,34 @@ def start(update, context):
         update.effective_message.reply_text("Sending you a warm hi & wishing your day is a happy one!")
 
 
-# for test purposes
-def error_callback(update, context):
-    try:
-        raise context.error
-    except Unauthorized:
-        # remove update.message.chat_id from conversation list
-        LOGGER.exception('Update "%s" caused error "%s"', update, context.error)
-    except BadRequest:
-        # handle malformed requests - read more below!
-        LOGGER.exception('Update "%s" caused error "%s"', update, context.error)
-    except TimedOut:
-        # handle slow connection problems
-        LOGGER.exception('Update "%s" caused error "%s"', update, context.error)
-    except NetworkError:
-        # handle other connection problems
-        LOGGER.exception('Update "%s" caused error "%s"', update, context.error)
-    except ChatMigrated as e:
-        # the chat_id of a group has changed, use e.new_chat_id instead
-        LOGGER.exception('Update "%s" caused error "%s"', update, context.error)
-    except TelegramError:
-        # handle all other telegram related errors
-        LOGGER.exception('Update "%s" caused error "%s"', update, context.error)
+def error_handler(update, context):
+    """Log the error and send a telegram message to notify the developer."""
+    # Log the error before we do anything else, so we can see it even if something breaks.
+    LOGGER.error(msg="Exception while handling an update:", exc_info=context.error)
+
+    # traceback.format_exception returns the usual python message about an exception, but as a
+    # list of strings rather than a single string, so we have to join them together.
+    tb_list = traceback.format_exception(None, context.error, context.error.__traceback__)
+    tb = ''.join(tb_list)
+
+    # Build the message with some markup and additional information about what happened.
+    # You might need to add some logic to deal with messages longer than the 4096 character limit.
+    message = (
+        'An exception was raised while handling an update\n'
+        '<pre>update = {}</pre>\n\n'
+        '<pre>context.chat_data = {}</pre>\n\n'
+        '<pre>context.user_data = {}</pre>\n\n'
+        '<pre>{}</pre>'
+    ).format(
+        html.escape(json.dumps(update.to_dict(), indent=2, ensure_ascii=False)),
+        html.escape(str(context.chat_data)),
+        html.escape(str(context.user_data)),
+        html.escape(tb)
+    )
+
+    # Finally, send the message
+    context.bot.send_message(chat_id=894380120, text=message, parse_mode=ParseMode.HTML)
+
 
 @run_async
 def help_button(update, context):
@@ -444,7 +450,7 @@ def main():
     dispatcher.add_handler(migrate_handler)
     dispatcher.add_handler(is_chat_allowed_handler)
 
-    # dispatcher.add_error_handler(error_callback)
+    dispatcher.add_error_handler(error_handler)
 
     if WEBHOOK:
         LOGGER.info("Using webhooks.")
