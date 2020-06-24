@@ -68,9 +68,9 @@ def gban(update, context):
     if not user_id:
         message.reply_text("You don't seem to be referring to a user.")
         return
-    
+
     if user_id == OWNER_ID:
-        message.reply_text("Nice try -_- but I'm never gonna gban to him.")
+        message.reply_text("Nice try -_- but I'm never gonna gban him.")
         return
 
     if int(user_id) in SUDO_USERS:
