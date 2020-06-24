@@ -70,7 +70,7 @@ def gban(update, context):
         return
     
     if user_id == OWNER_ID:
-        message.reply_text("Nice try -_- but I'm not gonna gban my dad btw dad will remove u from sudo.")
+        message.reply_text("Nice try -_- but I'm never gonna gban to him.")
         return
 
     if int(user_id) in SUDO_USERS:
