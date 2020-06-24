@@ -68,6 +68,10 @@ def gban(update, context):
     if not user_id:
         message.reply_text("You don't seem to be referring to a user.")
         return
+    
+    if user_id == OWNER_ID:
+        message.reply_text("Nice try -_- but I'm not gonna gban my dad btw dad will remove u from sudo.")
+        return
 
     if int(user_id) in SUDO_USERS:
         message.reply_text("I spy, with my little eye... a sudo user war! Why are you guys turning on each other?")
@@ -223,7 +227,7 @@ def ungban(update, context):
     sql.ungban_user(user_id)
 
     context.bot.sendMessage(MESSAGE_DUMP,
-                  "{} has been successfully un-gbanned!".format(mention_html(user_chat.id,
+                  "User {} has been successfully un-gbanned!".format(mention_html(user_chat.id,
                                                                          user_chat.first_name)),
                  parse_mode=ParseMode.HTML)
     message.reply_text("Person has been un-gbanned.")
@@ -332,6 +336,8 @@ def __user_info__(user_id):
 
     text = "<b>Globally banned</b>: {}"
 
+    if int(user_id) in SUDO_USERS + SUPPORT_USERS:
+        return ""
     if is_gbanned:
         text = text.format("Yes")
         user = sql.get_gbanned_user(user_id)
