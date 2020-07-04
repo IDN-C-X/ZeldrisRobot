@@ -9,18 +9,27 @@ from skylee.modules.disable import DisableAbleMessageHandler
 
 DELIMITERS = ("/", ":", "|", "_")
 
+
 def infinite_checker(repl):
-     regex = [r'\((.{1,}[\+\*]){1,}\)[\+\*].', r'[\(\[].{1,}\{\d(,)?\}[\)\]]\{\d(,)?\}', r'\(.{1,}\)\{.{1,}(,)?\}\(.*\)(\+|\* |\{.*\})']
-     for match in regex:
-          status = re.search(match, repl)
-          if status:
-             return True
-          else:
-             return False
+    regex = [
+        r"\((.{1,}[\+\*]){1,}\)[\+\*].",
+        r"[\(\[].{1,}\{\d(,)?\}[\)\]]\{\d(,)?\}",
+        r"\(.{1,}\)\{.{1,}(,)?\}\(.*\)(\+|\* |\{.*\})",
+    ]
+    for match in regex:
+        status = re.search(match, repl)
+        if status:
+            return True
+        else:
+            return False
 
 
 def separate_sed(sed_string):
-    if len(sed_string) >= 3 and sed_string[1] in DELIMITERS and sed_string.count(sed_string[1]) >= 2:
+    if (
+        len(sed_string) >= 3
+        and sed_string[1] in DELIMITERS
+        and sed_string.count(sed_string[1]) >= 2
+    ):
         delim = sed_string[1]
         start = counter = 2
         while counter < len(sed_string):
@@ -39,8 +48,12 @@ def separate_sed(sed_string):
             return None
 
         while counter < len(sed_string):
-            if sed_string[counter] == "\\" and counter + 1 < len(sed_string) and sed_string[counter + 1] == delim:
-                sed_string = sed_string[:counter] + sed_string[counter + 1:]
+            if (
+                sed_string[counter] == "\\"
+                and counter + 1 < len(sed_string)
+                and sed_string[counter + 1] == delim
+            ):
+                sed_string = sed_string[:counter] + sed_string[counter + 1 :]
 
             elif sed_string[counter] == delim:
                 replace_with = sed_string[start:counter]
@@ -71,8 +84,9 @@ def sed(update, context):
         repl, repl_with, flags = sed_result
 
         if not repl:
-            update.effective_message.reply_to_message.reply_text("You're trying to replace... "
-                                                                 "nothing with something?")
+            update.effective_message.reply_to_message.reply_text(
+                "You're trying to replace... " "nothing with something?"
+            )
             return
 
         try:
@@ -81,11 +95,11 @@ def sed(update, context):
             if infinite_checker(repl) == True:
                 return update.effective_message.reply_text("Nice try -_-")
 
-            if 'i' in flags and 'g' in flags:
+            if "i" in flags and "g" in flags:
                 text = re.sub(repl, repl_with, to_fix, flags=re.I).strip()
-            elif 'i' in flags:
+            elif "i" in flags:
                 text = re.sub(repl, repl_with, to_fix, count=1, flags=re.I).strip()
-            elif 'g' in flags:
+            elif "g" in flags:
                 text = re.sub(repl, repl_with, to_fix).strip()
             else:
                 text = re.sub(repl, repl_with, to_fix, count=1).strip()
@@ -97,13 +111,16 @@ def sed(update, context):
 
         # empty string errors -_-
         if len(text) >= telegram.MAX_MESSAGE_LENGTH:
-            update.effective_message.reply_text("The result of the sed command was too long for \
-                                                 telegram!")
+            update.effective_message.reply_text(
+                "The result of the sed command was too long for \
+                                                 telegram!"
+            )
         elif text:
             update.effective_message.reply_to_message.reply_text(text)
 
 
-
-SED_HANDLER = DisableAbleMessageHandler(Filters.regex(r's([{}]).*?\1.*'.format("".join(DELIMITERS))), sed, friendly="sed")
+SED_HANDLER = DisableAbleMessageHandler(
+    Filters.regex(r"s([{}]).*?\1.*".format("".join(DELIMITERS))), sed, friendly="sed"
+)
 
 dispatcher.add_handler(SED_HANDLER)

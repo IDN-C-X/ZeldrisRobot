@@ -14,6 +14,7 @@ from skylee.modules.disable import DisableAbleCommandHandler, DisableAbleMessage
 
 import skylee.modules.helper_funcs.fun_strings as fun
 
+
 @run_async
 @typing_action
 def runs(update, context):
@@ -27,13 +28,17 @@ def slap(update, context):
     msg = update.effective_message
 
     # reply to correct message
-    reply_text = msg.reply_to_message.reply_text if msg.reply_to_message else msg.reply_text
+    reply_text = (
+        msg.reply_to_message.reply_text if msg.reply_to_message else msg.reply_text
+    )
 
     # get user who sent message
     if msg.from_user.username:
         curr_user = "@" + escape_markdown(msg.from_user.username)
     else:
-        curr_user = "[{}](tg://user?id={})".format(msg.from_user.first_name, msg.from_user.id)
+        curr_user = "[{}](tg://user?id={})".format(
+            msg.from_user.first_name, msg.from_user.id
+        )
 
     user_id = extract_user(update.effective_message, args)
     if user_id:
@@ -42,8 +47,9 @@ def slap(update, context):
         if slapped_user.username:
             user2 = "@" + escape_markdown(slapped_user.username)
         else:
-            user2 = "[{}](tg://user?id={})".format(slapped_user.first_name,
-                                                   slapped_user.id)
+            user2 = "[{}](tg://user?id={})".format(
+                slapped_user.first_name, slapped_user.id
+            )
 
     # if no target found, bot targets the sender
     else:
@@ -67,13 +73,17 @@ def punch(update, context):
     msg = update.effective_message  # type: Optional[Message]
 
     # reply to correct message
-    reply_text = msg.reply_to_message.reply_text if msg.reply_to_message else msg.reply_text
+    reply_text = (
+        msg.reply_to_message.reply_text if msg.reply_to_message else msg.reply_text
+    )
 
     # get user who sent message
     if msg.from_user.username:
         curr_user = "@" + escape_markdown(msg.from_user.username)
     else:
-        curr_user = "[{}](tg://user?id={})".format(msg.from_user.first_name, msg.from_user.id)
+        curr_user = "[{}](tg://user?id={})".format(
+            msg.from_user.first_name, msg.from_user.id
+        )
 
     user_id = extract_user(update.effective_message, args)
     if user_id:
@@ -82,8 +92,9 @@ def punch(update, context):
         if punched_user.username:
             user2 = "@" + escape_markdown(punched_user.username)
         else:
-            user2 = "[{}](tg://user?id={})".format(punched_user.first_name,
-                                                   punched_user.id)
+            user2 = "[{}](tg://user?id={})".format(
+                punched_user.first_name, punched_user.id
+            )
 
     # if no target found, bot targets the sender
     else:
@@ -99,7 +110,6 @@ def punch(update, context):
     reply_text(repl, parse_mode=ParseMode.MARKDOWN)
 
 
-
 @run_async
 @typing_action
 def hug(update, context):
@@ -107,13 +117,17 @@ def hug(update, context):
     msg = update.effective_message  # type: Optional[Message]
 
     # reply to correct message
-    reply_text = msg.reply_to_message.reply_text if msg.reply_to_message else msg.reply_text
+    reply_text = (
+        msg.reply_to_message.reply_text if msg.reply_to_message else msg.reply_text
+    )
 
     # get user who sent message
     if msg.from_user.username:
         curr_user = "@" + escape_markdown(msg.from_user.username)
     else:
-        curr_user = "[{}](tg://user?id={})".format(msg.from_user.first_name, msg.from_user.id)
+        curr_user = "[{}](tg://user?id={})".format(
+            msg.from_user.first_name, msg.from_user.id
+        )
 
     user_id = extract_user(update.effective_message, args)
     if user_id:
@@ -122,12 +136,15 @@ def hug(update, context):
         if hugged_user.username:
             user2 = "@" + escape_markdown(hugged_user.username)
         else:
-            user2 = "[{}](tg://user?id={})".format(hugged_user.first_name,
-                                                   hugged_user.id)
+            user2 = "[{}](tg://user?id={})".format(
+                hugged_user.first_name, hugged_user.id
+            )
 
     # if no target found, bot targets the sender
     else:
-        user1 = "Awwh! [{}](tg://user?id={})".format(context.bot.first_name, context.bot.id)
+        user1 = "Awwh! [{}](tg://user?id={})".format(
+            context.bot.first_name, context.bot.id
+        )
         user2 = curr_user
 
     temp = random.choice(fun.HUG_TEMPLATES)
@@ -142,27 +159,43 @@ def hug(update, context):
 @typing_action
 def abuse(update, context):
     # reply to correct message
-    reply_text = update.effective_message.reply_to_message.reply_text if update.effective_message.reply_to_message else update.effective_message.reply_text
+    reply_text = (
+        update.effective_message.reply_to_message.reply_text
+        if update.effective_message.reply_to_message
+        else update.effective_message.reply_text
+    )
     reply_text(random.choice(fun.ABUSE_STRINGS))
+
 
 @run_async
 @typing_action
 def dice(update, context):
     context.bot.sendDice(update.effective_chat.id)
 
+
 @run_async
 @typing_action
 def shrug(update, context):
     # reply to correct message
-    reply_text = update.effective_message.reply_to_message.reply_text if update.effective_message.reply_to_message else update.effective_message.reply_text
+    reply_text = (
+        update.effective_message.reply_to_message.reply_text
+        if update.effective_message.reply_to_message
+        else update.effective_message.reply_text
+    )
     reply_text(random.choice(fun.SHGS))
+
 
 @run_async
 def decide(update, context):
     args = update.effective_message.text.split(None, 1)
-    if len(args) >= 2: # Don't reply if no args
-       reply_text = update.effective_message.reply_to_message.reply_text if update.effective_message.reply_to_message else update.effective_message.reply_text
-       reply_text(random.choice(fun.DECIDE))
+    if len(args) >= 2:  # Don't reply if no args
+        reply_text = (
+            update.effective_message.reply_to_message.reply_text
+            if update.effective_message.reply_to_message
+            else update.effective_message.reply_text
+        )
+        reply_text(random.choice(fun.DECIDE))
+
 
 @run_async
 def yesnowtf(update, context):
@@ -170,33 +203,49 @@ def yesnowtf(update, context):
     chat = update.effective_chat
     res = r.get("https://yesno.wtf/api")
     if res.status_code != 200:
-       return msg.reply_text(random.choice(fun.DECIDE))
+        return msg.reply_text(random.choice(fun.DECIDE))
     else:
-       res = res.json()
+        res = res.json()
     try:
-       context.bot.send_animation(chat.id,
-       animation=res["image"],
-       caption=str(res["answer"]).upper())
+        context.bot.send_animation(
+            chat.id, animation=res["image"], caption=str(res["answer"]).upper()
+        )
     except BadRequest:
-           return
+        return
+
 
 @run_async
 @typing_action
 def table(update, context):
-    reply_text = update.effective_message.reply_to_message.reply_text if update.effective_message.reply_to_message else update.effective_message.reply_text
+    reply_text = (
+        update.effective_message.reply_to_message.reply_text
+        if update.effective_message.reply_to_message
+        else update.effective_message.reply_text
+    )
     reply_text(random.choice(fun.TABLE))
+
 
 @run_async
 @typing_action
 def cri(update, context):
-    reply_text = update.effective_message.reply_to_message.reply_text if update.effective_message.reply_to_message else update.effective_message.reply_text
+    reply_text = (
+        update.effective_message.reply_to_message.reply_text
+        if update.effective_message.reply_to_message
+        else update.effective_message.reply_text
+    )
     reply_text(random.choice(fun.CRI))
+
 
 @run_async
 @typing_action
 def recite(update, context):
-    reply_text = update.effective_message.reply_to_message.reply_text if update.effective_message.reply_to_message else update.effective_message.reply_text
+    reply_text = (
+        update.effective_message.reply_to_message.reply_text
+        if update.effective_message.reply_to_message
+        else update.effective_message.reply_text
+    )
     reply_text(random.choice(fun.BEING_LOGICAL))
+
 
 @run_async
 @typing_action
@@ -205,9 +254,10 @@ def gbun(update, context):
     chat = update.effective_chat
 
     if update.effective_message.chat.type == "private":
-       return
+        return
     if int(user.id) in SUDO_USERS or int(user.id) in SUPPORT_USERS:
-       context.bot.sendMessage(chat.id, (random.choice(fun.GBUN)))
+        context.bot.sendMessage(chat.id, (random.choice(fun.GBUN)))
+
 
 @run_async
 @typing_action
@@ -224,7 +274,9 @@ def snipe(update, context):
             context.bot.sendMessage(int(chat_id), str(to_send))
         except TelegramError:
             LOGGER.warning("Couldn't send to group %s", str(chat_id))
-            update.effective_message.reply_text("Couldn't send the message. Perhaps I'm not part of that group?")
+            update.effective_message.reply_text(
+                "Couldn't send the message. Perhaps I'm not part of that group?"
+            )
 
 
 @run_async
@@ -234,9 +286,40 @@ def copypasta(update, context):
     if not message.reply_to_message:
         message.reply_text("I need a message to make pasta.")
     else:
-        emojis = ["😂", "😂", "👌", "✌", "💞", "👍", "👌", "💯", "🎶", "👀", "😂", "👓", "👏", "👐", "🍕", "💥", "🍴", "💦", "💦", "🍑", "🍆", "😩", "😏", "👉👌", "👀", "👅", "😩", "🚰"]
+        emojis = [
+            "😂",
+            "😂",
+            "👌",
+            "✌",
+            "💞",
+            "👍",
+            "👌",
+            "💯",
+            "🎶",
+            "👀",
+            "😂",
+            "👓",
+            "👏",
+            "👐",
+            "🍕",
+            "💥",
+            "🍴",
+            "💦",
+            "💦",
+            "🍑",
+            "🍆",
+            "😩",
+            "😏",
+            "👉👌",
+            "👀",
+            "👅",
+            "😩",
+            "🚰",
+        ]
         reply_text = random.choice(emojis)
-        b_char = random.choice(message.reply_to_message.text).lower() # choose a random character in the message to be substituted with 🅱️
+        b_char = random.choice(
+            message.reply_to_message.text
+        ).lower()  # choose a random character in the message to be substituted with 🅱️
         for c in message.reply_to_message.text:
             if c == " ":
                 reply_text += random.choice(emojis)
@@ -274,20 +357,37 @@ def owo(update, context):
     if not message.reply_to_message:
         message.reply_text("I need a message to meme.")
     else:
-        faces = ['(・`ω´・)',';;w;;','owo','UwU','>w<','^w^','\(^o\) (/o^)/','( ^ _ ^)∠☆','(ô_ô)','~:o',';____;', '(*^*)', '(>_', '(♥_♥)', '*(^O^)*', '((+_+))']
-        reply_text = re.sub(r'[rl]', "w", message.reply_to_message.text)
-        reply_text = re.sub(r'[ｒｌ]', "ｗ", message.reply_to_message.text)
-        reply_text = re.sub(r'[RL]', 'W', reply_text)
-        reply_text = re.sub(r'[ＲＬ]', 'Ｗ', reply_text)
-        reply_text = re.sub(r'n([aeiouａｅｉｏｕ])', r'ny\1', reply_text)
-        reply_text = re.sub(r'ｎ([ａｅｉｏｕ])', r'ｎｙ\1', reply_text)
-        reply_text = re.sub(r'N([aeiouAEIOU])', r'Ny\1', reply_text)
-        reply_text = re.sub(r'Ｎ([ａｅｉｏｕＡＥＩＯＵ])', r'Ｎｙ\1', reply_text)
-        reply_text = re.sub(r'\!+', ' ' + random.choice(faces), reply_text)
-        reply_text = re.sub(r'！+', ' ' + random.choice(faces), reply_text)
+        faces = [
+            "(・`ω´・)",
+            ";;w;;",
+            "owo",
+            "UwU",
+            ">w<",
+            "^w^",
+            "\(^o\) (/o^)/",
+            "( ^ _ ^)∠☆",
+            "(ô_ô)",
+            "~:o",
+            ";____;",
+            "(*^*)",
+            "(>_",
+            "(♥_♥)",
+            "*(^O^)*",
+            "((+_+))",
+        ]
+        reply_text = re.sub(r"[rl]", "w", message.reply_to_message.text)
+        reply_text = re.sub(r"[ｒｌ]", "ｗ", message.reply_to_message.text)
+        reply_text = re.sub(r"[RL]", "W", reply_text)
+        reply_text = re.sub(r"[ＲＬ]", "Ｗ", reply_text)
+        reply_text = re.sub(r"n([aeiouａｅｉｏｕ])", r"ny\1", reply_text)
+        reply_text = re.sub(r"ｎ([ａｅｉｏｕ])", r"ｎｙ\1", reply_text)
+        reply_text = re.sub(r"N([aeiouAEIOU])", r"Ny\1", reply_text)
+        reply_text = re.sub(r"Ｎ([ａｅｉｏｕＡＥＩＯＵ])", r"Ｎｙ\1", reply_text)
+        reply_text = re.sub(r"\!+", " " + random.choice(faces), reply_text)
+        reply_text = re.sub(r"！+", " " + random.choice(faces), reply_text)
         reply_text = reply_text.replace("ove", "uv")
         reply_text = reply_text.replace("ｏｖｅ", "ｕｖ")
-        reply_text += ' ' + random.choice(faces)
+        reply_text += " " + random.choice(faces)
         message.reply_to_message.reply_text(reply_text)
 
 
@@ -299,9 +399,13 @@ def stretch(update, context):
         message.reply_text("I need a message to streeeeeeeeetch.")
     else:
         count = random.randint(3, 10)
-        reply_text = re.sub(r'([aeiouAEIOUａｅｉｏｕＡＥＩＯＵ])', (r'\1' * count), message.reply_to_message.text)
+        reply_text = re.sub(
+            r"([aeiouAEIOUａｅｉｏｕＡＥＩＯＵ])", (r"\1" * count), message.reply_to_message.text
+        )
         if len(reply_text) >= MAX_MESSAGE_LENGTH:
-           return message.reply_text("Result of this message was too long for telegram!")
+            return message.reply_text(
+                "Result of this message was too long for telegram!"
+            )
 
         message.reply_to_message.reply_text(reply_text)
 
@@ -312,28 +416,29 @@ def me_too(update, context):
     reply = random.choice(["Me too thanks", "Haha yes, me too", "Same lol", "Me irl"])
     message.reply_text(reply)
 
+
 @run_async
 def goodnight(update, context):
     message = update.effective_message
     reply = random.choice(fun.GDNIGHT)
-    message.reply_text(reply,
-    parse_mode=ParseMode.MARKDOWN)
+    message.reply_text(reply, parse_mode=ParseMode.MARKDOWN)
+
 
 @run_async
 def goodmorning(update, context):
     message = update.effective_message
     reply = random.choice(fun.GDMORNING)
-    message.reply_text(reply,
-    parse_mode=ParseMode.MARKDOWN)
+    message.reply_text(reply, parse_mode=ParseMode.MARKDOWN)
 
 
 # Bug reporting module for X00TD PORTS!
+
 
 @run_async
 def ports_bug(update, context):
     message = update.effective_message
     user = update.effective_user
-    bug = message.text[len('/bug '):]
+    bug = message.text[len("/bug ") :]
     chat = update.effective_chat
 
     PORT_GRP = [-1001297379754, -1001469684768]
@@ -346,8 +451,13 @@ def ports_bug(update, context):
         return
 
     if bug:
-        context.bot.sendMessage(-1001495581911, "<b>NEW BUG REPORT!</b>\n\n<b>Submitted by</b>: {}.\n\nDescription: <code>{}</code>.".format(
-                                mention_html(user.id, user.first_name), bug), parse_mode=ParseMode.HTML)
+        context.bot.sendMessage(
+            -1001495581911,
+            "<b>NEW BUG REPORT!</b>\n\n<b>Submitted by</b>: {}.\n\nDescription: <code>{}</code>.".format(
+                mention_html(user.id, user.first_name), bug
+            ),
+            parse_mode=ParseMode.HTML,
+        )
         message.reply_text("Successfully submitted bug report!")
 
 
@@ -384,8 +494,12 @@ All regex filters can be disabled incase u don't want... like: `/disable metoo`.
 __mod_name__ = "Memes"
 
 SHRUG_HANDLER = DisableAbleCommandHandler("shrug", shrug)
-DECIDE_HANDLER = DisableAbleMessageHandler(Filters.regex(r"(?i)^skylee\?"), decide, friendly="decide")
-SNIPE_HANDLER = CommandHandler("snipe", snipe, pass_args=True, filters=CustomFilters.sudo_filter)
+DECIDE_HANDLER = DisableAbleMessageHandler(
+    Filters.regex(r"(?i)^skylee\?"), decide, friendly="decide"
+)
+SNIPE_HANDLER = CommandHandler(
+    "snipe", snipe, pass_args=True, filters=CustomFilters.sudo_filter
+)
 ABUSE_HANDLER = DisableAbleCommandHandler("abuse", abuse)
 PORT_BUG_HANDLER = CommandHandler("bug", ports_bug)
 RUNS_HANDLER = DisableAbleCommandHandler("runs", runs)
@@ -399,12 +513,18 @@ PASTA_HANDLER = DisableAbleCommandHandler("pasta", copypasta)
 CLAP_HANDLER = DisableAbleCommandHandler("clap", clapmoji)
 OWO_HANDLER = DisableAbleCommandHandler("owo", owo)
 STRECH_HANDLER = DisableAbleCommandHandler("stretch", stretch)
-MEETOO_HANDLER = DisableAbleMessageHandler(Filters.regex(r"(?i)(me too)"), me_too, friendly="metoo")
+MEETOO_HANDLER = DisableAbleMessageHandler(
+    Filters.regex(r"(?i)(me too)"), me_too, friendly="metoo"
+)
 RECITE_HANDLER = DisableAbleCommandHandler("recite", recite)
 DICE_HANDLER = DisableAbleCommandHandler("roll", dice)
 YESNOWTF_HANDLER = DisableAbleCommandHandler("decide", yesnowtf)
-GDMORNING_HANDLER = DisableAbleMessageHandler(Filters.regex(r"(?i)(goodmorning)"), goodmorning, friendly="goodmorning")
-GDNIGHT_HANDLER = DisableAbleMessageHandler(Filters.regex(r"(?i)(goodnight)"), goodnight, friendly="goodnight")
+GDMORNING_HANDLER = DisableAbleMessageHandler(
+    Filters.regex(r"(?i)(goodmorning)"), goodmorning, friendly="goodmorning"
+)
+GDNIGHT_HANDLER = DisableAbleMessageHandler(
+    Filters.regex(r"(?i)(goodnight)"), goodnight, friendly="goodnight"
+)
 
 
 dispatcher.add_handler(SHRUG_HANDLER)

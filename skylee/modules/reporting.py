@@ -4,7 +4,13 @@ from typing import Optional, List
 from telegram import Message, Chat, User, ParseMode
 from telegram import InlineKeyboardMarkup, InlineKeyboardButton
 from telegram.error import BadRequest, Unauthorized
-from telegram.ext import CommandHandler, MessageHandler, run_async, Filters, CallbackQueryHandler
+from telegram.ext import (
+    CommandHandler,
+    MessageHandler,
+    run_async,
+    Filters,
+    CallbackQueryHandler,
+)
 from telegram.utils.helpers import mention_html
 
 from skylee import dispatcher, LOGGER
@@ -28,28 +34,42 @@ def report_setting(update, context):
         if len(args) >= 1:
             if args[0] in ("yes", "on"):
                 sql.set_user_setting(chat.id, True)
-                msg.reply_text("Turned on reporting! You'll be notified whenever anyone reports something.")
+                msg.reply_text(
+                    "Turned on reporting! You'll be notified whenever anyone reports something."
+                )
 
             elif args[0] in ("no", "off"):
                 sql.set_user_setting(chat.id, False)
                 msg.reply_text("Turned off reporting! You wont get any reports.")
         else:
-            msg.reply_text("Your current report preference is: `{}`".format(sql.user_should_report(chat.id)),
-                           parse_mode=ParseMode.MARKDOWN)
+            msg.reply_text(
+                "Your current report preference is: `{}`".format(
+                    sql.user_should_report(chat.id)
+                ),
+                parse_mode=ParseMode.MARKDOWN,
+            )
 
     else:
         if len(args) >= 1:
             if args[0] in ("yes", "on"):
                 sql.set_chat_setting(chat.id, True)
-                msg.reply_text("Turned on reporting! Admins who have turned on reports will be notified when /report "
-                               "or @admin are called.")
+                msg.reply_text(
+                    "Turned on reporting! Admins who have turned on reports will be notified when /report "
+                    "or @admin are called."
+                )
 
             elif args[0] in ("no", "off"):
                 sql.set_chat_setting(chat.id, False)
-                msg.reply_text("Turned off reporting! No admins will be notified on /report or @admin.")
+                msg.reply_text(
+                    "Turned off reporting! No admins will be notified on /report or @admin."
+                )
         else:
-            msg.reply_text("This chat's current setting is: `{}`".format(sql.chat_should_report(chat.id)),
-                           parse_mode=ParseMode.MARKDOWN)
+            msg.reply_text(
+                "This chat's current setting is: `{}`".format(
+                    sql.chat_should_report(chat.id)
+                ),
+                parse_mode=ParseMode.MARKDOWN,
+            )
 
 
 @run_async
@@ -68,8 +88,8 @@ def report(update, context) -> str:
         messages = update.effective_message
 
         isadmeme = chat.get_member(reported_user.id).status
-        if isadmeme == 'administrator' or isadmeme == 'creator':
-            return "" # No point of reporting admins!
+        if isadmeme == "administrator" or isadmeme == "creator":
+            return ""  # No point of reporting admins!
 
         if user.id == reported_user.id:
             message.reply_text("Why the hell you're reporting yourself?")
@@ -83,20 +103,35 @@ def report(update, context) -> str:
 
             reported = f"Reported {mention_html(reported_user.id, reported_user.first_name)} to the admins!"
 
-            msg = (f"<b>Report from: </b>{html.escape(chat.title)}\n"
-                   f"<b> × Report by:</b> {mention_html(user.id, user.first_name)}(<code>{user.id}</code>)\n"
-                   f"<b> × Reported user:</b> {mention_html(reported_user.id, reported_user.first_name)} (<code>{reported_user.id}</code>)\n")
+            msg = (
+                f"<b>Report from: </b>{html.escape(chat.title)}\n"
+                f"<b> × Report by:</b> {mention_html(user.id, user.first_name)}(<code>{user.id}</code>)\n"
+                f"<b> × Reported user:</b> {mention_html(reported_user.id, reported_user.first_name)} (<code>{reported_user.id}</code>)\n"
+            )
             link = f'<b> × Reported message:</b> <a href="https://t.me/{chat.username}/{message.reply_to_message.message_id}">click here</a>'
             should_forward = False
             keyboard = [
-                [InlineKeyboardButton(u"💬 Message", url=f"https://t.me/{chat.username}/{message.reply_to_message.message_id}"),
-                InlineKeyboardButton(u"⚽ Kick",
-                                      callback_data=f"report_{chat.id}=kick={reported_user.id}={reported_user.first_name}")],
-                 [InlineKeyboardButton(u"⛔️ Ban",
-                                      callback_data=f"report_{chat.id}=banned={reported_user.id}={reported_user.first_name}"),
-                InlineKeyboardButton(u"❎ Delete Message",
-                                      callback_data=f"report_{chat.id}=delete={reported_user.id}={message.reply_to_message.message_id}")]
-                        ]
+                [
+                    InlineKeyboardButton(
+                        "💬 Message",
+                        url=f"https://t.me/{chat.username}/{message.reply_to_message.message_id}",
+                    ),
+                    InlineKeyboardButton(
+                        "⚽ Kick",
+                        callback_data=f"report_{chat.id}=kick={reported_user.id}={reported_user.first_name}",
+                    ),
+                ],
+                [
+                    InlineKeyboardButton(
+                        "⛔️ Ban",
+                        callback_data=f"report_{chat.id}=banned={reported_user.id}={reported_user.first_name}",
+                    ),
+                    InlineKeyboardButton(
+                        "❎ Delete Message",
+                        callback_data=f"report_{chat.id}=delete={reported_user.id}={message.reply_to_message.message_id}",
+                    ),
+                ],
+            ]
             reply_markup = InlineKeyboardMarkup(keyboard)
         else:
             reported = f"Reported {mention_html(reported_user.id, reported_user.first_name)} to the admins!"
@@ -111,26 +146,35 @@ def report(update, context) -> str:
 
             if sql.user_should_report(admin.user.id):
                 try:
-                    context.bot.send_message(admin.user.id, msg + link,
-                    reply_markup=reply_markup, parse_mode=ParseMode.HTML)
+                    context.bot.send_message(
+                        admin.user.id,
+                        msg + link,
+                        reply_markup=reply_markup,
+                        parse_mode=ParseMode.HTML,
+                    )
                     if should_forward:
                         message.reply_to_message.forward(admin.user.id)
 
-                        if len(message.text.split()) > 1:  # If user is giving a reason, send his message too
+                        if (
+                            len(message.text.split()) > 1
+                        ):  # If user is giving a reason, send his message too
                             message.forward(admin.user.id)
 
                 except Unauthorized:
                     pass
                 except BadRequest as excp:  # TODO: cleanup exceptions
-                    if excp.message == 'Message_id_invalid':
-                       pass
+                    if excp.message == "Message_id_invalid":
+                        pass
                     else:
-                       LOGGER.exception("Exception while reporting user " + excp.message)
+                        LOGGER.exception(
+                            "Exception while reporting user " + excp.message
+                        )
 
         message.reply_to_message.reply_text(reported, parse_mode=ParseMode.HTML)
         return msg
 
     return ""
+
 
 def report_buttons(update, context):
     query = update.callback_query
@@ -143,14 +187,22 @@ def report_buttons(update, context):
             return ""
         except Exception as err:
             query.answer("⚠️ Failed to kick!")
-            context.bot.sendMessage(text=f"Error: {err}",chat_id=query.message.chat_id,parse_mode=ParseMode.HTML)
+            context.bot.sendMessage(
+                text=f"Error: {err}",
+                chat_id=query.message.chat_id,
+                parse_mode=ParseMode.HTML,
+            )
     elif splitter[1] == "banned":
         try:
             context.bot.kickChatMember(splitter[0], splitter[2])
             query.answer("User has been succesfully banned")
             return ""
         except Exception as err:
-            context.bot.sendMessage(text=f"Error: {err}",chat_id=query.message.chat_id,parse_mode=ParseMode.HTML)
+            context.bot.sendMessage(
+                text=f"Error: {err}",
+                chat_id=query.message.chat_id,
+                parse_mode=ParseMode.HTML,
+            )
             query.answer("⚠️ Failed to Ban")
     elif splitter[1] == "delete":
         try:
@@ -158,9 +210,12 @@ def report_buttons(update, context):
             query.answer("Message has been deleted!")
             return ""
         except Exception as err:
-            context.bot.sendMessage(text=f"Error: {err}",chat_id=query.message.chat_id,parse_mode=ParseMode.HTML)
+            context.bot.sendMessage(
+                text=f"Error: {err}",
+                chat_id=query.message.chat_id,
+                parse_mode=ParseMode.HTML,
+            )
             query.answer("⚠️ Failed to delete message!")
-
 
 
 def __migrate__(old_chat_id, new_chat_id):
@@ -169,12 +224,15 @@ def __migrate__(old_chat_id, new_chat_id):
 
 def __chat_settings__(chat_id, user_id):
     return "This chat is setup to send user reports to admins, via /report and @admin: `{}`".format(
-        sql.chat_should_report(chat_id))
+        sql.chat_should_report(chat_id)
+    )
 
 
 def __user_settings__(user_id):
     return "You receive reports from chats you're admin in: `{}`.\nToggle this with /reports in PM.".format(
-        sql.user_should_report(user_id))
+        sql.user_should_report(user_id)
+    )
+
 
 __mod_name__ = "Reporting"
 

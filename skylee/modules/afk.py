@@ -40,15 +40,17 @@ def no_longer_afk(update, context):
 
     res = sql.rm_afk(user.id)
     if res:
-       noafkstr = random.choice(fun.NOAFK)
-       update.effective_message.reply_text(noafkstr.format(user.first_name))
+        noafkstr = random.choice(fun.NOAFK)
+        update.effective_message.reply_text(noafkstr.format(user.first_name))
 
 
 @run_async
 def reply_afk(update, context):
     message = update.effective_message  # type: Optional[Message]
 
-    entities = message.parse_entities([MessageEntity.TEXT_MENTION, MessageEntity.MENTION])
+    entities = message.parse_entities(
+        [MessageEntity.TEXT_MENTION, MessageEntity.MENTION]
+    )
     if message.entities and entities:
         for ent in entities:
             if ent.type == MessageEntity.TEXT_MENTION:
@@ -56,7 +58,9 @@ def reply_afk(update, context):
                 fst_name = ent.user.first_name
 
             elif ent.type == MessageEntity.MENTION:
-                user_id = get_user_id(message.text[ent.offset:ent.offset + ent.length])
+                user_id = get_user_id(
+                    message.text[ent.offset : ent.offset + ent.length]
+                )
                 if not user_id:
                     # Should never happen, since for a user to become AFK they must have spoken. Maybe changed username?
                     return
@@ -78,7 +82,9 @@ def reply_afk(update, context):
                         res = rplafkstr.format(fst_name)
                     else:
                         res = f"<b>{fst_name}</b> is away from keyboard! says it's because of \n{reason}"
-                    send_message(update.effective_message, res, parse_mode=ParseMode.HTML)
+                    send_message(
+                        update.effective_message, res, parse_mode=ParseMode.HTML
+                    )
 
 
 def __user_info__(user_id):
@@ -92,8 +98,10 @@ def __user_info__(user_id):
         text = text.format("No")
     return text
 
+
 def __gdpr__(user_id):
     sql.rm_afk(user_id)
+
 
 __help__ = """
 When marked as AFK, any mentions will be replied to with a message to say you're not available!
@@ -106,9 +114,13 @@ __mod_name__ = "BRB"
 
 
 AFK_HANDLER = DisableAbleCommandHandler("afk", afk)
-AFK_REGEX_HANDLER = DisableAbleMessageHandler(Filters.regex("(?i)brb"), afk, friendly="afk")
-NO_AFK_HANDLER = MessageHandler(Filters.all & Filters.group & ~Filters.update.edited_message, no_longer_afk)
-AFK_REPLY_HANDLER = MessageHandler(Filters.all & Filters.group , reply_afk)
+AFK_REGEX_HANDLER = DisableAbleMessageHandler(
+    Filters.regex("(?i)brb"), afk, friendly="afk"
+)
+NO_AFK_HANDLER = MessageHandler(
+    Filters.all & Filters.group & ~Filters.update.edited_message, no_longer_afk
+)
+AFK_REPLY_HANDLER = MessageHandler(Filters.all & Filters.group, reply_afk)
 # AFK_REPLY_HANDLER = MessageHandler(Filters.entity(MessageEntity.MENTION) | Filters.entity(MessageEntity.TEXT_MENTION),
 #                                   reply_afk)
 

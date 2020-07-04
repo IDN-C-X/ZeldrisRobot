@@ -14,9 +14,9 @@ from skylee.modules.disable import DisableAbleCommandHandler
 from skylee.modules.helper_funcs.alternate import typing_action
 
 opener = urllib.request.build_opener()
-useragent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.38 Safari/537.36'
-#useragent = 'Mozilla/5.0 (Linux; Android 6.0.1; SM-G920V Build/MMB29K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/52.0.2743.98 Mobile Safari/537.36'
-opener.addheaders = [('User-agent', useragent)]
+useragent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.38 Safari/537.36"
+# useragent = 'Mozilla/5.0 (Linux; Android 6.0.1; SM-G920V Build/MMB29K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/52.0.2743.98 Mobile Safari/537.36'
+opener.addheaders = [("User-agent", useragent)]
 
 
 @run_async
@@ -69,11 +69,13 @@ def reverse(update, context):
         try:
             urllib.request.urlretrieve(img_link, imagename)
         except HTTPError as HE:
-            if HE.reason == 'Not Found':
+            if HE.reason == "Not Found":
                 msg.reply_text("Image not found.")
                 return
-            elif HE.reason == 'Forbidden':
-                msg.reply_text("Couldn't access the provided link, The website might have blocked accessing to the website by bot or the website does not existed.")
+            elif HE.reason == "Forbidden":
+                msg.reply_text(
+                    "Couldn't access the provided link, The website might have blocked accessing to the website by bot or the website does not existed."
+                )
                 return
         except URLError as UE:
             msg.reply_text(f"{UE.reason}")
@@ -82,40 +84,59 @@ def reverse(update, context):
             msg.reply_text(f"{VE}\nPlease try again using http or https protocol.")
             return
     else:
-        msg.reply_markdown("Please reply to a sticker, or an image to search it!\nDo you know that you can search an image with a link too? `/reverse [picturelink] <amount>`.")
+        msg.reply_markdown(
+            "Please reply to a sticker, or an image to search it!\nDo you know that you can search an image with a link too? `/reverse [picturelink] <amount>`."
+        )
         return
 
     try:
-        searchUrl = 'https://www.google.com/searchbyimage/upload'
-        multipart = {'encoded_image': (imagename, open(imagename, 'rb')), 'image_content': ''}
+        searchUrl = "https://www.google.com/searchbyimage/upload"
+        multipart = {
+            "encoded_image": (imagename, open(imagename, "rb")),
+            "image_content": "",
+        }
         response = requests.post(searchUrl, files=multipart, allow_redirects=False)
-        fetchUrl = response.headers['Location']
+        fetchUrl = response.headers["Location"]
 
         if response != 400:
-            xx = context.bot.send_message(chat_id, "Image was successfully uploaded to Google."
-                                  "\nParsing source now. Maybe.", reply_to_message_id=rtmid)
+            xx = context.bot.send_message(
+                chat_id,
+                "Image was successfully uploaded to Google."
+                "\nParsing source now. Maybe.",
+                reply_to_message_id=rtmid,
+            )
         else:
-            xx = context.bot.send_message(chat_id, "Google told me to go away.", reply_to_message_id=rtmid)
+            xx = context.bot.send_message(
+                chat_id, "Google told me to go away.", reply_to_message_id=rtmid
+            )
             return
 
         os.remove(imagename)
         match = ParseSauce(fetchUrl + "&hl=en")
-        guess = match['best_guess']
-        if match['override'] and not match['override'] == '':
-            imgspage = match['override']
+        guess = match["best_guess"]
+        if match["override"] and not match["override"] == "":
+            imgspage = match["override"]
         else:
-            imgspage = match['similar_images']
+            imgspage = match["similar_images"]
 
         if guess and imgspage:
-            xx.edit_text(f"[{guess}]({fetchUrl})\nLooking for images...", parse_mode='Markdown', disable_web_page_preview=True)
+            xx.edit_text(
+                f"[{guess}]({fetchUrl})\nLooking for images...",
+                parse_mode="Markdown",
+                disable_web_page_preview=True,
+            )
         else:
             xx.edit_text("Couldn't find anything.")
             return
 
         images = scam(imgspage, lim)
         if len(images) == 0:
-            xx.edit_text(f"[{guess}]({fetchUrl})\n[Visually similar images]({imgspage})"
-                          "\nCouldn't fetch any images.", parse_mode='Markdown', disable_web_page_preview=True)
+            xx.edit_text(
+                f"[{guess}]({fetchUrl})\n[Visually similar images]({imgspage})"
+                "\nCouldn't fetch any images.",
+                parse_mode="Markdown",
+                disable_web_page_preview=True,
+            )
             return
 
         imglinks = []
@@ -123,51 +144,57 @@ def reverse(update, context):
             lmao = InputMediaPhoto(media=str(link))
             imglinks.append(lmao)
 
-        context.bot.send_media_group(chat_id=chat_id, media=imglinks, reply_to_message_id=rtmid)
-        xx.edit_text(f"[{guess}]({fetchUrl})\n[Visually similar images]({imgspage})", parse_mode='Markdown', disable_web_page_preview=True)
+        context.bot.send_media_group(
+            chat_id=chat_id, media=imglinks, reply_to_message_id=rtmid
+        )
+        xx.edit_text(
+            f"[{guess}]({fetchUrl})\n[Visually similar images]({imgspage})",
+            parse_mode="Markdown",
+            disable_web_page_preview=True,
+        )
     except TelegramError as e:
         print(e)
     except Exception as exception:
         print(exception)
 
+
 def ParseSauce(googleurl):
     source = opener.open(googleurl).read()
-    soup = BeautifulSoup(source, 'html.parser')
+    soup = BeautifulSoup(source, "html.parser")
 
-    results = {
-        'similar_images': '',
-        'override': '',
-        'best_guess': ''
-    }
+    results = {"similar_images": "", "override": "", "best_guess": ""}
 
     try:
-         for bess in soup.findAll('a', {'class': 'PBorbe'}):
-            url = 'https://www.google.com' + bess.get('href')
-            results['override'] = url
+        for bess in soup.findAll("a", {"class": "PBorbe"}):
+            url = "https://www.google.com" + bess.get("href")
+            results["override"] = url
     except:
         pass
 
-    for similar_image in soup.findAll('input', {'class': 'gLFyf'}):
-            url = 'https://www.google.com/search?tbm=isch&q=' + urllib.parse.quote_plus(similar_image.get('value'))
-            results['similar_images'] = url
+    for similar_image in soup.findAll("input", {"class": "gLFyf"}):
+        url = "https://www.google.com/search?tbm=isch&q=" + urllib.parse.quote_plus(
+            similar_image.get("value")
+        )
+        results["similar_images"] = url
 
-    for best_guess in soup.findAll('div', attrs={'class':'r5a77d'}):
-        results['best_guess'] = best_guess.get_text()
+    for best_guess in soup.findAll("div", attrs={"class": "r5a77d"}):
+        results["best_guess"] = best_guess.get_text()
 
     return results
+
 
 def scam(imgspage, lim):
     """Parse/Scrape the HTML code for the info we want."""
 
     single = opener.open(imgspage).read()
-    decoded = single.decode('utf-8')
+    decoded = single.decode("utf-8")
     if int(lim) > 10:
         lim = 10
 
     imglinks = []
     counter = 0
 
-    pattern = r'^,\[\"(.*[.png|.jpg|.jpeg])\",[0-9]+,[0-9]+\]$'
+    pattern = r"^,\[\"(.*[.png|.jpg|.jpeg])\",[0-9]+,[0-9]+\]$"
     oboi = re.findall(pattern, decoded, re.I | re.M)
 
     for imglink in oboi:
@@ -179,7 +206,8 @@ def scam(imgspage, lim):
     return imglinks
 
 
-REVERSE_HANDLER = DisableAbleCommandHandler("reverse", reverse, pass_args=True, admin_ok=True)
+REVERSE_HANDLER = DisableAbleCommandHandler(
+    "reverse", reverse, pass_args=True, admin_ok=True
+)
 
 dispatcher.add_handler(REVERSE_HANDLER)
-

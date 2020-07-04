@@ -28,13 +28,19 @@ def about_me(update, context):
     info = sql.get_user_me_info(user.id)
 
     if info:
-        update.effective_message.reply_text("*{}*:\n{}".format(user.first_name, escape_markdown(info)),
-                                            parse_mode=ParseMode.MARKDOWN)
+        update.effective_message.reply_text(
+            "*{}*:\n{}".format(user.first_name, escape_markdown(info)),
+            parse_mode=ParseMode.MARKDOWN,
+        )
     elif message.reply_to_message:
         username = message.reply_to_message.from_user.first_name
-        update.effective_message.reply_text(username + "Information about him is currently unavailable !")
+        update.effective_message.reply_text(
+            username + "Information about him is currently unavailable !"
+        )
     else:
-        update.effective_message.reply_text("You have not added any information about yourself yet !")
+        update.effective_message.reply_text(
+            "You have not added any information about yourself yet !"
+        )
 
 
 @run_async
@@ -43,14 +49,19 @@ def set_about_me(update, context):
     message = update.effective_message  # type: Optional[Message]
     user_id = message.from_user.id
     text = message.text
-    info = text.split(None, 1)  # use python's maxsplit to only remove the cmd, hence keeping newlines.
+    info = text.split(
+        None, 1
+    )  # use python's maxsplit to only remove the cmd, hence keeping newlines.
     if len(info) == 2:
         if len(info[1]) < MAX_MESSAGE_LENGTH // 4:
             sql.set_user_me_info(user_id, info[1])
             message.reply_text("Your bio has been saved successfully")
         else:
             message.reply_text(
-                " About You{} To be confined to letters ".format(MAX_MESSAGE_LENGTH // 4, len(info[1])))
+                " About You{} To be confined to letters ".format(
+                    MAX_MESSAGE_LENGTH // 4, len(info[1])
+                )
+            )
 
 
 @run_async
@@ -68,11 +79,15 @@ def about_bio(update, context):
     info = sql.get_user_bio(user.id)
 
     if info:
-        update.effective_message.reply_text("*{}*:\n{}".format(user.first_name, escape_markdown(info)),
-                                            parse_mode=ParseMode.MARKDOWN)
+        update.effective_message.reply_text(
+            "*{}*:\n{}".format(user.first_name, escape_markdown(info)),
+            parse_mode=ParseMode.MARKDOWN,
+        )
     elif message.reply_to_message:
         username = user.first_name
-        update.effective_message.reply_text("{} No details about him have been saved yet !".format(username))
+        update.effective_message.reply_text(
+            "{} No details about him have been saved yet !".format(username)
+        )
     else:
         update.effective_message.reply_text(" Your bio  about you has been saved !")
 
@@ -93,15 +108,23 @@ def set_about_bio(update, context):
             return
 
         text = message.text
-        bio = text.split(None, 1)  # use python's maxsplit to only remove the cmd, hence keeping newlines.
+        bio = text.split(
+            None, 1
+        )  # use python's maxsplit to only remove the cmd, hence keeping newlines.
         if len(bio) == 2:
             if len(bio[1]) < MAX_MESSAGE_LENGTH // 4:
                 sql.set_user_bio(user_id, bio[1])
-                message.reply_text("{} bio has been successfully saved!".format(repl_message.from_user.first_name))
+                message.reply_text(
+                    "{} bio has been successfully saved!".format(
+                        repl_message.from_user.first_name
+                    )
+                )
             else:
                 message.reply_text(
                     "About you {} Must stick to the letter! The number of characters you have just tried {} hm .".format(
-                        MAX_MESSAGE_LENGTH // 4, len(bio[1])))
+                        MAX_MESSAGE_LENGTH // 4, len(bio[1])
+                    )
+                )
     else:
         message.reply_text(" His bio can only be saved if someone MESSAGE as a REPLY")
 
@@ -110,11 +133,13 @@ def __user_info__(user_id):
     bio = html.escape(sql.get_user_bio(user_id) or "")
     me = html.escape(sql.get_user_me_info(user_id) or "")
     if bio and me:
-        return "<b>About user:</b>\n{me}\n\n<b>What others say:</b>\n{bio}".format(me=me, bio=bio)
+        return "<b>About user:</b>\n{me}\n\n<b>What others say:</b>\n{bio}".format(
+            me=me, bio=bio
+        )
     elif bio:
         return "<b>What others say:</b>\n{bio}\n".format(me=me, bio=bio)
     elif me:
-        return "<b>About user:</b>\n{me}""".format(me=me, bio=bio)
+        return "<b>About user:</b>\n{me}" "".format(me=me, bio=bio)
     else:
         return ""
 

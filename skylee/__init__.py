@@ -7,8 +7,8 @@ import telegram.ext as tg
 
 # enable logging
 logging.basicConfig(
-    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
-    level=logging.INFO)
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", level=logging.INFO
+)
 
 LOGGER = logging.getLogger(__name__)
 
@@ -16,19 +16,21 @@ LOGGER.info("Starting Skylee...")
 
 # if version < 3.6, stop bot.
 if sys.version_info[0] < 3 or sys.version_info[1] < 6:
-    LOGGER.error("You MUST have a python version of at least 3.6! Multiple features depend on this. Bot quitting.")
+    LOGGER.error(
+        "You MUST have a python version of at least 3.6! Multiple features depend on this. Bot quitting."
+    )
     quit(1)
 
-ENV = bool(os.environ.get('ENV', False))
+ENV = bool(os.environ.get("ENV", False))
 
 if ENV:
-    TOKEN = os.environ.get('TOKEN', None)
+    TOKEN = os.environ.get("TOKEN", None)
     try:
-        OWNER_ID = int(os.environ.get('OWNER_ID', None))
+        OWNER_ID = int(os.environ.get("OWNER_ID", None))
     except ValueError:
         raise Exception("Your OWNER_ID env variable is not a valid integer.")
 
-    MESSAGE_DUMP = os.environ.get('MESSAGE_DUMP', None)
+    MESSAGE_DUMP = os.environ.get("MESSAGE_DUMP", None)
     OWNER_USERNAME = os.environ.get("OWNER_USERNAME", None)
 
     try:
@@ -42,40 +44,47 @@ if ENV:
         raise Exception("Your support users list does not contain valid integers.")
 
     try:
-        WHITELIST_USERS = set(int(x) for x in os.environ.get("WHITELIST_USERS", "").split())
+        WHITELIST_USERS = set(
+            int(x) for x in os.environ.get("WHITELIST_USERS", "").split()
+        )
     except ValueError:
         raise Exception("Your whitelisted users list does not contain valid integers.")
     try:
-        WHITELIST_CHATS = set(int(x) for x in os.environ.get("WHITELIST_CHATS", "").split())
+        WHITELIST_CHATS = set(
+            int(x) for x in os.environ.get("WHITELIST_CHATS", "").split()
+        )
     except ValueError:
         raise Exception("Your whitelisted users list does not contain valid integers.")
     try:
-        BLACKLIST_CHATS = set(int(x) for x in os.environ.get("BLACKLIST_CHATS", "").split())
+        BLACKLIST_CHATS = set(
+            int(x) for x in os.environ.get("BLACKLIST_CHATS", "").split()
+        )
     except ValueError:
         raise Exception("Your whitelisted users list does not contain valid integers.")
 
-    WEBHOOK = bool(os.environ.get('WEBHOOK', False))
-    URL = os.environ.get('URL', "")  # Does not contain token
-    PORT = int(os.environ.get('PORT', 5000))
+    WEBHOOK = bool(os.environ.get("WEBHOOK", False))
+    URL = os.environ.get("URL", "")  # Does not contain token
+    PORT = int(os.environ.get("PORT", 5000))
     CERT_PATH = os.environ.get("CERT_PATH")
 
-    DB_URI = os.environ.get('DATABASE_URL')
-    DONATION_LINK = os.environ.get('DONATION_LINK')
+    DB_URI = os.environ.get("DATABASE_URL")
+    DONATION_LINK = os.environ.get("DONATION_LINK")
     LOAD = os.environ.get("LOAD", "").split()
     NO_LOAD = os.environ.get("NO_LOAD", "").split()
-    DEL_CMDS = bool(os.environ.get('DEL_CMDS', False))
-    STRICT_GBAN = bool(os.environ.get('STRICT_GBAN', False))
-    WORKERS = int(os.environ.get('WORKERS', 8))
-    BAN_STICKER = os.environ.get('BAN_STICKER', 'CAADAgADOwADPPEcAXkko5EB3YGYAg')
-    CUSTOM_CMD = os.environ.get('CUSTOM_CMD', False)
-    API_WEATHER = os.environ.get('API_OPENWEATHER', None)
-    WALL_API = os.environ.get('WALL_API', None)
-    TELETHON_ID = int(os.environ.get('TL_APP_ID', None))
-    TELETHON_HASH = os.environ.get('TL_HASH', None)
-    SPAMWATCH = os.environ.get('SPAMWATCH_API', None)
+    DEL_CMDS = bool(os.environ.get("DEL_CMDS", False))
+    STRICT_GBAN = bool(os.environ.get("STRICT_GBAN", False))
+    WORKERS = int(os.environ.get("WORKERS", 8))
+    BAN_STICKER = os.environ.get("BAN_STICKER", "CAADAgADOwADPPEcAXkko5EB3YGYAg")
+    CUSTOM_CMD = os.environ.get("CUSTOM_CMD", False)
+    API_WEATHER = os.environ.get("API_OPENWEATHER", None)
+    WALL_API = os.environ.get("WALL_API", None)
+    TELETHON_ID = int(os.environ.get("TL_APP_ID", None))
+    TELETHON_HASH = os.environ.get("TL_HASH", None)
+    SPAMWATCH = os.environ.get("SPAMWATCH_API", None)
 
 else:
     from skylee.config import Development as Config
+
     TOKEN = Config.API_KEY
     try:
         OWNER_ID = int(Config.OWNER_ID)
@@ -121,7 +130,7 @@ else:
     STRICT_GBAN = Config.STRICT_GBAN
     WORKERS = Config.WORKERS
     BAN_STICKER = Config.BAN_STICKER
-    #ALLOW_EXCL = Config.ALLOW_EXCL
+    # ALLOW_EXCL = Config.ALLOW_EXCL
     CUSTOM_CMD = Config.CUSTOM_CMD
     API_WEATHER = Config.API_OPENWEATHER
     WALL_API = Config.WALL_API
@@ -133,15 +142,15 @@ SUDO_USERS.add(OWNER_ID)
 
 # Pass if SpamWatch token not set.
 if SPAMWATCH == None:
-   spamwtc = None
-   LOGGER.warning("Invalid spamwatch api")
+    spamwtc = None
+    LOGGER.warning("Invalid spamwatch api")
 else:
-   spamwtc = spamwatch.Client(SPAMWATCH)
+    spamwtc = spamwatch.Client(SPAMWATCH)
 
 # Telethon
 api_id = TELETHON_ID
 api_hash = TELETHON_HASH
-client = TelegramClient('skylee', api_id, api_hash)
+client = TelegramClient("skylee", api_id, api_hash)
 
 updater = tg.Updater(TOKEN, workers=WORKERS, use_context=True)
 
@@ -156,4 +165,3 @@ from skylee.modules.helper_funcs.handlers import CustomCommandHandler
 
 if CUSTOM_CMD and len(CUSTOM_CMD) >= 1:
     tg.CommandHandler = CustomCommandHandler
-

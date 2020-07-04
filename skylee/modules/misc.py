@@ -8,18 +8,30 @@ from io import BytesIO
 from random import randint
 import requests as r
 
-from telegram import (Message,
-Chat, MessageEntity,
-InlineKeyboardMarkup,
-InlineKeyboardButton,
-ParseMode, ChatAction,
-TelegramError)
+from telegram import (
+    Message,
+    Chat,
+    MessageEntity,
+    InlineKeyboardMarkup,
+    InlineKeyboardButton,
+    ParseMode,
+    ChatAction,
+    TelegramError,
+)
 
 from telegram.ext import CommandHandler, run_async, Filters
 from telegram.utils.helpers import escape_markdown, mention_html
 from telegram.error import BadRequest
 
-from skylee import dispatcher, OWNER_ID, SUDO_USERS, SUPPORT_USERS, WHITELIST_USERS, WALL_API, spamwtc
+from skylee import (
+    dispatcher,
+    OWNER_ID,
+    SUDO_USERS,
+    SUPPORT_USERS,
+    WHITELIST_USERS,
+    WALL_API,
+    spamwtc,
+)
 from skylee.__main__ import STATS, USER_INFO, GDPR
 from skylee.modules.disable import DisableAbleCommandHandler
 from skylee.modules.helper_funcs.extraction import extract_user
@@ -33,7 +45,10 @@ def get_id(update, context):
     args = context.args
     user_id = extract_user(update.effective_message, args)
     if user_id:
-        if update.effective_message.reply_to_message and update.effective_message.reply_to_message.forward_from:
+        if (
+            update.effective_message.reply_to_message
+            and update.effective_message.reply_to_message.forward_from
+        ):
             user1 = update.effective_message.reply_to_message.from_user
             user2 = update.effective_message.reply_to_message.forward_from
             update.effective_message.reply_text(
@@ -41,21 +56,28 @@ def get_id(update, context):
                     escape_markdown(user2.first_name),
                     user2.id,
                     escape_markdown(user1.first_name),
-                    user1.id),
-                parse_mode=ParseMode.MARKDOWN)
+                    user1.id,
+                ),
+                parse_mode=ParseMode.MARKDOWN,
+            )
         else:
             user = context.bot.get_chat(user_id)
-            update.effective_message.reply_text("{}'s id is `{}`.".format(escape_markdown(user.first_name), user.id),
-                                                parse_mode=ParseMode.MARKDOWN)
+            update.effective_message.reply_text(
+                "{}'s id is `{}`.".format(escape_markdown(user.first_name), user.id),
+                parse_mode=ParseMode.MARKDOWN,
+            )
     else:
         chat = update.effective_chat  # type: Optional[Chat]
         if chat.type == "private":
-            update.effective_message.reply_text("Your id is `{}`.".format(chat.id),
-                                                parse_mode=ParseMode.MARKDOWN)
+            update.effective_message.reply_text(
+                "Your id is `{}`.".format(chat.id), parse_mode=ParseMode.MARKDOWN
+            )
 
         else:
-            update.effective_message.reply_text("This group's id is `{}`.".format(chat.id),
-                                                parse_mode=ParseMode.MARKDOWN)
+            update.effective_message.reply_text(
+                "This group's id is `{}`.".format(chat.id),
+                parse_mode=ParseMode.MARKDOWN,
+            )
 
 
 @run_async
@@ -71,20 +93,31 @@ def info(update, context):
     elif not msg.reply_to_message and not args:
         user = msg.from_user
 
-    elif not msg.reply_to_message and (not args or (
-            len(args) >= 1 and not args[0].startswith("@") and not args[0].isdigit() and not msg.parse_entities(
-        [MessageEntity.TEXT_MENTION]))):
+    elif not msg.reply_to_message and (
+        not args
+        or (
+            len(args) >= 1
+            and not args[0].startswith("@")
+            and not args[0].isdigit()
+            and not msg.parse_entities([MessageEntity.TEXT_MENTION])
+        )
+    ):
         msg.reply_text("I can't extract a user from this.")
         return
 
     else:
         return
 
-    del_msg = msg.reply_text("Hold tight while I steal some data from <b>FBI Database</b>...", parse_mode=ParseMode.HTML)
+    del_msg = msg.reply_text(
+        "Hold tight while I steal some data from <b>FBI Database</b>...",
+        parse_mode=ParseMode.HTML,
+    )
 
-    text = "<b>USER INFO</b>:" \
-           "\n\nID: <code>{}</code>" \
-           "\nFirst Name: {}".format(user.id, html.escape(user.first_name))
+    text = (
+        "<b>USER INFO</b>:"
+        "\n\nID: <code>{}</code>"
+        "\nFirst Name: {}".format(user.id, html.escape(user.first_name))
+    )
 
     if user.last_name:
         text += "\nLast Name: {}".format(html.escape(user.last_name))
@@ -94,36 +127,44 @@ def info(update, context):
 
     text += "\nPermanent user link: {}".format(mention_html(user.id, "link"))
 
-    text += "\nNumber of profile pics: {}".format(context.bot.get_user_profile_photos(user.id).total_count)
+    text += "\nNumber of profile pics: {}".format(
+        context.bot.get_user_profile_photos(user.id).total_count
+    )
 
     try:
         sw = spamwtc.get_ban(int(user.id))
         if sw:
-           text +='\n\n<b>This person is banned in Spamwatch!</b>'
-           text += f'\nResason: <pre>{sw.reason}</pre>'
+            text += "\n\n<b>This person is banned in Spamwatch!</b>"
+            text += f"\nResason: <pre>{sw.reason}</pre>"
         else:
-           pass
+            pass
     except:
-        pass # Don't break on exceptions like if api is down?
+        pass  # Don't break on exceptions like if api is down?
 
     if user.id == OWNER_ID:
         text += "\n\nAye this guy is my owner.\nI would never do anything against him!"
 
     elif user.id in SUDO_USERS:
-        text += "\n\nThis person is one of my sudo users! " \
-                    "Nearly as powerful as my owner - so watch it."
+        text += (
+            "\n\nThis person is one of my sudo users! "
+            "Nearly as powerful as my owner - so watch it."
+        )
 
     elif user.id in SUPPORT_USERS:
-        text += "\n\nThis person is one of my support users! " \
-                    "Not quite a sudo user, but can still gban you off the map."
+        text += (
+            "\n\nThis person is one of my support users! "
+            "Not quite a sudo user, but can still gban you off the map."
+        )
 
     elif user.id in WHITELIST_USERS:
-        text += "\n\nThis person has been whitelisted! " \
-                    "That means I'm not allowed to ban/kick them."
+        text += (
+            "\n\nThis person has been whitelisted! "
+            "That means I'm not allowed to ban/kick them."
+        )
 
     try:
         memstatus = chat.get_member(user.id).status
-        if memstatus == 'administrator' or memstatus == 'creator':
+        if memstatus == "administrator" or memstatus == "creator":
             result = context.bot.get_chat_member(chat.id, user.id)
             if result.custom_title:
                 text += f"\n\nThis user has custom title <b>{result.custom_title}</b> in this chat."
@@ -141,7 +182,13 @@ def info(update, context):
     try:
         profile = context.bot.get_user_profile_photos(user.id).photos[0][-1]
         context.bot.sendChatAction(chat.id, "upload_photo")
-        context.bot.send_photo(chat.id, photo=profile, caption=(text), parse_mode=ParseMode.HTML, disable_web_page_preview=True)
+        context.bot.send_photo(
+            chat.id,
+            photo=profile,
+            caption=(text),
+            parse_mode=ParseMode.HTML,
+            disable_web_page_preview=True,
+        )
     except IndexError:
         context.bot.sendChatAction(chat.id, "typing")
         msg.reply_text(text, parse_mode=ParseMode.HTML, disable_web_page_preview=True)
@@ -168,14 +215,16 @@ def gdpr(update, context):
     for mod in GDPR:
         mod.__gdpr__(update.effective_user.id)
 
-    update.effective_message.reply_text("Your personal data has been deleted.\n\nNote that this will not unban "
-                                        "you from any chats, as that is telegram data, not Skylee data. "
-                                        "Flooding, warns, and gbans are also preserved, as of "
-                                        "[this](https://ico.org.uk/for-organisations/guide-to-the-general-data-protection-regulation-gdpr/individual-rights/right-to-erasure/), "
-                                        "which clearly states that the right to erasure does not apply "
-                                        "\"for the performance of a task carried out in the public interest\", as is "
-                                        "the case for the aforementioned pieces of data.",
-                                        parse_mode=ParseMode.MARKDOWN)
+    update.effective_message.reply_text(
+        "Your personal data has been deleted.\n\nNote that this will not unban "
+        "you from any chats, as that is telegram data, not Skylee data. "
+        "Flooding, warns, and gbans are also preserved, as of "
+        "[this](https://ico.org.uk/for-organisations/guide-to-the-general-data-protection-regulation-gdpr/individual-rights/right-to-erasure/), "
+        "which clearly states that the right to erasure does not apply "
+        '"for the performance of a task carried out in the public interest", as is '
+        "the case for the aforementioned pieces of data.",
+        parse_mode=ParseMode.MARKDOWN,
+    )
 
 
 MARKDOWN_HELP = """
@@ -202,17 +251,24 @@ If you want multiple buttons on the same line, use :same, as such:
 This will create two buttons on a single line, instead of one button per line.
 
 Keep in mind that your message <b>MUST</b> contain some text other than just a button!
-""".format(dispatcher.bot.first_name)
+""".format(
+    dispatcher.bot.first_name
+)
 
 
 @run_async
 @typing_action
 def markdown_help(update, context):
     update.effective_message.reply_text(MARKDOWN_HELP, parse_mode=ParseMode.HTML)
-    update.effective_message.reply_text("Try forwarding the following message to me, and you'll see!")
-    update.effective_message.reply_text("/save test This is a markdown test. _italics_, --underline--, *bold*, `code`, ~strike~ "
-                                        "[URL](example.com) [button](buttonurl:github.com) "
-                                        "[button2](buttonurl://google.com:same)")
+    update.effective_message.reply_text(
+        "Try forwarding the following message to me, and you'll see!"
+    )
+    update.effective_message.reply_text(
+        "/save test This is a markdown test. _italics_, --underline--, *bold*, `code`, ~strike~ "
+        "[URL](example.com) [button](buttonurl:github.com) "
+        "[button2](buttonurl://google.com:same)"
+    )
+
 
 @run_async
 @typing_action
@@ -224,14 +280,30 @@ def wiki(update, context):
     else:
         try:
             pertama = update.effective_message.reply_text("🔄 Loading...")
-            keyboard = InlineKeyboardMarkup([[InlineKeyboardButton(text="🔧 More Info...", url=wikipedia.page(kueri).url)]])
-            context.bot.editMessageText(chat_id=update.effective_chat.id, message_id=pertama.message_id, text=wikipedia.summary(kueri, sentences=10), reply_markup=keyboard)
+            keyboard = InlineKeyboardMarkup(
+                [
+                    [
+                        InlineKeyboardButton(
+                            text="🔧 More Info...", url=wikipedia.page(kueri).url
+                        )
+                    ]
+                ]
+            )
+            context.bot.editMessageText(
+                chat_id=update.effective_chat.id,
+                message_id=pertama.message_id,
+                text=wikipedia.summary(kueri, sentences=10),
+                reply_markup=keyboard,
+            )
         except wikipedia.PageError as e:
             update.effective_message.reply_text(f"⚠ Error: {e}")
-        except BadRequest as et :
+        except BadRequest as et:
             update.effective_message.reply_text(f"⚠ Error: {et}")
         except wikipedia.exceptions.DisambiguationError as eet:
-            update.effective_message.reply_text(f"⚠ Error\n There are too many query! Express it more!\nPossible query result:\n{eet}")
+            update.effective_message.reply_text(
+                f"⚠ Error\n There are too many query! Express it more!\nPossible query result:\n{eet}"
+            )
+
 
 @run_async
 @typing_action
@@ -240,34 +312,40 @@ def ud(update, context):
     args = context.args
     text = " ".join(args).lower()
     if not text:
-       msg.reply_text("Please enter keywords to search!")
-       return
-    elif text == 'starry':
-       msg.reply_text("Fek off bitch!")
-       return
+        msg.reply_text("Please enter keywords to search!")
+        return
+    elif text == "starry":
+        msg.reply_text("Fek off bitch!")
+        return
     try:
-        results = get(f'http://api.urbandictionary.com/v0/define?term={text}').json()
+        results = get(f"http://api.urbandictionary.com/v0/define?term={text}").json()
         reply_text = f'Word: {text}\nDefinition: {results["list"][0]["definition"]}'
         reply_text += f'\n\nExample: {results["list"][0]["example"]}'
     except IndexError:
-        reply_text = f'Word: {text}\nResults: Sorry could not find any matching results!'
+        reply_text = (
+            f"Word: {text}\nResults: Sorry could not find any matching results!"
+        )
     ignore_chars = "[]"
     reply = reply_text
     for chars in ignore_chars:
         reply = reply.replace(chars, "")
     if len(reply) >= 4096:
-        reply = reply[:4096] # max msg lenth of tg.
+        reply = reply[:4096]  # max msg lenth of tg.
     try:
         msg.reply_text(reply)
     except BadRequest as err:
         msg.reply_text(f"Error! {err.message}")
 
+
 @run_async
 @typing_action
 def src(update, context):
     update.effective_message.reply_text(
-    "Hey there! You can find what makes me click [here](www.github.com/starry69/skyleebot).",
-     parse_mode=ParseMode.MARKDOWN, disable_web_page_preview=True)
+        "Hey there! You can find what makes me click [here](www.github.com/starry69/skyleebot).",
+        parse_mode=ParseMode.MARKDOWN,
+        disable_web_page_preview=True,
+    )
+
 
 @run_async
 @send_action(ChatAction.UPLOAD_PHOTO)
@@ -283,7 +361,9 @@ def wall(update, context):
     else:
         caption = query
         term = query.replace(" ", "%20")
-        json_rep = r.get(f"https://wall.alphacoders.com/api2.0/get.php?auth={WALL_API}&method=search&term={term}").json()
+        json_rep = r.get(
+            f"https://wall.alphacoders.com/api2.0/get.php?auth={WALL_API}&method=search&term={term}"
+        ).json()
         if not json_rep.get("success"):
             msg.reply_text("An error occurred!")
 
@@ -293,15 +373,26 @@ def wall(update, context):
                 msg.reply_text("No results found! Refine your search.")
                 return
             else:
-                index = randint(0, len(wallpapers)-1) # Choose random index
+                index = randint(0, len(wallpapers) - 1)  # Choose random index
                 wallpaper = wallpapers[index]
                 wallpaper = wallpaper.get("url_image")
                 wallpaper = wallpaper.replace("\\", "")
-                context.bot.send_photo(chat_id, photo=wallpaper, caption='Preview',
-                reply_to_message_id=msg_id, timeout=60)
-                context.bot.send_document(chat_id, document=wallpaper,
-                filename='wallpaper', caption=caption, reply_to_message_id=msg_id,
-                timeout=60)
+                context.bot.send_photo(
+                    chat_id,
+                    photo=wallpaper,
+                    caption="Preview",
+                    reply_to_message_id=msg_id,
+                    timeout=60,
+                )
+                context.bot.send_document(
+                    chat_id,
+                    document=wallpaper,
+                    filename="wallpaper",
+                    caption=caption,
+                    reply_to_message_id=msg_id,
+                    timeout=60,
+                )
+
 
 @run_async
 @typing_action
@@ -309,7 +400,7 @@ def getlink(update, context):
     args = context.args
     message = update.effective_message
     if args:
-        pattern = re.compile(r'-\d+')
+        pattern = re.compile(r"-\d+")
     else:
         message.reply_text("You don't seem to be referring to any chats.")
     links = "Invite link(s):\n"
@@ -321,13 +412,16 @@ def getlink(update, context):
                 invitelink = context.bot.exportChatInviteLink(chat_id)
                 links += str(chat_id) + ":\n" + invitelink + "\n"
             else:
-                links += str(chat_id) + ":\nI don't have access to the invite link." + "\n"
+                links += (
+                    str(chat_id) + ":\nI don't have access to the invite link." + "\n"
+                )
         except BadRequest as excp:
-                links += str(chat_id) + ":\n" + excp.message + "\n"
+            links += str(chat_id) + ":\n" + excp.message + "\n"
         except TelegramError as excp:
-                links += str(chat_id) + ":\n" + excp.message + "\n"
+            links += str(chat_id) + ":\n" + excp.message + "\n"
 
     message.reply_text(links)
+
 
 @run_async
 @send_action(ChatAction.UPLOAD_PHOTO)
@@ -335,57 +429,71 @@ def rmemes(update, context):
     msg = update.effective_message
     chat = update.effective_chat
 
-    SUBREDS = ['meirl', 'dankmemes', 'AdviceAnimals',
-               'memes', 'meme', 'memes_of_the_dank',
-               'PornhubComments', 'teenagers', 'memesIRL',
-               'insanepeoplefacebook', 'terriblefacebookmemes']
+    SUBREDS = [
+        "meirl",
+        "dankmemes",
+        "AdviceAnimals",
+        "memes",
+        "meme",
+        "memes_of_the_dank",
+        "PornhubComments",
+        "teenagers",
+        "memesIRL",
+        "insanepeoplefacebook",
+        "terriblefacebookmemes",
+    ]
 
     subreddit = random.choice(SUBREDS)
-    res = r.get(
-          f"https://meme-api.herokuapp.com/gimme/{subreddit}")
+    res = r.get(f"https://meme-api.herokuapp.com/gimme/{subreddit}")
 
-    if res.status_code != 200: # Like if api is down?
-       msg.reply_text('Sorry some error occurred :(')
-       return
+    if res.status_code != 200:  # Like if api is down?
+        msg.reply_text("Sorry some error occurred :(")
+        return
     else:
-       res = res.json()
+        res = res.json()
 
-    rpage = res.get(str('subreddit')) # Subreddit
-    title = res.get(str('title')) # Post title
-    memeu = res.get(str('url')) # meme pic url
-    plink = res.get(str('postLink'))
+    rpage = res.get(str("subreddit"))  # Subreddit
+    title = res.get(str("title"))  # Post title
+    memeu = res.get(str("url"))  # meme pic url
+    plink = res.get(str("postLink"))
 
     caps = f"× <b>Title</b>: {title}\n"
     caps += f"× <b>Subreddit:</b> <pre>r/{rpage}</pre>"
 
-    keyb = [[InlineKeyboardButton(
-           text="Subreddit Postlink 🔗", url=plink)]]
+    keyb = [[InlineKeyboardButton(text="Subreddit Postlink 🔗", url=plink)]]
     try:
-       context.bot.send_photo(chat.id, photo=memeu,
-                   caption=(caps),
-                   reply_markup=InlineKeyboardMarkup(keyb),
-                   timeout=60,
-                   parse_mode=ParseMode.HTML)
+        context.bot.send_photo(
+            chat.id,
+            photo=memeu,
+            caption=(caps),
+            reply_markup=InlineKeyboardMarkup(keyb),
+            timeout=60,
+            parse_mode=ParseMode.HTML,
+        )
 
     except BadRequest as excp:
-           return msg.reply_text(f"Error! {excp.message}")
+        return msg.reply_text(f"Error! {excp.message}")
 
 
 @run_async
 def staff_ids(update, context):
-    sfile = 'List of SUDO & SUPPORT users:\n'
-    sfile += f'× SUDO USER IDs; {SUDO_USERS}\n'
-    sfile += f'× SUPPORT USER IDs; {SUPPORT_USERS}'
+    sfile = "List of SUDO & SUPPORT users:\n"
+    sfile += f"× SUDO USER IDs; {SUDO_USERS}\n"
+    sfile += f"× SUPPORT USER IDs; {SUPPORT_USERS}"
     with BytesIO(str.encode(sfile)) as output:
-         output.name = "staff-ids.txt"
-         update.effective_message.reply_document(
-           document=output, filename="staff-ids.txt",
-           caption="Here is the list of SUDO & SUPPORTS users.")
+        output.name = "staff-ids.txt"
+        update.effective_message.reply_document(
+            document=output,
+            filename="staff-ids.txt",
+            caption="Here is the list of SUDO & SUPPORTS users.",
+        )
 
 
 @run_async
 def stats(update, context):
-    update.effective_message.reply_text("Current stats:\n" + "\n".join([mod.__stats__() for mod in STATS]))
+    update.effective_message.reply_text(
+        "Current stats:\n" + "\n".join([mod.__stats__() for mod in STATS])
+    )
 
 
 # /ip is for private use
@@ -414,8 +522,12 @@ GDPR_HANDLER = CommandHandler("gdpr", gdpr, filters=Filters.private)
 WIKI_HANDLER = DisableAbleCommandHandler("wiki", wiki)
 WALLPAPER_HANDLER = DisableAbleCommandHandler("wall", wall, pass_args=True)
 UD_HANDLER = DisableAbleCommandHandler("ud", ud)
-GETLINK_HANDLER = CommandHandler("getlink", getlink, pass_args=True, filters=Filters.user(OWNER_ID))
-STAFFLIST_HANDLER = CommandHandler("staffids", staff_ids, filters=Filters.user(OWNER_ID))
+GETLINK_HANDLER = CommandHandler(
+    "getlink", getlink, pass_args=True, filters=Filters.user(OWNER_ID)
+)
+STAFFLIST_HANDLER = CommandHandler(
+    "staffids", staff_ids, filters=Filters.user(OWNER_ID)
+)
 REDDIT_MEMES_HANDLER = DisableAbleCommandHandler("rmeme", rmemes)
 SRC_HANDLER = CommandHandler("source", src, filters=Filters.private)
 
