@@ -93,19 +93,6 @@ UNLOCK_CHAT_RESTRICTION = {
 PERM_GROUP = 1
 REST_GROUP = 2
 
-"""
-class CustomCommandHandler(tg.CommandHandler):
-	def __init__(self, command, callback, **kwargs):
-		super().__init__(command, callback, **kwargs)
-
-	def check_update(self, update):
-		return super().check_update(update) and not (
-				sql.is_restr_locked(update.effective_chat.id, 'messages') and not is_user_admin(update.effective_chat,
-																								update.effective_user.id))
-
-
-tg.CommandHandler = CustomCommandHandler"""
-
 
 # NOT ASYNC
 def restr_members(
@@ -148,7 +135,10 @@ def unrestr_members(
 @run_async
 def locktypes(update, context):
     update.effective_message.reply_text(
-        "\n - ".join(["Locks: "] + list(LOCK_TYPES) + list(LOCK_CHAT_RESTRICTION))
+        "\n × ".join(
+            ["Locks available: "]
+            + sorted(list(LOCK_TYPES) + list(LOCK_CHAT_RESTRICTION))
+        )
     )
 
 
