@@ -42,6 +42,7 @@ LOCK_TYPES = {
     "egame": Filters.dice,
     "rtl": "rtl",
     "button": "button",
+    "inline": "inline",
 }
 
 
@@ -401,6 +402,17 @@ def del_lockables(update, context):
                         else:
                             LOGGER.exception("ERROR in lockables")
             continue
+        if lockable == "inline":
+            if sql.is_locked(chat.id, lockable) and can_delete(chat, context.bot.id):
+                if message and message.via_bot:
+                    try:
+                        message.delete()
+                    except BadRequest as excp:
+                        if excp.message == "Message to delete not found":
+                            pass
+                        else:
+                            LOGGER.exception("ERROR in lockables")
+            continue
         if (
             filter(update)
             and sql.is_locked(chat.id, lockable)
@@ -459,6 +471,7 @@ def build_lock_message(chat_id):
             locklist.append("rtl = `{}`".format(locks.rtl))
             locklist.append("button = `{}`".format(locks.button))
             locklist.append("egame = `{}`".format(locks.egame))
+            locklist.append("inline = `{}`".format(locks.inline))
     permissions = dispatcher.bot.get_chat(chat_id).permissions
     permslist.append("messages = `{}`".format(permissions.can_send_messages))
     permslist.append("media = `{}`".format(permissions.can_send_media_messages))
