@@ -2193,7 +2193,7 @@ def get_myfedsubs(update, context):
 
     getmy = sql.get_mysubs(fed_id)
 
-    if len(getmy) == 0:
+    if getmy is None:
         send_message(
             update.effective_message,
             "Federation `{}` is not subscribing any federation.".format(

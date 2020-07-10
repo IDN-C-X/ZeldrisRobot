@@ -746,6 +746,8 @@ def get_spec_subs(fed_id, fed_target):
 
 
 def get_mysubs(my_fed):
+    if MYFEDS_SUBSCRIBER.get(my_fed) is None:
+       return None
     return list(MYFEDS_SUBSCRIBER.get(my_fed))
 
 
