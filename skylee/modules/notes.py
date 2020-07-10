@@ -346,9 +346,14 @@ def list_notes(update, context):
         update.effective_message.reply_text("No notes saved here!")
 
     elif len(msg) != 0:
-        update.effective_message.reply_text(
-            msg.format(chat_name) + des, parse_mode=ParseMode.MARKDOWN
-        )
+        try:
+            update.effective_message.reply_text(
+                msg.format(chat_name) + des, parse_mode=ParseMode.MARKDOWN
+            )
+        except ValueError:
+            update.effective_message.reply_text(
+                "There was a problem in showing notes list, maybe due to some invalid character in note names. Ask in @skyleebot if you're unable to figure it out!"
+            )
 
 
 @run_async
