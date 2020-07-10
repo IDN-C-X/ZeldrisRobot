@@ -20,6 +20,7 @@ from skylee import (
     dispatcher,
     updater,
     TOKEN,
+    OWNER_ID,
     WEBHOOK,
     CERT_PATH,
     PORT,
@@ -198,22 +199,19 @@ def error_handler(update, context):
     tb = "".join(tb_list)
 
     # Build the message with some markup and additional information about what happened.
-    # You might need to add some logic to deal with messages longer than the 4096 character limit.
     message = (
         "An exception was raised while handling an update\n"
         "<pre>update = {}</pre>\n\n"
-        "<pre>context.chat_data = {}</pre>\n\n"
-        "<pre>context.user_data = {}</pre>\n\n"
         "<pre>{}</pre>"
     ).format(
         html.escape(json.dumps(update.to_dict(), indent=2, ensure_ascii=False)),
-        html.escape(str(context.chat_data)),
-        html.escape(str(context.user_data)),
         html.escape(tb),
     )
 
+    if len(message) >= 4096:
+        message = message[:4096]
     # Finally, send the message
-    context.bot.send_message(chat_id=894380120, text=message, parse_mode=ParseMode.HTML)
+    context.bot.send_message(chat_id=OWNER_ID, text=message, parse_mode=ParseMode.HTML)
 
 
 @run_async
