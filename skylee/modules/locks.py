@@ -370,6 +370,7 @@ def del_lockables(update, context):
                                 pass
                             else:
                                 LOGGER.exception("ERROR in lockables")
+                        break
                 if message.text:
                     check = ad.detect_alphabet(u"{}".format(message.text))
                     if "ARABIC" in check:
@@ -380,6 +381,7 @@ def del_lockables(update, context):
                                 pass
                             else:
                                 LOGGER.exception("ERROR in lockables")
+                        break
             continue
         if lockable == "button":
             if sql.is_locked(chat.id, lockable) and can_delete(chat, context.bot.id):
@@ -391,6 +393,7 @@ def del_lockables(update, context):
                             pass
                         else:
                             LOGGER.exception("ERROR in lockables")
+                    break
             continue
         if lockable == "inline":
             if sql.is_locked(chat.id, lockable) and can_delete(chat, context.bot.id):
@@ -402,6 +405,7 @@ def del_lockables(update, context):
                             pass
                         else:
                             LOGGER.exception("ERROR in lockables")
+                    break
             continue
         if (
             filter(update)
@@ -425,6 +429,7 @@ def del_lockables(update, context):
                             update.effective_message,
                             "Only admins are allowed to add bots in this chat! Get outta here.",
                         )
+                        break
             else:
                 try:
                     message.delete()
