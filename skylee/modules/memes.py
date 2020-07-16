@@ -4,7 +4,7 @@ import requests as r
 from telegram import ParseMode, TelegramError, MAX_MESSAGE_LENGTH
 from telegram.ext import Filters, CommandHandler, run_async
 from telegram.error import BadRequest
-from telegram.utils.helpers import mention_html, escape_markdown
+from telegram.utils.helpers import escape_markdown
 
 from skylee.modules.helper_funcs.extraction import extract_user
 from skylee.modules.helper_funcs.filters import CustomFilters
