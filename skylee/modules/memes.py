@@ -431,35 +431,6 @@ def goodmorning(update, context):
     message.reply_text(reply, parse_mode=ParseMode.MARKDOWN)
 
 
-# Bug reporting module for X00TD PORTS!
-
-
-@run_async
-def ports_bug(update, context):
-    message = update.effective_message
-    user = update.effective_user
-    bug = message.text[len("/bug ") :]
-    chat = update.effective_chat
-
-    PORT_GRP = [-1001297379754, -1001469684768]
-
-    if not int(chat.id) in PORT_GRP:
-        return
-
-    if not bug:
-        message.reply_text("Submitting empty bug report won't do anything!")
-        return
-
-    if bug:
-        context.bot.sendMessage(
-            -1001495581911,
-            "<b>NEW BUG REPORT!</b>\n\n<b>Submitted by</b>: {}.\n\nDescription: <code>{}</code>.".format(
-                mention_html(user.id, user.first_name), bug
-            ),
-            parse_mode=ParseMode.HTML,
-        )
-        message.reply_text("Successfully submitted bug report!")
-
 
 __help__ = """
 Some dank memes for fun or whatever!
@@ -501,7 +472,6 @@ SNIPE_HANDLER = CommandHandler(
     "snipe", snipe, pass_args=True, filters=CustomFilters.sudo_filter
 )
 ABUSE_HANDLER = DisableAbleCommandHandler("abuse", abuse)
-PORT_BUG_HANDLER = CommandHandler("bug", ports_bug)
 RUNS_HANDLER = DisableAbleCommandHandler("runs", runs)
 SLAP_HANDLER = DisableAbleCommandHandler("slap", slap, pass_args=True)
 PUNCH_HANDLER = DisableAbleCommandHandler("punch", punch, pass_args=True)
@@ -531,7 +501,6 @@ dispatcher.add_handler(SHRUG_HANDLER)
 dispatcher.add_handler(DECIDE_HANDLER)
 dispatcher.add_handler(ABUSE_HANDLER)
 dispatcher.add_handler(SNIPE_HANDLER)
-dispatcher.add_handler(PORT_BUG_HANDLER)
 dispatcher.add_handler(RUNS_HANDLER)
 dispatcher.add_handler(SLAP_HANDLER)
 dispatcher.add_handler(PUNCH_HANDLER)
