@@ -54,7 +54,7 @@ def magisk(update, context):
 def device(update, context):
     args = context.args
     if len(args) == 0:
-        reply = f"No codename provided, write a codename for fetching informations."
+        reply = "No codename provided, write a codename for fetching informations."
         del_msg = update.effective_message.reply_text(
             "{}".format(reply),
             parse_mode=ParseMode.MARKDOWN,

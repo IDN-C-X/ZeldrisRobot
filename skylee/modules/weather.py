@@ -14,7 +14,7 @@ from skylee.modules.helper_funcs.alternate import typing_action
 def weather(update, context):
     args = context.args
     if len(args) == 0:
-        reply = f"Write a location to check the weather."
+        reply = "Write a location to check the weather."
         del_msg = update.effective_message.reply_text(
             "{}".format(reply),
             parse_mode=ParseMode.MARKDOWN,
@@ -37,7 +37,7 @@ def weather(update, context):
     request = requests.get(url)
     result = json.loads(request.text)
     if request.status_code != 200:
-        reply = f"Location not valid."
+        reply = "Location not valid."
         del_msg = update.effective_message.reply_text(
             "{}".format(reply),
             parse_mode=ParseMode.MARKDOWN,

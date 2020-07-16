@@ -93,7 +93,7 @@ def dbcleanup(update, context):
     reply = f"Total invalid chats - {invalid_chat_count}\n"
     reply += f"Total invalid gbanned users - {invalid_gban_count}"
 
-    buttons = [[InlineKeyboardButton("Cleanup DB", callback_data=f"db_cleanup")]]
+    buttons = [[InlineKeyboardButton("Cleanup DB", callback_data="db_cleanup")]]
 
     update.effective_message.reply_text(
         reply, reply_markup=InlineKeyboardMarkup(buttons)
@@ -157,7 +157,7 @@ def leave_muted_chats(update, context):
     progress_message = message.reply_text("Getting chat count ...")
     muted_chats = get_muted_chats(context.bot, update)
 
-    buttons = [[InlineKeyboardButton("Leave chats", callback_data=f"db_leave_chat")]]
+    buttons = [[InlineKeyboardButton("Leave chats", callback_data="db_leave_chat")]]
 
     update.effective_message.reply_text(
         f"I am muted in {muted_chats} chats.",
