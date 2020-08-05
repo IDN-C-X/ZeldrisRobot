@@ -17,7 +17,7 @@ simple to use. Note that this project uses well-known Telegram-bot of it's time 
 
 Can be found on telegram as [Skylee](https://t.me/skylee_bot).
 
-Join the [news channel](https://t.me/skyleeupdates) if you just want to stay in the loop about new features or
+Join the [news channel](https://t.me/skyleebot) if you just want to stay in the loop about new features or
 announcements.
 
 Alternatively, [contact my reporter bot on telegram](https://t.me/YumiUzo_bot)! (Keep all support questions in the support chat, where more people can help you.)
