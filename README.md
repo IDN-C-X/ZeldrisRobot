@@ -25,8 +25,6 @@ Can be found on telegram as [Skylee](https://t.me/skylee_bot).
 Join the [news channel](https://t.me/skyleebot) if you just want to stay in the loop about new features or
 announcements.
 
-Alternatively, [contact my reporter bot on telegram](https://t.me/YumiUzo_bot)! (Keep all support questions in the support chat, where more people can help you.)
-
 ## Credits
 
 Skittbot for Stickers module and memes in extras module.
