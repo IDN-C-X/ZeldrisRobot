@@ -95,8 +95,7 @@ def weather(update, context):
     def celsius(c):
         k = 273.15
         c = k if (c > (k - 1)) and (c < k) else c
-        temp = str(round((c - k)))
-        return temp
+        return str(round((c - k)))
 
     def fahr(c):
         c1 = 9 / 5
@@ -104,8 +103,7 @@ def weather(update, context):
         tF = c * c1 - c2
         if tF < 0 and tF > -1:
             tF = 0
-        temp = str(round(tF))
-        return temp
+        return str(round(tF))
 
     reply = f"*Current weather for {cityname}, {country_name} is*:\n\n*Temperature:* `{celsius(curtemp)}°C ({fahr(curtemp)}ºF), feels like {celsius(feels_like)}°C ({fahr(feels_like)}ºF) \n`*Condition:* `{condmain}, {conddet}` {icon}\n*Humidity:* `{humidity}%`\n*Wind:* `{kmph[0]} km/h`\n"
     del_msg = update.effective_message.reply_text(

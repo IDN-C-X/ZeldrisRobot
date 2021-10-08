@@ -198,9 +198,7 @@ def gban(update, context):
     try:
         context.bot.kick_chat_member(chat.id, user_chat.id)
     except BadRequest as excp:
-        if excp.message in GBAN_ERRORS:
-            pass
-
+        pass
     sql.gban_user(user_id, user_chat.username or user_chat.first_name, reason)
 
 
@@ -258,9 +256,7 @@ def ungban(update, context):
                 context.bot.unban_chat_member(chat_id, user_id)
 
         except BadRequest as excp:
-            if excp.message in UNGBAN_ERRORS:
-                pass
-            else:
+            if excp.message not in UNGBAN_ERRORS:
                 message.reply_text("Could not un-gban due to: {}".format(excp.message))
                 context.bot.send_message(
                     OWNER_ID, "Could not un-gban due to: {}".format(excp.message)
@@ -317,9 +313,7 @@ def check_and_ban(update, user_id, should_message=True):
                     f"This person has been detected as spambot by @SpamWatch and has been removed!\nReason: <code>{spmban.reason}</code>",
                     parse_mode=ParseMode.HTML,
                 )
-                return
-            else:
-                return
+            return
     except Exception:
         pass
 
@@ -342,25 +336,28 @@ def check_and_ban(update, user_id, should_message=True):
 def enforce_gban(update, context):
     # Not using @restrict handler to avoid spamming - just ignore if cant gban.
     if (
-            sql.does_chat_gban(update.effective_chat.id)
-            and update.effective_chat.get_member(context.bot.id).can_restrict_members
+        not sql.does_chat_gban(update.effective_chat.id)
+        or not update.effective_chat.get_member(
+            context.bot.id
+        ).can_restrict_members
     ):
-        user = update.effective_user
-        chat = update.effective_chat
-        msg = update.effective_message
+        return
+    user = update.effective_user
+    chat = update.effective_chat
+    msg = update.effective_message
 
+    if user and not is_user_admin(chat, user.id):
+        check_and_ban(update, user.id)
+
+    if msg.new_chat_members:
+        new_members = update.effective_message.new_chat_members
+        for mem in new_members:
+            check_and_ban(update, mem.id)
+
+    if msg.reply_to_message:
+        user = msg.reply_to_message.from_user
         if user and not is_user_admin(chat, user.id):
-            check_and_ban(update, user.id)
-
-        if msg.new_chat_members:
-            new_members = update.effective_message.new_chat_members
-            for mem in new_members:
-                check_and_ban(update, mem.id)
-
-        if msg.reply_to_message:
-            user = msg.reply_to_message.from_user
-            if user and not is_user_admin(chat, user.id):
-                check_and_ban(update, user.id, should_message=False)
+            check_and_ban(update, user.id, should_message=False)
 
 
 @run_async

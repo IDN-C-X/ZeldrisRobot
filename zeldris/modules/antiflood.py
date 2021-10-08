@@ -123,7 +123,7 @@ def set_flood(update, context) -> str:
 
     if len(args) >= 1:
         val = args[0].lower()
-        if val == "off" or val == "no" or val == "0":
+        if val in ["off", "no", "0"]:
             sql.set_flood(chat_id, 0)
             if conn:
                 text = message.reply_text(
@@ -224,21 +224,19 @@ def flood(update, context):
             )
         else:
             text = msg.reply_text("I'm not enforcing any flood control here!")
-        send_message(update.effective_message, text, parse_mode="markdown")
+    elif conn:
+        text = msg.reply_text(
+            "I'm currently restricting members after {} consecutive messages in {}.".format(
+                limit, chat_name
+            )
+        )
     else:
-        if conn:
-            text = msg.reply_text(
-                "I'm currently restricting members after {} consecutive messages in {}.".format(
-                    limit, chat_name
-                )
+        text = msg.reply_text(
+            "I'm currently restricting members after {} consecutive messages.".format(
+                limit
             )
-        else:
-            text = msg.reply_text(
-                "I'm currently restricting members after {} consecutive messages.".format(
-                    limit
-                )
-            )
-        send_message(update.effective_message, text, parse_mode="markdown")
+        )
+    send_message(update.effective_message, text, parse_mode="markdown")
 
 
 @run_async

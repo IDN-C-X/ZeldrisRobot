@@ -20,11 +20,7 @@ def about_me(update, context):
     args = context.args
     user_id = extract_user(message, args)
 
-    if user_id:
-        user = bot.get_chat(user_id)
-    else:
-        user = message.from_user
-
+    user = bot.get_chat(user_id) if user_id else message.from_user
     info = sql.get_user_me_info(user.id)
 
     if info:
@@ -71,11 +67,7 @@ def about_bio(update, context):
     args = context.args
 
     user_id = extract_user(message, args)
-    if user_id:
-        user = context.bot.get_chat(user_id)
-    else:
-        user = message.from_user
-
+    user = context.bot.get_chat(user_id) if user_id else message.from_user
     info = sql.get_user_bio(user.id)
 
     if info:

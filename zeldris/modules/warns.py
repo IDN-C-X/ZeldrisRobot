@@ -282,7 +282,6 @@ def warns(update, context):
     args = context.args
     user_id = extract_user(message, args) or update.effective_user.id
     result = sql.get_warns(user_id, chat.id)
-    num = 1
     if result and result[0] != 0:
         num_warns, reasons = result
         limit, soft_warn = sql.get_warn_setting(chat.id)
@@ -291,10 +290,8 @@ def warns(update, context):
             text = "This user has {}/{} warnings, for the following reasons:".format(
                 num_warns, limit
             )
-            for reason in reasons:
+            for num, reason in enumerate(reasons, start=1):
                 text += "\n {}. {}".format(num, reason)
-                num += 1
-
             msgs = split_message(text)
             for msg in msgs:
                 update.effective_message.reply_text(msg)
@@ -323,13 +320,12 @@ def add_warn_filter(update, context):
 
     extracted = split_quotes(args[1])
 
-    if len(extracted) >= 2:
-        # set trigger -> lower, so as to avoid adding duplicate filters with different cases
-        keyword = extracted[0].lower()
-        content = extracted[1]
-
-    else:
+    if len(extracted) < 2:
         return
+
+    # set trigger -> lower, so as to avoid adding duplicate filters with different cases
+    keyword = extracted[0].lower()
+    content = extracted[1]
 
     # Note: perhaps handlers can be removed somehow using sql.get_chat_filters
     for handler in dispatcher.handlers.get(WARN_HANDLER_GROUP, []):
@@ -396,7 +392,7 @@ def list_warn_filters(update, context):
         else:
             filter_list += entry
 
-    if not filter_list == CURRENT_WARNING_FILTER_STRING:
+    if filter_list != CURRENT_WARNING_FILTER_STRING:
         update.effective_message.reply_text(filter_list, parse_mode=ParseMode.HTML)
 
 
@@ -519,7 +515,7 @@ def __stats__():
 
 def __import_data__(chat_id, data):
     for user_id, count in data.get("warns", {}).items():
-        for x in range(int(count)):
+        for _ in range(int(count)):
             sql.warn_user(user_id, chat_id)
 
 
