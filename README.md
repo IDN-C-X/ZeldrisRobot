@@ -1,4 +1,10 @@
-# Zeldris Robot
+<p align="center">
+  <img src="https://telegra.ph/file/fed9ba09e9add9b197c21.png">
+<p>
+
+<h1 align="center">
+    Zeldris Robot
+</h1>
 
 <p align="center">
 <a href="https://t.me/IDNCoderX"> <img src="https://img.shields.io/badge/Support-Chat-blue?&logo=telegram" alt="Support Chat" /> </a>
@@ -38,7 +44,7 @@
 **A modular Telegram Python bot running on python3 with a sqlalchemy, redislab, mongo database, telethon, and
 pyrogram.**
 
-## How to setup/deploy.
+## How to set up/deploy.
 
 <details>
   <summary>Steps to self Host!!</summary>
@@ -53,7 +59,7 @@ This is because markdown parsing is done by iterating through a dict, which is o
 There are two possible ways of configuring your bot: a config.py file, or ENV variables.
 
 The preferred version is to use a `config.py` file, as it makes it easier to see all your settings grouped together.
-This file should be placed in your `LaylaRobot` folder, alongside the `__main__.py` file. This is where your bot token
+This file should be placed in your `zeldris` folder, alongside the `__main__.py` file. This is where your bot token
 will be loaded from, as well as your database URI (if you're using a database), and most of your other settings.
 
 It is recommended to import sample_config and extend the Config class, as this will ensure your config contains all
@@ -93,6 +99,7 @@ variables are supported:
 - `URL`: The URL your webhook should connect to (only needed for webhook mode)
 
 - `SUDO_USERS`: A space-separated list of user_ids which should be considered sudo users
+- `DEV_USERS`: A space-separated list of user_ids which should be considered dev users
 - `SUPPORT_USERS`: A space-separated list of user_ids which should be considered support users (can gban/ungban, nothing
   else)
 - `WHITELIST_USERS`: A space-separated list of user_ids which should be considered whitelisted - they can't be banned.
@@ -102,7 +109,7 @@ variables are supported:
 - `DEL_CMDS`: Whether to delete commands from users which don't have rights to use that command
 - `STRICT_GBAN`: Enforce gbans across new groups as well as old groups. When a gbanned user talks, he will be banned.
 - `WORKERS`: Number of threads to use. 8 is the recommended (and default) amount, but your experience may vary.
-  __Note__ that going crazy with more threads wont necessarily speed up your bot, given the large amount of sql data
+  __Note__ that going crazy with more threads won't necessarily speed up your bot, given the large amount of sql data
   accesses, and the way python asynchronous calls work.
 - `BAN_STICKER`: Which sticker to use when banning people.
 - `ALLOW_EXCL`: Whether to allow using exclamation marks ! for commands as well as /.
@@ -153,14 +160,20 @@ You should now be able to build your database URI. This will be:
 
 `sqldbtype://username:pw@hostname:port/db_name`
 
-Replace sqldbtype with whichever DB you're using (e.g. Postgres, MySQL, SQLite, `etc)
+Replace sqldbtype with whichever DB you're using (e.g. Postgres, MySQL, SQLite, `etc.)
 repeat for your username, password, hostname (localhost?), port (5432?), and DB name.
 
-Or, register on [ElephantSQL](https://www.elephantsql.com/) for free Postgresql. Learn for your self, i won't learn you
+Or, register on [ElephantSQL](https://www.elephantsql.com/) for free Postgresql. Learn for your self, I won't learn you
 anything.
 </details>
 
-## Copyright & License
+## Credits
 
-- Copyright (©) 2021 by [IDN-C-X](https://github.com/IDN-C-X)
-- Licensed under the terms of the [GNU GENERAL PUBLIC LICENSE Version 3, 05 October 2021](./LICENSE).
+_ [Skyleebot](https://github.com/SensiPeeps/skyleebot) This bot Based
+- 1maverick1 for many stuffs.
+- AyraHikari for weather modules and some other stuffs.
+- RealAkito for reverse search modules.
+- MrYacha for connections module
+- ATechnoHazard for many stuffs
+- corsicanu and nunopenim for android modules
+Any other missing Credits can be seen in commits!
