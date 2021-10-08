@@ -16,10 +16,10 @@ DEVICES_DATA = "https://raw.githubusercontent.com/androidtrackers/certified-andr
 
 @run_async
 @typing_action
-def magisk(update, context):
+def magisk(update, _):
     url = "https://raw.githubusercontent.com/topjohnwu/magisk_files/"
     releases = ""
-    for type, branch in {
+    for types, branch in {
         "Stable": ["master/stable", "master"],
         "Beta": ["master/beta", "master"],
         "Canary (release)": ["canary/release", "canary"],
@@ -27,11 +27,12 @@ def magisk(update, context):
     }.items():
         data = get(url + branch[0] + ".json").json()
         releases += (
-            f"*{type}*: \n"
+            f"*{types}*: \n"
             f"• [Changelog](https://github.com/topjohnwu/magisk_files/blob/{branch[1]}/notes.md)\n"
             f'• Zip - [{data["magisk"]["version"]}-{data["magisk"]["versionCode"]}]({data["magisk"]["link"]}) \n'
             f'• App - [{data["app"]["version"]}-{data["app"]["versionCode"]}]({data["app"]["link"]}) \n'
-            f'• Uninstaller - [{data["magisk"]["version"]}-{data["magisk"]["versionCode"]}]({data["uninstaller"]["link"]})\n\n'
+            f'• Uninstaller - [{data["magisk"]["version"]}-{data["magisk"]["versionCode"]}]'
+            f'({data["uninstaller"]["link"]})\n\n'
         )
 
     del_msg = update.message.reply_text(
@@ -72,11 +73,11 @@ def device(update, context):
                 "Message can't be deleted",
             ]:
                 return
-    device = " ".join(args)
+    devices = " ".join(args)
     db = get(DEVICES_DATA).json()
-    newdevice = device.strip("lte") if device.startswith("beyond") else device
+    newdevice = devices.strip("lte") if devices.startswith("beyond") else devices
     try:
-        reply = f"Search results for {device}:\n\n"
+        reply = f"Search results for {devices}:\n\n"
         brand = db[newdevice][0]["brand"]
         name = db[newdevice][0]["name"]
         model = db[newdevice][0]["model"]
@@ -87,7 +88,7 @@ def device(update, context):
             f"Codename: <code>{codename}</code>\n\n"
         )
     except KeyError:
-        reply = f"Couldn't find info about {device}!\n"
+        reply = f"Couldn't find info about {devices}!\n"
         del_msg = update.effective_message.reply_text(
             "{}".format(reply),
             parse_mode=ParseMode.MARKDOWN,
@@ -130,10 +131,10 @@ def twrp(update, context):
             ]:
                 return
 
-    device = " ".join(args)
-    url = get(f"https://eu.dl.twrp.me/{device}/")
+    devices = " ".join(args)
+    url = get(f"https://eu.dl.twrp.me/{devices}/")
     if url.status_code == 404:
-        reply = f"Couldn't find twrp downloads for {device}!\n"
+        reply = f"Couldn't find twrp downloads for {devices}!\n"
         del_msg = update.effective_message.reply_text(
             "{}".format(reply),
             parse_mode=ParseMode.MARKDOWN,
@@ -150,14 +151,14 @@ def twrp(update, context):
             ]:
                 return
     else:
-        reply = f"*Latest Official TWRP for {device}*\n"
+        reply = f"*Latest Official TWRP for {devices}*\n"
         db = get(DEVICES_DATA).json()
-        newdevice = device.strip("lte") if device.startswith("beyond") else device
+        newdevice = devices.strip("lte") if devices.startswith("beyond") else devices
         try:
             brand = db[newdevice][0]["brand"]
             name = db[newdevice][0]["name"]
             reply += f"*{brand} - {name}*\n"
-        except KeyError as err:
+        except KeyError:
             pass
         page = BeautifulSoup(url.content, "lxml")
         date = page.find("em").text.strip()

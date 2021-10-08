@@ -37,9 +37,9 @@ def promote(update, context):
     message = update.effective_message
     chat = update.effective_chat
     user = update.effective_user
-    args = context.args
+    bot, args = context.bot, context.args
 
-    if user_can_promote(chat, user, context.bot.id) is False:
+    if user_can_promote(chat, user, bot.id) is False:
         message.reply_text("You don't have enough rights to promote someone!")
         return ""
 
@@ -53,14 +53,14 @@ def promote(update, context):
         message.reply_text("This person is already an admin...!")
         return ""
 
-    if user_id == context.bot.id:
+    if user_id == bot.id:
         message.reply_text("I hope, if i could promote myself!")
         return ""
 
     # set same perms as bot - bot can't assign higher perms than itself!
-    bot_member = chat.get_member(context.bot.id)
+    bot_member = chat.get_member(bot.id)
 
-    context.bot.promoteChatMember(
+    bot.promoteChatMember(
         chat_id,
         user_id,
         can_change_info=bot_member.can_change_info,
@@ -95,9 +95,9 @@ def demote(update, context):
     chat = update.effective_chat
     message = update.effective_message
     user = update.effective_user
-    args = context.args
+    bot, args = context.bot, context.args
 
-    if user_can_promote(chat, user, context.bot.id) is False:
+    if user_can_promote(chat, user, bot.id) is False:
         message.reply_text("You don't have enough rights to demote someone!")
         return ""
 
@@ -117,12 +117,12 @@ def demote(update, context):
         )
         return ""
 
-    if user_id == context.bot.id:
+    if user_id == bot.id:
         message.reply_text("Yeahhh... Not gonna demote myself!")
         return ""
 
     try:
-        context.bot.promoteChatMember(
+        bot.promoteChatMember(
             int(chat.id),
             int(user_id),
             can_change_info=False,
@@ -160,7 +160,7 @@ def demote(update, context):
 @loggable
 @typing_action
 def pin(update, context):
-    args = context.args
+    bot, args = context.bot, context.args
     user = update.effective_user
     chat = update.effective_chat
     message = update.effective_message
@@ -169,17 +169,21 @@ def pin(update, context):
 
     prev_message = update.effective_message.reply_to_message
 
-    if user_can_pin(chat, user, context.bot.id) is False:
+    if user_can_pin(chat, user, bot.id) is False:
         message.reply_text("You are missing rights to pin a message!")
         return ""
 
     is_silent = True
     if len(args) >= 1:
-        is_silent = not args[0].lower() in ["notify", "loud", "violent"]
+        is_silent = not (
+                args[0].lower() == "notify"
+                or args[0].lower() == "loud"
+                or args[0].lower() == "violent"
+        )
 
     if prev_message and is_group:
         try:
-            context.bot.pinChatMessage(
+            bot.pinChatMessage(
                 chat.id, prev_message.message_id, disable_notification=is_silent
             )
         except BadRequest as excp:
@@ -203,16 +207,17 @@ def pin(update, context):
 @loggable
 @typing_action
 def unpin(update, context):
+    bot = context.bot
     chat = update.effective_chat
     user = update.effective_user
     message = update.effective_message
 
-    if user_can_pin(chat, user, context.bot.id) is False:
+    if user_can_pin(chat, user, bot.id) is False:
         message.reply_text("You are missing rights to unpin a message!")
         return ""
 
     try:
-        context.bot.unpinChatMessage(chat.id)
+        bot.unpinChatMessage(chat.id)
     except BadRequest as excp:
         if excp.message != "Chat_not_modified":
             raise
@@ -231,12 +236,12 @@ def unpin(update, context):
 @user_admin
 @typing_action
 def invite(update, context):
+    bot = context.bot
     user = update.effective_user
     msg = update.effective_message
     chat = update.effective_chat
-    args = context.args
 
-    conn = connected(context.bot, update, chat, user.id, need_admin=True)
+    conn = connected(bot, update, chat, user.id, need_admin=True)
     if conn:
         chat = dispatcher.bot.getChat(conn)
     else:
@@ -248,7 +253,7 @@ def invite(update, context):
     if chat.username:
         msg.reply_text(chat.username)
     elif chat.type in [chat.SUPERGROUP, chat.CHANNEL]:
-        bot_member = chat.get_member(context.bot.id)
+        bot_member = chat.get_member(bot.id)
         if bot_member.can_invite_users:
             invitelink = context.bot.exportChatInviteLink(chat.id)
             msg.reply_text(invitelink)
@@ -264,7 +269,7 @@ def invite(update, context):
 
 @run_async
 @typing_action
-def adminlist(update, context):
+def adminlist(update, _):
     administrators = update.effective_chat.get_administrators()
     text = "Admins in <b>{}</b>:".format(update.effective_chat.title or "this chat")
     for admin in administrators:
@@ -289,7 +294,7 @@ def adminlist(update, context):
 @user_admin
 @typing_action
 def set_title(update, context):
-    args = context.args
+    bot, args = context.bot, context.args
     chat = update.effective_chat
     message = update.effective_message
 
@@ -315,7 +320,7 @@ def set_title(update, context):
         )
         return
 
-    if user_id == context.bot.id:
+    if user_id == bot.id:
         message.reply_text(
             "I can't set my own title myself! Get the one who made me admin to do it for me."
         )
@@ -331,7 +336,7 @@ def set_title(update, context):
         )
 
     try:
-        context.bot.set_chat_administrator_custom_title(chat.id, user_id, title)
+        bot.setChatAdministratorCustomTitle(chat.id, user_id, title)
         message.reply_text(
             "Sucessfully set title for <b>{}</b> to <code>{}</code>!".format(
                 user_member.user.first_name or user_id, title[:16]
@@ -348,11 +353,12 @@ def set_title(update, context):
 @user_admin
 @typing_action
 def setchatpic(update, context):
+    bot = context.bot
     chat = update.effective_chat
     msg = update.effective_message
     user = update.effective_user
 
-    if user_can_changeinfo(chat, user, context.bot.id) is False:
+    if user_can_changeinfo(chat, user, bot.id) is False:
         msg.reply_text("You are missing right to change group info!")
         return
 
@@ -365,11 +371,11 @@ def setchatpic(update, context):
             msg.reply_text("You can only set some photo as chat pic!")
             return
         dlmsg = msg.reply_text("Just a sec...")
-        tpic = context.bot.get_file(pic_id)
+        tpic = bot.getFile(pic_id)
         tpic.download("gpic.png")
         try:
             with open("gpic.png", "rb") as chatp:
-                context.bot.set_chat_photo(int(chat.id), photo=chatp)
+                bot.setChatPhoto(int(chat.id), photo=chatp)
                 msg.reply_text("Successfully set new chatpic!")
         except BadRequest as excp:
             msg.reply_text(f"Error! {excp.message}")
@@ -386,15 +392,16 @@ def setchatpic(update, context):
 @user_admin
 @typing_action
 def rmchatpic(update, context):
+    bot = context.bo
     chat = update.effective_chat
     msg = update.effective_message
     user = update.effective_user
 
-    if user_can_changeinfo(chat, user, context.bot.id) is False:
+    if user_can_changeinfo(chat, user, bot.id) is False:
         msg.reply_text("You don't have enough rights to delete group photo")
         return
     try:
-        context.bot.delete_chat_photo(int(chat.id))
+        bot.deleteChatPhoto(int(chat.id))
         msg.reply_text("Successfully deleted chat's profile photo!")
     except BadRequest as excp:
         msg.reply_text(f"Error! {excp.message}.")
@@ -409,9 +416,9 @@ def setchat_title(update, context):
     chat = update.effective_chat
     msg = update.effective_message
     user = update.effective_user
-    args = context.args
+    bot, args = context.bot, context.args
 
-    if user_can_changeinfo(chat, user, context.bot.id) is False:
+    if user_can_changeinfo(chat, user, bot.id) is False:
         msg.reply_text("You don't have enough rights to change chat info!")
         return
 
@@ -421,7 +428,7 @@ def setchat_title(update, context):
         return
 
     try:
-        context.bot.set_chat_title(int(chat.id), str(title))
+        bot.setChatTitle(int(chat.id), str(title))
         msg.reply_text(
             f"Successfully set <b>{title}</b> as new chat title!",
             parse_mode=ParseMode.HTML,
@@ -436,11 +443,12 @@ def setchat_title(update, context):
 @user_admin
 @typing_action
 def set_sticker(update, context):
+    bot = context.bot
     msg = update.effective_message
     chat = update.effective_chat
     user = update.effective_user
 
-    if user_can_changeinfo(chat, user, context.bot.id) is False:
+    if user_can_changeinfo(chat, user, bot.id) is False:
         return msg.reply_text("You're missing rights to change chat info!")
 
     if msg.reply_to_message:
@@ -450,12 +458,13 @@ def set_sticker(update, context):
             )
         stkr = msg.reply_to_message.sticker.set_name
         try:
-            context.bot.set_chat_sticker_set(chat.id, stkr)
+            bot.setChatStickerSet(chat.id, stkr)
             msg.reply_text(f"Successfully set new group stickers in {chat.title}!")
         except BadRequest as excp:
             if excp.message == "Participants_too_few":
                 return msg.reply_text(
-                    "Sorry, due to telegram restrictions chat needs to have minimum 100 members before they can have group stickers!"
+                    "Sorry, due to telegram restrictions chat needs to have minimum 100 members before they can have "
+                    "group stickers! "
                 )
             msg.reply_text(f"Error! {excp.message}.")
     else:
@@ -467,11 +476,12 @@ def set_sticker(update, context):
 @user_admin
 @typing_action
 def set_desc(update, context):
+    bot = context.bot
     msg = update.effective_message
     chat = update.effective_chat
     user = update.effective_user
 
-    if user_can_changeinfo(chat, user, context.bot.id) is False:
+    if user_can_changeinfo(chat, user, bot.id) is False:
         return msg.reply_text("You're missing rights to change chat info!")
 
     tesc = msg.text.split(None, 1)
@@ -482,7 +492,7 @@ def set_desc(update, context):
     try:
         if len(desc) > 255:
             return msg.reply_text("Description must needs to be under 255 characters!")
-        context.bot.set_chat_description(chat.id, desc)
+        bot.setChatDescription(chat.id, desc)
         msg.reply_text(f"Successfully updated chat description in {chat.title}!")
     except BadRequest as excp:
         msg.reply_text(f"Error! {excp.message}.")

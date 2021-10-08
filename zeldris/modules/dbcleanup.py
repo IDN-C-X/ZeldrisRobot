@@ -25,7 +25,7 @@ def get_invalid_chats(bot: Bot, update: Update, remove: bool = False):
                     bot.editMessageText(
                         progress_bar, chat_id, progress_message.message_id
                     )
-                except:
+                except BaseException:
                     pass
             else:
                 progress_message = bot.sendMessage(chat_id, progress_bar)
@@ -38,12 +38,12 @@ def get_invalid_chats(bot: Bot, update: Update, remove: bool = False):
         except (BadRequest, Unauthorized):
             kicked_chats += 1
             chat_list.append(cid)
-        except:
+        except BaseException:
             pass
 
     try:
         progress_message.delete()
-    except:
+    except BaseException:
         pass
 
     if remove:
@@ -54,7 +54,7 @@ def get_invalid_chats(bot: Bot, update: Update, remove: bool = False):
     return kicked_chats
 
 
-def get_invalid_gban(bot: Bot, update: Update, remove: bool = False):
+def get_invalid_gban(bot: Bot, remove: bool = False):
     banned = gban_sql.get_gban_list()
     ungbanned_users = 0
     ungban_list = []
@@ -67,7 +67,7 @@ def get_invalid_gban(bot: Bot, update: Update, remove: bool = False):
         except BadRequest:
             ungbanned_users += 1
             ungban_list.append(user_id)
-        except:
+        except BaseException:
             pass
 
     if remove:
@@ -86,7 +86,7 @@ def dbcleanup(update, context):
     invalid_chat_count = get_invalid_chats(context.bot, update)
 
     msg.reply_text("Getting invalid gbanned count ...")
-    invalid_gban_count = get_invalid_gban(context.bot, update)
+    invalid_gban_count = get_invalid_gban(context.bot)
 
     reply = f"Total invalid chats - {invalid_chat_count}\n"
     reply += f"Total invalid gbanned users - {invalid_gban_count}"
@@ -114,7 +114,7 @@ def get_muted_chats(bot: Bot, update: Update, leave: bool = False):
                     bot.editMessageText(
                         progress_bar, chat_id, progress_message.message_id
                     )
-                except:
+                except BaseException:
                     pass
             else:
                 progress_message = bot.sendMessage(chat_id, progress_bar)
@@ -128,12 +128,12 @@ def get_muted_chats(bot: Bot, update: Update, leave: bool = False):
         except (BadRequest, Unauthorized):
             muted_chats += +1
             chat_list.append(cid)
-        except:
+        except BaseException:
             pass
 
     try:
         progress_message.delete()
-    except:
+    except BaseException:
         pass
 
     if leave:
@@ -141,7 +141,7 @@ def get_muted_chats(bot: Bot, update: Update, leave: bool = False):
             sleep(0.1)
             try:
                 bot.leaveChat(muted_chat, timeout=120)
-            except:
+            except BaseException:
                 pass
             user_sql.rem_chat(muted_chat)
 
@@ -180,15 +180,15 @@ def callback_button(update, context):
         chat_count = get_muted_chats(bot, update, True)
         bot.sendMessage(chat_id, f"Left {chat_count} chats.")
     elif (
-        query_type == "db_leave_chat"
-        or query_type == "db_cleanup"
-        and query.from_user.id not in admin_list
+            query_type == "db_leave_chat"
+            or query_type == "db_cleanup"
+            and query.from_user.id not in admin_list
     ):
         query.answer("You are not allowed to use this.")
     elif query_type == "db_cleanup":
         bot.editMessageText("Cleaning up DB ...", chat_id, message.message_id)
         invalid_chat_count = get_invalid_chats(bot, update, True)
-        invalid_gban_count = get_invalid_gban(bot, update, True)
+        invalid_gban_count = get_invalid_gban(bot, True)
         reply = "Cleaned up {} chats and {} gbanned users from db.".format(
             invalid_chat_count, invalid_gban_count
         )

@@ -1,4 +1,5 @@
 # Zeldris Robot
+
 <p align="center">
 <a href="https://t.me/IDNCoderX"> <img src="https://img.shields.io/badge/Support-Chat-blue?&logo=telegram" alt="Support Chat" /> </a>
 <a href="https://t.me/IDNCoder"> <img src="https://img.shields.io/badge/Update-Channel-blue?&logo=telegram" alt="Update Channel" /> </a><br>
@@ -34,31 +35,32 @@
 </a>
 </p>
 
-**A modular Telegram Python bot running on python3 with a sqlalchemy, redislab, mongo database, telethon, and pyrogram.**
+**A modular Telegram Python bot running on python3 with a sqlalchemy, redislab, mongo database, telethon, and
+pyrogram.**
 
 ## How to setup/deploy.
-
 
 <details>
   <summary>Steps to self Host!!</summary>
 
-  ## Setting up the bot (Read this before trying to use!):
+## Setting up the bot (Read this before trying to use!):
+
 Please make sure to use python3.6, as I cannot guarantee everything will work as expected on older Python versions!
 This is because markdown parsing is done by iterating through a dict, which is ordered by default in 3.6.
 
-  ### Configuration
+### Configuration
 
 There are two possible ways of configuring your bot: a config.py file, or ENV variables.
 
 The preferred version is to use a `config.py` file, as it makes it easier to see all your settings grouped together.
-This file should be placed in your `LaylaRobot` folder, alongside the `__main__.py` file. 
-This is where your bot token will be loaded from, as well as your database URI (if you're using a database), and most of 
-your other settings.
+This file should be placed in your `LaylaRobot` folder, alongside the `__main__.py` file. This is where your bot token
+will be loaded from, as well as your database URI (if you're using a database), and most of your other settings.
 
-It is recommended to import sample_config and extend the Config class, as this will ensure your config contains all 
+It is recommended to import sample_config and extend the Config class, as this will ensure your config contains all
 defaults set in the sample_config, hence making it easier to upgrade.
 
 An example `config.py` file could be:
+
 ```
 from ZeldrisRobot.sample_config import Config
 
@@ -74,38 +76,38 @@ class Development(Config):
     NO_LOAD = ['translation']
 ```
 
-If you can't have a config.py file (EG on Heroku), it is also possible to use environment variables.
-The following env variables are supported:
- - `ENV`: Setting this to ANYTHING will enable env variables
+If you can't have a config.py file (EG on Heroku), it is also possible to use environment variables. The following env
+variables are supported:
 
- - `TOKEN`: Your bot token, as a string.
- - `OWNER_ID`: An integer of consisting of your owner ID
- - `OWNER_USERNAME`: Your username
+- `ENV`: Setting this to ANYTHING will enable env variables
 
- - `DATABASE_URL`: Your database URL
- - `MESSAGE_DUMP`: optional: a chat where your replied saved messages are stored, to stop people deleting their old 
- - `LOAD`: Space-separated list of modules you would like to load
- - `NO_LOAD`: Space-separated list of modules you would like NOT to load
- - `WEBHOOK`: Setting this to ANYTHING will enable webhooks when in env mode
- messages
- - `URL`: The URL your webhook should connect to (only needed for webhook mode)
+- `TOKEN`: Your bot token, as a string.
+- `OWNER_ID`: An integer of consisting of your owner ID
+- `OWNER_USERNAME`: Your username
 
- - `SUDO_USERS`: A space-separated list of user_ids which should be considered sudo users
- - `SUPPORT_USERS`: A space-separated list of user_ids which should be considered support users (can gban/ungban,
- nothing else)
- - `WHITELIST_USERS`: A space-separated list of user_ids which should be considered whitelisted - they can't be banned.
- - `DONATION_LINK`: Optional: link where you would like to receive donations.
- - `CERT_PATH`: Path to your webhook certificate
- - `PORT`: Port to use for your webhooks
- - `DEL_CMDS`: Whether to delete commands from users which don't have rights to use that command
- - `STRICT_GBAN`: Enforce gbans across new groups as well as old groups. When a gbanned user talks, he will be banned.
- - `WORKERS`: Number of threads to use. 8 is the recommended (and default) amount, but your experience may vary.
- __Note__ that going crazy with more threads wont necessarily speed up your bot, given the large amount of sql data 
- accesses, and the way python asynchronous calls work.
- - `BAN_STICKER`: Which sticker to use when banning people.
- - `ALLOW_EXCL`: Whether to allow using exclamation marks ! for commands as well as /.
+- `DATABASE_URL`: Your database URL
+- `MESSAGE_DUMP`: optional: a chat where your replied saved messages are stored, to stop people deleting their old
+- `LOAD`: Space-separated list of modules you would like to load
+- `NO_LOAD`: Space-separated list of modules you would like NOT to load
+- `WEBHOOK`: Setting this to ANYTHING will enable webhooks when in env mode messages
+- `URL`: The URL your webhook should connect to (only needed for webhook mode)
 
-  ### Python dependencies
+- `SUDO_USERS`: A space-separated list of user_ids which should be considered sudo users
+- `SUPPORT_USERS`: A space-separated list of user_ids which should be considered support users (can gban/ungban, nothing
+  else)
+- `WHITELIST_USERS`: A space-separated list of user_ids which should be considered whitelisted - they can't be banned.
+- `DONATION_LINK`: Optional: link where you would like to receive donations.
+- `CERT_PATH`: Path to your webhook certificate
+- `PORT`: Port to use for your webhooks
+- `DEL_CMDS`: Whether to delete commands from users which don't have rights to use that command
+- `STRICT_GBAN`: Enforce gbans across new groups as well as old groups. When a gbanned user talks, he will be banned.
+- `WORKERS`: Number of threads to use. 8 is the recommended (and default) amount, but your experience may vary.
+  __Note__ that going crazy with more threads wont necessarily speed up your bot, given the large amount of sql data
+  accesses, and the way python asynchronous calls work.
+- `BAN_STICKER`: Which sticker to use when banning people.
+- `ALLOW_EXCL`: Whether to allow using exclamation marks ! for commands as well as /.
+
+### Python dependencies
 
 Install the necessary Python dependencies by moving to the project directory and running:
 
@@ -113,12 +115,13 @@ Install the necessary Python dependencies by moving to the project directory and
 
 This will install all the necessary python packages.
 
-  ### Database
+### Database
 
-If you wish to use a database-dependent module (eg: locks, notes, userinfo, users, filters, welcomes),
-you'll need to have a database installed on your system. I use Postgres, so I recommend using it for optimal compatibility.
+If you wish to use a database-dependent module (eg: locks, notes, userinfo, users, filters, welcomes), you'll need to
+have a database installed on your system. I use Postgres, so I recommend using it for optimal compatibility.
 
-In the case of Postgres, this is how you would set up a database on a Debian/ubuntu system. Other distributions may vary.
+In the case of Postgres, this is how you would set up a database on a Debian/ubuntu system. Other distributions may
+vary.
 
 - install postgresql:
 
@@ -144,20 +147,20 @@ Change YOUR_USER and YOUR_DB_NAME appropriately.
 
 `psql YOUR_DB_NAME -h YOUR_HOST YOUR_USER`
 
-This will allow you to connect to your database via your terminal.
-By default, YOUR_HOST should be 0.0.0.0:5432.
+This will allow you to connect to your database via your terminal. By default, YOUR_HOST should be 0.0.0.0:5432.
 
 You should now be able to build your database URI. This will be:
 
 `sqldbtype://username:pw@hostname:port/db_name`
 
-Replace sqldbtype with whichever DB you're using (eg Postgres, MySQL, SQLite, etc)
+Replace sqldbtype with whichever DB you're using (e.g. Postgres, MySQL, SQLite, `etc)
 repeat for your username, password, hostname (localhost?), port (5432?), and DB name.
 
-Or, register on [ElephantSQL](https://www.elephantsql.com/) for free Postgresql.
-Learn for your self, i won't learn you anything.
+Or, register on [ElephantSQL](https://www.elephantsql.com/) for free Postgresql. Learn for your self, i won't learn you
+anything.
 </details>
 
 ## Copyright & License
+
 - Copyright (©) 2021 by [IDN-C-X](https://github.com/IDN-C-X)
 - Licensed under the terms of the [GNU GENERAL PUBLIC LICENSE Version 3, 05 October 2021](./LICENSE).

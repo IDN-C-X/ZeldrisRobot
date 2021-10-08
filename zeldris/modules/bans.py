@@ -1,6 +1,7 @@
 import html
+from typing import Optional
 
-from telegram import Chat, User, ParseMode
+from telegram import Chat, Message, User, ParseMode
 from telegram.error import BadRequest
 from telegram.ext import run_async, CommandHandler, Filters
 from telegram.utils.helpers import mention_html
@@ -273,7 +274,7 @@ def kick(update, context):
 @can_restrict
 @loggable
 @typing_action
-def banme(update, context):
+def banme(update, _):
     user_id = update.effective_message.from_user.id
     chat = update.effective_chat
     user = update.effective_user
@@ -294,8 +295,6 @@ def banme(update, context):
                 user_id,
             )
         )
-
-
     else:
         update.effective_message.reply_text("Huh? I can't :/")
 
@@ -304,7 +303,7 @@ def banme(update, context):
 @bot_admin
 @can_restrict
 @typing_action
-def kickme(update, context):
+def kickme(update, _):
     user_id = update.effective_message.from_user.id
     if is_user_admin(update.effective_chat, user_id):
         update.effective_message.reply_text("Yeahhh.. not gonna kick an admin.")

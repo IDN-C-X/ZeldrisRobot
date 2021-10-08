@@ -64,7 +64,8 @@ def import_data(update, context):
         # only import one group
         if len(data) > 1 and str(chat.id) not in data:
             msg.reply_text(
-                "There are more than one group in this file and the chat.id is not same! How am i supposed to import it?"
+                "There are more than one group in this file and the chat.id is not same! How am i supposed to import "
+                "it? "
             )
             return
 
@@ -84,7 +85,8 @@ def import_data(update, context):
         try:
             if str(context.bot.id) != str(data[str(chat.id)]["bot"]):
                 return msg.reply_text(
-                    "Backup from another bot that is not suggested might cause the problem, documents, photos, videos, audios, records might not work as it should be."
+                    "Backup from another bot that is not suggested might cause the problem, documents, photos, "
+                    "videos, audios, records might not work as it should be. "
                 )
         except Exception:
             pass
@@ -99,7 +101,8 @@ def import_data(update, context):
                 mod.__import_data__(str(chat.id), data)
         except Exception:
             msg.reply_text(
-                "An error occurred while recovering your data. The process failed. If you experience a problem with this, please ask @starryboi"
+                "An error occurred while recovering your data. The process failed. If you experience a problem with "
+                "this, please ask @starryboi "
             )
 
             LOGGER.exception(
@@ -225,8 +228,8 @@ def export_data(update, context):
         else:
             isicat += "{}<###splitter###>".format(note.value)
     notes = {"#{}".format(namacat.split("<###splitter###>")[x]): "{}".format(
-            isicat.split("<###splitter###>")[x]
-        ) for x in range(count)}
+        isicat.split("<###splitter###>")[x]
+    ) for x in range(count)}
     # Rules
     rules = rulessql.get_rules(chat_id)
     # Blacklist
@@ -341,8 +344,9 @@ def export_data(update, context):
         pass
     context.bot.sendDocument(
         current_chat_id,
-        document=open("SkyLee{}.backup".format(chat_id), "rb"),
-        caption="*Successfully imported backup:*\nChat: `{}`\nChat ID: `{}`\nOn: `{}`\n\nNote: This `SkyLee-Backup` is specially made for notes.".format(
+        document=open("Zeldris{}.backup".format(chat_id), "rb"),
+        caption="*Successfully imported backup:*\nChat: `{}`\nChat ID: `{}`\nOn: `{}`\n\nNote: This `Zeldris-Backup` "
+                "is specially made for notes.".format(
             chat.title, chat_id, tgl
         ),
         timeout=360,
@@ -355,7 +359,7 @@ def export_data(update, context):
 # Temporary data
 def put_chat(chat_id, value, chat_data):
     # print(chat_data)
-    if value == False:
+    if value is False:
         status = False
     else:
         status = True
@@ -376,10 +380,11 @@ __mod_name__ = "Backups"
 __help__ = """
 *Only for chat administrator:*
 
- × /import: Reply to the backup file for the butler / emilia group to import as much as possible, making transfers very easy! \
- Note that files / photos cannot be imported due to telegram restrictions.
+ × /import: Reply to the backup file for the butler / emilia group to import as much as possible, making transfers 
+ very easy! Note that files / photos cannot be imported due to telegram restrictions. 
 
- × /export: Export group data, which will be exported are: rules, notes (documents, images, music, video, audio, voice, text, text buttons) \
+ × /export: Export group data, which will be exported are: rules, notes (documents, images, music, video, audio, 
+ voice, text, text buttons)
 
 """
 

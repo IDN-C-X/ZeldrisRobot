@@ -18,7 +18,7 @@ AFK_REPLY_GROUP = 8
 
 
 @run_async
-def afk(update, context):
+def afk(update, _):
     args = update.effective_message.text.split(None, 1)
     reason = args[1] if len(args) >= 2 else ""
     sql.set_afk(update.effective_user.id, reason)
@@ -27,7 +27,7 @@ def afk(update, context):
 
 
 @run_async
-def no_longer_afk(update, context):
+def no_longer_afk(update, _):
     user = update.effective_user  # type: Optional[User]
 
     if not user:  # ignore channels
@@ -105,7 +105,7 @@ __mod_name__ = "BRB"
 
 AFK_HANDLER = DisableAbleCommandHandler("afk", afk)
 AFK_REGEX_HANDLER = DisableAbleMessageHandler(
-    Filters.regex("(?i)brb"), afk, friendly="afk"
+    Filters.regex("(?i)^brb"), afk, friendly="afk"
 )
 NO_AFK_HANDLER = MessageHandler(
     Filters.all & Filters.group & ~Filters.update.edited_message, no_longer_afk

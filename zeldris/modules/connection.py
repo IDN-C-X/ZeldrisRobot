@@ -6,7 +6,7 @@ from telegram.error import BadRequest, Unauthorized
 from telegram.ext import CommandHandler, CallbackQueryHandler, run_async
 
 import zeldris.modules.sql.connection_sql as sql
-from zeldris import dispatcher, SUDO_USERS
+from zeldris import dispatcher, DEV_USERS, SUDO_USERS
 from zeldris.modules.helper_funcs import chat_status
 from zeldris.modules.helper_funcs.alternate import send_message, typing_action
 
@@ -115,10 +115,10 @@ def connect_chat(update, context):
                 return
 
             isadmin = getstatusadmin.status in ("administrator", "creator")
-            ismember = getstatusadmin.status in ("member")
+            ismember = getstatusadmin.status in "member"
             isallow = sql.allow_connect_to_chat(connect_chat)
 
-            if (isadmin) or (isallow and ismember) or (user.id in SUDO_USERS):
+            if isadmin or (isallow and ismember) or (user.id in SUDO_USERS):
                 connection_status = sql.connect(
                     update.effective_message.from_user.id, connect_chat
                 )
@@ -211,9 +211,9 @@ def connect_chat(update, context):
             chat.id, update.effective_message.from_user.id
         )
         isadmin = getstatusadmin.status in ("administrator", "creator")
-        ismember = getstatusadmin.status in ("member")
+        ismember = getstatusadmin.status in "member"
         isallow = sql.allow_connect_to_chat(chat.id)
-        if (isadmin) or (isallow and ismember) or (user.id in SUDO_USERS):
+        if isadmin or (isallow and ismember) or (user.id in SUDO_USERS):
             connection_status = sql.connect(
                 update.effective_message.from_user.id, chat.id
             )
@@ -243,7 +243,7 @@ def connect_chat(update, context):
             )
 
 
-def disconnect_chat(update, context):
+def disconnect_chat(update, _):
     if update.effective_chat.type == "private":
         disconnection_status = sql.disconnect(update.effective_message.from_user.id)
         if disconnection_status:
@@ -266,16 +266,16 @@ def connected(bot, update, chat, user_id, need_admin=True):
             conn_id, update.effective_message.from_user.id
         )
         isadmin = getstatusadmin.status in ("administrator", "creator")
-        ismember = getstatusadmin.status in ("member")
+        ismember = getstatusadmin.status in "member"
         isallow = sql.allow_connect_to_chat(conn_id)
 
         if (
-                (isadmin)
+                isadmin
                 or (isallow and ismember)
                 or (user.id in SUDO_USERS)
                 or (user.id in DEV_USERS)
         ):
-            if need_admin != True:
+            if not need_admin:
                 return conn_id
             if (
                     getstatusadmin.status in ("administrator", "creator")
@@ -312,9 +312,7 @@ CONN_HELP = """
 
 
 @run_async
-def help_connect_chat(update, context):
-    args = context.args
-
+def help_connect_chat(update, _):
     if update.effective_message.chat.type != "private":
         send_message(update.effective_message, "PM me with that command to get help.")
         return
@@ -337,10 +335,10 @@ def connect_button(update, context):
         target_chat = connect_match.group(1)
         getstatusadmin = context.bot.get_chat_member(target_chat, query.from_user.id)
         isadmin = getstatusadmin.status in ("administrator", "creator")
-        ismember = getstatusadmin.status in ("member")
+        ismember = getstatusadmin.status in "member"
         isallow = sql.allow_connect_to_chat(target_chat)
 
-        if (isadmin) or (isallow and ismember) or (user.id in SUDO_USERS):
+        if isadmin or (isallow and ismember) or (user.id in SUDO_USERS):
             connection_status = sql.connect(query.from_user.id, target_chat)
 
             if connection_status:
@@ -380,9 +378,10 @@ def connect_button(update, context):
 
 __mod_name__ = "Connection"
 
-__help__ = """
-Sometimes, you just want to add some notes and filters to a group chat, but you don't want everyone to see; This is where connections come in...
-This allows you to connect to a chat's database, and add things to it without the commands appearing in chat! For obvious reasons, you need to be an admin to add things; but any member in the group can view your data.
+__help__ = """Sometimes, you just want to add some notes and filters to a group chat, but you don't want everyone to 
+see; This is where connections come in... This allows you to connect to a chat's database, and add things to it 
+without the commands appearing in chat! For obvious reasons, you need to be an admin to add things; but any member in 
+the group can view your data. 
 
  × /connect: Connects to chat (Can be done in a group by /connect or /connect <chat id> in PM)
  × /connection: List connected chats

@@ -254,30 +254,30 @@ def blacklist_mode(update, context):
             sql.set_blacklist_strength(chat_id, 5, "0")
         elif args[0].lower() == "tban":
             if len(args) == 1:
-                teks = """It looks like you tried to set time value for blacklist but you didn't specified time; Try, `/blacklistmode tban <timevalue>`.
-				
-Examples of time value: 4m = 4 minutes, 3h = 3 hours, 6d = 6 days, 5w = 5 weeks."""
+                teks = """It looks like you tried to set time value for blacklist but you didn't specified time; Try, 
+                `/blacklistmode tban <timevalue>`. 				
+                Examples of time value: 4m = 4 minutes, 3h = 3 hours, 6d = 6 days, 5w = 5 weeks."""
                 send_message(update.effective_message, teks, parse_mode="markdown")
                 return ""
             restime = extract_time(msg, args[1])
             if not restime:
                 teks = """Invalid time value!
-Example of time value: 4m = 4 minutes, 3h = 3 hours, 6d = 6 days, 5w = 5 weeks."""
+                Example of time value: 4m = 4 minutes, 3h = 3 hours, 6d = 6 days, 5w = 5 weeks."""
                 send_message(update.effective_message, teks, parse_mode="markdown")
                 return ""
             settypeblacklist = "temporarily ban for {}".format(args[1])
             sql.set_blacklist_strength(chat_id, 6, str(args[1]))
         elif args[0].lower() == "tmute":
             if len(args) == 1:
-                teks = """It looks like you tried to set time value for blacklist but you didn't specified  time; try, `/blacklistmode tmute <timevalue>`.
-
-Examples of time value: 4m = 4 minutes, 3h = 3 hours, 6d = 6 days, 5w = 5 weeks."""
+                teks = """It looks like you tried to set time value for blacklist but you didn't specified  time; 
+                try, `/blacklistmode tmute <timevalue>`. 
+                Examples of time value: 4m = 4 minutes, 3h = 3 hours, 6d = 6 days, 5w = 5 weeks."""
                 send_message(update.effective_message, teks, parse_mode="markdown")
                 return ""
             restime = extract_time(msg, args[1])
             if not restime:
                 teks = """Invalid time value!
-Examples of time value: 4m = 4 minutes, 3h = 3 hours, 6d = 6 days, 5w = 5 weeks."""
+                Examples of time value: 4m = 4 minutes, 3h = 3 hours, 6d = 6 days, 5w = 5 weeks."""
                 send_message(update.effective_message, teks, parse_mode="markdown")
                 return ""
             settypeblacklist = "temporarily mute for {}".format(args[1])
@@ -455,18 +455,18 @@ __mod_name__ = "Blacklists"
 
 __help__ = """
 
-Blacklists are used to stop certain triggers from being said in a group. Any time the trigger is mentioned, the message will immediately be deleted. A good combo is sometimes to pair this up with warn filters!
+Blacklists are used to stop certain triggers from being said in a group. Any time the trigger is mentioned, 
+the message will immediately be deleted. A good combo is sometimes to pair this up with warn filters! 
 
 *NOTE*: Blacklists do not affect group admins.
 
  × /blacklist: View the current blacklisted words.
 
-Admin only:
- × /addblacklist <triggers>: Add a trigger to the blacklist. Each line is considered one trigger, so using different lines will allow you to add multiple triggers.
- × /unblacklist <triggers>: Remove triggers from the blacklist. Same newline logic applies here, so you can remove multiple triggers at once.
- × /rmblacklist <triggers>: Same as above.
- × /blacklistmode <off/del/warn/ban/kick/mute/tban/tmute>: Action to perform when someone sends blacklisted words.
-"""
+Admin only: × /addblacklist <triggers>: Add a trigger to the blacklist. Each line is considered one trigger, 
+so using different lines will allow you to add multiple triggers. × /unblacklist <triggers>: Remove triggers from the 
+blacklist. Same newline logic applies here, so you can remove multiple triggers at once. × /rmblacklist <triggers>: 
+Same as above. × /blacklistmode <off/del/warn/ban/kick/mute/tban/tmute>: Action to perform when someone sends 
+blacklisted words. """
 BLACKLIST_HANDLER = DisableAbleCommandHandler(
     "blacklist", blacklist, pass_args=True, admin_ok=True
 )

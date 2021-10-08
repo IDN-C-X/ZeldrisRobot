@@ -1,7 +1,7 @@
 from typing import Union
 
 from future.utils import string_types
-from telegram import ParseMode, Update, Chat
+from telegram import ParseMode, Update
 from telegram.ext import CommandHandler, MessageHandler
 from telegram.utils.helpers import escape_markdown
 
@@ -96,7 +96,7 @@ if is_module_loaded(FILENAME):
     @user_admin
     @typing_action
     def disable(update, context):
-        chat = update.effective_chat  # type: Optional[Chat]
+        chat = update.effective_chat
         user = update.effective_user
         args = context.args
 
@@ -141,7 +141,7 @@ if is_module_loaded(FILENAME):
     @user_admin
     @typing_action
     def enable(update, context):
-        chat = update.effective_chat  # type: Optional[Chat]
+        chat = update.effective_chat
         user = update.effective_user
         args = context.args
 
@@ -185,7 +185,7 @@ if is_module_loaded(FILENAME):
 
     @run_async
     @user_admin
-    def list_cmds(update, context):
+    def list_cmds(update, _):
         if DISABLE_CMDS + DISABLE_OTHER:
             result = "".join(
                 " - `{}`\n".format(escape_markdown(str(cmd)))
@@ -198,7 +198,6 @@ if is_module_loaded(FILENAME):
             )
         else:
             update.effective_message.reply_text("No commands can be disabled.")
-
 
     # do not async
     def build_curr_disabled(chat_id: Union[str, int]) -> str:

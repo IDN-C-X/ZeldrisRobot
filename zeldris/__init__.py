@@ -13,7 +13,7 @@ logging.basicConfig(
 
 LOGGER = logging.getLogger(__name__)
 
-LOGGER.info("Starting Skylee...")
+LOGGER.info("Starting Zeldris...")
 
 # if version < 3.6, stop bot.
 if sys.version_info[0] < 3 or sys.version_info[1] < 6:
@@ -36,8 +36,9 @@ if ENV:
 
     try:
         SUDO_USERS = {int(x) for x in os.environ.get("SUDO_USERS", "").split()}
+        DEV_USERS = {int(x) for x in os.environ.get("DEV_USERS", "").split()}
     except ValueError:
-        raise Exception("Your sudo users list does not contain valid integers.")
+        raise Exception("Your sudo or dev users list does not contain valid integers.")
 
     try:
         SUPPORT_USERS = {int(x) for x in os.environ.get("SUPPORT_USERS", "").split()}

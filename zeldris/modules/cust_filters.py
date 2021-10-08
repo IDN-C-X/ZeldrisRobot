@@ -2,7 +2,7 @@ import re
 from html import escape
 
 import telegram
-from telegram import ParseMode, InlineKeyboardMarkup, Message
+from telegram import ParseMode, InlineKeyboardMarkup
 from telegram.error import BadRequest
 from telegram.ext import (
     CommandHandler,
@@ -52,7 +52,7 @@ def list_handlers(update, context):
     user = update.effective_user
 
     conn = connected(context.bot, update, chat, user.id, need_admin=False)
-    if conn != False:
+    if conn:
         chat_id = conn
         chat_name = dispatcher.bot.getChat(conn).title
         filter_list = "*Filter in {}:*\n"
@@ -104,7 +104,7 @@ def filters(update, context):
     )  # use python's maxsplit to separate Cmd, keyword, and reply_text
 
     conn = connected(context.bot, update, chat, user.id)
-    if conn != False:
+    if conn:
         chat_id = conn
         chat_name = dispatcher.bot.getChat(conn).title
     else:
@@ -203,10 +203,10 @@ def filters(update, context):
         return
 
     add = addnew_filter(update, chat_id, keyword, text, file_type, file_id, buttons)
-    # This is an old method
-    # sql.add_filter(chat_id, keyword, content, is_sticker, is_document, is_image, is_audio, is_voice, is_video, buttons)
+    # This is an old method sql.add_filter(chat_id, keyword, content, is_sticker, is_document, is_image, is_audio,
+    # is_voice, is_video, buttons)
 
-    if add == True:
+    if add:
         send_message(
             update.effective_message,
             "Saved filter '{}' in *{}*!".format(keyword, chat_name),
@@ -224,7 +224,7 @@ def stop_filter(update, context):
     args = update.effective_message.text.split(None, 1)
 
     conn = connected(context.bot, update, chat, user.id)
-    if conn != False:
+    if conn not in False:
         chat_id = conn
         chat_name = dispatcher.bot.getChat(conn).title
     else:
@@ -258,8 +258,8 @@ def stop_filter(update, context):
 
 @run_async
 def reply_filter(update, context):
-    chat = update.effective_chat  # type: Optional[Chat]
-    message = update.effective_message  # type: Optional[Message]
+    chat = update.effective_chat
+    message = update.effective_message
 
     to_match = extract_text(message)
     if not to_match:
@@ -433,7 +433,7 @@ def reply_filter(update, context):
                         )
 
             else:
-                    # LEGACY - all new filters will have has_markdown set to True.
+                # LEGACY - all new filters will have has_markdown set to True.
                 try:
                     send_message(update.effective_message, filt.reply)
                 except BadRequest as excp:
@@ -444,7 +444,7 @@ def reply_filter(update, context):
 @run_async
 @user_admin
 @typing_action
-def rmall_filters(update, context):
+def rmall_filters(update, _):
     chat = update.effective_chat
     user = update.effective_user
     msg = update.effective_message
@@ -475,7 +475,8 @@ def rmall_filters(update, context):
 # NOT ASYNC NOT A HANDLER
 def get_exception(excp, filt, chat):
     if excp.message == "Unsupported url protocol":
-        return "You seem to be trying to use the URL protocol which is not supported. Telegram does not support key for multiple protocols, such as tg: //. Please try again!"
+        return "You seem to be trying to use the URL protocol which is not supported. Telegram does not support key " \
+               "for multiple protocols, such as tg: //. Please try again! "
     elif excp.message == "Reply message not found":
         return "noreply"
     else:
