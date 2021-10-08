@@ -1,4 +1,4 @@
-# TESTINGBOT
+# TESTING BOT
 
 > **:warning: Project unmaintained!** Developers and maintainers of this bot doesn't have much free time to maintain the project. You have the right
 > to fork the code, but no technical support will be given if problems arise on your fork.
