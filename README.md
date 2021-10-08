@@ -169,7 +169,7 @@ anything.
 
 ## Credits
 
-_ [Skyleebot](https://github.com/SensiPeeps/skyleebot) This bot Based
+- [Skyleebot](https://github.com/SensiPeeps/skyleebot) This bot Based
 - 1maverick1 for many stuffs.
 - AyraHikari for weather modules and some other stuffs.
 - RealAkito for reverse search modules.
