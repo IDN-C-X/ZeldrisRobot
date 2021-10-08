@@ -16,10 +16,10 @@ from zeldris import (
     MESSAGE_DUMP,
     spamwtc,
 )
+from zeldris.modules.helper_funcs.alternate import typing_action, send_action
 from zeldris.modules.helper_funcs.chat_status import user_admin, is_user_admin
 from zeldris.modules.helper_funcs.extraction import extract_user, extract_user_and_text
 from zeldris.modules.helper_funcs.filters import CustomFilters
-from zeldris.modules.helper_funcs.alternate import typing_action, send_action
 from zeldris.modules.sql.users_sql import get_all_chats
 
 GBAN_ENFORCE_GROUP = 6
@@ -308,7 +308,6 @@ def gbanlist(update, context):
 
 
 def check_and_ban(update, user_id, should_message=True):
-
     try:
         spmban = spamwtc.get_ban(int(user_id))
         if spmban:
@@ -343,8 +342,8 @@ def check_and_ban(update, user_id, should_message=True):
 def enforce_gban(update, context):
     # Not using @restrict handler to avoid spamming - just ignore if cant gban.
     if (
-        sql.does_chat_gban(update.effective_chat.id)
-        and update.effective_chat.get_member(context.bot.id).can_restrict_members
+            sql.does_chat_gban(update.effective_chat.id)
+            and update.effective_chat.get_member(context.bot.id).can_restrict_members
     ):
         user = update.effective_user
         chat = update.effective_chat

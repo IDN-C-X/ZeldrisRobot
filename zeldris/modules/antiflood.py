@@ -1,5 +1,5 @@
 import html
-from typing import Optional, List
+from typing import Optional
 
 from telegram import Message, Chat, User, ParseMode, ChatPermissions
 from telegram.error import BadRequest
@@ -7,13 +7,12 @@ from telegram.ext import Filters, MessageHandler, CommandHandler, run_async
 from telegram.utils.helpers import mention_html
 
 from zeldris import dispatcher
+from zeldris.modules.connection import connected
+from zeldris.modules.helper_funcs.alternate import send_message, typing_action
 from zeldris.modules.helper_funcs.chat_status import is_user_admin, user_admin
 from zeldris.modules.helper_funcs.string_handling import extract_time
 from zeldris.modules.log_channel import loggable
 from zeldris.modules.sql import antiflood_sql as sql
-from zeldris.modules.connection import connected
-
-from zeldris.modules.helper_funcs.alternate import send_message, typing_action
 
 FLOOD_GROUP = 3
 

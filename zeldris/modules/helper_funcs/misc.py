@@ -64,7 +64,7 @@ def paginate_modules(page_n: int, module_dict: Dict, prefix, chat=None) -> List:
             ]
         )
 
-    pairs = [modules[i * 3 : (i + 1) * 3] for i in range((len(modules) + 3 - 1) // 3)]
+    pairs = [modules[i * 3: (i + 1) * 3] for i in range((len(modules) + 3 - 1) // 3)]
     round_num = len(modules) / 3
     calc = len(modules) - round(round_num)
     if calc == 1:
@@ -82,7 +82,7 @@ def paginate_modules(page_n: int, module_dict: Dict, prefix, chat=None) -> List:
 
 
 def send_to_list(
-    bot: Bot, send_to: list, message: str, markdown=False, html=False
+        bot: Bot, send_to: list, message: str, markdown=False, html=False
 ) -> None:
     if html and markdown:
         raise Exception("Can only send with either markdown or HTML!")

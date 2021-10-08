@@ -18,6 +18,7 @@ from telegram.utils.helpers import mention_html
 
 from zeldris import dispatcher  # BAN_STICKER
 from zeldris.modules.disable import DisableAbleCommandHandler
+from zeldris.modules.helper_funcs.alternate import typing_action
 from zeldris.modules.helper_funcs.chat_status import (
     is_user_admin,
     bot_admin,
@@ -33,7 +34,6 @@ from zeldris.modules.helper_funcs.extraction import (
 from zeldris.modules.helper_funcs.filters import CustomFilters
 from zeldris.modules.helper_funcs.misc import split_message
 from zeldris.modules.helper_funcs.string_handling import split_quotes
-from zeldris.modules.helper_funcs.alternate import typing_action
 from zeldris.modules.log_channel import loggable
 from zeldris.modules.sql import warns_sql as sql
 
@@ -43,7 +43,7 @@ CURRENT_WARNING_FILTER_STRING = "<b>Current warning filters in this chat:</b>\n"
 
 # Not async
 def warn(
-    user: User, chat: Chat, reason: str, message: Message, warner: User = None
+        user: User, chat: Chat, reason: str, message: Message, warner: User = None
 ) -> str:
     if is_user_admin(chat, user.id):
         message.reply_text("Damn admins, can't even be warned!")
@@ -192,8 +192,8 @@ def warn_user(update, context):
 
     if user_id:
         if (
-            message.reply_to_message
-            and message.reply_to_message.from_user.id == user_id
+                message.reply_to_message
+                and message.reply_to_message.from_user.id == user_id
         ):
             return warn(
                 message.reply_to_message.from_user,

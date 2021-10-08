@@ -1,18 +1,16 @@
-from typing import Optional, List
-from gtts import gTTS
-import os
-import requests
 import json
-from emoji import UNICODE_EMOJI
+import os
 
+import requests
+from emoji import UNICODE_EMOJI
+from googletrans import Translator
+from gtts import gTTS
 from telegram import ChatAction
 from telegram.ext import run_async
 
 from zeldris import dispatcher
 from zeldris.modules.disable import DisableAbleCommandHandler
 from zeldris.modules.helper_funcs.alternate import typing_action, send_action
-
-from googletrans import Translator
 
 
 @run_async

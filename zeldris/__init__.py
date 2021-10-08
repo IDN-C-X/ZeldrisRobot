@@ -1,9 +1,10 @@
 import logging
 import os
 import sys
+
 import spamwatch
-from telethon import TelegramClient
 import telegram.ext as tg
+from telethon import TelegramClient
 
 # enable logging
 logging.basicConfig(

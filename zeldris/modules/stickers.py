@@ -1,9 +1,9 @@
-import os
 import math
+import os
 import urllib.request as urllib
-from PIL import Image
 from html import escape
 
+from PIL import Image
 from telegram import ParseMode, InlineKeyboardMarkup, InlineKeyboardButton
 from telegram import TelegramError
 from telegram.ext import run_async
@@ -30,12 +30,12 @@ def kang(update, context):
             if len(stickerset.stickers) >= max_stickers:
                 packnum += 1
                 packname = (
-                    "a"
-                    + str(packnum)
-                    + "_"
-                    + str(user.id)
-                    + "_by_"
-                    + context.bot.username
+                        "a"
+                        + str(packnum)
+                        + "_"
+                        + str(user.id)
+                        + "_by_"
+                        + context.bot.username
                 )
             else:
                 packname_found = 1
@@ -146,7 +146,7 @@ def kang(update, context):
                         "Sticker successfully added to [pack](t.me/addstickers/%s)"
                         % packname
                         + "\n"
-                        "Emoji is:" + " " + sticker_emoji,
+                          "Emoji is:" + " " + sticker_emoji,
                         parse_mode=ParseMode.MARKDOWN,
                     )
                 print(e)
@@ -161,12 +161,12 @@ def kang(update, context):
                     if len(stickerset.stickers) >= max_stickers:
                         packnum += 1
                         packname = (
-                            "animated"
-                            + str(packnum)
-                            + "_"
-                            + str(user.id)
-                            + "_by_"
-                            + context.bot.username
+                                "animated"
+                                + str(packnum)
+                                + "_"
+                                + str(user.id)
+                                + "_by_"
+                                + context.bot.username
                         )
                     else:
                         packname_found = 1
@@ -204,7 +204,7 @@ def kang(update, context):
                         "Sticker successfully added to [pack](t.me/addstickers/%s)"
                         % packname
                         + "\n"
-                        "Emoji is:" + " " + sticker_emoji,
+                          "Emoji is:" + " " + sticker_emoji,
                         parse_mode=ParseMode.MARKDOWN,
                     )
                 print(e)
@@ -292,7 +292,7 @@ def kang(update, context):
                     "Sticker successfully added to [pack](t.me/addstickers/%s)"
                     % packname
                     + "\n"
-                    "Emoji is:" + " " + sticker_emoji,
+                      "Emoji is:" + " " + sticker_emoji,
                     parse_mode=ParseMode.MARKDOWN,
                 )
             print(e)
@@ -315,15 +315,15 @@ def kang(update, context):
 
 
 def makepack_internal(
-    update,
-    context,
-    msg,
-    user,
-    emoji,
-    packname,
-    packnum,
-    png_sticker=None,
-    tgs_sticker=None,
+        update,
+        context,
+        msg,
+        user,
+        emoji,
+        packname,
+        packnum,
+        png_sticker=None,
+        tgs_sticker=None,
 ):
     name = user.first_name
     name = name[:50]
@@ -396,7 +396,7 @@ def getsticker(update, context):
             "Hello"
             + f"{mention_html(msg.from_user.id, msg.from_user.first_name)}"
             + ", Please check the file you requested below."
-            "\nPlease use this feature wisely!",
+              "\nPlease use this feature wisely!",
             parse_mode=ParseMode.HTML,
         )
         context.bot.sendChatAction(chat_id, "upload_document")

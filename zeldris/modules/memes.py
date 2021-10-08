@@ -1,18 +1,18 @@
-import random, re
-import requests as r
+import random
+import re
 
+import requests as r
 from telegram import ParseMode, TelegramError, MAX_MESSAGE_LENGTH
-from telegram.ext import Filters, CommandHandler, run_async
 from telegram.error import BadRequest
+from telegram.ext import Filters, CommandHandler, run_async
 from telegram.utils.helpers import escape_markdown
 
-from zeldris.modules.helper_funcs.extraction import extract_user
-from zeldris.modules.helper_funcs.filters import CustomFilters
-from zeldris.modules.helper_funcs.alternate import typing_action
+import zeldris.modules.helper_funcs.fun_strings as fun
 from zeldris import dispatcher, SUDO_USERS, SUPPORT_USERS, LOGGER
 from zeldris.modules.disable import DisableAbleCommandHandler, DisableAbleMessageHandler
-
-import zeldris.modules.helper_funcs.fun_strings as fun
+from zeldris.modules.helper_funcs.alternate import typing_action
+from zeldris.modules.helper_funcs.extraction import extract_user
+from zeldris.modules.helper_funcs.filters import CustomFilters
 
 
 @run_async
@@ -431,7 +431,6 @@ def goodmorning(update, context):
     message.reply_text(reply, parse_mode=ParseMode.MARKDOWN)
 
 
-
 __help__ = """
 Some dank memes for fun or whatever!
 
@@ -495,7 +494,6 @@ GDMORNING_HANDLER = DisableAbleMessageHandler(
 GDNIGHT_HANDLER = DisableAbleMessageHandler(
     Filters.regex(r"(?i)(goodnight)"), goodnight, friendly="goodnight"
 )
-
 
 dispatcher.add_handler(SHRUG_HANDLER)
 dispatcher.add_handler(DECIDE_HANDLER)

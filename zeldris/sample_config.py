@@ -55,6 +55,7 @@ class Config(object):
     SPAMWATCH_API = None  # Your SpamWatch token
     WALL_API = None
 
+
 class Production(Config):
     LOGGER = False
 

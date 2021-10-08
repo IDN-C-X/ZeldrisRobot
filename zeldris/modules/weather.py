@@ -1,4 +1,7 @@
-import time, requests, json
+import json
+import requests
+import time
+
 from pytz import country_names as cname
 from telegram import ParseMode
 from telegram.error import BadRequest
@@ -26,7 +29,7 @@ def weather(update, context):
             update.effective_message.delete()
         except BadRequest as err:
             if (err.message == "Message to delete not found") or (
-                err.message == "Message can't be deleted"
+                    err.message == "Message can't be deleted"
             ):
                 return
 
@@ -49,7 +52,7 @@ def weather(update, context):
             update.effective_message.delete()
         except BadRequest as err:
             if (err.message == "Message to delete not found") or (
-                err.message == "Message can't be deleted"
+                    err.message == "Message can't be deleted"
             ):
                 return
         return
@@ -114,7 +117,7 @@ def weather(update, context):
         update.effective_message.delete()
     except BadRequest as err:
         if (err.message == "Message to delete not found") or (
-            err.message == "Message can't be deleted"
+                err.message == "Message can't be deleted"
         ):
             return
 

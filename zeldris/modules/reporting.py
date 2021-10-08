@@ -1,8 +1,8 @@
 import html
-from typing import Optional, List
+from typing import Optional
 
-from telegram import Message, Chat, User, ParseMode
 from telegram import InlineKeyboardMarkup, InlineKeyboardButton
+from telegram import Message, Chat, User, ParseMode
 from telegram.error import BadRequest, Unauthorized
 from telegram.ext import (
     CommandHandler,
@@ -14,8 +14,8 @@ from telegram.ext import (
 from telegram.utils.helpers import mention_html
 
 from zeldris import dispatcher, LOGGER
-from zeldris.modules.helper_funcs.chat_status import user_not_admin, user_admin
 from zeldris.modules.helper_funcs.alternate import typing_action
+from zeldris.modules.helper_funcs.chat_status import user_not_admin, user_admin
 from zeldris.modules.log_channel import loggable
 from zeldris.modules.sql import reporting_sql as sql
 
@@ -156,7 +156,7 @@ def report(update, context) -> str:
                         message.reply_to_message.forward(admin.user.id)
 
                         if (
-                            len(message.text.split()) > 1
+                                len(message.text.split()) > 1
                         ):  # If user is giving a reason, send his message too
                             message.forward(admin.user.id)
 

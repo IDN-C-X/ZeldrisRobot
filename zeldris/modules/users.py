@@ -1,6 +1,5 @@
 from io import BytesIO
 from time import sleep
-from typing import Optional
 
 from telegram import TelegramError
 from telegram.error import BadRequest
@@ -109,8 +108,8 @@ def chats(update, context):
 @run_async
 def chat_checker(update, context):
     if (
-        update.effective_message.chat.get_member(context.bot.id).can_send_messages
-        is False
+            update.effective_message.chat.get_member(context.bot.id).can_send_messages
+            is False
     ):
         context.bot.leaveChat(update.effective_message.chat.id)
 

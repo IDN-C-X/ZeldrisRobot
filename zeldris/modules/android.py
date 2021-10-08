@@ -1,4 +1,5 @@
 import time
+
 from bs4 import BeautifulSoup
 from requests import get
 from telegram import ParseMode
@@ -44,7 +45,7 @@ def magisk(update, context):
         update.effective_message.delete()
     except BadRequest as err:
         if (err.message == "Message to delete not found") or (
-            err.message == "Message can't be deleted"
+                err.message == "Message can't be deleted"
         ):
             return
 
@@ -66,7 +67,7 @@ def device(update, context):
             update.effective_message.delete()
         except BadRequest as err:
             if (err.message == "Message to delete not found") or (
-                err.message == "Message can't be deleted"
+                    err.message == "Message can't be deleted"
             ):
                 return
     device = " ".join(args)
@@ -96,7 +97,7 @@ def device(update, context):
             update.effective_message.delete()
         except BadRequest as err:
             if (err.message == "Message to delete not found") or (
-                err.message == "Message can't be deleted"
+                    err.message == "Message can't be deleted"
             ):
                 return
     update.message.reply_text(
@@ -121,7 +122,7 @@ def twrp(update, context):
             update.effective_message.delete()
         except BadRequest as err:
             if (err.message == "Message to delete not found") or (
-                err.message == "Message can't be deleted"
+                    err.message == "Message can't be deleted"
             ):
                 return
 
@@ -140,7 +141,7 @@ def twrp(update, context):
             update.effective_message.delete()
         except BadRequest as err:
             if (err.message == "Message to delete not found") or (
-                err.message == "Message can't be deleted"
+                    err.message == "Message can't be deleted"
             ):
                 return
     else:

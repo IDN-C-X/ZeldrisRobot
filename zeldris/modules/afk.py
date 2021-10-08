@@ -1,18 +1,17 @@
-from typing import Optional
 import random
+from typing import Optional
 
 from telegram import Message, User
 from telegram import MessageEntity, ParseMode
 from telegram.error import BadRequest
 from telegram.ext import Filters, MessageHandler, run_async
 
+import zeldris.modules.helper_funcs.fun_strings as fun
 from zeldris import dispatcher
 from zeldris.modules.disable import DisableAbleCommandHandler, DisableAbleMessageHandler
+from zeldris.modules.helper_funcs.alternate import send_message
 from zeldris.modules.sql import afk_sql as sql
 from zeldris.modules.users import get_user_id
-
-from zeldris.modules.helper_funcs.alternate import send_message
-import zeldris.modules.helper_funcs.fun_strings as fun
 
 AFK_GROUP = 7
 AFK_REPLY_GROUP = 8
@@ -59,7 +58,7 @@ def reply_afk(update, context):
 
             elif ent.type == MessageEntity.MENTION:
                 user_id = get_user_id(
-                    message.text[ent.offset : ent.offset + ent.length]
+                    message.text[ent.offset: ent.offset + ent.length]
                 )
                 if not user_id:
                     # Should never happen, since for a user to become AFK they must have spoken. Maybe changed username?
@@ -111,7 +110,6 @@ When marked as AFK, any mentions will be replied to with a message to say you're
 """
 
 __mod_name__ = "BRB"
-
 
 AFK_HANDLER = DisableAbleCommandHandler("afk", afk)
 AFK_REGEX_HANDLER = DisableAbleMessageHandler(

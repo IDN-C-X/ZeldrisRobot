@@ -8,16 +8,15 @@ from telegram.utils.helpers import mention_html
 
 import zeldris.modules.sql.blacklist_sql as sql
 from zeldris import dispatcher, LOGGER
+from zeldris.modules.connection import connected
 from zeldris.modules.disable import DisableAbleCommandHandler
+from zeldris.modules.helper_funcs.alternate import send_message, typing_action
 from zeldris.modules.helper_funcs.chat_status import user_admin, user_not_admin
 from zeldris.modules.helper_funcs.extraction import extract_text
 from zeldris.modules.helper_funcs.misc import split_message
+from zeldris.modules.helper_funcs.string_handling import extract_time
 from zeldris.modules.log_channel import loggable
 from zeldris.modules.warns import warn
-from zeldris.modules.helper_funcs.string_handling import extract_time
-from zeldris.modules.connection import connected
-
-from zeldris.modules.helper_funcs.alternate import send_message, typing_action
 
 BLACKLIST_GROUP = 11
 
@@ -227,9 +226,9 @@ def blacklist_mode(update, context):
 
     if args:
         if (
-            args[0].lower() == "off"
-            or args[0].lower() == "nothing"
-            or args[0].lower() == "no"
+                args[0].lower() == "off"
+                or args[0].lower() == "nothing"
+                or args[0].lower() == "no"
         ):
             settypeblacklist = "do nothing"
             sql.set_blacklist_strength(chat_id, 0, "0")

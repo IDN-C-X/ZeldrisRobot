@@ -1,14 +1,16 @@
 import html
 from typing import Optional
 
-from telegram import Message, Chat, User
 from telegram import ChatPermissions
+from telegram import Message, Chat, User
 from telegram.error import BadRequest
 from telegram.ext import CommandHandler, Filters
 from telegram.ext.dispatcher import run_async
 from telegram.utils.helpers import mention_html
 
 from zeldris import dispatcher, LOGGER
+from zeldris.modules.helper_funcs.admin_rights import user_can_ban
+from zeldris.modules.helper_funcs.alternate import typing_action
 from zeldris.modules.helper_funcs.chat_status import (
     bot_admin,
     user_admin,
@@ -17,8 +19,6 @@ from zeldris.modules.helper_funcs.chat_status import (
 )
 from zeldris.modules.helper_funcs.extraction import extract_user, extract_user_and_text
 from zeldris.modules.helper_funcs.string_handling import extract_time
-from zeldris.modules.helper_funcs.admin_rights import user_can_ban
-from zeldris.modules.helper_funcs.alternate import typing_action
 from zeldris.modules.log_channel import loggable
 
 
@@ -106,10 +106,10 @@ def unmute(update, context):
 
     if member.status != "kicked" and member.status != "left":
         if (
-            member.can_send_messages
-            and member.can_send_media_messages
-            and member.can_send_other_messages
-            and member.can_add_web_page_previews
+                member.can_send_messages
+                and member.can_send_media_messages
+                and member.can_send_other_messages
+                and member.can_add_web_page_previews
         ):
             message.reply_text("This user already has the right to speak.")
         else:

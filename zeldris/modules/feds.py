@@ -1,13 +1,12 @@
+import csv
+import json
+import os
+import re
+import time
+import uuid
 from io import BytesIO
 from typing import Optional
-import uuid
-import re
-import json
-import time
-import csv
-import os
 
-from telegram.error import BadRequest, TelegramError, Unauthorized
 from telegram import (
     ParseMode,
     Chat,
@@ -17,9 +16,11 @@ from telegram import (
     InlineKeyboardButton,
     ChatAction,
 )
+from telegram.error import BadRequest, TelegramError, Unauthorized
 from telegram.ext import run_async, CommandHandler, CallbackQueryHandler
 from telegram.utils.helpers import mention_html, mention_markdown
 
+import zeldris.modules.sql.feds_sql as sql
 from zeldris import (
     dispatcher,
     OWNER_ID,
@@ -28,6 +29,12 @@ from zeldris import (
     MESSAGE_DUMP,
     LOGGER,
 )
+from zeldris.modules.disable import DisableAbleCommandHandler
+from zeldris.modules.helper_funcs.alternate import (
+    send_message,
+    typing_action,
+    send_action,
+)
 from zeldris.modules.helper_funcs.chat_status import is_user_admin
 from zeldris.modules.helper_funcs.extraction import (
     extract_user,
@@ -35,15 +42,6 @@ from zeldris.modules.helper_funcs.extraction import (
     extract_user_fban,
 )
 from zeldris.modules.helper_funcs.string_handling import markdown_parser
-from zeldris.modules.disable import DisableAbleCommandHandler
-
-import zeldris.modules.sql.feds_sql as sql
-
-from zeldris.modules.helper_funcs.alternate import (
-    send_message,
-    typing_action,
-    send_action,
-)
 
 # Hello bot owner, I spended for feds many hours of my life, Please don't remove this if you still respect MrYacha and peaktogoo and AyraHikari too
 # Federation by MrYacha 2018-2019
@@ -343,13 +341,13 @@ def user_join_fed(update, context):
         elif not msg.reply_to_message and not args:
             user = msg.from_user
         elif not msg.reply_to_message and (
-            not args
-            or (
-                len(args) >= 1
-                and not args[0].startswith("@")
-                and not args[0].isdigit()
-                and not msg.parse_entities([MessageEntity.TEXT_MENTION])
-            )
+                not args
+                or (
+                        len(args) >= 1
+                        and not args[0].startswith("@")
+                        and not args[0].isdigit()
+                        and not msg.parse_entities([MessageEntity.TEXT_MENTION])
+                )
         ):
             msg.reply_text("I cannot extract user from this message")
             return
@@ -410,13 +408,13 @@ def user_demote_fed(update, context):
             user = msg.from_user
 
         elif not msg.reply_to_message and (
-            not args
-            or (
-                len(args) >= 1
-                and not args[0].startswith("@")
-                and not args[0].isdigit()
-                and not msg.parse_entities([MessageEntity.TEXT_MENTION])
-            )
+                not args
+                or (
+                        len(args) >= 1
+                        and not args[0].startswith("@")
+                        and not args[0].isdigit()
+                        and not msg.parse_entities([MessageEntity.TEXT_MENTION])
+                )
         ):
             msg.reply_text("I cannot extract user from this message")
             return
@@ -498,7 +496,6 @@ def fed_info(update, context):
 @run_async
 @typing_action
 def fed_admin(update, context):
-
     chat = update.effective_chat  # type: Optional[Chat]
     user = update.effective_user  # type: Optional[User]
     args = context.args
@@ -548,7 +545,6 @@ def fed_admin(update, context):
 @run_async
 @typing_action
 def fed_ban(update, context):
-
     chat = update.effective_chat  # type: Optional[Chat]
     user = update.effective_user  # type: Optional[User]
     args = context.args
@@ -1175,7 +1171,6 @@ def unfban(update, context):
 @run_async
 @typing_action
 def set_frules(update, context):
-
     chat = update.effective_chat  # type: Optional[Chat]
     user = update.effective_user  # type: Optional[User]
     args = context.args
@@ -1749,9 +1744,9 @@ def fed_import_bans(update, context):
                 "fban_{}.csv".format(msg.reply_to_message.document.file_id)
             )
             with open(
-                "fban_{}.csv".format(msg.reply_to_message.document.file_id),
-                "r",
-                encoding="utf8",
+                    "fban_{}.csv".format(msg.reply_to_message.document.file_id),
+                    "r",
+                    encoding="utf8",
             ) as csvFile:
                 reader = csv.reader(csvFile)
                 for data in reader:
@@ -2355,7 +2350,6 @@ You can even designate admin federations, so your trusted admin can ban all the 
  × /fedchats: Get all the chats that are connected in the Federation.
  × /importfbans: Reply to the Federation backup message file to import the banned list to the Federation now.
 """
-
 
 NEW_FED_HANDLER = CommandHandler("newfed", new_fed)
 DEL_FED_HANDLER = CommandHandler("delfed", del_fed, pass_args=True)

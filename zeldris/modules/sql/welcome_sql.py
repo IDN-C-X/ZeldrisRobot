@@ -1,5 +1,6 @@
 import threading
 from typing import Union
+
 from sqlalchemy import Column, String, Boolean, UnicodeText, Integer, BigInteger
 
 from zeldris.modules.helper_funcs.msg_types import Types
@@ -256,8 +257,8 @@ def set_custom_welcome(chat_id, custom_welcome, welcome_type, buttons=None):
         with WELC_BTN_LOCK:
             prev_buttons = (
                 SESSION.query(WelcomeButtons)
-                .filter(WelcomeButtons.chat_id == str(chat_id))
-                .all()
+                    .filter(WelcomeButtons.chat_id == str(chat_id))
+                    .all()
             )
             for btn in prev_buttons:
                 SESSION.delete(btn)
@@ -301,8 +302,8 @@ def set_custom_gdbye(chat_id, custom_goodbye, goodbye_type, buttons=None):
         with LEAVE_BTN_LOCK:
             prev_buttons = (
                 SESSION.query(GoodbyeButtons)
-                .filter(GoodbyeButtons.chat_id == str(chat_id))
-                .all()
+                    .filter(GoodbyeButtons.chat_id == str(chat_id))
+                    .all()
             )
             for btn in prev_buttons:
                 SESSION.delete(btn)
@@ -328,9 +329,9 @@ def get_welc_buttons(chat_id):
     try:
         return (
             SESSION.query(WelcomeButtons)
-            .filter(WelcomeButtons.chat_id == str(chat_id))
-            .order_by(WelcomeButtons.id)
-            .all()
+                .filter(WelcomeButtons.chat_id == str(chat_id))
+                .order_by(WelcomeButtons.id)
+                .all()
         )
     finally:
         SESSION.close()
@@ -340,9 +341,9 @@ def get_gdbye_buttons(chat_id):
     try:
         return (
             SESSION.query(GoodbyeButtons)
-            .filter(GoodbyeButtons.chat_id == str(chat_id))
-            .order_by(GoodbyeButtons.id)
-            .all()
+                .filter(GoodbyeButtons.chat_id == str(chat_id))
+                .order_by(GoodbyeButtons.id)
+                .all()
         )
     finally:
         SESSION.close()
@@ -378,8 +379,8 @@ def migrate_chat(old_chat_id, new_chat_id):
         with WELC_BTN_LOCK:
             chat_buttons = (
                 SESSION.query(WelcomeButtons)
-                .filter(WelcomeButtons.chat_id == str(old_chat_id))
-                .all()
+                    .filter(WelcomeButtons.chat_id == str(old_chat_id))
+                    .all()
             )
             for btn in chat_buttons:
                 btn.chat_id = str(new_chat_id)
@@ -387,8 +388,8 @@ def migrate_chat(old_chat_id, new_chat_id):
         with LEAVE_BTN_LOCK:
             chat_buttons = (
                 SESSION.query(GoodbyeButtons)
-                .filter(GoodbyeButtons.chat_id == str(old_chat_id))
-                .all()
+                    .filter(GoodbyeButtons.chat_id == str(old_chat_id))
+                    .all()
             )
             for btn in chat_buttons:
                 btn.chat_id = str(new_chat_id)

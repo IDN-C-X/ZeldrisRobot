@@ -99,7 +99,6 @@ CHAT_FEDS_LOCK = threading.RLock()
 FEDS_SETTINGS_LOCK = threading.RLock()
 FEDS_SUBSCRIBER_LOCK = threading.RLock()
 
-
 FEDERATION_BYNAME = {}
 FEDERATION_BYOWNER = {}
 FEDERATION_BYFEDID = {}
@@ -503,12 +502,12 @@ def fban_user(fed_id, user_id, first_name, last_name, user_name, reason, time):
 
 
 def multi_fban_user(
-    multi_fed_id,
-    multi_user_id,
-    multi_first_name,
-    multi_last_name,
-    multi_user_name,
-    multi_reason,
+        multi_fed_id,
+        multi_user_id,
+        multi_first_name,
+        multi_last_name,
+        multi_user_name,
+        multi_reason,
 ):
     if True:  # with FEDS_LOCK:
         counter = 0
@@ -747,7 +746,7 @@ def get_spec_subs(fed_id, fed_target):
 
 def get_mysubs(my_fed):
     if MYFEDS_SUBSCRIBER.get(my_fed) is None:
-       return None
+        return None
     return list(MYFEDS_SUBSCRIBER.get(my_fed))
 
 

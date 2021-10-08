@@ -1,18 +1,19 @@
-import speedtest
-import requests
 import datetime
 import platform
-
-from psutil import cpu_percent, virtual_memory, disk_usage, boot_time
 from platform import python_version
-from telegram import __version__
-from spamwatch import __version__ as __sw__
+
+import requests
+import speedtest
+from psutil import cpu_percent, virtual_memory, disk_usage, boot_time
 from pythonping import ping as ping3
+from spamwatch import __version__ as __sw__
 from telegram import ParseMode
+from telegram import __version__
 from telegram.ext import CommandHandler, run_async, Filters
+
 from zeldris import dispatcher, OWNER_ID
-from zeldris.modules.helper_funcs.filters import CustomFilters
 from zeldris.modules.helper_funcs.alternate import typing_action
+from zeldris.modules.helper_funcs.filters import CustomFilters
 
 
 @run_async

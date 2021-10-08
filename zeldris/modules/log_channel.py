@@ -1,4 +1,5 @@
 from functools import wraps
+
 from zeldris.modules.helper_funcs.misc import is_module_loaded
 
 FILENAME = __name__.rsplit(".", 1)[-1]
@@ -12,6 +13,7 @@ if is_module_loaded(FILENAME):
     from zeldris import dispatcher, LOGGER
     from zeldris.modules.helper_funcs.chat_status import user_admin
     from zeldris.modules.sql import log_channel_sql as sql
+
 
     def loggable(func):
         @wraps(func)
@@ -45,6 +47,7 @@ if is_module_loaded(FILENAME):
 
         return log_action
 
+
     def send_log(bot: Bot, log_chat_id: str, orig_chat_id: str, result: str):
         try:
             bot.send_message(log_chat_id, result, parse_mode=ParseMode.HTML)
@@ -65,6 +68,7 @@ if is_module_loaded(FILENAME):
                     + "\n\nFormatting has been disabled due to an unexpected error.",
                 )
 
+
     @run_async
     @user_admin
     def logging(update, context):
@@ -83,6 +87,7 @@ if is_module_loaded(FILENAME):
 
         else:
             message.reply_text("No log channel has been set for this group!")
+
 
     @run_async
     @user_admin
@@ -129,6 +134,7 @@ if is_module_loaded(FILENAME):
                 " - forward the /setlog to the group\n"
             )
 
+
     @run_async
     @user_admin
     def unsetlog(update, context):
@@ -145,11 +151,14 @@ if is_module_loaded(FILENAME):
         else:
             message.reply_text("No log channel has been set yet!")
 
+
     def __stats__():
         return "× {} log channels have been set.".format(sql.num_logchannels())
 
+
     def __migrate__(old_chat_id, new_chat_id):
         sql.migrate_chat(old_chat_id, new_chat_id)
+
 
     def __chat_settings__(chat_id, user_id):
         log_channel = sql.get_chat_log_channel(chat_id)
@@ -159,6 +168,7 @@ if is_module_loaded(FILENAME):
                 escape_markdown(log_channel_info.title), log_channel
             )
         return "No log channel is set for this group!"
+
 
     __help__ = """
 Recent actions are nice, but they don't help you log every action taken by the bot. This is why you need log channels!

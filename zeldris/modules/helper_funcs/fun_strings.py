@@ -493,7 +493,6 @@ CRI = (
     "༼ ༎ຶ ෴ ༎ຶ༽",
 )
 
-
 BEING_LOGICAL = (
     "Underwater bubbles and raindrops are total opposites of each other.",
     "If you buy an eraser you are literally paying for your mistakes.",

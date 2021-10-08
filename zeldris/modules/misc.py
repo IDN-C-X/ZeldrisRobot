@@ -1,13 +1,13 @@
 import html
-import random, re
-import wikipedia
-from typing import Optional, List
-from requests import get
-
+import random
+import re
 from io import BytesIO
 from random import randint
-import requests as r
+from typing import Optional
 
+import requests as r
+import wikipedia
+from requests import get
 from telegram import (
     Message,
     Chat,
@@ -18,10 +18,9 @@ from telegram import (
     ChatAction,
     TelegramError,
 )
-
+from telegram.error import BadRequest
 from telegram.ext import CommandHandler, run_async, Filters
 from telegram.utils.helpers import escape_markdown, mention_html
-from telegram.error import BadRequest
 
 from zeldris import (
     dispatcher,
@@ -34,9 +33,9 @@ from zeldris import (
 )
 from zeldris.__main__ import STATS, USER_INFO, GDPR
 from zeldris.modules.disable import DisableAbleCommandHandler
+from zeldris.modules.helper_funcs.alternate import typing_action, send_action
 from zeldris.modules.helper_funcs.extraction import extract_user
 from zeldris.modules.helper_funcs.filters import CustomFilters
-from zeldris.modules.helper_funcs.alternate import typing_action, send_action
 
 
 @run_async
@@ -46,8 +45,8 @@ def get_id(update, context):
     user_id = extract_user(update.effective_message, args)
     if user_id:
         if (
-            update.effective_message.reply_to_message
-            and update.effective_message.reply_to_message.forward_from
+                update.effective_message.reply_to_message
+                and update.effective_message.reply_to_message.forward_from
         ):
             user1 = update.effective_message.reply_to_message.from_user
             user2 = update.effective_message.reply_to_message.forward_from
@@ -94,13 +93,13 @@ def info(update, context):
         user = msg.from_user
 
     elif not msg.reply_to_message and (
-        not args
-        or (
-            len(args) >= 1
-            and not args[0].startswith("@")
-            and not args[0].isdigit()
-            and not msg.parse_entities([MessageEntity.TEXT_MENTION])
-        )
+            not args
+            or (
+                    len(args) >= 1
+                    and not args[0].startswith("@")
+                    and not args[0].isdigit()
+                    and not msg.parse_entities([MessageEntity.TEXT_MENTION])
+            )
     ):
         msg.reply_text("I can't extract a user from this.")
         return
@@ -413,7 +412,7 @@ def getlink(update, context):
                 links += str(chat_id) + ":\n" + invitelink + "\n"
             else:
                 links += (
-                    str(chat_id) + ":\nI don't have access to the invite link." + "\n"
+                        str(chat_id) + ":\nI don't have access to the invite link." + "\n"
                 )
         except BadRequest as excp:
             links += str(chat_id) + ":\n" + excp.message + "\n"
