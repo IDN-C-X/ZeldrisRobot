@@ -68,8 +68,8 @@ RUN pip3 install --upgrade pip setuptools
 RUN git clone https://github.com/starry69/skyleebot /root/skyleebot
 WORKDIR /root/skyleebot
 
-#Copy config file to /root/skyleebot/skylee
-COPY ./skylee/sample_config.py ./skylee/config.py* /root/skyleebot/skylee/
+#Copy config file to /root/skyleebot/zeldris
+COPY zeldris/sample_config.py ./skylee/config.py* /root/skyleebot/skylee/
 
 ENV PATH="/home/bot/bin:$PATH"
 
