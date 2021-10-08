@@ -135,8 +135,6 @@ def info(update, context):
         if sw:
             text += "\n\n<b>This person is banned in Spamwatch!</b>"
             text += f"\nResason: <pre>{sw.reason}</pre>"
-        else:
-            pass
     except:
         pass  # Don't break on exceptions like if api is down?
 
@@ -163,7 +161,7 @@ def info(update, context):
 
     try:
         memstatus = chat.get_member(user.id).status
-        if memstatus == "administrator" or memstatus == "creator":
+        if memstatus in ["administrator", "creator"]:
             result = context.bot.get_chat_member(chat.id, user.id)
             if result.custom_title:
                 text += f"\n\nThis user has custom title <b>{result.custom_title}</b> in this chat."

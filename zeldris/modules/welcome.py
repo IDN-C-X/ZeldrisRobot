@@ -188,7 +188,6 @@ def new_member(update, context):
                 )
                 continue
 
-            # Make bot greet admins
             elif new_mem.id == context.bot.id:
                 update.effective_message.reply_text(
                     "Hey {}, I'm {}! Thank you for adding me to {}"
@@ -207,7 +206,7 @@ def new_member(update, context):
                 )
             else:
                 # If welcome message is media, send with appropriate function
-                if welc_type != sql.Types.TEXT and welc_type != sql.Types.BUTTON_TEXT:
+                if welc_type not in [sql.Types.TEXT, sql.Types.BUTTON_TEXT]:
                     sent = ENUM_FUNC_MAP[welc_type](chat.id, cust_welcome)
                     # print(bool(sent))
                     continue
@@ -223,11 +222,7 @@ def new_member(update, context):
                         fullname = first_name
                     count = chat.get_members_count()
                     mention = mention_html(new_mem.id, first_name)
-                    if new_mem.username:
-                        username = "@" + escape(new_mem.username)
-                    else:
-                        username = mention
-
+                    username = "@" + escape(new_mem.username) if new_mem.username else mention
                     valid_format = escape_invalid_curly_brackets(
                         cust_welcome, VALID_WELCOME_FORMATTERS
                     )
@@ -368,7 +363,7 @@ def left_member(update, context):
                 return
 
             # if media goodbye, use appropriate function for it
-            if goodbye_type != sql.Types.TEXT and goodbye_type != sql.Types.BUTTON_TEXT:
+            if goodbye_type not in [sql.Types.TEXT, sql.Types.BUTTON_TEXT]:
                 ENUM_FUNC_MAP[goodbye_type](chat.id, cust_goodbye)
                 return
 
@@ -382,11 +377,7 @@ def left_member(update, context):
                     fullname = first_name
                 count = chat.get_members_count()
                 mention = mention_html(left_mem.id, first_name)
-                if left_mem.username:
-                    username = "@" + escape(left_mem.username)
-                else:
-                    username = mention
-
+                username = "@" + escape(left_mem.username) if left_mem.username else mention
                 valid_format = escape_invalid_curly_brackets(
                     cust_goodbye, VALID_WELCOME_FORMATTERS
                 )
@@ -440,14 +431,13 @@ def welcome(update, context):
 
                 send(update, welcome_m, keyboard, sql.DEFAULT_WELCOME)
 
-        else:
-            if noformat:
-                ENUM_FUNC_MAP[welcome_type](chat.id, welcome_m)
+        elif noformat:
+            ENUM_FUNC_MAP[welcome_type](chat.id, welcome_m)
 
-            else:
-                ENUM_FUNC_MAP[welcome_type](
-                    chat.id, welcome_m, parse_mode=ParseMode.MARKDOWN
-                )
+        else:
+            ENUM_FUNC_MAP[welcome_type](
+                chat.id, welcome_m, parse_mode=ParseMode.MARKDOWN
+            )
 
     elif len(args) >= 1:
         if args[0].lower() in ("on", "yes"):
@@ -493,14 +483,13 @@ def goodbye(update, context):
 
                 send(update, goodbye_m, keyboard, sql.DEFAULT_GOODBYE)
 
-        else:
-            if noformat:
-                ENUM_FUNC_MAP[goodbye_type](chat.id, goodbye_m)
+        elif noformat:
+            ENUM_FUNC_MAP[goodbye_type](chat.id, goodbye_m)
 
-            else:
-                ENUM_FUNC_MAP[goodbye_type](
-                    chat.id, goodbye_m, parse_mode=ParseMode.MARKDOWN
-                )
+        else:
+            ENUM_FUNC_MAP[goodbye_type](
+                chat.id, goodbye_m, parse_mode=ParseMode.MARKDOWN
+            )
 
     elif len(args) >= 1:
         if args[0].lower() in ("on", "yes"):
@@ -731,28 +720,7 @@ def clean_welcome(update, context) -> str:
 def cleanservice(update, context):
     chat = update.effective_chat  # type: Optional[Chat]
     args = context.args
-    if chat.type != chat.PRIVATE:
-        if len(args) >= 1:
-            var = args[0]
-            if var == "no" or var == "off":
-                sql.set_clean_service(chat.id, False)
-                update.effective_message.reply_text(
-                    "Turned off service messages cleaning."
-                )
-            elif var == "yes" or var == "on":
-                sql.set_clean_service(chat.id, True)
-                update.effective_message.reply_text(
-                    "Turned on service messages cleaning!"
-                )
-            else:
-                update.effective_message.reply_text(
-                    "Invalid option", parse_mode=ParseMode.MARKDOWN
-                )
-        else:
-            update.effective_message.reply_text(
-                "Usage is on/yes or off/no", parse_mode=ParseMode.MARKDOWN
-            )
-    else:
+    if chat.type == chat.PRIVATE:
         curr = sql.clean_service(chat.id)
         if curr:
             update.effective_message.reply_text(
@@ -762,6 +730,27 @@ def cleanservice(update, context):
             update.effective_message.reply_text(
                 "Welcome clean service is : off", parse_mode=ParseMode.MARKDOWN
             )
+
+    elif len(args) >= 1:
+        var = args[0]
+        if var in ["no", "off"]:
+            sql.set_clean_service(chat.id, False)
+            update.effective_message.reply_text(
+                "Turned off service messages cleaning."
+            )
+        elif var in ["yes", "on"]:
+            sql.set_clean_service(chat.id, True)
+            update.effective_message.reply_text(
+                "Turned on service messages cleaning!"
+            )
+        else:
+            update.effective_message.reply_text(
+                "Invalid option", parse_mode=ParseMode.MARKDOWN
+            )
+    else:
+        update.effective_message.reply_text(
+            "Usage is on/yes or off/no", parse_mode=ParseMode.MARKDOWN
+        )
 
 
 @run_async

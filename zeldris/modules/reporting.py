@@ -49,27 +49,26 @@ def report_setting(update, context):
                 parse_mode=ParseMode.MARKDOWN,
             )
 
-    else:
-        if len(args) >= 1:
-            if args[0] in ("yes", "on"):
-                sql.set_chat_setting(chat.id, True)
-                msg.reply_text(
-                    "Turned on reporting! Admins who have turned on reports will be notified when /report "
-                    "or @admin are called."
-                )
-
-            elif args[0] in ("no", "off"):
-                sql.set_chat_setting(chat.id, False)
-                msg.reply_text(
-                    "Turned off reporting! No admins will be notified on /report or @admin."
-                )
-        else:
+    elif len(args) >= 1:
+        if args[0] in ("yes", "on"):
+            sql.set_chat_setting(chat.id, True)
             msg.reply_text(
-                "This chat's current setting is: `{}`".format(
-                    sql.chat_should_report(chat.id)
-                ),
-                parse_mode=ParseMode.MARKDOWN,
+                "Turned on reporting! Admins who have turned on reports will be notified when /report "
+                "or @admin are called."
             )
+
+        elif args[0] in ("no", "off"):
+            sql.set_chat_setting(chat.id, False)
+            msg.reply_text(
+                "Turned off reporting! No admins will be notified on /report or @admin."
+            )
+    else:
+        msg.reply_text(
+            "This chat's current setting is: `{}`".format(
+                sql.chat_should_report(chat.id)
+            ),
+            parse_mode=ParseMode.MARKDOWN,
+        )
 
 
 @run_async
@@ -88,7 +87,7 @@ def report(update, context) -> str:
         messages = update.effective_message
 
         isadmeme = chat.get_member(reported_user.id).status
-        if isadmeme == "administrator" or isadmeme == "creator":
+        if isadmeme in ["administrator", "creator"]:
             return ""  # No point of reporting admins!
 
         if user.id == reported_user.id:
@@ -163,9 +162,7 @@ def report(update, context) -> str:
                 except Unauthorized:
                     pass
                 except BadRequest as excp:  # TODO: cleanup exceptions
-                    if excp.message == "Message_id_invalid":
-                        pass
-                    else:
+                    if excp.message != "Message_id_invalid":
                         LOGGER.exception(
                             "Exception while reporting user " + excp.message
                         )

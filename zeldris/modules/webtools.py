@@ -25,10 +25,7 @@ def ping(update, context):
     text += "Average speed to Telegram bot API server - `{}` ms\n".format(
         tg_api.rtt_avg_ms
     )
-    if google.rtt_avg:
-        gspeed = google.rtt_avg
-    else:
-        gspeed = google.rtt_avg
+    gspeed = google.rtt_avg
     text += "Average speed to Google - `{}` ms".format(gspeed)
     update.effective_message.reply_text(text, parse_mode=ParseMode.MARKDOWN)
 

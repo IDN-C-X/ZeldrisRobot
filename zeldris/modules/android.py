@@ -44,9 +44,10 @@ def magisk(update, context):
         del_msg.delete()
         update.effective_message.delete()
     except BadRequest as err:
-        if (err.message == "Message to delete not found") or (
-                err.message == "Message can't be deleted"
-        ):
+        if err.message in [
+            "Message to delete not found",
+            "Message can't be deleted",
+        ]:
             return
 
 
@@ -66,9 +67,10 @@ def device(update, context):
             del_msg.delete()
             update.effective_message.delete()
         except BadRequest as err:
-            if (err.message == "Message to delete not found") or (
-                    err.message == "Message can't be deleted"
-            ):
+            if err.message in [
+                "Message to delete not found",
+                "Message can't be deleted",
+            ]:
                 return
     device = " ".join(args)
     db = get(DEVICES_DATA).json()
@@ -96,9 +98,10 @@ def device(update, context):
             del_msg.delete()
             update.effective_message.delete()
         except BadRequest as err:
-            if (err.message == "Message to delete not found") or (
-                    err.message == "Message can't be deleted"
-            ):
+            if err.message in [
+                "Message to delete not found",
+                "Message can't be deleted",
+            ]:
                 return
     update.message.reply_text(
         "{}".format(reply), parse_mode=ParseMode.HTML, disable_web_page_preview=True
@@ -121,9 +124,10 @@ def twrp(update, context):
             del_msg.delete()
             update.effective_message.delete()
         except BadRequest as err:
-            if (err.message == "Message to delete not found") or (
-                    err.message == "Message can't be deleted"
-            ):
+            if err.message in [
+                "Message to delete not found",
+                "Message can't be deleted",
+            ]:
                 return
 
     device = " ".join(args)
@@ -140,9 +144,10 @@ def twrp(update, context):
             del_msg.delete()
             update.effective_message.delete()
         except BadRequest as err:
-            if (err.message == "Message to delete not found") or (
-                    err.message == "Message can't be deleted"
-            ):
+            if err.message in [
+                "Message to delete not found",
+                "Message can't be deleted",
+            ]:
                 return
     else:
         reply = f"*Latest Official TWRP for {device}*\n"
