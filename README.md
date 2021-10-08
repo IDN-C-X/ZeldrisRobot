@@ -60,16 +60,16 @@ defaults set in the sample_config, hence making it easier to upgrade.
 
 An example `config.py` file could be:
 ```
-from LaylaRobot.sample_config import Config
+from ZeldrisRobot.sample_config import Config
 
 class Development(Config):
-    OWNER_ID = 1249591948  # your telegram ID
-    OWNER_USERNAME = "Yoga_CIC"  # your telegram username
+    OWNER_ID = 123456789  # your telegram ID
+    OWNER_USERNAME = "username"  # your telegram username
     API_KEY = "your bot api key"  # your api key, as provided by the @botfather
     SQLALCHEMY_DATABASE_URI = 'postgresql://username:password@localhost:5432/database'  # sample db credentials
-    MESSAGE_DUMP = '-1001370800241' # some group chat that your bot is a member of
+    MESSAGE_DUMP = '-10007372' # some group chat that your bot is a member of
     USE_MESSAGE_DUMP = True
-    SUDO_USERS = [1883915673, 83489514]  # List of id's for users which have sudo access to the bot.
+    SUDO_USERS = [1234, 1234]  # List of id's for users which have sudo access to the bot.
     LOAD = []
     NO_LOAD = ['translation']
 ```
