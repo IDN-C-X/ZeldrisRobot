@@ -65,11 +65,11 @@ RUN apt update && apt upgrade -y && \
 RUN pip3 install --upgrade pip setuptools
 
 # Copy Python Requirements to /root/zeldris
-RUN git clone https://github.com/IDN-C-X/zeldris /root/zeldris
-WORKDIR /root/zeldris
+RUN git clone https://github.com/IDN-C-X/ZeldrisRobot /root/ZeldrisRobot
+WORKDIR /root/ZeldrisRobot
 
-#Copy config file to /root/zeldris
-COPY zeldris/sample_config.py ./zeldris/config.py* /root/zeldris/zeldris/
+#Copy config file to /root/ZeldrisRobot/zeldris
+COPY zeldris/sample_config.py ./zeldris/config.py* /root/ZeldrisRobot/zeldris/
 
 ENV PATH="/home/bot/bin:$PATH"
 
