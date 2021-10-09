@@ -261,6 +261,9 @@ def reply_filter(update, context):
     chat = update.effective_chat
     message = update.effective_message
 
+    if not update.effective_user or update.effective_user.id == 777000:
+        return
+
     to_match = extract_text(message)
     if not to_match:
         return
