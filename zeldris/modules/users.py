@@ -69,7 +69,7 @@ def broadcast(update, context):
 
 
 @run_async
-def log_user(update, context):
+def log_user(update, _):
     chat = update.effective_chat
     msg = update.effective_message
 
@@ -88,7 +88,7 @@ def log_user(update, context):
 
 
 @run_async
-def chats(update, context):
+def chats(update, _):
     all_chats = sql.get_all_chats() or []
     chatfile = "List of chats.\n"
     for chat in all_chats:

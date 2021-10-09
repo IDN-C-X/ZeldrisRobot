@@ -4,6 +4,7 @@ requests
 telethon
 sqlalchemy
 python-telegram-bot==12.8
+pyrate-limiter
 psycopg2-binary
 pythonping
 feedparser
