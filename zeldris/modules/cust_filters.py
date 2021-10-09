@@ -15,7 +15,7 @@ from telegram.ext import (
 )
 from telegram.utils.helpers import mention_html, escape_markdown
 
-from zeldris import dispatcher, LOGGER, DRAGONS
+from zeldris import dispatcher, LOGGER, SUDO_USERS
 from zeldris.modules.disable import DisableAbleCommandHandler
 from zeldris.modules.helper_funcs.handlers import MessageHandlerChecker
 from zeldris.modules.helper_funcs.chat_status import user_admin
@@ -506,7 +506,7 @@ def rmall_filters(update, context):
     chat = update.effective_chat
     user = update.effective_user
     member = chat.get_member(user.id)
-    if member.status != "creator" and user.id not in DRAGONS:
+    if member.status != "creator" and user.id not in SUDO_USERS:
         update.effective_message.reply_text(
             "Only the chat owner can clear all notes at once."
         )
