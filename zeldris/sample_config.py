@@ -14,7 +14,7 @@ class Config(object):
     LOGGER = True
 
     # REQUIRED
-    TOKNE = ""  # Take from @BotFather
+    TOKEN = ""  # Take from @BotFather
     OWNER_ID = (
         ""  # If you dont know, run the bot and do /id in your private chat with it
     )

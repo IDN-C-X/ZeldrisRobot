@@ -336,10 +336,10 @@ def check_and_ban(update, user_id, should_message=True):
 def enforce_gban(update, context):
     # Not using @restrict handler to avoid spamming - just ignore if cant gban.
     if (
-        not sql.does_chat_gban(update.effective_chat.id)
-        or not update.effective_chat.get_member(
-            context.bot.id
-        ).can_restrict_members
+            not sql.does_chat_gban(update.effective_chat.id)
+            or not update.effective_chat.get_member(
+        context.bot.id
+    ).can_restrict_members
     ):
         return
     user = update.effective_user

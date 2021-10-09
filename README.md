@@ -41,8 +41,7 @@
 </a>
 </p>
 
-**A modular Telegram Python bot running on python3 with a sqlalchemy, redislab, mongo database, telethon, and
-pyrogram.**
+**A modular Telegram Python bot running on python3 with a sqlalchemy, redislab, telethon.**
 
 ## How to set up/deploy.
 
@@ -59,8 +58,8 @@ This is because markdown parsing is done by iterating through a dict, which is o
 There are two possible ways of configuring your bot: a config.py file, or ENV variables.
 
 The preferred version is to use a `config.py` file, as it makes it easier to see all your settings grouped together.
-This file should be placed in your `zeldris` folder, alongside the `__main__.py` file. This is where your bot token
-will be loaded from, as well as your database URI (if you're using a database), and most of your other settings.
+This file should be placed in your `zeldris` folder, alongside the `__main__.py` file. This is where your bot token will
+be loaded from, as well as your database URI (if you're using a database), and most of your other settings.
 
 It is recommended to import sample_config and extend the Config class, as this will ensure your config contains all
 defaults set in the sample_config, hence making it easier to upgrade.
@@ -175,5 +174,4 @@ anything.
 - RealAkito for reverse search modules.
 - MrYacha for connections module
 - ATechnoHazard for many stuffs
-- corsicanu and nunopenim for android modules
-Any other missing Credits can be seen in commits!
+- corsicanu and nunopenim for android modules Any other missing Credits can be seen in commits!

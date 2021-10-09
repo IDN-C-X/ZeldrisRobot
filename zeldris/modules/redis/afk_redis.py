@@ -1,5 +1,6 @@
 from zeldris import REDIS
 
+
 # AFK
 def is_user_afk(userid):
     rget = REDIS.get(f"is_afk_{userid}")

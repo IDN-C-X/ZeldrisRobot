@@ -199,6 +199,7 @@ if is_module_loaded(FILENAME):
         else:
             update.effective_message.reply_text("No commands can be disabled.")
 
+
     # do not async
     def build_curr_disabled(chat_id: Union[str, int]) -> str:
         disabled = sql.get_all_disabled(chat_id)

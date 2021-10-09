@@ -9,7 +9,7 @@ from telegram.ext.dispatcher import run_async
 from telegram.utils.helpers import mention_html
 
 import zeldris.modules.sql.locks_sql as sql
-from zeldris import dispatcher, SUDO_USERS, LOGGER
+from zeldris import dispatcher, LOGGER
 from zeldris.modules.connection import connected
 from zeldris.modules.disable import DisableAbleCommandHandler
 from zeldris.modules.helper_funcs.alternate import send_message, typing_action
@@ -376,10 +376,10 @@ def del_lockables(update, context):
             continue
         if lockable == "button":
             if (
-                sql.is_locked(chat.id, lockable)
-                and can_delete(chat, context.bot.id)
-                and message.reply_markup
-                and message.reply_markup.inline_keyboard
+                    sql.is_locked(chat.id, lockable)
+                    and can_delete(chat, context.bot.id)
+                    and message.reply_markup
+                    and message.reply_markup.inline_keyboard
             ):
                 try:
                     message.delete()
@@ -390,10 +390,10 @@ def del_lockables(update, context):
             continue
         if lockable == "inline":
             if (
-                sql.is_locked(chat.id, lockable)
-                and can_delete(chat, context.bot.id)
-                and message
-                and message.via_bot
+                    sql.is_locked(chat.id, lockable)
+                    and can_delete(chat, context.bot.id)
+                    and message
+                    and message.via_bot
             ):
                 try:
                     message.delete()

@@ -151,7 +151,7 @@ def get_user_admin_fed_name(user_id):
         FEDERATION_BYFEDID[f]["fname"]
         for f in FEDERATION_BYFEDID
         if int(user_id)
-        in eval(eval(FEDERATION_BYFEDID[f]["fusers"])["members"])
+           in eval(eval(FEDERATION_BYFEDID[f]["fusers"])["members"])
     ]
 
 
@@ -168,7 +168,7 @@ def get_user_admin_fed_full(user_id):
         {"fed_id": f, "fed": FEDERATION_BYFEDID[f]}
         for f in FEDERATION_BYFEDID
         if int(user_id)
-        in eval(eval(FEDERATION_BYFEDID[f]["fusers"])["members"])
+           in eval(eval(FEDERATION_BYFEDID[f]["fusers"])["members"])
     ]
 
 

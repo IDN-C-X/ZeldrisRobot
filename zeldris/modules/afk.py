@@ -1,15 +1,14 @@
-from typing import Optional
 import time
 
-from telegram import Message, User
-from telegram import MessageEntity, ParseMode
+from telegram import MessageEntity
 from telegram.error import BadRequest
 from telegram.ext import Filters, MessageHandler, run_async
+from zeldris.modules.helper_funcs.readable_time import get_readable_time
 
+from zeldris import REDIS
 from zeldris import dispatcher
 from zeldris.modules.disable import (
     DisableAbleCommandHandler,
-    DisableAbleMessageHandler,
 )
 from zeldris.modules.redis.afk_redis import (
     start_afk,
@@ -17,11 +16,7 @@ from zeldris.modules.redis.afk_redis import (
     is_user_afk,
     afk_reason,
 )
-from zeldris import REDIS
 from zeldris.modules.users import get_user_id
-
-from zeldris.modules.helper_funcs.alternate import send_message
-from zeldris.modules.helper_funcs.readable_time import get_readable_time
 
 AFK_GROUP = 7
 AFK_REPLY_GROUP = 8
@@ -84,7 +79,7 @@ def reply_afk(update, context):
     userc = update.effective_user
     userc_id = userc.id
     if message.entities and message.parse_entities(
-        [MessageEntity.TEXT_MENTION, MessageEntity.MENTION]
+            [MessageEntity.TEXT_MENTION, MessageEntity.MENTION]
     ):
         entities = message.parse_entities(
             [MessageEntity.TEXT_MENTION, MessageEntity.MENTION]
@@ -102,7 +97,7 @@ def reply_afk(update, context):
 
             elif ent.type == MessageEntity.MENTION:
                 user_id = get_user_id(
-                    message.text[ent.offset : ent.offset + ent.length]
+                    message.text[ent.offset: ent.offset + ent.length]
                 )
                 if not user_id:
                     # Should never happen, since for a user to become AFK they must have spoken. Maybe changed username?

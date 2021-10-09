@@ -23,9 +23,9 @@ def infinite_checker(repl):
 
 def separate_sed(sed_string):
     if (
-        len(sed_string) < 3
-        or sed_string[1] not in DELIMITERS
-        or sed_string.count(sed_string[1]) < 2
+            len(sed_string) < 3
+            or sed_string[1] not in DELIMITERS
+            or sed_string.count(sed_string[1]) < 2
     ):
         return
 
