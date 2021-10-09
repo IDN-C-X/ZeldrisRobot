@@ -9,6 +9,7 @@ from zeldris import REDIS
 from zeldris import dispatcher
 from zeldris.modules.disable import (
     DisableAbleCommandHandler,
+    DisableAbleMessageHandler,
 )
 from zeldris.modules.redis.afk_redis import (
     start_afk,
