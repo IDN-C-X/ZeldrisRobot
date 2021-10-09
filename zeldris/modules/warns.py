@@ -8,7 +8,6 @@ from telegram import Message, Chat
 from telegram.error import BadRequest
 from telegram.ext import (
     CommandHandler,
-    run_async,
     DispatcherHandlerStop,
     MessageHandler,
     Filters,
@@ -139,7 +138,7 @@ def warn(
     return log_reason
 
 
-@run_async
+
 @user_admin_no_reply
 @bot_admin
 @loggable
@@ -178,7 +177,7 @@ def button(update, context):
     return ""
 
 
-@run_async
+
 @user_admin
 @can_restrict
 @loggable
@@ -209,7 +208,7 @@ def warn_user(update, context):
     return ""
 
 
-@run_async
+
 @user_admin
 @bot_admin
 @loggable
@@ -241,7 +240,7 @@ def reset_warns(update, context):
     return ""
 
 
-@run_async
+
 @user_admin
 @bot_admin
 @loggable
@@ -274,7 +273,7 @@ def remove_warns(update, context):
     return ""
 
 
-@run_async
+
 @typing_action
 def warns(update, context):
     message = update.effective_message  # type: Optional[Message]
@@ -374,7 +373,7 @@ def remove_warn_filter(update, context):
     )
 
 
-@run_async
+
 def list_warn_filters(update, context):
     chat = update.effective_chat  # type: Optional[Chat]
     all_handlers = sql.get_chat_warn_triggers(chat.id)
@@ -396,7 +395,7 @@ def list_warn_filters(update, context):
         update.effective_message.reply_text(filter_list, parse_mode=ParseMode.HTML)
 
 
-@run_async
+
 @loggable
 def reply_filter(update, context) -> str:
     chat = update.effective_chat  # type: Optional[Chat]
@@ -416,7 +415,7 @@ def reply_filter(update, context) -> str:
     return ""
 
 
-@run_async
+
 @user_admin
 @loggable
 @typing_action
@@ -451,7 +450,7 @@ def set_warn_limit(update, context) -> str:
     return ""
 
 
-@run_async
+
 @user_admin
 @typing_action
 def set_warn_strength(update, context):
@@ -559,20 +558,20 @@ be a sentence, encompass it with quotes, as such: `/addwarn "very angry" This is
 
 __mod_name__ = "Warnings"
 
-WARN_HANDLER = CommandHandler("warn", warn_user, pass_args=True, filters=Filters.chat_type.groups)
+WARN_HANDLER = CommandHandler("warn", warn_user, pass_args=True, filters=Filters.chat_type.groups, run_async=True)
 RESET_WARN_HANDLER = CommandHandler(
-    ["resetwarn", "resetwarns"], reset_warns, pass_args=True, filters=Filters.chat_type.groups
+    ["resetwarn", "resetwarns"], reset_warns, pass_args=True, filters=Filters.chat_type.groups, run_async=True
 )
 REMOVE_WARNS_HANDLER = CommandHandler(
-    ["rmwarn", "unwarn"], remove_warns, pass_args=True, filters=Filters.chat_type.groups
+    ["rmwarn", "unwarn"], remove_warns, pass_args=True, filters=Filters.chat_type.groups, run_async=True
 )
 CALLBACK_QUERY_HANDLER = CallbackQueryHandler(button, pattern=r"rm_warn")
 MYWARNS_HANDLER = DisableAbleCommandHandler(
     "warns", warns, pass_args=True, filters=Filters.chat_type.groups
 )
-ADD_WARN_HANDLER = CommandHandler("addwarn", add_warn_filter, filters=Filters.chat_type.groups)
+ADD_WARN_HANDLER = CommandHandler("addwarn", add_warn_filter, filters=Filters.chat_type.groups, run_async=True)
 RM_WARN_HANDLER = CommandHandler(
-    ["nowarn", "stopwarn"], remove_warn_filter, filters=Filters.chat_type.groups
+    ["nowarn", "stopwarn"], remove_warn_filter, filters=Filters.chat_type.groups, run_async=True
 )
 LIST_WARN_HANDLER = DisableAbleCommandHandler(
     ["warnlist", "warnfilters"], list_warn_filters, filters=Filters.chat_type.groups, admin_ok=True
@@ -581,10 +580,10 @@ WARN_FILTER_HANDLER = MessageHandler(
     CustomFilters.has_text & Filters.group, reply_filter
 )
 WARN_LIMIT_HANDLER = CommandHandler(
-    "warnlimit", set_warn_limit, pass_args=True, filters=Filters.chat_type.groups
+    "warnlimit", set_warn_limit, pass_args=True, filters=Filters.chat_type.groups, run_async=True
 )
 WARN_STRENGTH_HANDLER = CommandHandler(
-    "strongwarn", set_warn_strength, pass_args=True, filters=Filters.chat_type.groups
+    "strongwarn", set_warn_strength, pass_args=True, filters=Filters.chat_type.groups, run_async=True
 )
 
 dispatcher.add_handler(WARN_HANDLER)
