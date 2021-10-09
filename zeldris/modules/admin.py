@@ -91,6 +91,67 @@ def promote(update, context):
 @user_admin
 @loggable
 @typing_action
+def fullpromote(update, context):
+    chat_id = update.effective_chat.id
+    message = update.effective_message
+    chat = update.effective_chat
+    user = update.effective_user
+    bot, args = context.bot, context.args
+
+    if user_can_promote(chat, user, bot.id) is False:
+        message.reply_text("You don't have enough rights to promote someone!")
+        return ""
+
+    user_id = extract_user(message, args)
+    if not user_id:
+        message.reply_text("mention one.... 🤷🏻‍♂.")
+        return ""
+
+    user_member = chat.get_member(user_id)
+    if user_member.status in ["administrator", "creator"]:
+        message.reply_text("This person is already an admin...!")
+        return ""
+
+    if user_id == bot.id:
+        message.reply_text("I hope, if i could promote myself!")
+        return ""
+
+    # set same perms as bot - bot can't assign higher perms than itself!
+    bot_member = chat.get_member(bot.id)
+
+    bot.promoteChatMember(
+        chat.id,
+        user_id,
+        can_change_info=bot_member.can_change_info,
+        can_post_messages=bot_member.can_post_messages,
+        can_edit_messages=bot_member.can_edit_messages,
+        can_delete_messages=bot_member.can_delete_messages,
+        can_invite_users=bot_member.can_invite_users,
+        can_promote_members=bot_member.can_promote_members,
+        can_restrict_members=bot_member.can_restrict_members,
+        can_pin_messages=bot_member.can_pin_messages,
+        can_manage_voice_chats=bot_member.can_manage_voice_chats,
+    )
+
+    message.reply_text("Full Promoted🧡")
+    return (
+        "<b>{}:</b>"
+        "\n#FULLPROMOTED"
+        "\n<b>Admin:</b> {}"
+        "\n<b>User:</b> {}".format(
+            html.escape(chat.title),
+            mention_html(user.id, user.first_name),
+            mention_html(user_member.user.id, user_member.user.first_name),
+        )
+    )
+
+
+@run_async
+@bot_admin
+@can_promote
+@user_admin
+@loggable
+@typing_action
 def demote(update, context):
     chat = update.effective_chat
     message = update.effective_message
@@ -548,6 +609,9 @@ SETDESC_HANDLER = CommandHandler("setdescription", set_desc, filters=Filters.gro
 PROMOTE_HANDLER = CommandHandler(
     "promote", promote, pass_args=True, filters=Filters.group
 )
+FULLPROMOTE_HANDLER = CommandHandler(
+    "fullpromote", fullpromote, pass_args=True, filters=Filters.group
+)
 DEMOTE_HANDLER = CommandHandler("demote", demote, pass_args=True, filters=Filters.group)
 
 SET_TITLE_HANDLER = DisableAbleCommandHandler("settitle", set_title, pass_args=True)
@@ -559,6 +623,7 @@ dispatcher.add_handler(PIN_HANDLER)
 dispatcher.add_handler(UNPIN_HANDLER)
 dispatcher.add_handler(INVITE_HANDLER)
 dispatcher.add_handler(PROMOTE_HANDLER)
+dispatcher.add_handler(FULLPROMOTE_HANDLER)
 dispatcher.add_handler(DEMOTE_HANDLER)
 dispatcher.add_handler(ADMINLIST_HANDLER)
 dispatcher.add_handler(SET_TITLE_HANDLER)
