@@ -4,7 +4,9 @@ import sys
 
 import spamwatch
 import telegram.ext as tg
+
 from telethon import TelegramClient
+from telethon.sessions import MemorySession
 from redis import StrictRedis
 
 # enable logging
@@ -165,9 +167,9 @@ finally:
 # Telethon
 api_id = TELETHON_ID
 api_hash = TELETHON_HASH
-client = TelegramClient("zeldris", api_id, api_hash)
+client = TelegramClient(MemorySession(), api_id, api_hash)
 
-updater = tg.Updater(TOKEN, workers=WORKERS, use_context=True)
+updater = tg.Updater(TOKEN, workers=min(32, os.cpu_count() + 4), request_kwargs={"read_timeout": 10, "connect_timeout": 10})
 
 dispatcher = updater.dispatcher
 
