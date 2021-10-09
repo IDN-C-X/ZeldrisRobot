@@ -5,6 +5,7 @@ import sys
 import spamwatch
 import telegram.ext as tg
 from telethon import TelegramClient
+from redis import StrictRedis
 
 # enable logging
 logging.basicConfig(
@@ -143,6 +144,24 @@ if SPAMWATCH is None:
 else:
     spamwtc = spamwatch.Client(SPAMWATCH)
 
+REDIS = StrictRedis.from_url(REDIS_URL, decode_responses=True)
+
+try:
+
+    REDIS.ping()
+
+    LOGGER.info("Your redis server is now alive!")
+
+except BaseException:
+
+    raise Exception("Your redis server is not alive, please check again.")
+
+finally:
+
+    REDIS.ping()
+
+    LOGGER.info("Your redis server is now alive!")
+    
 # Telethon
 api_id = TELETHON_ID
 api_hash = TELETHON_HASH
