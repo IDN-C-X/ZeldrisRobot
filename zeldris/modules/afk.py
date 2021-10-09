@@ -26,11 +26,13 @@ AFK_REPLY_GROUP = 8
 def afk(update, context):
     args = update.effective_message.text.split(None, 1)
     user = update.effective_user
+
     if not user:  # ignore channels
         return
 
-    if user.id == 777000:
+    if user.id in [777000, 1087968824]:
         return
+
     start_afk_time = time.time()
     if len(args) >= 2:
         reason = args[1]
@@ -149,38 +151,35 @@ def check_afk(update, context, user_id, fst_name, userc_id):
             update.effective_message.reply_text(res)
 
 
-def __user_info__(user_id):
-    is_afk = is_user_afk(user_id)
-    text = ""
-    if is_afk:
-        since_afk = get_readable_time(
-            (time.time() - float(REDIS.get(f"afk_time_{user_id}")))
-        )
-        text = "<i>This user is currently afk (away from keyboard).</i>"
-        text += f"\n<i>Since: {since_afk}</i>"
-
-    else:
-        text = "<i>This user is currently isn't afk (away from keyboard).</i>"
-    return text
-
-
 def __gdpr__(user_id):
     end_afk(user_id)
 
 
 __help__ = """
- • `/afk <reason>`*:* mark yourself as AFK (away from keyboard).
- • `brb <reason>`*:* same as the afk command - but not a command.
 When marked as AFK, any mentions will be replied to with a message to say you're not available!
+
+× /afk <reason>: Mark yourself as AFK.
+× brb <reason>: Same as the afk command - but not a command.
 """
-__mod_name__ = "AFK"
+
 
 AFK_HANDLER = DisableAbleCommandHandler("afk", afk)
-AFK_REGEX_HANDLER = MessageHandler(Filters.regex("(?i)brb"), afk)
+AFK_REGEX_HANDLER = DisableAbleMessageHandler(Filters.regex("(?i)^brb"), afk, friendly="afk")
 NO_AFK_HANDLER = MessageHandler(Filters.all & Filters.group, no_longer_afk)
-AFK_REPLY_HANDLER = MessageHandler(Filters.all & Filters.group, reply_afk)
+AFK_REPLY_HANDLER = MessageHandler(Filters.all & Filters.group & ~Filters.update.edited_message, reply_afk)
+
 
 dispatcher.add_handler(AFK_HANDLER, AFK_GROUP)
 dispatcher.add_handler(AFK_REGEX_HANDLER, AFK_GROUP)
 dispatcher.add_handler(NO_AFK_HANDLER, AFK_GROUP)
 dispatcher.add_handler(AFK_REPLY_HANDLER, AFK_REPLY_GROUP)
+
+
+__mod_name__ = "AFK"
+__command_list__ = ["afk"]
+__handlers__ = [
+    (AFK_HANDLER, AFK_GROUP),
+    (AFK_REGEX_HANDLER, AFK_GROUP),
+    (NO_AFK_HANDLER, AFK_GROUP),
+    (AFK_REPLY_HANDLER, AFK_REPLY_GROUP),
+]
