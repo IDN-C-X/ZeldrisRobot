@@ -5,14 +5,13 @@ import requests
 from pytz import country_names as cname
 from telegram import ParseMode
 from telegram.error import BadRequest
-from telegram.ext import run_async
 
 from zeldris import dispatcher, API_WEATHER as APPID
 from zeldris.modules.disable import DisableAbleCommandHandler
 from zeldris.modules.helper_funcs.alternate import typing_action
 
 
-@run_async
+
 @typing_action
 def weather(update, context):
     args = context.args
