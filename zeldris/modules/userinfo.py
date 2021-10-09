@@ -3,7 +3,6 @@ from typing import Optional
 
 from telegram import Message, User
 from telegram import ParseMode, MAX_MESSAGE_LENGTH
-from telegram.ext.dispatcher import run_async
 from telegram.utils.helpers import escape_markdown
 
 import zeldris.modules.sql.userinfo_sql as sql
@@ -13,7 +12,7 @@ from zeldris.modules.helper_funcs.alternate import typing_action
 from zeldris.modules.helper_funcs.extraction import extract_user
 
 
-@run_async
+
 @typing_action
 def about_me(update, context):
     message = update.effective_message  # type: Optional[Message]
@@ -39,7 +38,7 @@ def about_me(update, context):
         )
 
 
-@run_async
+
 @typing_action
 def set_about_me(update, context):
     message = update.effective_message  # type: Optional[Message]
@@ -60,7 +59,7 @@ def set_about_me(update, context):
             )
 
 
-@run_async
+
 @typing_action
 def about_bio(update, context):
     message = update.effective_message  # type: Optional[Message]
@@ -84,7 +83,7 @@ def about_bio(update, context):
         update.effective_message.reply_text(" Your bio  about you has been saved !")
 
 
-@run_async
+
 @typing_action
 def set_about_bio(update, context):
     message = update.effective_message  # type: Optional[Message]
