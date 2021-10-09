@@ -4,7 +4,6 @@ import os
 from telegram import ParseMode
 from telegram.error import BadRequest
 from telegram.ext import CommandHandler, Filters
-from telegram.ext.dispatcher import run_async
 from telegram.utils.helpers import mention_html
 
 from zeldris import dispatcher
@@ -26,7 +25,6 @@ from zeldris.modules.helper_funcs.extraction import extract_user, extract_user_a
 from zeldris.modules.log_channel import loggable
 
 
-@run_async
 @bot_admin
 @can_promote
 @user_admin
@@ -85,7 +83,6 @@ def promote(update, context):
     )
 
 
-@run_async
 @bot_admin
 @can_promote
 @user_admin
@@ -146,7 +143,6 @@ def fullpromote(update, context):
     )
 
 
-@run_async
 @bot_admin
 @can_promote
 @user_admin
@@ -214,7 +210,6 @@ def demote(update, context):
         return ""
 
 
-@run_async
 @bot_admin
 @can_pin
 @user_admin
@@ -261,7 +256,6 @@ def pin(update, context):
     return ""
 
 
-@run_async
 @bot_admin
 @can_pin
 @user_admin
@@ -292,7 +286,6 @@ def unpin(update, context):
     )
 
 
-@run_async
 @bot_admin
 @user_admin
 @typing_action
@@ -328,7 +321,6 @@ def invite(update, context):
         )
 
 
-@run_async
 @typing_action
 def adminlist(update, _):
     administrators = update.effective_chat.get_administrators()
@@ -349,7 +341,6 @@ def adminlist(update, _):
     update.effective_message.reply_text(text, parse_mode=ParseMode.HTML)
 
 
-@run_async
 @bot_admin
 @can_promote
 @user_admin
@@ -409,7 +400,6 @@ def set_title(update, context):
         message.reply_text("I can't set custom title for admins that I didn't promote!")
 
 
-@run_async
 @bot_admin
 @user_admin
 @typing_action
@@ -448,7 +438,6 @@ def setchatpic(update, context):
         msg.reply_text("Reply to some photo or file to set new chat pic!")
 
 
-@run_async
 @bot_admin
 @user_admin
 @typing_action
@@ -469,7 +458,6 @@ def rmchatpic(update, context):
         return
 
 
-@run_async
 @bot_admin
 @user_admin
 @typing_action
@@ -499,7 +487,6 @@ def setchat_title(update, context):
         return
 
 
-@run_async
 @bot_admin
 @user_admin
 @typing_action
@@ -532,7 +519,6 @@ def set_sticker(update, context):
         msg.reply_text("You need to reply to some sticker to set chat sticker set!")
 
 
-@run_async
 @bot_admin
 @user_admin
 @typing_action
@@ -594,30 +580,47 @@ An example of promoting someone to admins:
 
 __mod_name__ = "Admin"
 
-PIN_HANDLER = CommandHandler("pin", pin, pass_args=True, filters=Filters.group)
-UNPIN_HANDLER = CommandHandler("unpin", unpin, filters=Filters.group)
 
-INVITE_HANDLER = CommandHandler("invitelink", invite)
-CHAT_PIC_HANDLER = CommandHandler("setgpic", setchatpic, filters=Filters.group)
-DEL_CHAT_PIC_HANDLER = CommandHandler("delgpic", rmchatpic, filters=Filters.group)
-SETCHAT_TITLE_HANDLER = CommandHandler(
-    "setgtitle", setchat_title, filters=Filters.group
+PIN_HANDLER = CommandHandler(
+    "pin", pin, pass_args=True, filters=Filters.chat_type.groups, run_async=True
 )
-SETSTICKET_HANDLER = CommandHandler("setsticker", set_sticker, filters=Filters.group)
-SETDESC_HANDLER = CommandHandler("setdescription", set_desc, filters=Filters.group)
-
+UNPIN_HANDLER = CommandHandler(
+    "unpin", unpin, filters=Filters.chat_type.groups, run_async=True
+)
+INVITE_HANDLER = CommandHandler(
+    "invitelink", invite, run_async=True
+)
+CHAT_PIC_HANDLER = CommandHandler(
+    "setgpic", setchatpic, filters=Filters.chat_type.groups, run_async=True
+)
+DEL_CHAT_PIC_HANDLER = CommandHandler(
+    "delgpic", rmchatpic, filters=Filters.chat_type.groups, run_async=True
+)
+SETCHAT_TITLE_HANDLER = CommandHandler(
+    "setgtitle", setchat_title, filters=Filters.chat_type.groups, run_async=True
+)
+SETSTICKET_HANDLER = CommandHandler(
+    "setsticker", set_sticker, filters=Filters.chat_type.groups, run_async=True
+)
+SETDESC_HANDLER = CommandHandler(
+    "setdescription", set_desc, filters=Filters.chat_type.groups, run_async=True
+)
 PROMOTE_HANDLER = CommandHandler(
-    "promote", promote, pass_args=True, filters=Filters.group
+    "promote", promote, pass_args=True, filters=Filters.chat_type.groups, run_async=True
 )
 FULLPROMOTE_HANDLER = CommandHandler(
-    "fullpromote", fullpromote, pass_args=True, filters=Filters.group
+    "fullpromote", fullpromote, pass_args=True, filters=Filters.chat_type.groups, run_async=True
 )
-DEMOTE_HANDLER = CommandHandler("demote", demote, pass_args=True, filters=Filters.group)
-
-SET_TITLE_HANDLER = DisableAbleCommandHandler("settitle", set_title, pass_args=True)
+DEMOTE_HANDLER = CommandHandler(
+    "demote", demote, pass_args=True, filters=Filters.chat_type.groups, run_async=True
+)
+SET_TITLE_HANDLER = DisableAbleCommandHandler(
+    "settitle", set_title, pass_args=True, run_async=True
+)
 ADMINLIST_HANDLER = DisableAbleCommandHandler(
-    "adminlist", adminlist, filters=Filters.group
+    "adminlist", adminlist, filters=Filters.chat_type.groups, run_async=True
 )
+
 
 dispatcher.add_handler(PIN_HANDLER)
 dispatcher.add_handler(UNPIN_HANDLER)

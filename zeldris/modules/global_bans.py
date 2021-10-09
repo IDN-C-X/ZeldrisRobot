@@ -3,7 +3,7 @@ from io import BytesIO
 
 from telegram import ParseMode, ChatAction
 from telegram.error import BadRequest, TelegramError
-from telegram.ext import run_async, CommandHandler, MessageHandler, Filters
+from telegram.ext import CommandHandler, MessageHandler, Filters
 from telegram.utils.helpers import mention_html
 
 import zeldris.modules.sql.global_bans_sql as sql
@@ -65,7 +65,6 @@ UNGBAN_ERRORS = {
 }
 
 
-@run_async
 @typing_action
 def gban(update, context):
     message = update.effective_message
@@ -124,7 +123,7 @@ def gban(update, context):
         user_id, new_reason = extract_user_and_text(message, args)
 
         if old_reason:
-            banner = update.effective_user  # type: Optional[User]
+            banner = update.effective_user
             bannerid = banner.id
             bannername = banner.first_name
             new_reason = (
@@ -197,12 +196,11 @@ def gban(update, context):
 
     try:
         context.bot.kick_chat_member(chat.id, user_chat.id)
-    except BadRequest as excp:
+    except BadRequest:
         pass
     sql.gban_user(user_id, user_chat.username or user_chat.first_name, reason)
 
 
-@run_async
 @typing_action
 def ungban(update, context):
     message = update.effective_message
@@ -221,7 +219,7 @@ def ungban(update, context):
         message.reply_text("This user is not gbanned!")
         return
 
-    banner = update.effective_user  # type: Optional[User]
+    banner = update.effective_user
 
     message.reply_text(
         "I'll give {} a second chance, globally.".format(user_chat.first_name)
@@ -277,9 +275,8 @@ def ungban(update, context):
     message.reply_text("Person has been un-gbanned.")
 
 
-@run_async
 @send_action(ChatAction.UPLOAD_DOCUMENT)
-def gbanlist(update, context):
+def gbanlist(update, _):
     banned_users = sql.get_gban_list()
 
     if not banned_users:
@@ -310,7 +307,8 @@ def check_and_ban(update, user_id, should_message=True):
             update.effective_chat.kick_member(user_id)
             if should_message:
                 update.effective_message.reply_text(
-                    f"This person has been detected as spambot by @SpamWatch and has been removed!\nReason: <code>{spmban.reason}</code>",
+                    f"This person has been detected as spambot by @SpamWatch and has been removed!"
+                    f"\nReason: <code>{spmban.reason}</code>",
                     parse_mode=ParseMode.HTML,
                 )
             return
@@ -332,14 +330,11 @@ def check_and_ban(update, user_id, should_message=True):
             return
 
 
-@run_async
 def enforce_gban(update, context):
     # Not using @restrict handler to avoid spamming - just ignore if cant gban.
     if (
             not sql.does_chat_gban(update.effective_chat.id)
-            or not update.effective_chat.get_member(
-        context.bot.id
-    ).can_restrict_members
+            or not update.effective_chat.get_member(context.bot.id).can_restrict_members
     ):
         return
     user = update.effective_user
@@ -360,7 +355,6 @@ def enforce_gban(update, context):
             check_and_ban(update, user.id, should_message=False)
 
 
-@run_async
 @user_admin
 @typing_action
 def gbanstat(update, context):
@@ -427,9 +421,9 @@ Spam shield uses @Spamwatch API and Global bans to remove Spammers as much as po
 
 *What is SpamWatch?*
 
-SpamWatch maintains a large constantly updated ban-list of spambots, trolls, bitcoin spammers and unsavoury characters.
-Skylee will constantly help banning spammers off from your group automatically So, you don't have to worry about spammers storming your group[.](https://telegra.ph/file/c1051d264a5b4146bd71e.jpg)
-"""
+SpamWatch maintains a large constantly updated ban-list of spambots, trolls, bitcoin spammers and unsavoury 
+characters. Zeldris will constantly help banning spammers off from your group automatically So, you don't have to 
+worry about spammers storming your group[.](https://telegra.ph/file/c1051d264a5b4146bd71e.jpg) """
 
 __mod_name__ = "Spam Shield"
 
@@ -452,7 +446,7 @@ GBAN_LIST = CommandHandler(
 )
 
 GBAN_STATUS = CommandHandler(
-    "spamshield", gbanstat, pass_args=True, filters=Filters.group
+    "spamshield", gbanstat, pass_args=True, filters=Filters.chat_type.groups
 )
 
 GBAN_ENFORCER = MessageHandler(Filters.all & Filters.group, enforce_gban)

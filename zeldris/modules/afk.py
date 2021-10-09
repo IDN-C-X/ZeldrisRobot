@@ -2,7 +2,7 @@ import time
 
 from telegram import MessageEntity
 from telegram.error import BadRequest
-from telegram.ext import Filters, MessageHandler, run_async
+from telegram.ext import Filters, MessageHandler
 from zeldris.modules.helper_funcs.readable_time import get_readable_time
 
 from zeldris import REDIS
@@ -23,8 +23,7 @@ AFK_GROUP = 7
 AFK_REPLY_GROUP = 8
 
 
-@run_async
-def afk(update, context):
+def afk(update, _):
     args = update.effective_message.text.split(None, 1)
     user = update.effective_user
 
@@ -48,8 +47,7 @@ def afk(update, context):
         pass
 
 
-@run_async
-def no_longer_afk(update, context):
+def no_longer_afk(update, _):
     user = update.effective_user
     message = update.effective_message
     if not user:  # ignore channels
@@ -76,7 +74,6 @@ def no_longer_afk(update, context):
             return
 
 
-@run_async
 def reply_afk(update, context):
     message = update.effective_message
     userc = update.effective_user
@@ -132,7 +129,7 @@ def reply_afk(update, context):
         check_afk(update, context, user_id, fst_name, userc_id)
 
 
-def check_afk(update, context, user_id, fst_name, userc_id):
+def check_afk(update, context, user_id: int, fst_name: int, userc_id: int):
     if is_user_afk(user_id):
         reason = afk_reason(user_id)
         since_afk = get_readable_time(
@@ -164,10 +161,18 @@ When marked as AFK, any mentions will be replied to with a message to say you're
 """
 
 
-AFK_HANDLER = DisableAbleCommandHandler("afk", afk)
-AFK_REGEX_HANDLER = DisableAbleMessageHandler(Filters.regex("(?i)^brb"), afk, friendly="afk")
-NO_AFK_HANDLER = MessageHandler(Filters.all & Filters.group, no_longer_afk)
-AFK_REPLY_HANDLER = MessageHandler(Filters.all & Filters.group & ~Filters.update.edited_message, reply_afk)
+AFK_HANDLER = DisableAbleCommandHandler("afk", afk, run_async=True)
+AFK_REGEX_HANDLER = DisableAbleMessageHandler(
+    Filters.regex("(?i)^brb"), afk, friendly="afk", run_async=True,
+)
+NO_AFK_HANDLER = MessageHandler(
+    Filters.all & Filters.group, no_longer_afk, run_async=True,
+)
+AFK_REPLY_HANDLER = MessageHandler(
+    Filters.all & Filters.group & ~Filters.update.edited_message,
+    reply_afk,
+    run_async=True,
+)
 
 
 dispatcher.add_handler(AFK_HANDLER, AFK_GROUP)

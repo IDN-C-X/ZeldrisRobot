@@ -2,7 +2,7 @@ from time import sleep
 
 from telegram import Bot, Update, InlineKeyboardMarkup, InlineKeyboardButton
 from telegram.error import BadRequest, Unauthorized
-from telegram.ext import CommandHandler, CallbackQueryHandler, run_async, Filters
+from telegram.ext import CommandHandler, CallbackQueryHandler, Filters
 
 import zeldris.modules.sql.global_bans_sql as gban_sql
 import zeldris.modules.sql.users_sql as user_sql
@@ -78,7 +78,6 @@ def get_invalid_gban(bot: Bot, remove: bool = False):
     return ungbanned_users
 
 
-@run_async
 def dbcleanup(update, context):
     msg = update.effective_message
 
@@ -148,7 +147,6 @@ def get_muted_chats(bot: Bot, update: Update, leave: bool = False):
     return muted_chats
 
 
-@run_async
 def leave_muted_chats(update, context):
     message = update.effective_message
     progress_message = message.reply_text("Getting chat count ...")
@@ -163,7 +161,6 @@ def leave_muted_chats(update, context):
     progress_message.delete()
 
 
-@run_async
 def callback_button(update, context):
     bot = context.bot
     query = update.callback_query
@@ -196,12 +193,17 @@ def callback_button(update, context):
 
 
 DB_CLEANUP_HANDLER = CommandHandler(
-    "dbcleanup", dbcleanup, filters=Filters.chat(OWNER_ID)
+    "dbcleanup", dbcleanup, filters=Filters.chat(OWNER_ID), run_async=True
 )
 LEAVE_MUTED_CHATS_HANDLER = CommandHandler(
-    "leavemutedchats", leave_muted_chats, filters=Filters.chat(OWNER_ID)
+    "leavemutedchats",
+    leave_muted_chats,
+    filters=Filters.chat(OWNER_ID),
+    run_async=True
 )
-BUTTON_HANDLER = CallbackQueryHandler(callback_button, pattern="db_.*")
+BUTTON_HANDLER = CallbackQueryHandler(
+    callback_button, pattern="db_.*", run_async=True
+)
 
 dispatcher.add_handler(DB_CLEANUP_HANDLER)
 dispatcher.add_handler(LEAVE_MUTED_CHATS_HANDLER)

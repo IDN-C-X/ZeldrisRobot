@@ -18,13 +18,13 @@ MATCH_MD = re.compile(
     r"\*(.*?)\*|"
     r"_(.*?)_|"
     r"`(.*?)`|"
-    r"(?<!\\)(\[.*?\])(\(.*?\))|"
+    r"(?<!\\)(\[.*?])(\(.*?\))|"
     r"(?P<esc>[*_`\[])"
 )
 
 # regex to find []() links -> hyperlinks/buttons
-LINK_REGEX = re.compile(r"(?<!\\)\[.+?\]\((.*?)\)")
-BTN_URL_REGEX = re.compile(r"(\[([^\[]+?)\]\(buttonurl:(?:/{0,2})(.+?)(:same)?\))")
+LINK_REGEX = re.compile(r"(?<!\\)\[.+?]\((.*?)\)")
+BTN_URL_REGEX = re.compile(r"(\[([^\[]+?)]\(buttonurl:/{0,2}(.+?)(:same)?\))")
 
 
 def _selective_escape(to_parse: str) -> str:

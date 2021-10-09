@@ -252,7 +252,7 @@ You MUST reply to a message to report a user; you can't just use @admin to tag a
 Note that the report commands do not work when admins use them; or when used to report an admin. Bot assumes that \
 admins don't need to report, or be reported!
 """
-REPORT_HANDLER = CommandHandler("report", report, filters=Filters.group)
+REPORT_HANDLER = CommandHandler("report", report, filters=Filters.chat_type.groups)
 SETTING_HANDLER = CommandHandler("reports", report_setting, pass_args=True)
 ADMIN_REPORT_HANDLER = MessageHandler(Filters.regex("(?i)@admin(s)?"), report)
 REPORT_BUTTON_HANDLER = CallbackQueryHandler(report_buttons, pattern=r"report_")

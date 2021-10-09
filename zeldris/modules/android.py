@@ -4,7 +4,6 @@ from bs4 import BeautifulSoup
 from requests import get
 from telegram import ParseMode
 from telegram.error import BadRequest
-from telegram.ext import run_async
 
 from zeldris import dispatcher
 from zeldris.modules.disable import DisableAbleCommandHandler
@@ -14,7 +13,6 @@ GITHUB = "https://github.com"
 DEVICES_DATA = "https://raw.githubusercontent.com/androidtrackers/certified-android-devices/master/by_device.json"
 
 
-@run_async
 @typing_action
 def magisk(update, _):
     url = "https://raw.githubusercontent.com/topjohnwu/magisk_files/"
@@ -52,7 +50,6 @@ def magisk(update, _):
             return
 
 
-@run_async
 @typing_action
 def device(update, context):
     args = context.args
@@ -109,7 +106,6 @@ def device(update, context):
     )
 
 
-@run_async
 @typing_action
 def twrp(update, context):
     args = context.args
@@ -191,9 +187,9 @@ Get Latest magisk relese, Twrp for your device or info about some device using i
 
 __mod_name__ = "Android"
 
-MAGISK_HANDLER = DisableAbleCommandHandler("magisk", magisk)
-DEVICE_HANDLER = DisableAbleCommandHandler("device", device, pass_args=True)
-TWRP_HANDLER = DisableAbleCommandHandler("twrp", twrp, pass_args=True)
+MAGISK_HANDLER = DisableAbleCommandHandler("magisk", magisk, run_async=True)
+DEVICE_HANDLER = DisableAbleCommandHandler("device", device, pass_args=True, run_async=True)
+TWRP_HANDLER = DisableAbleCommandHandler("twrp", twrp, pass_args=True, run_async=True)
 
 dispatcher.add_handler(MAGISK_HANDLER)
 dispatcher.add_handler(DEVICE_HANDLER)

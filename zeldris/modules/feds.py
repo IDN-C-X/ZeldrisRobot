@@ -17,7 +17,7 @@ from telegram import (
     ChatAction,
 )
 from telegram.error import BadRequest, TelegramError, Unauthorized
-from telegram.ext import run_async, CommandHandler, CallbackQueryHandler
+from telegram.ext import CommandHandler, CallbackQueryHandler
 from telegram.utils.helpers import mention_html, mention_markdown
 
 import zeldris.modules.sql.feds_sql as sql
@@ -43,9 +43,8 @@ from zeldris.modules.helper_funcs.extraction import (
 )
 from zeldris.modules.helper_funcs.string_handling import markdown_parser
 
-# Hello bot owner, I spended for feds many hours of my life, Please don't remove this if you still respect MrYacha and peaktogoo and AyraHikari too
-# Federation by MrYacha 2018-2019
-# Federation rework by Mizukito Akito 2019
+# Hello bot owner, I spended for feds many hours of my life, Please don't remove this if you still respect MrYacha
+# and peaktogoo and AyraHikari too Federation by MrYacha 2018-2019 Federation rework by Mizukito Akito 2019
 # Federation update v2 by Ayra Hikari 2019
 #
 # Time spended on feds = 10h by #MrYacha
@@ -86,7 +85,6 @@ UNFBAN_ERRORS = {
 }
 
 
-@run_async
 @typing_action
 def new_fed(update, context):
     chat = update.effective_chat  # type: Optional[Chat]
@@ -139,7 +137,6 @@ def new_fed(update, context):
         )
 
 
-@run_async
 @typing_action
 def del_fed(update, context):
     chat = update.effective_chat  # type: Optional[Chat]
@@ -153,7 +150,7 @@ def del_fed(update, context):
     if args:
         is_fed_id = args[0]
         getinfo = sql.get_fed_info(is_fed_id)
-        if getinfo == False:
+        if not getinfo:
             update.effective_message.reply_text("This federation is not found")
             return
         if int(getinfo["owner"]) == int(user.id) or int(user.id) == OWNER_ID:
@@ -165,32 +162,33 @@ def del_fed(update, context):
         update.effective_message.reply_text("What should I delete?")
         return
 
-    if is_user_fed_owner(fed_id, user.id) == False:
-        update.effective_message.reply_text("Only federation owners can do this!")
+    if is_user_fed_owner(fed_id, user.id):
+        update.effective_message.reply_text(
+            "Are you sure you want to delete your federation? This action cannot be canceled, you will lose your "
+            "entire "
+            "ban list, and '{}' will be permanently lost.".format(
+                getinfo["fname"]
+            ),
+            reply_markup=InlineKeyboardMarkup(
+                [
+                    [
+                        InlineKeyboardButton(
+                            text="⚠️ Remove Federation ⚠️",
+                            callback_data="rmfed_{}".format(fed_id),
+                        )
+                    ],
+                    [InlineKeyboardButton(text="Cancel", callback_data="rmfed_cancel")],
+                ]
+            ),
+        )
         return
 
-    update.effective_message.reply_text(
-        "Are you sure you want to delete your federation? This action cannot be canceled, you will lose your entire ban list, and '{}' will be permanently lost.".format(
-            getinfo["fname"]
-        ),
-        reply_markup=InlineKeyboardMarkup(
-            [
-                [
-                    InlineKeyboardButton(
-                        text="⚠️ Remove Federation ⚠️",
-                        callback_data="rmfed_{}".format(fed_id),
-                    )
-                ],
-                [InlineKeyboardButton(text="Cancel", callback_data="rmfed_cancel")],
-            ]
-        ),
-    )
+    update.effective_message.reply_text("Only federation owners can do this!")
 
 
-@run_async
 @typing_action
-def fed_chat(update, context):
-    chat = update.effective_chat  # type: Optional[Chat]
+def fed_chat(update, _):
+    chat = update.effective_chat
     fed_id = sql.get_fed_id(chat.id)
 
     user_id = update.effective_message.from_user.id
@@ -204,7 +202,7 @@ def fed_chat(update, context):
         update.effective_message.reply_text("This group is not in any federation!")
         return
 
-    chat = update.effective_chat  # type: Optional[Chat]
+    chat = update.effective_chat
     info = sql.get_fed_info(fed_id)
 
     text = "This chat is part of the following federation:"
@@ -213,7 +211,6 @@ def fed_chat(update, context):
     update.effective_message.reply_text(text, parse_mode=ParseMode.HTML)
 
 
-@run_async
 @typing_action
 def join_fed(update, context):
     chat = update.effective_chat  # type: Optional[Chat]
@@ -245,7 +242,7 @@ def join_fed(update, context):
 
     if len(args) >= 1:
         getfed = sql.search_fed_by_id(args[0])
-        if getfed == False:
+        if not getfed:
             message.reply_text("Please enter a valid federation ID")
             return
 
@@ -269,7 +266,6 @@ def join_fed(update, context):
         )
 
 
-@run_async
 @typing_action
 def leave_fed(update, context):
     chat = update.effective_chat  # type: Optional[Chat]
@@ -288,7 +284,7 @@ def leave_fed(update, context):
     # administrators = chat.get_administrators().status
     getuser = context.bot.get_chat_member(chat.id, user.id).status
     if getuser in "creator" or user.id in SUDO_USERS:
-        if sql.chat_leave_fed(chat.id) == True:
+        if sql.chat_leave_fed(chat.id):
             get_fedlog = sql.get_fed_log(fed_id)
             if get_fedlog and eval(get_fedlog):
                 context.bot.send_message(
@@ -310,7 +306,6 @@ def leave_fed(update, context):
         update.effective_message.reply_text("Only group creators can use this command!")
 
 
-@run_async
 @typing_action
 def user_join_fed(update, context):
     chat = update.effective_chat
@@ -375,7 +370,6 @@ def user_join_fed(update, context):
         update.effective_message.reply_text("Only federation owners can do this!")
 
 
-@run_async
 @typing_action
 def user_demote_fed(update, context):
     chat = update.effective_chat  # type: Optional[Chat]
@@ -392,7 +386,7 @@ def user_demote_fed(update, context):
     fed_id = sql.get_fed_id(chat.id)
 
     if is_user_fed_owner(fed_id, user.id):
-        msg = update.effective_message  # type: Optional[Message]
+        msg = update.effective_message
         user_id = extract_user(msg, args)
         if user_id:
             user = context.bot.get_chat(user_id)
@@ -420,14 +414,14 @@ def user_demote_fed(update, context):
             )
             return
 
-        if sql.search_user_in_fed(fed_id, user_id) == False:
+        if not sql.search_user_in_fed(fed_id, user_id):
             update.effective_message.reply_text(
                 "I cannot demote people who are not federation admins!"
             )
             return
 
         res = sql.user_demote_fed(fed_id, user_id)
-        if res == True:
+        if res:
             update.effective_message.reply_text("Get out of here!")
         else:
             update.effective_message.reply_text("Demotion failed!")
@@ -436,7 +430,6 @@ def user_demote_fed(update, context):
         return
 
 
-@run_async
 @typing_action
 def fed_info(update, context):
     chat = update.effective_chat  # type: Optional[Chat]
@@ -452,21 +445,21 @@ def fed_info(update, context):
             )
             return
     info = sql.get_fed_info(fed_id)
-    if is_user_fed_admin(fed_id, user.id) == False:
+    if not is_user_fed_admin(fed_id, user.id):
         update.effective_message.reply_text("Only a federation admin can do this!")
         return
 
     owner = context.bot.get_chat(info["owner"])
     try:
         owner_name = owner.first_name + " " + owner.last_name
-    except:
+    except BaseException:
         owner_name = owner.first_name
     FEDADMIN = sql.all_fed_users(fed_id)
     FEDADMIN.append(int(owner.id))
     TotalAdminFed = len(FEDADMIN)
 
-    user = update.effective_user  # type: Optional[Chat]
-    chat = update.effective_chat  # type: Optional[Chat]
+    user = update.effective_user
+    chat = update.effective_chat
     info = sql.get_fed_info(fed_id)
 
     text = "<b>ℹ️ Federation Information:</b>"
@@ -484,7 +477,6 @@ def fed_info(update, context):
     update.effective_message.reply_text(text, parse_mode=ParseMode.HTML)
 
 
-@run_async
 @typing_action
 def fed_admin(update, context):
     chat = update.effective_chat  # type: Optional[Chat]
@@ -504,12 +496,12 @@ def fed_admin(update, context):
         update.effective_message.reply_text("This group is not in any federation!")
         return
 
-    if is_user_fed_admin(fed_id, user.id) == False:
+    if not is_user_fed_admin(fed_id, user.id):
         update.effective_message.reply_text("Only federation admins can do this!")
         return
 
-    user = update.effective_user  # type: Optional[Chat]
-    chat = update.effective_chat  # type: Optional[Chat]
+    user = update.effective_user
+    chat = update.effective_chat
     info = sql.get_fed_info(fed_id)
 
     text = "<b>Federation Admin {}:</b>\n\n".format(info["fname"])
@@ -517,7 +509,7 @@ def fed_admin(update, context):
     owner = context.bot.get_chat(info["owner"])
     try:
         owner_name = owner.first_name + " " + owner.last_name
-    except:
+    except BaseException:
         owner_name = owner.first_name
     text += " • {}\n".format(mention_html(owner.id, owner_name))
 
@@ -533,7 +525,6 @@ def fed_admin(update, context):
     update.effective_message.reply_text(text, parse_mode=ParseMode.HTML)
 
 
-@run_async
 @typing_action
 def fed_ban(update, context):
     chat = update.effective_chat  # type: Optional[Chat]
@@ -558,7 +549,7 @@ def fed_ban(update, context):
     info = sql.get_fed_info(fed_id)
     getfednotif = sql.user_feds_report(info["owner"])
 
-    if is_user_fed_admin(fed_id, user.id) == False:
+    if not is_user_fed_admin(fed_id, user.id):
         update.effective_message.reply_text("Only federation admins can do this!")
         return
 
@@ -578,11 +569,11 @@ def fed_ban(update, context):
         )
         return
 
-    if is_user_fed_owner(fed_id, user_id) == True:
+    if is_user_fed_owner(fed_id, user_id):
         message.reply_text("Why did you try the federation fban?")
         return
 
-    if is_user_fed_admin(fed_id, user_id) == True:
+    if is_user_fed_admin(fed_id, user_id):
         message.reply_text("He is a federation admin, I can't fban him.")
         return
 
@@ -936,12 +927,11 @@ def fed_ban(update, context):
         )
 
 
-@run_async
 @typing_action
 def unfban(update, context):
-    chat = update.effective_chat  # type: Optional[Chat]
-    user = update.effective_user  # type: Optional[User]
-    message = update.effective_message  # type: Optional[Message]
+    chat = update.effective_chat
+    user = update.effective_user
+    message = update.effective_message
     args = context.args
 
     if chat.type == "private":
@@ -962,7 +952,7 @@ def unfban(update, context):
     info = sql.get_fed_info(fed_id)
     getfednotif = sql.user_feds_report(info["owner"])
 
-    if is_user_fed_admin(fed_id, user.id) == False:
+    if not is_user_fed_admin(fed_id, user.id):
         update.effective_message.reply_text("Only federation admins can do this!")
         return
 
@@ -1001,7 +991,7 @@ def unfban(update, context):
         user_target = fban_user_name
 
     fban, fbanreason, fbantime = sql.get_fban_user(fed_id, fban_user_id)
-    if fban == False:
+    if not fban:
         message.reply_text("This user is not fbanned!")
         return
 
@@ -1157,7 +1147,6 @@ def unfban(update, context):
 	"""
 
 
-@run_async
 @typing_action
 def set_frules(update, context):
     chat = update.effective_chat  # type: Optional[Chat]
@@ -1177,12 +1166,12 @@ def set_frules(update, context):
         update.effective_message.reply_text("This chat is not in any federation!")
         return
 
-    if is_user_fed_admin(fed_id, user.id) == False:
+    if not is_user_fed_admin(fed_id, user.id):
         update.effective_message.reply_text("Only fed admins can do this!")
         return
 
     if len(args) >= 1:
-        msg = update.effective_message  # type: Optional[Message]
+        msg = update.effective_message
         raw_text = msg.text
         args = raw_text.split(None, 1)  # use python's maxsplit to separate cmd and args
         if len(args) == 2:
@@ -1215,7 +1204,6 @@ def set_frules(update, context):
         update.effective_message.reply_text("Please write rules to set it up!")
 
 
-@run_async
 @typing_action
 def get_frules(update, context):
     chat = update.effective_chat  # type: Optional[Chat]
@@ -1239,12 +1227,11 @@ def get_frules(update, context):
     update.effective_message.reply_text(text, parse_mode=ParseMode.MARKDOWN)
 
 
-@run_async
 @typing_action
 def fed_broadcast(update, context):
-    msg = update.effective_message  # type: Optional[Message]
-    user = update.effective_user  # type: Optional[User]
-    chat = update.effective_chat  # type: Optional[Chat]
+    msg = update.effective_message
+    user = update.effective_user
+    chat = update.effective_chat
     args = context.args
 
     if chat.type == "private":
@@ -1267,7 +1254,7 @@ def fed_broadcast(update, context):
         text = text_parser
         try:
             broadcaster = user.first_name
-        except:
+        except BaseException:
             broadcaster = user.first_name + " " + user.last_name
         text += "\n\n- {}".format(mention_markdown(user.id, broadcaster))
         chat_list = sql.all_fed_chats(fed_id)
@@ -1299,7 +1286,6 @@ def fed_broadcast(update, context):
         update.effective_message.reply_text(send_text)
 
 
-@run_async
 @send_action(ChatAction.UPLOAD_DOCUMENT)
 def fed_ban_list(update, context):
     chat = update.effective_chat  # type: Optional[Chat]
@@ -1323,7 +1309,7 @@ def fed_ban_list(update, context):
         )
         return
 
-    if is_user_fed_owner(fed_id, user.id) == False:
+    if not is_user_fed_owner(fed_id, user.id):
         update.effective_message.reply_text("Only Federation owners can do this!")
         return
 
@@ -1373,10 +1359,10 @@ def fed_ban_list(update, context):
                 backups += json.dumps(json_parser)
                 backups += "\n"
             with BytesIO(str.encode(backups)) as output:
-                output.name = "skylee_fbanned_users.json"
+                output.name = "zeldris_fbanned_users.json"
                 update.effective_message.reply_document(
                     document=output,
-                    filename="skylee_fbanned_users.json",
+                    filename="zeldris_fbanned_users.json",
                     caption="Total {} User are blocked by the Federation {}.".format(
                         len(getfban), info["fname"]
                     ),
@@ -1416,10 +1402,10 @@ def fed_ban_list(update, context):
                 )
                 backups += "\n"
             with BytesIO(str.encode(backups)) as output:
-                output.name = "skylee_fbanned_users.csv"
+                output.name = "zeldris_fbanned_users.csv"
                 update.effective_message.reply_document(
                     document=output,
-                    filename="skylee_fbanned_users.csv",
+                    filename="zeldris_fbanned_users.csv",
                     caption="Total {} User are blocked by Federation {}.".format(
                         len(getfban), info["fname"]
                     ),
@@ -1431,7 +1417,7 @@ def fed_ban_list(update, context):
     )
     for users in getfban:
         getuserinfo = sql.get_all_fban_users_target(fed_id, users)
-        if getuserinfo == False:
+        if not getuserinfo:
             text = "There are no users banned from the federation {}".format(
                 info["fname"]
             )
@@ -1445,7 +1431,7 @@ def fed_ban_list(update, context):
 
     try:
         update.effective_message.reply_text(text, parse_mode=ParseMode.HTML)
-    except:
+    except BaseException:
         jam = time.time()
         new_jam = jam + 1800
         cek = get_chat(chat.id, chat_data)
@@ -1480,12 +1466,11 @@ def fed_ban_list(update, context):
             )
 
 
-@run_async
 @typing_action
 def fed_notif(update, context):
-    chat = update.effective_chat  # type: Optional[Chat]
-    user = update.effective_user  # type: Optional[User]
-    msg = update.effective_message  # type: Optional[Message]
+    chat = update.effective_chat
+    user = update.effective_user
+    msg = update.effective_messag
     args = context.args
     fed_id = sql.get_fed_id(chat.id)
 
@@ -1516,7 +1501,6 @@ def fed_notif(update, context):
         )
 
 
-@run_async
 @typing_action
 def fed_chats(update, context):
     chat = update.effective_chat  # type: Optional[Chat]
@@ -1539,7 +1523,7 @@ def fed_chats(update, context):
         )
         return
 
-    if is_user_fed_admin(fed_id, user.id) == False:
+    if not is_user_fed_admin(fed_id, user.id):
         update.effective_message.reply_text("Only federation admins can do this!")
         return
 
@@ -1567,7 +1551,7 @@ def fed_chats(update, context):
 
     try:
         update.effective_message.reply_text(text, parse_mode=ParseMode.HTML)
-    except:
+    except BaseException:
         cleanr = re.compile("<.*?>")
         cleantext = re.sub(cleanr, "", text)
         with BytesIO(str.encode(cleantext)) as output:
@@ -1581,12 +1565,11 @@ def fed_chats(update, context):
             )
 
 
-@run_async
 @typing_action
 def fed_import_bans(update, context):
-    chat = update.effective_chat  # type: Optional[Chat]
-    user = update.effective_user  # type: Optional[User]
-    msg = update.effective_message  # type: Optional[Message]
+    chat = update.effective_chat
+    user = update.effective_user
+    msg = update.effective_message
     chat_data = context.chat_data
 
     if chat.type == "private":
@@ -1606,7 +1589,7 @@ def fed_import_bans(update, context):
         )
         return
 
-    if is_user_fed_owner(fed_id, user.id) == False:
+    if not is_user_fed_owner(fed_id, user.id):
         update.effective_message.reply_text("Only Federation owners can do this!")
         return
 
@@ -1678,10 +1661,10 @@ def fed_import_bans(update, context):
                     if int(import_userid) == context.bot.id:
                         failed += 1
                         continue
-                    if is_user_fed_owner(fed_id, import_userid) == True:
+                    if is_user_fed_owner(fed_id, import_userid):
                         failed += 1
                         continue
-                    if is_user_fed_admin(fed_id, import_userid) == True:
+                    if is_user_fed_admin(fed_id, import_userid):
                         failed += 1
                         continue
                     if str(import_userid) == str(OWNER_ID):
@@ -1752,10 +1735,10 @@ def fed_import_bans(update, context):
                     if int(import_userid) == context.bot.id:
                         failed += 1
                         continue
-                    if is_user_fed_owner(fed_id, import_userid) == True:
+                    if is_user_fed_owner(fed_id, import_userid):
                         failed += 1
                         continue
-                    if is_user_fed_admin(fed_id, import_userid) == True:
+                    if is_user_fed_admin(fed_id, import_userid):
                         failed += 1
                         continue
                     if str(import_userid) == str(OWNER_ID):
@@ -1774,8 +1757,8 @@ def fed_import_bans(update, context):
                     multi_import_username.append(import_username)
                     multi_import_reason.append(import_reason)
                     success += 1
-                    # t = ThreadWithReturnValue(target=sql.fban_user, args=(fed_id, str(import_userid), import_firstname, import_lastname, import_username, import_reason,))
-                    # t.start()
+                    # t = ThreadWithReturnValue(target=sql.fban_user, args=(fed_id, str(import_userid),
+                    # import_firstname, import_lastname, import_username, import_reason,)) t.start()
                 sql.multi_fban_user(
                     multi_fed_id,
                     multi_import_userid,
@@ -1804,8 +1787,7 @@ def fed_import_bans(update, context):
         send_message(update.effective_message, text)
 
 
-@run_async
-def del_fed_button(update, context):
+def del_fed_button(update, _):
     query = update.callback_query
     fed_id = query.data.split("_")[1]
 
@@ -1818,18 +1800,18 @@ def del_fed_button(update, context):
         delete = sql.del_fed(fed_id)
         if delete:
             query.message.edit_text(
-                "You have removed your Federation! Now all the Groups that are connected with `{}` do not have a Federation.".format(
+                "You have removed your Federation! Now all the Groups that are connected with `{}` do not have a "
+                "Federation.".format(
                     getfed["fname"]
                 ),
                 parse_mode="markdown",
             )
 
 
-@run_async
 @typing_action
 def fed_stat_user(update, context):
-    user = update.effective_user  # type: Optional[User]
-    msg = update.effective_message  # type: Optional[Message]
+    user = update.effective_user
+    msg = update.effective_message
     args = context.args
 
     if args:
@@ -1848,14 +1830,14 @@ def fed_stat_user(update, context):
                 fbantime = time.strftime("%d/%m/%Y", time.localtime(fbantime))
             else:
                 fbantime = "Unavaiable"
-            if user_name == False:
+            if not user_name:
                 send_message(
                     update.effective_message,
                     "Fed {} not found!".format(fed_id),
                     parse_mode="markdown",
                 )
                 return
-            if user_name == "" or user_name == None:
+            if user_name == "" or user_name is None:
                 user_name = "He/she"
             if not reason:
                 send_message(
@@ -1874,7 +1856,7 @@ def fed_stat_user(update, context):
                 user_name = context.bot.get_chat(user_id).first_name
             except BadRequest:
                 user_name = "He/she"
-            if user_name == "" or user_name == None:
+            if user_name == "" or user_name is None:
                 user_name = "He/she"
         if len(fbanlist) == 0:
             send_message(
@@ -1934,7 +1916,6 @@ def fed_stat_user(update, context):
         )
 
 
-@run_async
 @typing_action
 def set_fed_log(update, context):
     chat = update.effective_chat  # type: Optional[Chat]
@@ -1975,12 +1956,11 @@ def set_fed_log(update, context):
         )
 
 
-@run_async
 @typing_action
 def unset_fed_log(update, context):
-    chat = update.effective_chat  # type: Optional[Chat]
-    user = update.effective_user  # type: Optional[User]
-    msg = update.effective_message  # type: Optional[Message]
+    chat = update.effective_chat
+    user = update.effective_user
+    msg = update.effective_message
     args = context.args
 
     if chat.type == "private":
@@ -2017,12 +1997,11 @@ def unset_fed_log(update, context):
         )
 
 
-@run_async
 @typing_action
 def subs_feds(update, context):
-    chat = update.effective_chat  # type: Optional[Chat]
-    user = update.effective_user  # type: Optional[User]
-    msg = update.effective_message  # type: Optional[Message]
+    chat = update.effective_chat
+    user = update.effective_user
+    msg = update.effective_message
     args = context.args
 
     if chat.type == "private":
@@ -2039,13 +2018,13 @@ def subs_feds(update, context):
         send_message(update.effective_message, "This chat is not in any federation!")
         return
 
-    if is_user_fed_owner(fed_id, user.id) == False:
+    if not is_user_fed_owner(fed_id, user.id):
         send_message(update.effective_message, "Only fed owner can do this!")
         return
 
     if args:
         getfed = sql.search_fed_by_id(args[0])
-        if getfed == False:
+        if not getfed:
             send_message(
                 update.effective_message, "Please enter a valid federation id."
             )
@@ -2054,7 +2033,8 @@ def subs_feds(update, context):
         if subfed:
             send_message(
                 update.effective_message,
-                "Federation `{}` has subscribe the federation `{}`. Every time there is a Fedban from that federation, this federation will also banned that user.".format(
+                "Federation `{}` has subscribe the federation `{}`. Every time there is a Fedban from that "
+                "federation, this federation will also banned that user.".format(
                     fedinfo["fname"], getfed["fname"]
                 ),
                 parse_mode="markdown",
@@ -2083,12 +2063,11 @@ def subs_feds(update, context):
         )
 
 
-@run_async
 @typing_action
 def unsubs_feds(update, context):
-    chat = update.effective_chat  # type: Optional[Chat]
-    user = update.effective_user  # type: Optional[User]
-    msg = update.effective_message  # type: Optional[Message]
+    chat = update.effective_chat
+    user = update.effective_user
+    msg = update.effective_message
     args = context.args
 
     if chat.type == "private":
@@ -2105,13 +2084,13 @@ def unsubs_feds(update, context):
         send_message(update.effective_message, "This chat is not in any federation!")
         return
 
-    if is_user_fed_owner(fed_id, user.id) == False:
+    if not is_user_fed_owner(fed_id, user.id):
         send_message(update.effective_message, "Only fed owner can do this!")
         return
 
     if args:
         getfed = sql.search_fed_by_id(args[0])
-        if getfed == False:
+        if not getfed:
             send_message(
                 update.effective_message, "Please enter a valid federation id."
             )
@@ -2149,12 +2128,11 @@ def unsubs_feds(update, context):
         )
 
 
-@run_async
 @typing_action
 def get_myfedsubs(update, context):
-    chat = update.effective_chat  # type: Optional[Chat]
-    user = update.effective_user  # type: Optional[User]
-    msg = update.effective_message  # type: Optional[Message]
+    chat = update.effective_chat
+    user = update.effective_user
+    msg = update.effective_message
     args = context.args
 
     if chat.type == "private":
@@ -2171,7 +2149,7 @@ def get_myfedsubs(update, context):
         send_message(update.effective_message, "This chat is not in any federation!")
         return
 
-    if is_user_fed_owner(fed_id, user.id) == False:
+    if not is_user_fed_owner(fed_id, user.id):
         send_message(update.effective_message, "Only fed owner can do this!")
         return
 
@@ -2198,12 +2176,11 @@ def get_myfedsubs(update, context):
         send_message(update.effective_message, listfed, parse_mode="markdown")
 
 
-@run_async
 @typing_action
 def get_myfeds_list(update, context):
-    chat = update.effective_chat  # type: Optional[Chat]
-    user = update.effective_user  # type: Optional[User]
-    msg = update.effective_message  # type: Optional[Message]
+    chat = update.effective_chat
+    user = update.effective_user
+    msg = update.effective_message
     args = context.args
 
     fedowner = sql.get_user_owner_fed_full(user.id)
@@ -2218,7 +2195,7 @@ def get_myfeds_list(update, context):
 
 def is_user_fed_admin(fed_id, user_id):
     fed_admins = sql.all_fed_users(fed_id)
-    if fed_admins == False:
+    if not fed_admins:
         return False
     if int(user_id) in fed_admins or int(user_id) == OWNER_ID:
         return True
@@ -2228,10 +2205,10 @@ def is_user_fed_admin(fed_id, user_id):
 
 def is_user_fed_owner(fed_id, user_id):
     getsql = sql.get_fed_info(fed_id)
-    if getsql == False:
+    if not getsql:
         return False
     getfedowner = eval(getsql["fusers"])
-    if getfedowner == None or getfedowner == False:
+    if getfedowner is None or getfedowner is False:
         return False
     getfedowner = getfedowner["owner"]
     if str(user_id) == getfedowner or int(user_id) == OWNER_ID:
@@ -2240,7 +2217,6 @@ def is_user_fed_owner(fed_id, user_id):
         return False
 
 
-@run_async
 def welcome_fed(update, context):
     chat = update.effective_chat  # type: Optional[Chat]
     user = update.effective_user  # type: Optional[User]
@@ -2294,7 +2270,7 @@ def __user_info__(user_id, chat_id):
 # Temporary data
 def put_chat(chat_id, value, chat_data):
     # print(chat_data)
-    if value == False:
+    if not value:
         status = False
     else:
         status = True
@@ -2313,8 +2289,9 @@ def get_chat(chat_id, chat_data):
 __mod_name__ = "Federations"
 
 __help__ = """
-Ah, group management. Everything is fun, until the spammer starts entering your group, and you have to block it. Then you need to start banning more, and more, and it hurts.
-But then you have many groups, and you don't want this spammer to be in one of your groups - how can you deal? Do you have to manually block it, in all your groups?
+Ah, group management. Everything is fun, until the spammer starts entering your group, and you have to 
+block it. Then you need to start banning more, and more, and it hurts. But then you have many groups, and you don't 
+want this spammer to be in one of your groups - how can you deal? Do you have to manually block it, in all your groups? 
 
 No longer! With Federation, you can make a ban in one chat overlap with all other chats.
 You can even designate admin federations, so your trusted admin can ban all the chats you want to protect.
@@ -2340,39 +2317,92 @@ You can even designate admin federations, so your trusted admin can ban all the 
  × /importfbans: Reply to the Federation backup message file to import the banned list to the Federation now.
 """
 
-NEW_FED_HANDLER = CommandHandler("newfed", new_fed)
-DEL_FED_HANDLER = CommandHandler("delfed", del_fed, pass_args=True)
-JOIN_FED_HANDLER = CommandHandler("joinfed", join_fed, pass_args=True)
-LEAVE_FED_HANDLER = CommandHandler("leavefed", leave_fed, pass_args=True)
-PROMOTE_FED_HANDLER = CommandHandler("fpromote", user_join_fed, pass_args=True)
-DEMOTE_FED_HANDLER = CommandHandler("fdemote", user_demote_fed, pass_args=True)
-INFO_FED_HANDLER = CommandHandler("fedinfo", fed_info, pass_args=True)
-BAN_FED_HANDLER = DisableAbleCommandHandler(["fban", "fedban"], fed_ban, pass_args=True)
-UN_BAN_FED_HANDLER = CommandHandler("unfban", unfban, pass_args=True)
-FED_BROADCAST_HANDLER = CommandHandler("fbroadcast", fed_broadcast, pass_args=True)
-FED_SET_RULES_HANDLER = CommandHandler("setfrules", set_frules, pass_args=True)
-FED_GET_RULES_HANDLER = CommandHandler("frules", get_frules, pass_args=True)
-FED_CHAT_HANDLER = CommandHandler("chatfed", fed_chat, pass_args=True)
-FED_ADMIN_HANDLER = CommandHandler("fedadmins", fed_admin, pass_args=True)
-FED_USERBAN_HANDLER = CommandHandler(
-    "fbanlist", fed_ban_list, pass_args=True, pass_chat_data=True
+NEW_FED_HANDLER = CommandHandler(
+    "newfed", new_fed, run_async=True
 )
-FED_NOTIF_HANDLER = CommandHandler("fednotif", fed_notif, pass_args=True)
-FED_CHATLIST_HANDLER = CommandHandler("fedchats", fed_chats, pass_args=True)
+DEL_FED_HANDLER = CommandHandler(
+    "delfed", del_fed, pass_args=True, run_async=True
+)
+JOIN_FED_HANDLER = CommandHandler(
+    "joinfed", join_fed, pass_args=True, run_async=True
+)
+LEAVE_FED_HANDLER = CommandHandler(
+    "leavefed", leave_fed, pass_args=True, run_async=True
+)
+PROMOTE_FED_HANDLER = CommandHandler(
+    "fpromote", user_join_fed, pass_args=True, run_async=True
+)
+DEMOTE_FED_HANDLER = CommandHandler(
+    "fdemote", user_demote_fed, pass_args=True, run_async=True
+)
+INFO_FED_HANDLER = CommandHandler(
+    "fedinfo", fed_info, pass_args=True, run_async=True
+)
+BAN_FED_HANDLER = DisableAbleCommandHandler(
+    ["fban", "fedban"],
+    fed_ban,
+    pass_args=True,
+    run_async=True,
+)
+UN_BAN_FED_HANDLER = CommandHandler(
+    "unfban", unfban, pass_args=True, run_async=True
+)
+FED_BROADCAST_HANDLER = CommandHandler(
+    "fbroadcast", fed_broadcast, pass_args=True, run_async=True
+)
+FED_SET_RULES_HANDLER = CommandHandler(
+    "setfrules", set_frules, pass_args=True, run_async=True
+)
+FED_GET_RULES_HANDLER = CommandHandler(
+    "frules", get_frules, pass_args=True, run_async=True
+)
+FED_CHAT_HANDLER = CommandHandler(
+    "chatfed", fed_chat, pass_args=True, run_async=True
+)
+FED_ADMIN_HANDLER = CommandHandler(
+    "fedadmins", fed_admin, pass_args=True, run_async=True
+)
+FED_USERBAN_HANDLER = CommandHandler(
+    "fbanlist",
+    fed_ban_list,
+    pass_args=True,
+    pass_chat_data=True,
+    run_async=True,
+)
+FED_NOTIF_HANDLER = CommandHandler("fednotif", fed_notif, pass_args=True, run_async=True)
+FED_CHATLIST_HANDLER = CommandHandler(
+    "fedchats", fed_chats, pass_args=True, run_async=True
+)
 FED_IMPORTBAN_HANDLER = CommandHandler(
-    "importfbans", fed_import_bans, pass_chat_data=True
+    "importfbans", fed_import_bans, pass_chat_data=True, run_async=True
 )
 FEDSTAT_USER = DisableAbleCommandHandler(
-    ["fedstat", "fbanstat"], fed_stat_user, pass_args=True
+    ["fedstat", "fbanstat"],
+    fed_stat_user,
+    pass_args=True,
+    run_async=True,
 )
-SET_FED_LOG = CommandHandler("setfedlog", set_fed_log, pass_args=True)
-UNSET_FED_LOG = CommandHandler("unsetfedlog", unset_fed_log, pass_args=True)
-SUBS_FED = CommandHandler("subfed", subs_feds, pass_args=True)
-UNSUBS_FED = CommandHandler("unsubfed", unsubs_feds, pass_args=True)
-MY_SUB_FED = CommandHandler("fedsubs", get_myfedsubs, pass_args=True)
-MY_FEDS_LIST = CommandHandler("myfeds", get_myfeds_list)
-
-DELETEBTN_FED_HANDLER = CallbackQueryHandler(del_fed_button, pattern=r"rmfed_")
+SET_FED_LOG = CommandHandler(
+    "setfedlog", set_fed_log, pass_args=True, run_async=True
+)
+UNSET_FED_LOG = CommandHandler(
+    "unsetfedlog", unset_fed_log, pass_args=True, run_async=True
+)
+SUBS_FED = CommandHandler(
+    "subfed", subs_feds, pass_args=True, run_async=True
+)
+UNSUBS_FED = CommandHandler(
+    "unsubfed", unsubs_feds, pass_args=True, run_async=True
+)
+MY_SUB_FED = CommandHandler(
+    "fedsubs", get_myfedsubs, pass_args=True, run_async=True
+)
+MY_FEDS_LIST = CommandHandler(
+    "myfeds", get_myfeds_list, run_async=True
+)
+DELETEBTN_FED_HANDLER = CallbackQueryHandler(
+    del_fed_button, pattern=r"rmfed_", run_async=True
+)
 
 dispatcher.add_handler(NEW_FED_HANDLER)
 dispatcher.add_handler(DEL_FED_HANDLER)

@@ -3,7 +3,7 @@ emoji
 requests
 telethon
 sqlalchemy
-python-telegram-bot==12.8
+python-telegram-bot==13.1
 pyrate-limiter
 psycopg2-binary
 pythonping
@@ -12,7 +12,7 @@ pytz
 gtts
 bs4
 lxml
-demjson
+ujson
 wget
 bs4
 telegraph
@@ -23,6 +23,6 @@ googletrans
 wikipedia
 spamwatch
 bleach
-git+https://github.com/starry69/python-markdown2.git
+markdown2
 alphabet_detector
 redis

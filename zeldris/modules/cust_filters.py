@@ -3,14 +3,12 @@ import random
 from html import escape
 
 import telegram
-from telegram import ParseMode, InlineKeyboardMarkup, Message, InlineKeyboardButton
+from telegram import ParseMode, InlineKeyboardMarkup, InlineKeyboardButton
 from telegram.error import BadRequest
 from telegram.ext import (
     CommandHandler,
     MessageHandler,
     DispatcherHandlerStop,
-    CallbackQueryHandler,
-    run_async,
     Filters,
 )
 from telegram.utils.helpers import mention_html, escape_markdown
@@ -50,14 +48,13 @@ ENUM_FUNC_MAP = {
 }
 
 
-@run_async
 @typing_action
 def list_handlers(update, context):
     chat = update.effective_chat
     user = update.effective_user
 
     conn = connected(context.bot, update, chat, user.id, need_admin=False)
-    if not conn is False:
+    if conn is not False:
         chat_id = conn
         chat_name = dispatcher.bot.getChat(conn).title
         filter_list = "*Filter in {}:*\n"
@@ -109,7 +106,7 @@ def filters(update, context):
     )  # use python's maxsplit to separate Cmd, keyword, and reply_text
 
     conn = connected(context.bot, update, chat, user.id)
-    if not conn is False:
+    if conn is not False:
         chat_id = conn
         chat_name = dispatcher.bot.getChat(conn).title
     else:
@@ -212,8 +209,8 @@ def filters(update, context):
         return
 
     add = addnew_filter(update, chat_id, keyword, text, file_type, file_id, buttons)
-    # This is an old method
-    # sql.add_filter(chat_id, keyword, content, is_sticker, is_document, is_image, is_audio, is_voice, is_video, buttons)
+    # This is an old method sql.add_filter(chat_id, keyword, content, is_sticker, is_document, is_image, is_audio,
+    # is_voice, is_video, buttons)
 
     if add is True:
         send_message(
@@ -233,7 +230,7 @@ def stop_filter(update, context):
     args = update.effective_message.text.split(None, 1)
 
     conn = connected(context.bot, update, chat, user.id)
-    if not conn is False:
+    if conn is not False:
         chat_id = conn
         chat_name = dispatcher.bot.getChat(conn).title
     else:
@@ -269,10 +266,9 @@ def stop_filter(update, context):
     )
 
 
-@run_async
 def reply_filter(update, context):
-    chat = update.effective_chat  # type: Optional[Chat]
-    message = update.effective_message  # type: Optional[Message]
+    chat = update.effective_chat
+    message = update.effective_message
 
     if not update.effective_user or update.effective_user.id == 777000:
         return
@@ -321,8 +317,8 @@ def reply_filter(update, context):
                             return
                         except BadRequest as excp:
                             if (
-                                excp.message
-                                == "Wrong remote file identifier specified: wrong padding in the string"
+                                    excp.message
+                                    == "Wrong remote file identifier specified: wrong padding in the string"
                             ):
                                 context.bot.send_message(
                                     chat.id,
@@ -501,8 +497,7 @@ def reply_filter(update, context):
                 break
 
 
-@run_async
-def rmall_filters(update, context):
+def rmall_filters(update, _):
     chat = update.effective_chat
     user = update.effective_user
     member = chat.get_member(user.id)
@@ -528,14 +523,13 @@ def rmall_filters(update, context):
         )
 
 
-@run_async
-def rmall_callback(update, context):
+def rmall_callback(update, _):
     query = update.callback_query
     chat = update.effective_chat
     msg = update.effective_message
     member = chat.get_member(query.from_user.id)
     if query.data == "filters_rmall":
-        if member.status == "creator" or query.from_user.id in DRAGONS:
+        if member.status == "creator" or query.from_user.id in SUDO_USERS:
             allfilters = sql.get_chat_triggers(chat.id)
             if not allfilters:
                 msg.edit_text("No filters in this chat, nothing to stop!")
@@ -558,7 +552,7 @@ def rmall_callback(update, context):
         if member.status == "member":
             query.answer("You need to be admin to do this.")
     elif query.data == "filters_cancel":
-        if member.status == "creator" or query.from_user.id in DRAGONS:
+        if member.status == "creator" or query.from_user.id in SUDO_USERS:
             msg.edit_text("Clearing of all filters has been cancelled.")
             return
         if member.status == "administrator":
@@ -570,7 +564,8 @@ def rmall_callback(update, context):
 # NOT ASYNC NOT A HANDLER
 def get_exception(excp, filt, chat):
     if excp.message == "Unsupported url protocol":
-        return "You seem to be trying to use the URL protocol which is not supported. Telegram does not support key for multiple protocols, such as tg: //. Please try again!"
+        return "You seem to be trying to use the URL protocol which is not supported. Telegram does not support key " \
+               "for multiple protocols, such as tg: //. Please try again! "
     elif excp.message == "Reply message not found":
         return "noreply"
     else:
@@ -633,14 +628,20 @@ Check `/markdownhelp` to know more!
 
 __mod_name__ = "Filters"
 
-FILTER_HANDLER = CommandHandler("filter", filters)
-STOP_HANDLER = CommandHandler("stop", stop_filter)
-RMALLFILTER_HANDLER = CommandHandler(
-    "rmallfilter", rmall_filters, filters=Filters.group
+FILTER_HANDLER = CommandHandler(
+    "filter", filters, run_async=True
 )
-LIST_HANDLER = DisableAbleCommandHandler("filters", list_handlers, admin_ok=True)
+STOP_HANDLER = CommandHandler(
+    "stop", stop_filter, run_async=True
+)
+RMALLFILTER_HANDLER = CommandHandler(
+    "rmallfilter", rmall_filters, filters=Filters.chat_type.groups, run_async=True
+)
+LIST_HANDLER = DisableAbleCommandHandler(
+    "filters", list_handlers, admin_ok=True, run_async=True
+)
 CUST_FILTER_HANDLER = MessageHandler(
-    CustomFilters.has_text & ~Filters.update.edited_message, reply_filter
+    CustomFilters.has_text & ~Filters.update.edited_message, reply_filter, run_async=True
 )
 
 dispatcher.add_handler(FILTER_HANDLER)

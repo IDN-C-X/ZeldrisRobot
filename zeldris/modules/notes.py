@@ -573,7 +573,7 @@ SAVE_HANDLER = CommandHandler("save", save)
 DELETE_HANDLER = CommandHandler("clear", clear, pass_args=True)
 
 LIST_HANDLER = DisableAbleCommandHandler(["notes", "saved"], list_notes, admin_ok=True)
-CLEARALLNOTES_HANDLER = CommandHandler("rmallnotes", clear_notes, filters=Filters.group)
+CLEARALLNOTES_HANDLER = CommandHandler("rmallnotes", clear_notes, filters=Filters.chat_type.groups)
 
 RMBTN_HANDLER = CallbackQueryHandler(rmbutton, pattern=r"rmnotes_")
 

@@ -571,11 +571,11 @@ Note:
 __mod_name__ = "Locks"
 
 LOCKTYPES_HANDLER = DisableAbleCommandHandler("locktypes", locktypes)
-LOCK_HANDLER = CommandHandler("lock", lock, pass_args=True)  # , filters=Filters.group)
+LOCK_HANDLER = CommandHandler("lock", lock, pass_args=True)  # , filters=Filters.chat_type.groups)
 UNLOCK_HANDLER = CommandHandler(
     "unlock", unlock, pass_args=True
-)  # , filters=Filters.group)
-LOCKED_HANDLER = CommandHandler("locks", list_locks)  # , filters=Filters.group)
+)  # , filters=Filters.chat_type.groups)
+LOCKED_HANDLER = CommandHandler("locks", list_locks)  # , filters=Filters.chat_type.groups)
 
 dispatcher.add_handler(LOCK_HANDLER)
 dispatcher.add_handler(UNLOCK_HANDLER)
