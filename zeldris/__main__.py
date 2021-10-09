@@ -35,8 +35,8 @@ from zeldris.modules.purge import client
 PM_START_TEXT = f"""
 Hey there! my name is *{dispatcher.bot.first_name}*. If you have any questions on how to use me, Click Help button.
 
-I'm here to make your group management fun and easy!
-i have lots of handy features, such as flood control, a warning system, a note keeping system, and even replies on predetermined filters.
+I'm here to make your group management fun and easy! i have lots of handy features, such as flood control, 
+a warning system, a note keeping system, and even replies on predetermined filters. 
 
 Any issues or need help related to me? join our group [zeldris support chat](https://t.me/skyleebot).
 
@@ -46,9 +46,9 @@ Wanna Add me to your Group? Just click the button below!
 buttons = [
     [
         InlineKeyboardButton(
-            text="Add to Group 👥", url="t.me/skylee_bot?startgroup=true"
+            text="Add to Group 👥", url="t.me/ZeldrisRobott?startgroup=true"
         ),
-        InlineKeyboardButton(text="Updates 📢", url="https://t.me/skyleebot"),
+        InlineKeyboardButton(text="Updates 📢", url="https://t.me/IDNCoder"),
     ]
 ]
 
@@ -129,10 +129,10 @@ def send_help(chat_id, text, keyboard=None):
 
 
 @run_async
-def test(update, context):
+def test(update, _):
     try:
         print(update)
-    except:
+    except BaseException:
         pass
     update.effective_message.reply_text(
         "Hola tester! _I_ *have* `markdown`", parse_mode=ParseMode.MARKDOWN
@@ -164,7 +164,7 @@ def start(update, context):
 
         else:
             update.effective_message.reply_photo(
-                "https://telegra.ph/file/4edfb3738a35bdfa1922f.jpg",
+                "https://telegra.ph/file/fed9ba09e9add9b197c21.png",
                 PM_START_TEXT,
                 reply_markup=InlineKeyboardMarkup(buttons),
                 parse_mode=ParseMode.MARKDOWN,
@@ -445,7 +445,6 @@ def get_settings(update, context):
     chat = update.effective_chat  # type: Optional[Chat]
     user = update.effective_user  # type: Optional[User]
     msg = update.effective_message  # type: Optional[Message]
-    args = msg.text.split(None, 1)
 
     # ONLY send settings in PM
     if chat.type == chat.PRIVATE:
@@ -469,10 +468,10 @@ def get_settings(update, context):
             ),
         )
     else:
-        text = "Click here to check your settings."
+        "Click here to check your settings."
 
 
-def migrate_chats(update, context):
+def migrate_chats(update, _):
     msg = update.effective_message  # type: Optional[Message]
     if msg.migrate_to_chat_id:
         old_chat = update.effective_chat.id

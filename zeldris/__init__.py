@@ -4,10 +4,9 @@ import sys
 
 import spamwatch
 import telegram.ext as tg
-
+from redis import StrictRedis
 from telethon import TelegramClient
 from telethon.sessions import MemorySession
-from redis import StrictRedis
 
 # enable logging
 logging.basicConfig(
@@ -78,14 +77,14 @@ if ENV:
     CUSTOM_CMD = os.environ.get("CUSTOM_CMD", False)
     API_WEATHER = os.environ.get("API_OPENWEATHER", None)
     WALL_API = os.environ.get("WALL_API", None)
-    TELETHON_ID = int(os.environ.get("TL_APP_ID", None))
-    TELETHON_HASH = os.environ.get("TL_HASH", None)
+    API_ID = int(os.environ.get("API_ID", None))
+    API_HASH = os.environ.get("API_HASH", None)
     SPAMWATCH = os.environ.get("SPAMWATCH_API", None)
 
 else:
     from zeldris.config import Development as Config
 
-    TOKEN = Config.API_KEY
+    TOKEN = Config.TOKEN
     try:
         OWNER_ID = int(Config.OWNER_ID)
     except ValueError:
@@ -135,8 +134,8 @@ else:
     CUSTOM_CMD = Config.CUSTOM_CMD
     API_WEATHER = Config.API_OPENWEATHER
     WALL_API = Config.WALL_API
-    TELETHON_HASH = Config.TELETHON_HASH
-    TELETHON_ID = Config.TELETHON_ID
+    API_HASH = Config.API_HASH
+    API_ID = Config.API_ID
     SPAMWATCH = Config.SPAMWATCH_API
 
 SUDO_USERS.add(OWNER_ID)
@@ -149,29 +148,23 @@ else:
     spamwtc = spamwatch.Client(SPAMWATCH)
 
 REDIS = StrictRedis.from_url(REDIS_URL, decode_responses=True)
-
 try:
-
     REDIS.ping()
-
     LOGGER.info("Your redis server is now alive!")
-
 except BaseException:
-
     raise Exception("Your redis server is not alive, please check again.")
-
 finally:
-
     REDIS.ping()
-
     LOGGER.info("Your redis server is now alive!")
-    
-# Telethon
-api_id = TELETHON_ID
-api_hash = TELETHON_HASH
-client = TelegramClient(MemorySession(), api_id, api_hash)
 
-updater = tg.Updater(TOKEN, workers=min(32, os.cpu_count() + 4), request_kwargs={"read_timeout": 10, "connect_timeout": 10})
+# Telethon
+client = TelegramClient(MemorySession(), API_ID, API_HASH)
+
+updater = tg.Updater(
+    TOKEN,
+    workers=min(32, os.cpu_count() + 4),
+    request_kwargs={"read_timeout": 10, "connect_timeout": 10}
+)
 
 dispatcher = updater.dispatcher
 
