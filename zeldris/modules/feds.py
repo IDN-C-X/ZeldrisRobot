@@ -345,7 +345,7 @@ def user_join_fed(update, context):
         getuser = sql.search_user_in_fed(fed_id, user_id)
         fed_id = sql.get_fed_id(chat.id)
         info = sql.get_fed_info(fed_id)
-        get_owner = eval(info["fusers"])["owner"]
+        get_owner = ast.literal_eval(info["fusers"])["owner"]
         get_owner = context.bot.get_chat(get_owner).id
         if user_id == get_owner:
             update.effective_message.reply_text(
@@ -1192,7 +1192,7 @@ def set_frules(update, context):
         getfed = sql.get_fed_info(fed_id)
         get_fedlog = sql.get_fed_log(fed_id)
         if get_fedlog:
-            if eval(get_fedlog):
+            if ast.literal_eval(get_fedlog):
                 context.bot.send_message(
                     get_fedlog,
                     "*{}* has changed federation rules for fed *{}*".format(
@@ -1699,7 +1699,7 @@ def fed_import_bans(update, context):
                 text += " {} Failed to import.".format(failed)
             get_fedlog = sql.get_fed_log(fed_id)
             if get_fedlog:
-                if eval(get_fedlog):
+                if ast.literal_eval(get_fedlog):
                     teks = "Fed *{}* has successfully imported data. {} banned.".format(
                         getfed["fname"], success
                     )
@@ -1775,7 +1775,7 @@ def fed_import_bans(update, context):
                 text += " {} Failed to import.".format(failed)
             get_fedlog = sql.get_fed_log(fed_id)
             if get_fedlog:
-                if eval(get_fedlog):
+                if ast.literal_eval(get_fedlog):
                     teks = "Fed *{}* has successfully imported data. {} banned.".format(
                         getfed["fname"], success
                     )
@@ -2208,7 +2208,7 @@ def is_user_fed_owner(fed_id, user_id):
     getsql = sql.get_fed_info(fed_id)
     if not getsql:
         return False
-    getfedowner = eval(getsql["fusers"])
+    getfedowner = ast.literal_eval(getsql["fusers"])
     if getfedowner is None or getfedowner is False:
         return False
     getfedowner = getfedowner["owner"]

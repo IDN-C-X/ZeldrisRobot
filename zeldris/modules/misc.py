@@ -133,7 +133,7 @@ def info(update, context):
         if sw:
             text += "\n\n<b>This person is banned in Spamwatch!</b>"
             text += f"\nResason: <pre>{sw.reason}</pre>"
-    except:
+    except BaseException:
         pass  # Don't break on exceptions like if api is down?
 
     if user.id == OWNER_ID:
@@ -180,9 +180,8 @@ def info(update, context):
         context.bot.send_photo(
             chat.id,
             photo=profile,
-            caption=(text),
+            caption=text,
             parse_mode=ParseMode.HTML,
-            disable_web_page_preview=True,
         )
     except IndexError:
         context.bot.sendChatAction(chat.id, "typing")
@@ -192,7 +191,7 @@ def info(update, context):
 
 
 @typing_action
-def echo(update, context):
+def echo(update, _):
     args = update.effective_message.text.split(None, 1)
     message = update.effective_message
     if message.reply_to_message:
@@ -203,7 +202,7 @@ def echo(update, context):
 
 
 @typing_action
-def gdpr(update, context):
+def gdpr(update, _):
     update.effective_message.reply_text("Deleting identifiable data...")
     for mod in GDPR:
         mod.__gdpr__(update.effective_user.id)
@@ -212,7 +211,8 @@ def gdpr(update, context):
         "Your personal data has been deleted.\n\nNote that this will not unban "
         "you from any chats, as that is telegram data, not Skylee data. "
         "Flooding, warns, and gbans are also preserved, as of "
-        "[this](https://ico.org.uk/for-organisations/guide-to-the-general-data-protection-regulation-gdpr/individual-rights/right-to-erasure/), "
+        "[this](https://ico.org.uk/for-organisations/guide-to-the-general-data-protection-regulation-gdpr/individual"
+        "-rights/right-to-erasure/), "
         "which clearly states that the right to erasure does not apply "
         '"for the performance of a task carried out in the public interest", as is '
         "the case for the aforementioned pieces of data.",
@@ -250,7 +250,7 @@ Keep in mind that your message <b>MUST</b> contain some text other than just a b
 
 
 @typing_action
-def markdown_help(update, context):
+def markdown_help(update, _):
     update.effective_message.reply_text(MARKDOWN_HELP, parse_mode=ParseMode.HTML)
     update.effective_message.reply_text(
         "Try forwarding the following message to me, and you'll see!"
@@ -328,7 +328,7 @@ def ud(update, context):
 
 
 @typing_action
-def src(update, context):
+def src(update, _):
     update.effective_message.reply_text(
         "Hey there! You can find what makes me click [here](www.github.com/IDN-C/ZeldrisRobot).",
         parse_mode=ParseMode.MARKDOWN,
@@ -451,7 +451,7 @@ def rmemes(update, context):
         context.bot.send_photo(
             chat.id,
             photo=memeu,
-            caption=(caps),
+            caption=caps,
             reply_markup=InlineKeyboardMarkup(keyb),
             timeout=60,
             parse_mode=ParseMode.HTML,
@@ -461,7 +461,7 @@ def rmemes(update, context):
         return msg.reply_text(f"Error! {excp.message}")
 
 
-def staff_ids(update, context):
+def staff_ids(update, _):
     sfile = "List of SUDO & SUPPORT users:\n"
     sfile += f"× SUDO USER IDs; {SUDO_USERS}\n"
     sfile += f"× SUPPORT USER IDs; {SUPPORT_USERS}"
@@ -474,7 +474,7 @@ def staff_ids(update, context):
         )
 
 
-def stats(update, context):
+def stats(update, _):
     update.effective_message.reply_text(
         "Current stats:\n" + "\n".join([mod.__stats__() for mod in STATS])
     )

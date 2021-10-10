@@ -128,16 +128,12 @@ def send_help(chat_id, text, keyboard=None):
     if not keyboard:
         keyboard = InlineKeyboardMarkup(paginate_modules(0, HELPABLE, "help"))
     dispatcher.bot.send_message(
-        chat_id=chat_id,
-        text=text,
-        parse_mode=ParseMode.MARKDOWN,
-        disable_web_page_preview=True,
-        reply_markup=keyboard,
+        chat_id=chat_id, text=text, parse_mode=ParseMode.MARKDOWN, reply_markup=keyboard
     )
 
 
 def test(update: Update, _):
-    # pprint(eval(str(update)))
+    # pprint(ast.literal_eval(str(update)))
     # update.effective_message.reply_text("Hola tester! _I_ *have* `markdown`", parse_mode=ParseMode.MARKDOWN)
     update.effective_message.reply_text("This person edited a message")
     print(update.effective_message)
@@ -279,7 +275,7 @@ def help_button(update, context):
         pass
 
 
-def zel_cb(update, context):
+def zel_cb(update, _):
     query = update.callback_query
     if query.data == "zel_":
         query.message.edit_text(

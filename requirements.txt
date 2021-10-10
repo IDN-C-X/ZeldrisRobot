@@ -3,7 +3,7 @@ emoji
 requests
 telethon
 sqlalchemy
-python-telegram-bot==13.1
+python-telegram-bot==13.5
 pyrate-limiter
 psycopg2-binary
 pythonping

@@ -190,6 +190,7 @@ def demote(update, context):
             can_invite_users=False,
             can_restrict_members=False,
             can_pin_messages=False,
+            can_manage_voice_chats=False,
         )
         message.reply_text("Successfully demoted!")
         return (
@@ -288,8 +289,13 @@ def unpin(update, context):
 
 
 @user_admin
+@typing_action
 def refresh_admin(update, _):
-    ADMIN_CACHE.pop(update.effective_chat.id)
+    try:
+        ADMIN_CACHE.pop(update.effective_chat.id)
+    except KeyError:
+        pass
+
     update.effective_message.reply_text("Admins cache refreshed!")
 
 

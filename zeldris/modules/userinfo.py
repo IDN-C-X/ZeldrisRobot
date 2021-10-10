@@ -15,7 +15,7 @@ from zeldris.modules.helper_funcs.extraction import extract_user
 @typing_action
 def about_me(update, context):
     message = update.effective_message  # type: Optional[Message]
-    args = context.args
+    bot, args = context.bot, context.args
     user_id = extract_user(message, args)
 
     user = bot.get_chat(user_id) if user_id else message.from_user
@@ -38,8 +38,8 @@ def about_me(update, context):
 
 
 @typing_action
-def set_about_me(update, context):
-    message = update.effective_message  # type: Optional[Message]
+def set_about_me(update, _):
+    message = update.effective_message
     user_id = message.from_user.id
     text = message.text
     info = text.split(
@@ -108,7 +108,8 @@ def set_about_bio(update, context):
                 )
             else:
                 message.reply_text(
-                    "About you {} Must stick to the letter! The number of characters you have just tried {} hm .".format(
+                    "About you {} Must stick to the letter! "
+                    "The number of characters you have just tried {} hm .".format(
                         MAX_MESSAGE_LENGTH // 4, len(bio[1])
                     )
                 )
@@ -153,11 +154,11 @@ Reply to user's message: `/setbio He is such cool person`.
 
 __mod_name__ = "Bios/Abouts"
 
-SET_BIO_HANDLER = DisableAbleCommandHandler("setbio", set_about_bio)
-GET_BIO_HANDLER = DisableAbleCommandHandler("bio", about_bio, pass_args=True)
+SET_BIO_HANDLER = DisableAbleCommandHandler("setbio", set_about_bio, run_async=True)
+GET_BIO_HANDLER = DisableAbleCommandHandler("bio", about_bio, pass_args=True, run_async=True)
 
-SET_ABOUT_HANDLER = DisableAbleCommandHandler("setme", set_about_me)
-GET_ABOUT_HANDLER = DisableAbleCommandHandler("me", about_me, pass_args=True)
+SET_ABOUT_HANDLER = DisableAbleCommandHandler("setme", set_about_me, run_async=True)
+GET_ABOUT_HANDLER = DisableAbleCommandHandler("me", about_me, pass_args=True, run_async=True)
 
 dispatcher.add_handler(SET_BIO_HANDLER)
 dispatcher.add_handler(GET_BIO_HANDLER)
