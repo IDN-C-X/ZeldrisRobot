@@ -1,7 +1,6 @@
+# ZeldrisRobot
 # Copyright (C) 2017-2019, Paul Larsen
-# Copyright (c) 2019-2021, corsicanu
-# Copyright (c) 2020-2021, soulr344
-# Copyright (c) 2021, IDNCoderX
+# Copyright (c) 2021, IDNCoderX Team, <https://github.com/IDN-C-X/ZeldrisRobot>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as published by

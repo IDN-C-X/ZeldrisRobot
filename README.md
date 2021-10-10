@@ -167,18 +167,20 @@ anything.
 
 ## Credits
 
-- [Skyleebot](https://github.com/SensiPeeps/skyleebot) This bot Based
+- [Skyleebot](https://github.com/SensiPeeps/skyleebot) Based this Bot.
 - [1maverick1](https://github.com/1maverick1) for many stuffs.
 - [AyraHikari](https://github.com/AyraHikari) for weather modules and some other stuffs.
 - [RealAkito](https://github.com/RealAkito) for reverse search modules.
-- [MrYacha](https://github.com/MrYacha) for connections module
-- [ATechnoHazard](https://github.com/SphericalKat) for many stuffs
-- [corsicanu](https://github.com/corsicanu) and nunopenim for android modules
+- [MrYacha](https://github.com/MrYacha) for connections module.
+- [ATechnoHazard](https://github.com/SphericalKat) for many stuffs.
+- [corsicanu](https://github.com/corsicanu) and nunopenim for android modules.
+- [Saitama Robot](https://github.com/AnimeKaizoku/SaitamaRobot) for anime modules and other stuff.
+- [Kigyo Robot](https://github.com/EnterpriseALRobot) for greetings modules.
 - Any other missing Credits can be seen in commits!
 
-## Copyrigts
+## Projects!
 
 ```
-Copyrights (c) 2021 by [IDNCoder](https://github.com/IDN-C-X)
-And Everyone that have contribute on this Project.
+Zeldris is project parts from [IDNCoder](https://github.com/IDN-C-X)
+Thanks to Everyone that have contribute on this Project.
 ```

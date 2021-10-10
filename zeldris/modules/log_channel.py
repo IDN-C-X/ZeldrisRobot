@@ -1,7 +1,6 @@
+# ZeldrisRobot
 # Copyright (C) 2017-2019, Paul Larsen
-# Copyright (c) 2019-2021, corsicanu
-# Copyright (c) 2020-2021, soulr344
-# Copyright (c) 2021, IDNCoderX
+# Copyright (c) 2021, IDNCoderX Team, <https://github.com/IDN-C-X/ZeldrisRobot>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as published by
@@ -180,7 +179,7 @@ if is_module_loaded(FILENAME):
 
 
     def __migrate__(old_chat_id, new_chat_id):
-        db.migrate_chat(old_chat_id, new_chat_id)
+        sql.migrate_chat(old_chat_id, new_chat_id)
 
 
     def __chat_settings__(chat_id, user_id):
