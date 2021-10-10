@@ -1197,8 +1197,41 @@ def __chat_settings__(chat_id, user_id):
     )
 
 
+__help__ = """
+{}
+*Admin only:*
+ × /welcome <on/off>: enable/disable Welcome messages.
+ × /welcome: Shows current welcome settings.
+ × /welcome noformat: Shows current welcome settings, without the formatting - useful to recycle your welcome messages!
+ × /goodbye -> Same usage and args as /welcome.
+ × /setwelcome <sometext>: Sets a custom welcome message. If used replying to media, uses that media.
+ × /setgoodbye <sometext>: Sets a custom goodbye message. If used replying to media, uses that media.
+ × /resetwelcome: Resets to the default welcome message.
+ × /resetgoodbye: Resets to the default goodbye message.
+ × /cleanwelcome <on/off>: On new member, try to delete the previous welcome message to avoid spamming the chat.
+ × /cleanservice <on/off>: Clean 'user is joined' service messages automatically.
+ × /welcomemute <off/soft/strong>: All users that join, get muted; a button gets added to the welcome message for them 
+ to unmute themselves. \
+This proves they aren't a bot! soft - restricts users ability to post media for 24 hours. strong - mutes on join until 
+they prove they're not bots.
+ × /welcomehelp: View more formatting information for custom welcome/goodbye messages.
+Buttons in welcome messages are made easy, everyone hates URLs visible. With button links you can make your chats look 
+more tidy and simplified.
+An example of using buttons:
+You can create a button using `[button text](buttonurl://example.com)`.
+If you wish to add more than 1 buttons simply do the following:
+`[Button 1](buttonurl://example.com)`
+`[Button 2](buttonurl://github.com:same)`
+`[Button 3](buttonurl://google.com)`
+The `:same` end of the link merges 2 buttons on same line as 1 button, resulting in 3rd button to be separated \
+from same line.
+Tip: Buttons must be placed at the end of welcome messages.
+""".format(
+    WELC_HELP_TXT
+
+
 NEW_MEM_HANDLER = MessageHandler(
-    Filters.status_update.new_chat_members, new_member, run_async=True
+    Filters.status_update.new_chat_members, new_member, run_async=True,
 )
 LEFT_MEM_HANDLER = MessageHandler(
     Filters.status_update.left_chat_member, left_member, run_async=True
