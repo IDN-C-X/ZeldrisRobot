@@ -23,10 +23,8 @@ from html import escape
 import telegram
 from telegram import InlineKeyboardButton
 from telegram import InlineKeyboardMarkup
-from telegram import Message
 from telegram import ParseMode
 from telegram.error import BadRequest
-from telegram.ext import CallbackQueryHandler
 from telegram.ext import CommandHandler
 from telegram.ext import DispatcherHandlerStop
 from telegram.ext import Filters
@@ -231,8 +229,8 @@ def filters(update, context):
         return
 
     add = addnew_filter(update, chat_id, keyword, text, file_type, file_id, buttons)
-    # This is an old method
-    # sql.add_filter(chat_id, keyword, content, is_sticker, is_document, is_image, is_audio, is_voice, is_video, buttons)
+    # This is an old method sql.add_filter(chat_id, keyword, content, is_sticker, is_document, is_image, is_audio,
+    # is_voice, is_video, buttons)
 
     if add is True:
         send_message(
@@ -289,8 +287,8 @@ def stop_filter(update, context):
 
 
 def reply_filter(update, context):
-    chat = update.effective_chat  # type: Optional[Chat]
-    message = update.effective_message  # type: Optional[Message]
+    chat = update.effective_chat
+    message = update.effective_message
 
     if not update.effective_user or update.effective_user.id == 777000:
         return
@@ -519,7 +517,7 @@ def reply_filter(update, context):
                 break
 
 
-def rmall_filters(update, context):
+def rmall_filters(update, _):
     chat = update.effective_chat
     user = update.effective_user
     member = chat.get_member(user.id)
@@ -545,13 +543,13 @@ def rmall_filters(update, context):
         )
 
 
-def rmall_callback(update, context):
+def rmall_callback(update, _):
     query = update.callback_query
     chat = update.effective_chat
     msg = update.effective_message
     member = chat.get_member(query.from_user.id)
     if query.data == "filters_rmall":
-        if member.status == "creator" or query.from_user.id in DRAGONS:
+        if member.status == "creator" or query.from_user.id in SUDO_USERS:
             allfilters = sql.get_chat_triggers(chat.id)
             if not allfilters:
                 msg.edit_text("No filters in this chat, nothing to stop!")
@@ -574,7 +572,7 @@ def rmall_callback(update, context):
         if member.status == "member":
             query.answer("You need to be admin to do this.")
     elif query.data == "filters_cancel":
-        if member.status == "creator" or query.from_user.id in DRAGONS:
+        if member.status == "creator" or query.from_user.id in SUDO_USERS:
             msg.edit_text("Clearing of all filters has been cancelled.")
             return
         if member.status == "administrator":

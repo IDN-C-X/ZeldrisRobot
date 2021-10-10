@@ -24,13 +24,12 @@ from platform import python_version
 import requests
 import speedtest
 from psutil import cpu_percent, virtual_memory, disk_usage, boot_time
-from pythonping import ping as ping3
 from spamwatch import __version__ as __sw__
 from telegram import ParseMode, Update
 from telegram import __version__
-from telegram.ext import CallbackContext, CommandHandler, Filters
+from telegram.ext import CommandHandler, Filters
 
-from zeldris import dispatcher, OWNER_ID, StartTime
+from zeldris import dispatcher, OWNER_ID
 from zeldris.modules.helper_funcs.alternate import typing_action
 from zeldris.modules.helper_funcs.filters import CustomFilters
 
@@ -62,7 +61,7 @@ def speed_convert(size):
 
 
 @typing_action
-def get_bot_ip(update, context):
+def get_bot_ip(update, _):
     """ Sends the bot's IP address, so as to be able to ssh in if necessary.
         OWNER ONLY.
     """
