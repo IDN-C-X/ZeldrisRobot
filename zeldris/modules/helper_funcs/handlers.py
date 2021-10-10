@@ -100,3 +100,19 @@ class CustomCommandHandler(CommandHandler):
                     return args, filter_result
                 else:
                     return False
+                
+    def handle_update(self, update, dispatcher, check_result, context=None):
+        if context:
+            self.collect_additional_context(context, update, dispatcher, check_result)
+            return self.callback(update, context)
+        else:
+            optional_args = self.collect_optional_args(dispatcher, update, check_result)
+            return self.callback(dispatcher.bot, update, **optional_args)
+
+    def collect_additional_context(self, context, update, dispatcher, check_result):
+        if isinstance(check_result, bool):
+            context.args = update.effective_message.text.split()[1:]
+        else:
+            context.args = check_result[0]
+            if isinstance(check_result[1], dict):
+                context.update(check_result[1])
