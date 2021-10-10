@@ -2,6 +2,7 @@ import html
 import importlib
 import json
 import re
+import time
 import traceback
 from sys import argv
 from typing import Optional
@@ -21,6 +22,7 @@ from telegram.utils.helpers import escape_markdown
 from zeldris import (
     dispatcher,
     updater,
+    StartTime,
     TOKEN,
     OWNER_ID,
     WEBHOOK,
@@ -37,14 +39,41 @@ from zeldris import (
 from zeldris.modules import ALL_MODULES
 from zeldris.modules.disable import DisableAbleCommandHandler
 from zeldris.modules.helper_funcs.chat_status import is_user_admin
+from zeldris.modules.sql import users_sql as sql
 from zeldris.modules.helper_funcs.misc import paginate_modules
 from zeldris.modules.purge import client
-from zeldris.modules.sql import users_sql as sql
+
+
+def get_readable_time(seconds: int) -> str:
+    count = 0
+    ping_time = ""
+    time_list = []
+    time_suffix_list = ["s", "m", "h", "days"]
+
+    while count < 4:
+        count += 1
+        remainder, result = divmod(seconds, 60) if count < 3 else divmod(seconds, 24)
+        if seconds == 0 and remainder == 0:
+            break
+        time_list.append(int(result))
+        seconds = int(remainder)
+
+    for x in range(len(time_list)):
+        time_list[x] = str(time_list[x]) + time_suffix_list[x]
+    if len(time_list) == 4:
+        ping_time += time_list.pop() + ", "
+
+    time_list.reverse()
+    ping_time += ":".join(time_list)
+
+    return ping_time
+
 
 PM_START_TEXT = """
 Hey there! my name is *{}*. 
 A modular group management bot with useful features[.](https://telegra.ph/file/fed9ba09e9add9b197c21.png)
 
+◑ *Uptime:* `{}`
 ◑ `{}` *Users, across* `{}` *chats.*
 
 Any issues or need help related to me?
@@ -55,21 +84,22 @@ Click help button to know my commands!
 buttons = [
     [
         InlineKeyboardButton(
-            text="❔ Help",
+            text="❔ Help", 
             callback_data="help_back",
         ),
         InlineKeyboardButton(
-            text="Updates 📢",
+            text="Updates 📢", 
             url="https://t.me/IDNCoder",
         ),
     ],
     [
         InlineKeyboardButton(
-            text="Add Zeldris to Your Group 👥",
+            text="Add Zeldris to Your Group 👥", 
             url="t.me/ZeldrisRobot?startgroup=true",
         ),
     ],
 ]
+
 
 HELP_STRINGS = f"""
 Hello there! My name is *{dispatcher.bot.first_name}*.
@@ -152,6 +182,7 @@ def test(update: Update, _):
 
 def start(update: Update, context: CallbackContext):
     args = context.args
+    uptime = get_readable_time((time.time() - StartTime))
     if update.effective_chat.type == "private":
         if len(args) >= 1:
             if args[0].lower() == "help":
@@ -184,6 +215,7 @@ def start(update: Update, context: CallbackContext):
             update.effective_message.reply_text(
                 PM_START_TEXT.format(
                     escape_markdown(context.bot.first_name),
+                    escape_markdown(uptime),
                     sql.num_users(),
                     sql.num_chats()),
                 reply_markup=InlineKeyboardMarkup(buttons),
@@ -192,7 +224,9 @@ def start(update: Update, context: CallbackContext):
             )
     else:
         update.effective_message.reply_text(
-            "Sending you a warm hi & wishing your day is a happy one!"
+            <b>I'm awake already!</b>\n<b>Haven't slept since:</b> <code>{}</code>\n<b>Support @IDNCoderX</b>".format(
+                uptime),
+            parse_mode=ParseMode.HTML,
         )
 
 
@@ -303,6 +337,7 @@ def zel_cb(update, context):
         query.message.edit_text(
             PM_START_TEXT.format(
                 escape_markdown(context.bot.first_name),
+                escape_markdown(get_readable_time((time.time() - StartTime))),
                 sql.num_users(),
                 sql.num_chats()),
             reply_markup=InlineKeyboardMarkup(buttons),
@@ -579,7 +614,7 @@ def is_chat_allowed(update, context):
 def main():
     # test_handler = DisableAbleCommandHandler("test", test, run_async=True)
     start_handler = DisableAbleCommandHandler(
-        "start", start, run_async=True
+        "start", start, pass_args=True, run_async=True
     )
     home_callback_handler = CallbackQueryHandler(
         zel_cb, pattern=r"zel_", run_async=True
