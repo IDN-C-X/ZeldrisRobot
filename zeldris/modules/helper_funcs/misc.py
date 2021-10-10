@@ -68,6 +68,9 @@ def paginate_modules(page_n: int, module_dict: Dict, prefix, chat=None) -> List:
     calc = len(modules) - round(round_num)
     if calc in [1, 2]:
         pairs.append([modules[-1]])
+    else:
+        pairs += [[EqInlineKeyboardButton("Home", callback_data="zel_back")]]
+    return pairs
     # can only have a certain amount of buttons side by side
     #    if len(pairs) > 7:
     #        pairs = pairs[modulo_page * 7:7 * (modulo_page + 1)] + [
