@@ -288,7 +288,7 @@ def help_button(update, context):
         pass
 
 
-def zel_cb(update, _):
+def zel_cb(update, context):
     query = update.callback_query
     if query.data == "zel_":
         query.message.edit_text(
