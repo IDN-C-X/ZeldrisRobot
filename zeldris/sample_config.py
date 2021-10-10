@@ -6,7 +6,7 @@ if not __name__.endswith("sample_config"):
         "values here. Doing that WILL backfire on you.\nBot quitting.",
         file=sys.stderr,
     )
-    quit(1)
+    sys.exit(1)
 
 
 # Create a new config.py file in same dir and import, then extend this class.
