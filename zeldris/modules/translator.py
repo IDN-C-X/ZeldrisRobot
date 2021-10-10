@@ -3,36 +3,48 @@ import os
 
 import requests
 from emoji import UNICODE_EMOJI
-from googletrans import Translator
+from gpytranslate import SyncTranslator
 from gtts import gTTS
-from telegram import ChatAction
+from telegram import ParseMode, Update, ChatAction
+from telegram.ext import CallbackContext
 
 from zeldris import dispatcher
 from zeldris.modules.disable import DisableAbleCommandHandler
 from zeldris.modules.helper_funcs.alternate import typing_action, send_action
 
 
-@typing_action
-def gtrans(update, context):
-    msg = update.effective_message
-    args = context.args
-    lang = " ".join(args)
-    if not lang:
-        lang = "en"
-    translate_text = msg.reply_to_message.text
-    ignore_text = UNICODE_EMOJI.keys()
-    for emoji in ignore_text:
-        if emoji in translate_text:
-            translate_text = translate_text.replace(emoji, "")
+trans = SyncTranslator()
 
-    translator = Translator()
+
+@typing_action
+def translate(update: Update, context: CallbackContext) -> None:
+    bot = context.bot
+    message = update.effective_message
+    reply_msg = message.reply_to_message
+    if not reply_msg:
+        message.reply_text("Reply to a message to translate it!")
+        return
+    if reply_msg.caption:
+        to_translate = reply_msg.caption
+    elif reply_msg.text:
+        to_translate = reply_msg.text
     try:
-        translated = translator.translate(translate_text, dest=lang)
-        trl = translated.src
-        results = translated.text
-        msg.reply_text("Translated from {} to {}.\n {}".format(trl, lang, results))
-    except:
-        msg.reply_text("Error! invalid language code.")
+        args = message.text.split()[1].lower()
+        if "//" in args:
+            source = args.split("//")[0]
+            dest = args.split("//")[1]
+        else:
+            source = trans.detect(to_translate)
+            dest = args
+    except IndexError:
+        source = trans.detect(to_translate)
+        dest = "en"
+    translation = trans(to_translate,
+                        sourcelang=source, targetlang=dest)
+    reply = f"<b>Translated from {source} to {dest}</b>:\n" \
+        f"<code>{translation.text}</code>"
+
+    bot.send_message(text=reply, chat_id=message.chat.id, parse_mode=ParseMode.HTML)
 
 
 @send_action(ChatAction.RECORD_AUDIO)
@@ -99,6 +111,6 @@ __help__ = """
 """
 __mod_name__ = "Translate"
 
-dispatcher.add_handler(DisableAbleCommandHandler(["tr", "tl"], gtrans, pass_args=True))
+dispatcher.add_handler(DisableAbleCommandHandler(["tr", "tl"], translate, pass_args=True))
 dispatcher.add_handler(DisableAbleCommandHandler("tts", gtts, pass_args=True))
 dispatcher.add_handler(DisableAbleCommandHandler("splcheck", spellcheck))
