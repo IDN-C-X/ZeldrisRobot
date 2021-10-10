@@ -117,7 +117,7 @@ def sed(update, context):
 
 
 SED_HANDLER = DisableAbleMessageHandler(
-    Filters.regex(r"s([{}]).*?\1.*".format("".join(DELIMITERS))), sed, friendly="sed", run_async=True
+    Filters.regex(r"s([{}]).*?\1.*".format("".join(DELIMITERS))), sed, friendly="sed"
 )
 
 dispatcher.add_handler(SED_HANDLER)
