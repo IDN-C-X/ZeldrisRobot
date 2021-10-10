@@ -192,12 +192,23 @@ updater = tg.Updater(TOKEN, workers=WORKERS)
 
 dispatcher = updater.dispatcher
 
+DEV_USERS = list (DEV_USERS)
 SUDO_USERS = list(SUDO_USERS)
 WHITELIST_USERS = list(WHITELIST_USERS)
 SUPPORT_USERS = list(SUPPORT_USERS)
 
 # Load at end to ensure all prev variables have been set
+# pylint: disable=C0413
 from zeldris.modules.helper_funcs.handlers import CustomCommandHandler
 
 if CUSTOM_CMD and len(CUSTOM_CMD) >= 1:
     tg.CommandHandler = CustomCommandHandler
+
+
+def spamfilters(text, user_id, chat_id):
+    # print("{} | {} | {}".format(text, user_id, chat_id))
+    if int(user_id) not in SPAMMERS:
+        return False
+
+    print("This user is a spammer!")
+    return True
