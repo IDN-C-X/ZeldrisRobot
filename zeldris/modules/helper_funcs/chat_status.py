@@ -2,7 +2,7 @@ from functools import wraps
 
 from telegram import Chat, ChatMember
 
-from zeldris import DEL_CMDS, SUDO_USERS, WHITELIST_USERS
+from zeldris import DEL_CMDS, SUDO_USERS, WHITELIST_USERS, DEV_USERS
 from zeldris.mwt import MWT
 
 
@@ -165,3 +165,27 @@ def user_not_admin(func):
             return func(update, context, *args, **kwargs)
 
     return is_not_admin
+
+
+def dev_plus(func):
+    @wraps(func)
+    def is_dev_plus_func(update, context, *args, **kwargs):
+        bot = context.bot
+        user = update.effective_user
+
+        if user.id in DEV_USERS:
+            return func(update, context, *args, **kwargs)
+        elif not user:
+            pass
+        elif DEL_CMDS and " " not in update.effective_message.text:
+            try:
+                update.effective_message.delete()
+            except:
+                pass
+        else:
+            update.effective_message.reply_text(
+                "This is a developer restricted command."
+                " You do not have permissions to run this."
+            )
+
+    return is_dev_plus_func
