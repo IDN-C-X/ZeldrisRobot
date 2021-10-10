@@ -12,7 +12,7 @@ if is_module_loaded(FILENAME):
 
     from zeldris import LOGGER, dispatcher
     from zeldris.modules.helper_funcs.chat_status import user_admin
-    from zeldris.modules.no_sql import log_channel_sql as sql
+    from zeldris.modules.sql import log_channel_sql as sql
 
     def loggable(func):
         @wraps(func)
