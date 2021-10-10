@@ -299,8 +299,7 @@ def zel_cb(update, _):
             ),
         )
     elif query.data == "zel_back":
-        query.message.reply_photo(
-            "https://telegra.ph/file/fed9ba09e9add9b197c21.png",
+        query.message.edit_text(
             PM_START_TEXT,
             reply_markup=InlineKeyboardMarkup(buttons),
             parse_mode=ParseMode.MARKDOWN,
