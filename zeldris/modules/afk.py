@@ -143,7 +143,7 @@ def check_afk(update, context, user_id: int, fst_name: int, userc_id: int):
         else:
             if int(userc_id) == int(user_id):
                 return
-            res = "{} is AFK!\nReason:\n{}\nSince: {}".format(
+            res = "{} is AFK!\nReason: {}\nSince: {}".format(
                 fst_name, reason, since_afk
             )
             update.effective_message.reply_text(res)
