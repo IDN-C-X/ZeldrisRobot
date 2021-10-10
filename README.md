@@ -66,7 +66,7 @@ defaults set in the sample_config, hence making it easier to upgrade.
 An example `config.py` file could be:
 
 ```
-from ZeldrisRobot.sample_config import Config
+from zeldris.sample_config import Config
 
 class Development(Config):
     OWNER_ID = 123456789  # your telegram ID
