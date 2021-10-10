@@ -45,7 +45,7 @@ PM_START_TEXT = f"""
 Hey there! my name is *{dispatcher.bot.first_name}*. 
 A modular group management bot with useful features[.](https://telegra.ph/file/fed9ba09e9add9b197c21.png)
 
-◑ `{}` *Users, across `{}` chats.
+◑ `{}` *Users, across* `{}` *chats.*
 
 Any issues or need help related to me? join our group [IDNCoderX](https://t.me/IDNCoderX).
 Click help button to know my commands!
@@ -54,8 +54,8 @@ Click help button to know my commands!
 buttons = [
     [
         InlineKeyboardButton(
-            text="Add Zeldris to Your Group 👥", 
-            url="t.me/ZeldrisRobot?startgroup=true",
+            text="❔ Help", 
+            callback_data="help_back",
         ),
         InlineKeyboardButton(
             text="Updates 📢", 
@@ -64,8 +64,8 @@ buttons = [
     ],
     [
         InlineKeyboardButton(
-            text="Help & Commands ❔", 
-            callback_data="help_back",
+            text="Add Zeldris to Your Group 👥", 
+            url="t.me/ZeldrisRobot?startgroup=true",
         ),
     ],
 ]
