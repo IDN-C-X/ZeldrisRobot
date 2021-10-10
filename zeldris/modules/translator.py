@@ -12,7 +12,6 @@ from zeldris import dispatcher
 from zeldris.modules.disable import DisableAbleCommandHandler
 from zeldris.modules.helper_funcs.alternate import typing_action, send_action
 
-
 trans = SyncTranslator()
 
 
@@ -42,7 +41,7 @@ def translate(update: Update, context: CallbackContext) -> None:
     translation = trans(to_translate,
                         sourcelang=source, targetlang=dest)
     reply = f"<b>Translated from {source} to {dest}</b>:\n" \
-        f"<code>{translation.text}</code>"
+            f"<code>{translation.text}</code>"
 
     bot.send_message(text=reply, chat_id=message.chat.id, parse_mode=ParseMode.HTML)
 

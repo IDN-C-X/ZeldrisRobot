@@ -570,15 +570,15 @@ DELETE_HANDLER = CommandHandler(
     "clear", clear, pass_args=True, run_async=True
 )
 LIST_HANDLER = DisableAbleCommandHandler(
-    ["notes", "saved"], 
+    ["notes", "saved"],
     list_notes,
-    admin_ok=True, 
+    admin_ok=True,
     run_async=True,
 )
 CLEARALLNOTES_HANDLER = CommandHandler(
     "rmallnotes",
-     clear_notes, 
-    filters=Filters.chat_type.groups, 
+    clear_notes,
+    filters=Filters.chat_type.groups,
     run_async=True,
 )
 

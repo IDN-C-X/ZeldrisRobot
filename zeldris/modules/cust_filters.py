@@ -16,9 +16,9 @@ from telegram.ext import MessageHandler
 from telegram.utils.helpers import escape_markdown
 from telegram.utils.helpers import mention_html
 
-from zeldris import dispatcher
-from zeldris import SUDO_USERS
 from zeldris import LOGGER
+from zeldris import SUDO_USERS
+from zeldris import dispatcher
 from zeldris.modules.connection import connected
 from zeldris.modules.disable import DisableAbleCommandHandler
 from zeldris.modules.helper_funcs.alternate import send_message
@@ -321,8 +321,8 @@ def reply_filter(update, context):
                             return
                         except BadRequest as excp:
                             if (
-                                excp.message
-                                == "Wrong remote file identifier specified: wrong padding in the string"
+                                    excp.message
+                                    == "Wrong remote file identifier specified: wrong padding in the string"
                             ):
                                 context.bot.send_message(
                                     chat.id,
@@ -642,7 +642,7 @@ LIST_HANDLER = DisableAbleCommandHandler(
 )
 CUST_FILTER_HANDLER = MessageHandler(
     CustomFilters.has_text & ~Filters.update.edited_message,
-    reply_filter, 
+    reply_filter,
     run_async=True,
 )
 

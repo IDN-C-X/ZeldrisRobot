@@ -28,6 +28,7 @@ def ping(update: Update, _):
         "*PONG!!!*\n`{}ms`".format(ping_time), parse_mode=ParseMode.MARKDOWN
     )
 
+
 # Kanged from PaperPlane Extended userbot
 def speed_convert(size):
     """

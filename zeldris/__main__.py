@@ -37,9 +37,9 @@ from zeldris import (
 from zeldris.modules import ALL_MODULES
 from zeldris.modules.disable import DisableAbleCommandHandler
 from zeldris.modules.helper_funcs.chat_status import is_user_admin
-from zeldris.modules.sql import users_sql as sql
 from zeldris.modules.helper_funcs.misc import paginate_modules
 from zeldris.modules.purge import client
+from zeldris.modules.sql import users_sql as sql
 
 PM_START_TEXT = """
 Hey there! my name is *{}*. 
@@ -55,22 +55,21 @@ Click help button to know my commands!
 buttons = [
     [
         InlineKeyboardButton(
-            text="❔ Help", 
+            text="❔ Help",
             callback_data="help_back",
         ),
         InlineKeyboardButton(
-            text="Updates 📢", 
+            text="Updates 📢",
             url="https://t.me/IDNCoder",
         ),
     ],
     [
         InlineKeyboardButton(
-            text="Add Zeldris to Your Group 👥", 
+            text="Add Zeldris to Your Group 👥",
             url="t.me/ZeldrisRobot?startgroup=true",
         ),
     ],
 ]
-
 
 HELP_STRINGS = f"""
 Hello there! My name is *{dispatcher.bot.first_name}*.
