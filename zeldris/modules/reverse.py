@@ -6,7 +6,6 @@ from urllib.error import URLError, HTTPError
 import requests
 from bs4 import BeautifulSoup
 from telegram import InputMediaPhoto, TelegramError
-from telegram.ext import run_async
 
 from zeldris import dispatcher
 from zeldris.modules.disable import DisableAbleCommandHandler
@@ -18,7 +17,7 @@ useragent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML
 opener.addheaders = [("User-agent", useragent)]
 
 
-@run_async
+
 @typing_action
 def reverse(update, context):
     if os.path.isfile("okgoogle.png"):
