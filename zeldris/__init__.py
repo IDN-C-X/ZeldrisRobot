@@ -1,12 +1,15 @@
 import logging
 import os
 import sys
+import time
 
 import spamwatch
 import telegram.ext as tg
 from redis import StrictRedis
 from telethon import TelegramClient
 from telethon.sessions import MemorySession
+
+StartTime = time.time()
 
 # enable logging
 logging.basicConfig(
