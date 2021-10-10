@@ -13,10 +13,9 @@
 <a href="https://www.codacy.com?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=IDN-C-X/ZeldrisRobot&amp;utm_campaign=Badge_Grade"> <img src="https://app.codacy.com/project/badge/Grade/f0985646bec24b6b9f5318d9a2a39b75" alt="Codacy" /> </a>
 <a href="https://www.codefactor.io/repository/github/idn-c-x/zeldrisrobot/overview/main"> <img src="https://www.codefactor.io/repository/github/idn-c-x/zeldrisrobot/badge/main?s=159cd037a0c02ec5a9d60eeaac7efa728430f58a" alt="Codefactor" /> </a><br>
 <a href="https://deepsource.io/gh/IDN-C-X/ZeldrisRobot/?ref=repository-badge"><img src="https://static.deepsource.io/deepsource-badge-light-mini.svg" alt="DeepSource"></a><br>
-<a href="https://python-telegram-bot.org"> <img src="https://img.shields.io/badge/PTB-13.7-brightgreen?&style=flat-round&logo=github" alt="Python Telegram Bot" /> </a><br>
+<a href="https://python-telegram-bot.org"> <img src="https://img.shields.io/badge/PTB-13.1-brightgreen?&style=flat-round&logo=github" alt="Python Telegram Bot" /> </a><br>
 <a href="https://docs.telethon.dev"> <img src="https://img.shields.io/badge/Telethon-1.16.4-brightgreen?&style=flat-round&logo=github" alt="Telethon" /> </a>
-<a href="https://docs.pyrogram.org"> <img src="https://img.shields.io/badge/Pyrogram-1.2.9-brightgreen?&style=flat-round&logo=github" alt="Pyrogram" /> </a><br>
-<a href="https://docs.python.org"> <img src="https://img.shields.io/badge/Python-3.9.6-brightgreen?&style=flat-round&logo=python" alt="Python" /> </a><br>
+<a href="https://docs.python.org"> <img src="https://img.shields.io/badge/Python-3.8.6-brightgreen?&style=flat-round&logo=python" alt="Python" /> </a><br>
 <a href="https://github.com/IDN-C-X"> <img src="https://badges.frapsoft.com/os/v1/open-source.svg?v=103" alt="Open Source" /> </a>
 <a href="https://GitHub.com/IDN-C-X/ZeldrisRobot"> <img src="https://img.shields.io/badge/Maintained-Yes-brightgreen.svg" alt="Maintenance" /> </a><br>
 <a href="https://github.com/IDN-C-X/ZeldrisRobot/blob/main/LICENSE"> <img src="https://img.shields.io/badge/License-GPLv3-blue.svg" alt="License" /> </a>
@@ -41,7 +40,7 @@
 </a>
 </p>
 
-**A modular Telegram Python bot running on python3 with a sqlalchemy, redislab, telethon.**
+**A modular Telegram Python bot running on python3 with a sqlalchemy, redis, telethon.**
 
 ## How to set up/deploy.
 
