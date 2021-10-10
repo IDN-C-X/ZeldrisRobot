@@ -10,6 +10,8 @@ from telegram import ParseMode, InlineKeyboardMarkup, InlineKeyboardButton
 from telegram.ext import CommandHandler, Filters, MessageHandler, CallbackQueryHandler
 from telegram.ext.dispatcher import DispatcherHandlerStop
 from telegram.utils.helpers import escape_markdown
+from sqlalchemy.exc import SQLAlchemyError, DBAPIError
+
 
 from zeldris import (
     dispatcher,
@@ -27,6 +29,7 @@ from zeldris import (
 # needed to dynamically load modules
 # NOTE: Module order is not guaranteed, specify that in the config file!
 from zeldris.modules import ALL_MODULES
+from zeldris.modules.disable import DisableAbleCommandHandler, DisableAbleMessageHandler
 from zeldris.modules.helper_funcs.alternate import typing_action
 from zeldris.modules.helper_funcs.chat_status import is_user_admin
 from zeldris.modules.helper_funcs.misc import paginate_modules
@@ -569,18 +572,33 @@ def is_chat_allowed(update, context):
 
 
 def main():
-    # test_handler = CommandHandler("test", test, run_async=True)
-    start_handler = CommandHandler("start", start, pass_args=True, run_async=True)
-    home_callback_handler = CallbackQueryHandler(zel_cb, pattern=r"zel_", run_async=True)
+    # test_handler = DisableAbleCommandHandler("test", test, run_async=True)
+    start_handler = DisableAbleCommandHandler(
+        "start", start, pass_args=True, run_async=True
+    )
+    home_callback_handler = CallbackQueryHandler(
+        zel_cb, pattern=r"zel_", run_async=True
+    )
+    help_handler = DisableAbleCommandHandler(
+        "help", get_help, run_async=True
+    )
+    help_callback_handler = CallbackQueryHandler(
+        help_button, pattern=r"help_", run_async=True
+    )
 
-    help_handler = CommandHandler("help", get_help, run_async=True)
-    help_callback_handler = CallbackQueryHandler(help_button, pattern=r"help_", run_async=True)
+    settings_handler = DisableAbleCommandHandler(
+        "settings", get_settings, run_async=True
+    )
+    settings_callback_handler = CallbackQueryHandler(
+        settings_button, pattern=r"stngs_", run_async=True
+    )
 
-    settings_handler = CommandHandler("settings", get_settings, run_async=True)
-    settings_callback_handler = CallbackQueryHandler(settings_button, pattern=r"stngs_", run_async=True)
-
-    migrate_handler = MessageHandler(Filters.status_update.migrate, migrate_chats)
-    is_chat_allowed_handler = MessageHandler(Filters.chat_type.groups, is_chat_allowed)
+    migrate_handler = MessageHandler(
+        Filters.status_update.migrate, migrate_chats
+    )
+    is_chat_allowed_handler = MessageHandler(
+        Filters.chat_type.groups, is_chat_allowed
+    )
 
     # dispatcher.add_handler(test_handler)
     dispatcher.add_handler(start_handler)
