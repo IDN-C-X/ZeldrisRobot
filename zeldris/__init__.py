@@ -146,6 +146,8 @@ else:
     API_ID = Config.API_ID
     SPAMWATCH = Config.SPAMWATCH_API
 
+#Dont Remove This
+DEV_USERS.add(OWNER_ID)
 SUDO_USERS.add(OWNER_ID)
 
 # Pass if SpamWatch token not set.
