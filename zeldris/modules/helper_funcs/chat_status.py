@@ -18,15 +18,21 @@
 
 from functools import wraps
 from threading import RLock
-from time import perf_counter
 
 from cachetools import TTLCache
 from telegram import Chat, ChatMember
+from telegram.error import BadRequest, Unauthorized
 
-from zeldris import DEL_CMDS, SUDO_USERS, WHITELIST_USERS, DEV_USERS, dispatcher
+from zeldris import (
+    DEL_CMDS,
+    DEV_USERS,
+    SUDO_USERS,
+    WHITELIST_USERS,
+    dispatcher,
+)
 
-# stores admemes in memory for 10 min.
-ADMIN_CACHE = TTLCache(maxsize=512, ttl=60 * 10, timer=perf_counter)
+# refresh cache 10m
+ADMIN_CACHE = TTLCache(maxsize=512, ttl=60 * 10)
 THREAD_LOCK = RLock()
 
 
@@ -34,12 +40,16 @@ def can_delete(chat: Chat, bot_id: int) -> bool:
     return chat.get_member(bot_id).can_delete_messages
 
 
-def is_user_ban_protected(chat: Chat, user_id: int, member: ChatMember = None) -> bool:
+def is_user_ban_protected(
+        chat: Chat, user_id: int, member: ChatMember = None
+) -> bool:
     if (
             chat.type == "private"
+            or user_id in DEV_USERS
             or user_id in SUDO_USERS
             or user_id in WHITELIST_USERS
             or chat.all_members_are_administrators
+            or user_id in (777000, 1087968824)
     ):
         return True
 
@@ -51,12 +61,13 @@ def is_user_ban_protected(chat: Chat, user_id: int, member: ChatMember = None) -
 def is_user_admin(chat: Chat, user_id: int, member: ChatMember = None) -> bool:
     if (
             chat.type == "private"
-            or user_id in SUDO_USERS
             or user_id in DEV_USERS
+            or user_id in SUDO_USERS
+            or user_id in (777000, 1087968824)
             or chat.all_members_are_administrators
-            or user_id in [777000, 1087968824]
-    ):  # Count telegram and Group Anonymous as admin
+    ):
         return True
+
     if not member:
         with THREAD_LOCK:
             # try to fetch from cache first.
@@ -66,16 +77,20 @@ def is_user_admin(chat: Chat, user_id: int, member: ChatMember = None) -> bool:
                 # keyerror happend means cache is deleted,
                 # so query bot api again and return user status
                 # while saving it in cache for future useage...
-                chat_admins = dispatcher.bot.getChatAdministrators(chat.id)
-                admin_list = [x.user.id for x in chat_admins]
-                ADMIN_CACHE[chat.id] = admin_list
+                try:
+                    chat_admins = dispatcher.bot.getChatAdministrators(chat.id)
+                    admin_list = [x.user.id for x in chat_admins]
+                    ADMIN_CACHE[chat.id] = admin_list
 
-                return user_id in admin_list
-    else:
-        return member.status in ("administrator", "creator")
+                    if user_id in admin_list:
+                        return True
+                except Unauthorized:
+                    return False
 
 
-def is_bot_admin(chat: Chat, bot_id: int, bot_member: ChatMember = None) -> bool:
+def is_bot_admin(
+        chat: Chat, bot_id: int, bot_member: ChatMember = None
+) -> bool:
     if chat.type == "private" or chat.all_members_are_administrators:
         return True
 
@@ -120,7 +135,9 @@ def can_pin(func):
 def can_promote(func):
     @wraps(func)
     def promote_rights(update, context, *args, **kwargs):
-        if update.effective_chat.get_member(context.bot.id).can_promote_members:
+        if update.effective_chat.get_member(
+                context.bot.id
+        ).can_promote_members:
             return func(update, context, *args, **kwargs)
         else:
             update.effective_message.reply_text(
@@ -134,7 +151,9 @@ def can_promote(func):
 def can_restrict(func):
     @wraps(func)
     def promote_rights(update, context, *args, **kwargs):
-        if update.effective_chat.get_member(context.bot.id).can_restrict_members:
+        if update.effective_chat.get_member(
+                context.bot.id
+        ).can_restrict_members:
             return func(update, context, *args, **kwargs)
         else:
             update.effective_message.reply_text(
@@ -151,7 +170,10 @@ def bot_admin(func):
         if is_bot_admin(update.effective_chat, context.bot.id):
             return func(update, context, *args, **kwargs)
         else:
-            update.effective_message.reply_text("I'm not admin!")
+            try:
+                update.effective_message.reply_text("I'm not admin!")
+            except BadRequest:
+                return
 
     return is_admin
 
@@ -167,7 +189,10 @@ def user_admin(func):
             pass
 
         elif DEL_CMDS and " " not in update.effective_message.text:
-            update.effective_message.delete()
+            try:
+                update.effective_message.delete()
+            except BadRequest:
+                pass
 
         else:
             update.effective_message.reply_text(

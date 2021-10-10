@@ -20,7 +20,6 @@ import json
 import os
 
 import requests
-from emoji import UNICODE_EMOJI
 from gpytranslate import SyncTranslator
 from gtts import gTTS
 from telegram import ParseMode, Update, ChatAction

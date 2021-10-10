@@ -17,8 +17,6 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 import telegram.ext as tg
-from telegram import Update
-
 from pyrate_limiter import (
     BucketFullException,
     Duration,
@@ -26,7 +24,9 @@ from pyrate_limiter import (
     Limiter,
     MemoryListBucket,
 )
+from telegram import Update
 
+import zeldris.modules.sql.blacklistusers_sql as sql
 from zeldris import LOGGER, DEV_USERS, SUDO_USERS, SUPPORT_USERS, WHITELIST_USERS
 
 try:
@@ -39,17 +39,18 @@ if CUSTOM_CMD:
     LOGGER.debug("Bot custom command handler = \"%s\"", CMD_STARTERS)
 else:
     CMD_STARTERS = ["/", "!"]
-                    
-                    
+
+
 class AntiSpam:
     def __init__(self):
         self.whitelist = (
-            (DEV_USERS or [])
-            + (SUDO_USERS or [])
-            + (WHITELIST_USERS or [])
-            + (SUPPORT_USERS or [])
+                (DEV_USERS or [])
+                + (SUDO_USERS or [])
+                + (WHITELIST_USERS or [])
+                + (SUPPORT_USERS or [])
         )
-        # Values are HIGHLY experimental, its recommended you pay attention to our commits as we will be adjusting the values over time with what suits best.
+        # Values are HIGHLY experimental, its recommended you pay attention to our commits as we will be adjusting
+        # the values over time with what suits best.
         Duration.CUSTOM = 15  # Custom duration, 15 seconds
         self.sec_limit = RequestRate(6, Duration.CUSTOM)  # 6 / Per 15 Seconds
         self.min_limit = RequestRate(20, Duration.MINUTE)  # 20 / Per minute
@@ -90,10 +91,19 @@ class CustomCommandHandler(tg.CommandHandler):
         if isinstance(update, Update) and update.effective_message:
             message = update.effective_message
 
+            try:
+                user_id = update.effective_user.id
+            except BaseException:
+                user_id = None
+
+            if user_id:
+                if sql.is_user_blacklisted(user_id):
+                    return False
+
             if message.text and len(message.text) > 1:
                 fst_word = message.text.split(None, 1)[0]
                 if len(fst_word) > 1 and any(
-                    fst_word.startswith(start) for start in CMD_STARTERS
+                        fst_word.startswith(start) for start in CMD_STARTERS
                 ):
                     args = message.text.split()[1:]
                     command = fst_word[1:].split("@")
@@ -102,8 +112,8 @@ class CustomCommandHandler(tg.CommandHandler):
                     )  # in case the command was sent without a username
 
                     if not (
-                        command[0].lower() in self.command
-                        and command[1].lower() == message.bot.username.lower()
+                            command[0].lower() in self.command
+                            and command[1].lower() == message.bot.username.lower()
                     ):
                         return None
 

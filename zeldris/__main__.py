@@ -43,7 +43,6 @@ from zeldris import (
     updater,
     StartTime,
     TOKEN,
-    OWNER_ID,
     WEBHOOK,
     CERT_PATH,
     MESSAGE_DUMP,
@@ -58,9 +57,9 @@ from zeldris import (
 from zeldris.modules import ALL_MODULES
 from zeldris.modules.disable import DisableAbleCommandHandler
 from zeldris.modules.helper_funcs.chat_status import is_user_admin
-from zeldris.modules.sql import users_sql as sql
 from zeldris.modules.helper_funcs.misc import paginate_modules
 from zeldris.modules.purge import client
+from zeldris.modules.sql import users_sql as sql
 
 
 def get_readable_time(seconds: int) -> str:
@@ -118,7 +117,6 @@ buttons = [
         ),
     ],
 ]
-
 
 HELP_STRINGS = f"""
 Hello there! My name is *{dispatcher.bot.first_name}*.
