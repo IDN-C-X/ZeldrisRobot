@@ -13,7 +13,6 @@ from telegram import (
 from telegram import Message
 from telegram.error import BadRequest
 from telegram.ext import CommandHandler, MessageHandler, Filters, CallbackQueryHandler
-from telegram.ext.dispatcher import run_async
 from telegram.utils.helpers import mention_html
 
 import zeldris.modules.sql.notes_sql as sql
@@ -211,7 +210,7 @@ def get(bot, update, notename, show_none=True, no_format=False):
         message.reply_text("This note doesn't exist")
 
 
-@run_async
+
 @typing_action
 def cmd_get(update, context):
     args = context.args
@@ -223,7 +222,7 @@ def cmd_get(update, context):
         update.effective_message.reply_text("Get rekt")
 
 
-@run_async
+
 def hash_get(update, context):
     message = update.effective_message.text
     fst_word = message.split()[0]
@@ -231,7 +230,7 @@ def hash_get(update, context):
     get(context.bot, update, no_hash, show_none=False)
 
 
-@run_async
+
 @user_admin
 @typing_action
 def save(update, context):
@@ -268,7 +267,7 @@ def save(update, context):
     )
 
 
-@run_async
+
 @user_admin
 @typing_action
 def clear(update, context):
@@ -303,7 +302,7 @@ def clear(update, context):
             )
 
 
-@run_async
+
 @typing_action
 def list_notes(update, context):
     chat_id = update.effective_chat.id
@@ -346,7 +345,7 @@ def list_notes(update, context):
             )
 
 
-@run_async
+
 @user_admin
 def clear_notes(update, context):
     chat = update.effective_chat
@@ -382,7 +381,7 @@ def clear_notes(update, context):
         msg.reply_text("This command can be only used by chat OWNER!")
 
 
-@run_async
+
 @user_admin_no_reply
 def rmbutton(update, context):
     query = update.callback_query
@@ -566,14 +565,14 @@ This will retrieve the note and send it without formatting it; getting you the r
 
 __mod_name__ = "Notes"
 
-GET_HANDLER = CommandHandler("get", cmd_get, pass_args=True)
+GET_HANDLER = CommandHandler("get", cmd_get, pass_args=True, run_async=True)
 HASH_GET_HANDLER = MessageHandler(Filters.regex(r"^#[^\s]+"), hash_get)
 
-SAVE_HANDLER = CommandHandler("save", save)
-DELETE_HANDLER = CommandHandler("clear", clear, pass_args=True)
+SAVE_HANDLER = CommandHandler("save", save, run_async=True)
+DELETE_HANDLER = CommandHandler("clear", clear, pass_args=True, run_async=True)
 
-LIST_HANDLER = DisableAbleCommandHandler(["notes", "saved"], list_notes, admin_ok=True)
-CLEARALLNOTES_HANDLER = CommandHandler("rmallnotes", clear_notes, filters=Filters.chat_type.groups)
+LIST_HANDLER = DisableAbleCommandHandler(["notes", "saved"], list_notes, admin_ok=True, run_async=True)
+CLEARALLNOTES_HANDLER = CommandHandler("rmallnotes", clear_notes, filters=Filters.chat_type.groups, run_async=True)
 
 RMBTN_HANDLER = CallbackQueryHandler(rmbutton, pattern=r"rmnotes_")
 
