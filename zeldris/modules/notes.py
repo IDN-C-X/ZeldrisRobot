@@ -168,7 +168,6 @@ def get(bot, update, notename, show_none=True, no_format=False):
                         text,
                         reply_to_message_id=reply_id,
                         parse_mode=parseMode,
-                        disable_web_page_preview=True,
                         reply_markup=keyboard,
                     )
                 else:
@@ -178,7 +177,6 @@ def get(bot, update, notename, show_none=True, no_format=False):
                         caption=text,
                         reply_to_message_id=reply_id,
                         parse_mode=parseMode,
-                        disable_web_page_preview=True,
                         reply_markup=keyboard,
                     )
 
@@ -559,16 +557,34 @@ without formatting it; getting you the raw markdown, allowing you to make easy e
 
 __mod_name__ = "Notes"
 
-GET_HANDLER = CommandHandler("get", cmd_get, pass_args=True, run_async=True)
-HASH_GET_HANDLER = MessageHandler(Filters.regex(r"^#[^\s]+"), hash_get)
+GET_HANDLER = DisableAbleCommandHandler(
+    "get", cmd_get, pass_args=True, run_async=True
+)
+HASH_GET_HANDLER = MessageHandler(
+    Filters.regex(r"^#[^\s]+"), hash_get, run_async=True
+)
+SAVE_HANDLER = CommandHandler(
+    "save", save, run_async=True
+)
+DELETE_HANDLER = CommandHandler(
+    "clear", clear, pass_args=True, run_async=True
+)
+LIST_HANDLER = DisableAbleCommandHandler(
+    ["notes", "saved"], 
+    list_notes,
+    admin_ok=True, 
+    run_async=True,
+)
+CLEARALLNOTES_HANDLER = CommandHandler(
+    "rmallnotes",
+     clear_notes, 
+    filters=Filters.chat_type.groups, 
+    run_async=True,
+)
 
-SAVE_HANDLER = CommandHandler("save", save, run_async=True)
-DELETE_HANDLER = CommandHandler("clear", clear, pass_args=True, run_async=True)
-
-LIST_HANDLER = DisableAbleCommandHandler(["notes", "saved"], list_notes, admin_ok=True, run_async=True)
-CLEARALLNOTES_HANDLER = CommandHandler("rmallnotes", clear_notes, filters=Filters.chat_type.groups, run_async=True)
-
-RMBTN_HANDLER = CallbackQueryHandler(rmbutton, pattern=r"rmnotes_")
+RMBTN_HANDLER = CallbackQueryHandler(
+    rmbutton, pattern=r"rmnotes_", run_async=True
+)
 
 dispatcher.add_handler(GET_HANDLER)
 dispatcher.add_handler(SAVE_HANDLER)
