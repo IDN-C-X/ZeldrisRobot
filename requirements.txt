@@ -12,7 +12,7 @@ pytz
 gtts
 bs4
 lxml
-ujson
+demjson
 wget
 bs4
 telegraph
