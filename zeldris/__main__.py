@@ -37,26 +37,24 @@ from zeldris import (
 from zeldris.modules import ALL_MODULES
 from zeldris.modules.disable import DisableAbleCommandHandler
 from zeldris.modules.helper_funcs.chat_status import is_user_admin
+from zeldris.modules.sql import users_sql as sql
 from zeldris.modules.helper_funcs.misc import paginate_modules
 from zeldris.modules.purge import client
 
 PM_START_TEXT = f"""
 Hey there! my name is *{dispatcher.bot.first_name}*. 
-If you have any questions on how to use me, 
-Click Help button[.](https://telegra.ph/file/fed9ba09e9add9b197c21.png)
+A modular group management bot with useful features[.](https://telegra.ph/file/fed9ba09e9add9b197c21.png)
 
-I'm here to make your group management fun and easy! i have lots of handy features, such as flood control, 
-a warning system, a note keeping system, and even replies on predetermined filters.
+◑ `{}` *Users, across `{}` chats.
 
-Any issues or need help related to me? join our group [IDNCoderX](https://t.me/IDNCoder).
-
-Wanna Add me to your Group? Just click the button below!
+Any issues or need help related to me? join our group [IDNCoderX](https://t.me/IDNCoderX).
+Click help button to know my commands!
 """
 
 buttons = [
     [
         InlineKeyboardButton(
-            text="Add to Group 👥", 
+            text="Add Zeldris to Your Group 👥", 
             url="t.me/ZeldrisRobot?startgroup=true",
         ),
         InlineKeyboardButton(
@@ -184,7 +182,9 @@ def start(update: Update, context: CallbackContext):
 
         else:
             update.effective_message.reply_text(
-                PM_START_TEXT,
+                PM_START_TEXT.format(
+                    sql.num_users(),
+                    sql.num_chats()),
                 reply_markup=InlineKeyboardMarkup(buttons),
                 parse_mode=ParseMode.MARKDOWN,
                 timeout=60,
@@ -300,7 +300,9 @@ def zel_cb(update, _):
         )
     elif query.data == "zel_back":
         query.message.edit_text(
-            PM_START_TEXT,
+            PM_START_TEXT.format(
+                sql.num_users(),
+                sql.num_chats()),
             reply_markup=InlineKeyboardMarkup(buttons),
             parse_mode=ParseMode.MARKDOWN,
             timeout=60,
@@ -637,6 +639,6 @@ def main():
 
 
 if __name__ == "__main__":
-    LOGGER.info("Successfully loaded modules: " + str(ALL_MODULES))
+    LOGGER.info("[Zeldris] Successfully loaded modules: " + str(ALL_MODULES))
     client.start(bot_token=TOKEN)
     main()
