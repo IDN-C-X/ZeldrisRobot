@@ -7,7 +7,6 @@ from telegram.error import BadRequest, Unauthorized
 from telegram.ext import (
     CommandHandler,
     MessageHandler,
-    run_async,
     Filters,
     CallbackQueryHandler,
 )
@@ -22,7 +21,7 @@ from zeldris.modules.sql import reporting_sql as sql
 REPORT_GROUP = 5
 
 
-@run_async
+
 @user_admin
 @typing_action
 def report_setting(update, context):
@@ -71,7 +70,7 @@ def report_setting(update, context):
         )
 
 
-@run_async
+
 @user_not_admin
 @loggable
 @typing_action
@@ -252,8 +251,8 @@ You MUST reply to a message to report a user; you can't just use @admin to tag a
 Note that the report commands do not work when admins use them; or when used to report an admin. Bot assumes that \
 admins don't need to report, or be reported!
 """
-REPORT_HANDLER = CommandHandler("report", report, filters=Filters.chat_type.groups)
-SETTING_HANDLER = CommandHandler("reports", report_setting, pass_args=True)
+REPORT_HANDLER = CommandHandler("report", report, filters=Filters.chat_type.groups, run_async=True)
+SETTING_HANDLER = CommandHandler("reports", report_setting, pass_args=True, run_async=True)
 ADMIN_REPORT_HANDLER = MessageHandler(Filters.regex("(?i)@admin(s)?"), report)
 REPORT_BUTTON_HANDLER = CallbackQueryHandler(report_buttons, pattern=r"report_")
 
