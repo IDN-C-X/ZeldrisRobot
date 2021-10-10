@@ -42,7 +42,7 @@ from zeldris.modules.helper_funcs.misc import paginate_modules
 from zeldris.modules.purge import client
 
 PM_START_TEXT = """
-Hey there! my name is *{dispatcher.bot.first_name}*. 
+Hey there! my name is *{}*. 
 A modular group management bot with useful features[.](https://telegra.ph/file/fed9ba09e9add9b197c21.png)
 
 ◑ `{}` *Users, across* `{}` *chats.*
@@ -183,6 +183,7 @@ def start(update: Update, context: CallbackContext):
         else:
             update.effective_message.reply_text(
                 PM_START_TEXT.format(
+                    escape_markdown(context.bot.first_name),
                     sql.num_users(),
                     sql.num_chats()),
                 reply_markup=InlineKeyboardMarkup(buttons),
