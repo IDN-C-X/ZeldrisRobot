@@ -15,6 +15,7 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 
+import sys
 from zeldris import LOAD, NO_LOAD, LOGGER
 
 
@@ -38,7 +39,7 @@ def __list_all_modules():
                     for mod in to_load
             ):
                 LOGGER.error("Invalid loadorder names. Quitting.")
-                quit(1)
+                sys.exit(1)
 
         else:
             to_load = all_modules
