@@ -1,5 +1,6 @@
 import datetime
 import platform
+import time
 from platform import python_version
 
 import requests
@@ -9,9 +10,9 @@ from pythonping import ping as ping3
 from spamwatch import __version__ as __sw__
 from telegram import ParseMode
 from telegram import __version__
-from telegram.ext import CommandHandler, Filters
+from telegram.ext import CallbackContext, CommandHandler, Filters
 
-from zeldris import dispatcher, OWNER_ID
+from zeldris import dispatcher, OWNER_ID, StartTime
 from zeldris.modules.helper_funcs.alternate import typing_action
 from zeldris.modules.helper_funcs.filters import CustomFilters
 
