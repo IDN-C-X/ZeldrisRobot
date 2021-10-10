@@ -1231,7 +1231,7 @@ Tip: Buttons must be placed at the end of welcome messages.
 
 
 NEW_MEM_HANDLER = MessageHandler(
-    Filters.status_update.new_chat_members, new_member, run_async=True,
+    Filters.status_update.new_chat_members, new_member, run_async=True
 )
 LEFT_MEM_HANDLER = MessageHandler(
     Filters.status_update.left_chat_member, left_member, run_async=True
