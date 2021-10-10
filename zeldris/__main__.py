@@ -41,7 +41,7 @@ from zeldris.modules.sql import users_sql as sql
 from zeldris.modules.helper_funcs.misc import paginate_modules
 from zeldris.modules.purge import client
 
-PM_START_TEXT = f"""
+PM_START_TEXT = """
 Hey there! my name is *{dispatcher.bot.first_name}*. 
 A modular group management bot with useful features[.](https://telegra.ph/file/fed9ba09e9add9b197c21.png)
 
