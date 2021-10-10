@@ -1,11 +1,11 @@
 import subprocess
 
-from zeldris import LOGGER, dispatcher
-from zeldris.modules.helper_funcs.chat_status import dev_plus
 from telegram import ParseMode
 from telegram.ext import CommandHandler
+from zeldris import LOGGER, dispatcher
+from zeldris.modules.helper_funcs.chat_status import dev_plus
 
-@run_async
+
 @dev_plus
 def shell(update, context):
     message = update.effective_message
