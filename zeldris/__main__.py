@@ -47,7 +47,8 @@ A modular group management bot with useful features[.](https://telegra.ph/file/f
 
 ◑ `{}` *Users, across* `{}` *chats.*
 
-Any issues or need help related to me? join our group [IDNCoderX](https://t.me/IDNCoderX).
+Any issues or need help related to me?
+Join our official group [IDNCoderX](https://t.me/IDNCoderX).
 Click help button to know my commands!
 """
 
