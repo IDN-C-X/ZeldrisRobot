@@ -579,7 +579,7 @@ def is_chat_allowed(update, context):
 def main():
     # test_handler = DisableAbleCommandHandler("test", test, run_async=True)
     start_handler = DisableAbleCommandHandler(
-        "start", start, pass_args=True, run_async=True
+        "start", start, run_async=True
     )
     home_callback_handler = CallbackQueryHandler(
         zel_cb, pattern=r"zel_", run_async=True
