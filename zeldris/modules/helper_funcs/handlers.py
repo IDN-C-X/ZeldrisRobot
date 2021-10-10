@@ -1,4 +1,5 @@
-import telegram.ext as tg
+from telegram.ext import CommandHandler
+
 from pyrate_limiter import (
     BucketFullException,
     Duration,
