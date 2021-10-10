@@ -3,32 +3,38 @@ import re
 from html import escape
 
 import telegram
-from telegram import ParseMode, InlineKeyboardMarkup, InlineKeyboardButton
+from telegram import InlineKeyboardButton
+from telegram import InlineKeyboardMarkup
+from telegram import Message
+from telegram import ParseMode
 from telegram.error import BadRequest
-from telegram.ext import (
-    CommandHandler,
-    MessageHandler,
-    DispatcherHandlerStop,
-    Filters,
-)
-from telegram.utils.helpers import mention_html, escape_markdown
+from telegram.ext import CallbackQueryHandler
+from telegram.ext import CommandHandler
+from telegram.ext import DispatcherHandlerStop
+from telegram.ext import Filters
+from telegram.ext import MessageHandler
+from telegram.utils.helpers import escape_markdown
+from telegram.utils.helpers import mention_html
 
-from zeldris import dispatcher, LOGGER, SUDO_USERS
+from zeldris import dispatcher
+from zeldris import DRAGONS
+from zeldris import LOGGER
 from zeldris.modules.connection import connected
 from zeldris.modules.disable import DisableAbleCommandHandler
-from zeldris.modules.helper_funcs.alternate import send_message, typing_action
+from zeldris.modules.helper_funcs.alternate import send_message
+from zeldris.modules.helper_funcs.alternate import typing_action
 from zeldris.modules.helper_funcs.chat_status import user_admin
 from zeldris.modules.helper_funcs.extraction import extract_text
 from zeldris.modules.helper_funcs.filters import CustomFilters
 from zeldris.modules.helper_funcs.handlers import MessageHandlerChecker
 from zeldris.modules.helper_funcs.misc import build_keyboard_parser
 from zeldris.modules.helper_funcs.msg_types import get_filter_type
+from zeldris.modules.helper_funcs.string_handling import button_markdown_parser
 from zeldris.modules.helper_funcs.string_handling import (
-    split_quotes,
-    button_markdown_parser,
     escape_invalid_curly_brackets,
-    markdown_to_html,
 )
+from zeldris.modules.helper_funcs.string_handling import markdown_to_html
+from zeldris.modules.helper_funcs.string_handling import split_quotes
 from zeldris.modules.sql import cust_filters_sql as sql
 
 HANDLER_GROUP = 10
@@ -207,8 +213,8 @@ def filters(update, context):
         return
 
     add = addnew_filter(update, chat_id, keyword, text, file_type, file_id, buttons)
-    # This is an old method sql.add_filter(chat_id, keyword, content, is_sticker, is_document, is_image, is_audio,
-    # is_voice, is_video, buttons)
+    # This is an old method
+    # sql.add_filter(chat_id, keyword, content, is_sticker, is_document, is_image, is_audio, is_voice, is_video, buttons)
 
     if add is True:
         send_message(
@@ -228,7 +234,7 @@ def stop_filter(update, context):
     args = update.effective_message.text.split(None, 1)
 
     conn = connected(context.bot, update, chat, user.id)
-    if conn is not False:
+    if not conn is False:
         chat_id = conn
         chat_name = dispatcher.bot.getChat(conn).title
     else:
@@ -265,8 +271,8 @@ def stop_filter(update, context):
 
 
 def reply_filter(update, context):
-    chat = update.effective_chat
-    message = update.effective_message
+    chat = update.effective_chat  # type: Optional[Chat]
+    message = update.effective_message  # type: Optional[Message]
 
     if not update.effective_user or update.effective_user.id == 777000:
         return
@@ -315,8 +321,8 @@ def reply_filter(update, context):
                             return
                         except BadRequest as excp:
                             if (
-                                    excp.message
-                                    == "Wrong remote file identifier specified: wrong padding in the string"
+                                excp.message
+                                == "Wrong remote file identifier specified: wrong padding in the string"
                             ):
                                 context.bot.send_message(
                                     chat.id,
@@ -327,7 +333,7 @@ def reply_filter(update, context):
                                 LOGGER.exception("Error in filters: " + excp.message)
                                 return
                     valid_format = escape_invalid_curly_brackets(
-                        text, VALID_WELCOME_FORMATTERS
+                        markdown_to_html(text), VALID_WELCOME_FORMATTERS
                     )
                     if valid_format:
                         filtext = valid_format.format(
@@ -366,7 +372,7 @@ def reply_filter(update, context):
                     try:
                         context.bot.send_message(
                             chat.id,
-                            markdown_to_html(filtext),
+                            filtext,
                             reply_to_message_id=message.message_id,
                             parse_mode=ParseMode.HTML,
                             disable_web_page_preview=True,
@@ -378,7 +384,7 @@ def reply_filter(update, context):
                             try:
                                 context.bot.send_message(
                                     chat.id,
-                                    markdown_to_html(filtext),
+                                    filtext,
                                     parse_mode=ParseMode.HTML,
                                     disable_web_page_preview=True,
                                     reply_markup=keyboard,
@@ -405,7 +411,7 @@ def reply_filter(update, context):
                         ENUM_FUNC_MAP[filt.file_type](
                             chat.id,
                             filt.file_id,
-                            caption=markdown_to_html(filtext),
+                            caption=filtext,
                             reply_to_message_id=message.message_id,
                             parse_mode=ParseMode.HTML,
                             disable_web_page_preview=True,
@@ -495,7 +501,7 @@ def reply_filter(update, context):
                 break
 
 
-def rmall_filters(update, _):
+def rmall_filters(update, context):
     chat = update.effective_chat
     user = update.effective_user
     member = chat.get_member(user.id)
@@ -521,13 +527,13 @@ def rmall_filters(update, _):
         )
 
 
-def rmall_callback(update, _):
+def rmall_callback(update, context):
     query = update.callback_query
     chat = update.effective_chat
     msg = update.effective_message
     member = chat.get_member(query.from_user.id)
     if query.data == "filters_rmall":
-        if member.status == "creator" or query.from_user.id in SUDO_USERS:
+        if member.status == "creator" or query.from_user.id in DRAGONS:
             allfilters = sql.get_chat_triggers(chat.id)
             if not allfilters:
                 msg.edit_text("No filters in this chat, nothing to stop!")
@@ -550,7 +556,7 @@ def rmall_callback(update, _):
         if member.status == "member":
             query.answer("You need to be admin to do this.")
     elif query.data == "filters_cancel":
-        if member.status == "creator" or query.from_user.id in SUDO_USERS:
+        if member.status == "creator" or query.from_user.id in DRAGONS:
             msg.edit_text("Clearing of all filters has been cancelled.")
             return
         if member.status == "administrator":
@@ -562,28 +568,26 @@ def rmall_callback(update, _):
 # NOT ASYNC NOT A HANDLER
 def get_exception(excp, filt, chat):
     if excp.message == "Unsupported url protocol":
-        return "You seem to be trying to use the URL protocol which is not supported. Telegram does not support key " \
-               "for multiple protocols, such as tg: //. Please try again! "
+        return "You seem to be trying to use the URL protocol which is not supported. Telegram does not support key for multiple protocols, such as tg: //. Please try again!"
     elif excp.message == "Reply message not found":
         return "noreply"
     else:
-        LOGGER.warning("Message %s could not be parsed", str(filt.reply))
-        LOGGER.exception(
-            "Could not parse filter %s in chat %s", str(filt.keyword), str(chat.id)
+    LOGGER.warning("Message %s could not be parsed", str(filt.reply))
+    LOGGER.exception(
+        "Could not parse filter %s in chat %s", str(filt.keyword), str(chat.id)
         )
-        return "This data could not be sent because it is incorrectly formatted."
+    return "This data could not be sent because it is incorrectly formatted."
 
 
 # NOT ASYNC NOT A HANDLER
 def addnew_filter(update, chat_id, keyword, text, file_type, file_id, buttons):
     msg = update.effective_message
     totalfilt = sql.get_chat_triggers(chat_id)
-    if len(totalfilt) >= 150:  # Idk why i made this like function....
+    if len(totalfilt) >= 1000:  # Idk why i made this like function....
         msg.reply_text("This group has reached its max filters limit of 150.")
         return False
-    else:
-        sql.new_add_filter(chat_id, keyword, text, file_type, file_id, buttons)
-        return True
+    sql.new_add_filter(chat_id, keyword, text, file_type, file_id, buttons)
+    return True
 
 
 def __stats__():
@@ -608,20 +612,16 @@ def __chat_settings__(chat_id, user_id):
 
 __help__ = """
  × /filters: List all active filters saved in the chat.
-
 *Admin only:*
  × /filter <keyword> <reply message>: Add a filter to this chat. The bot will now reply that message whenever 'keyword'\
 is mentioned. If you reply to a sticker with a keyword, the bot will reply with that sticker. NOTE: all filter \
 keywords are in lowercase. If you want your keyword to be a sentence, use quotes. eg: /filter "hey there" How you \
 doin?
  × /stop <filter keyword>: Stop that filter.
-
 *Chat creator only:*
  × /rmallfilter: Stop all chat filters at once.
-
 *Note*: Filters also support markdown formatters like: {first}, {last} etc.. and buttons.
 Check `/markdownhelp` to know more!
-
 """
 
 __mod_name__ = "Filters"
