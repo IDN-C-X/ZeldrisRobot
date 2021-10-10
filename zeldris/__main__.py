@@ -5,9 +5,15 @@ import re
 import traceback
 from typing import Optional
 
-from telegram import Message, Chat, User
+from telegram import Message, Chat, User, Update
 from telegram import ParseMode, InlineKeyboardMarkup, InlineKeyboardButton
-from telegram.ext import CommandHandler, Filters, MessageHandler, CallbackQueryHandler
+from telegram.ext import (
+    CommandHandler,
+    Filters, 
+    MessageHandler, 
+    CallbackQueryHandler,
+    CallbackContext,
+)
 from telegram.ext.dispatcher import DispatcherHandlerStop
 from telegram.utils.helpers import escape_markdown
 
