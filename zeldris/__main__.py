@@ -122,7 +122,7 @@ for module_name in ALL_MODULES:
 # do not async
 def send_help(chat_id, text, keyboard=None):
     if not keyboard:
-        keyboard = InlineKeyboardMarkup(paginate_modules(0, HELPABLE, "help"))
+        keyboard = paginate_modules(0, HELPABLE, "help"))
         keyboard.append([InlineKeyboardButton(text="Home", callback_data="zel_back")])
         kb = InlineKeyboardMarkup(keyboard)
     dispatcher.bot.send_message(
