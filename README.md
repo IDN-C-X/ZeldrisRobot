@@ -173,4 +173,5 @@ anything.
 - RealAkito for reverse search modules.
 - MrYacha for connections module
 - ATechnoHazard for many stuffs
-- corsicanu and nunopenim for android modules Any other missing Credits can be seen in commits!
+- corsicanu and nunopenim for android modules 
+- Any other missing Credits can be seen in commits!
