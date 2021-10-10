@@ -1,6 +1,14 @@
 import telegram.ext as tg
 from telegram import Update
 
+from pyrate_limiter import (
+    BucketFullException,
+    Duration,
+    RequestRate,
+    Limiter,
+    MemoryListBucket,
+)
+
 from zeldris import LOGGER, DEV_USERS, SUDO_USERS, SUPPORT_USERS, WHITELIST_USERS
 
 try:
