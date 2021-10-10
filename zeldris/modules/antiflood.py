@@ -384,7 +384,7 @@ will result in restricting that user.
 __mod_name__ = "Antiflood"
 
 FLOOD_BAN_HANDLER = MessageHandler(
-    Filters.all & ~Filters.status_update & Filters.group,
+    Filters.all & ~Filters.status_update & Filters.chat_type.groups,
     check_flood,
     run_async=True
 )
