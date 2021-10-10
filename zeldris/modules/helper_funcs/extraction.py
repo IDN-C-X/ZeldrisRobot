@@ -53,11 +53,7 @@ def extract_user_and_text(
     text = ""
 
     entities = list(message.parse_entities([MessageEntity.TEXT_MENTION]))
-    if len(entities) > 0:
-        ent = entities[0]
-    else:
-        ent = None
-
+    ent = entities[0] if entities else None
     # if entity offset matches (command end/text start) then all good
     if (
             entities
@@ -135,11 +131,7 @@ def extract_unt_fedban(
     text = ""
 
     entities = list(message.parse_entities([MessageEntity.TEXT_MENTION]))
-    if len(entities) > 0:
-        ent = entities[0]
-    else:
-        ent = None
-
+    ent = entities[0] if entities else None
     # if entity offset matches (command end/text start) then all good
     if (
             entities

@@ -63,10 +63,7 @@ def unblacklist_user(user_id):
 
 def get_reason(user_id):
     user = SESSION.query(BlacklistUsers).get(str(user_id))
-    rep = ""
-    if user:
-        rep = user.reason
-
+    rep = user.reason if user else ""
     SESSION.close()
     return rep
 

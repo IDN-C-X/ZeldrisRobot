@@ -130,11 +130,7 @@ def filters(update, context):
         chat_name = dispatcher.bot.getChat(conn).title
     else:
         chat_id = update.effective_chat.id
-        if chat.type == "private":
-            chat_name = "local filters"
-        else:
-            chat_name = chat.title
-
+        chat_name = "local filters" if chat.type == "private" else chat.title
     if not msg.reply_to_message and len(args) < 2:
         send_message(
             update.effective_message,
@@ -254,11 +250,7 @@ def stop_filter(update, context):
         chat_name = dispatcher.bot.getChat(conn).title
     else:
         chat_id = update.effective_chat.id
-        if chat.type == "private":
-            chat_name = "Local filters"
-        else:
-            chat_name = chat.title
-
+        chat_name = "Local filters" if chat.type == "private" else chat.title
     if len(args) < 2:
         send_message(update.effective_message, "What should i stop?")
         return
@@ -319,10 +311,7 @@ def reply_filter(update, context):
                 if filt.reply_text:
                     if "%%%" in filt.reply_text:
                         split = filt.reply_text.split("%%%")
-                        if all(split):
-                            text = random.choice(split)
-                        else:
-                            text = filt.reply_text
+                        text = random.choice(split) if all(split) else filt.reply_text
                     else:
                         text = filt.reply_text
                     if text.startswith("~!") and text.endswith("!~"):
@@ -343,10 +332,9 @@ def reply_filter(update, context):
                                     chat.id,
                                     "Message couldn't be sent, Is the sticker id valid?",
                                 )
-                                return
                             else:
                                 LOGGER.exception("Error in filters: " + excp.message)
-                                return
+                            return
                     valid_format = escape_invalid_curly_brackets(
                         markdown_to_html(text), VALID_WELCOME_FORMATTERS
                     )
@@ -420,7 +408,6 @@ def reply_filter(update, context):
                                 LOGGER.exception(
                                     "Failed to send message: " + excp.message
                                 )
-                                pass
                 else:
                     try:
                         ENUM_FUNC_MAP[filt.file_type](
@@ -437,83 +424,77 @@ def reply_filter(update, context):
                             message,
                             "I don't have the permission to send the content of the filter.",
                         )
-                break
-            else:
-                if filt.is_sticker:
-                    message.reply_sticker(filt.reply)
-                elif filt.is_document:
-                    message.reply_document(filt.reply)
-                elif filt.is_image:
-                    message.reply_photo(filt.reply)
-                elif filt.is_audio:
-                    message.reply_audio(filt.reply)
-                elif filt.is_voice:
-                    message.reply_voice(filt.reply)
-                elif filt.is_video:
-                    message.reply_video(filt.reply)
-                elif filt.has_markdown:
-                    buttons = sql.get_buttons(chat.id, filt.keyword)
-                    keyb = build_keyboard_parser(context.bot, chat.id, buttons)
-                    keyboard = InlineKeyboardMarkup(keyb)
+            elif filt.is_sticker:
+                message.reply_sticker(filt.reply)
+            elif filt.is_document:
+                message.reply_document(filt.reply)
+            elif filt.is_image:
+                message.reply_photo(filt.reply)
+            elif filt.is_audio:
+                message.reply_audio(filt.reply)
+            elif filt.is_voice:
+                message.reply_voice(filt.reply)
+            elif filt.is_video:
+                message.reply_video(filt.reply)
+            elif filt.has_markdown:
+                buttons = sql.get_buttons(chat.id, filt.keyword)
+                keyb = build_keyboard_parser(context.bot, chat.id, buttons)
+                keyboard = InlineKeyboardMarkup(keyb)
 
-                    try:
-                        send_message(
-                            update.effective_message,
-                            filt.reply,
-                            parse_mode=ParseMode.MARKDOWN,
-                            disable_web_page_preview=True,
-                            reply_markup=keyboard,
+                try:
+                    send_message(
+                        update.effective_message,
+                        filt.reply,
+                        parse_mode=ParseMode.MARKDOWN,
+                        disable_web_page_preview=True,
+                        reply_markup=keyboard,
+                    )
+                except BadRequest as excp:
+                    if excp.message == "Unsupported url protocol":
+                        try:
+                            send_message(
+                                update.effective_message,
+                                "You seem to be trying to use an unsupported url protocol. "
+                                "Telegram doesn't support buttons for some protocols, such as tg://. Please try "
+                                "again...",
+                            )
+                        except BadRequest as excp:
+                            LOGGER.exception("Error in filters: " + excp.message)
+                    elif excp.message == "Reply message not found":
+                        try:
+                            context.bot.send_message(
+                                chat.id,
+                                filt.reply,
+                                parse_mode=ParseMode.MARKDOWN,
+                                disable_web_page_preview=True,
+                                reply_markup=keyboard,
+                            )
+                        except BadRequest as excp:
+                            LOGGER.exception("Error in filters: " + excp.message)
+                    else:
+                        try:
+                            send_message(
+                                update.effective_message,
+                                "This message couldn't be sent as it's incorrectly formatted.",
+                            )
+                        except BadRequest as excp:
+                            LOGGER.exception("Error in filters: " + excp.message)
+                        LOGGER.warning(
+                            "Message %s could not be parsed", str(filt.reply)
                         )
-                    except BadRequest as excp:
-                        if excp.message == "Unsupported url protocol":
-                            try:
-                                send_message(
-                                    update.effective_message,
-                                    "You seem to be trying to use an unsupported url protocol. "
-                                    "Telegram doesn't support buttons for some protocols, such as tg://. Please try "
-                                    "again...",
-                                )
-                            except BadRequest as excp:
-                                LOGGER.exception("Error in filters: " + excp.message)
-                                pass
-                        elif excp.message == "Reply message not found":
-                            try:
-                                context.bot.send_message(
-                                    chat.id,
-                                    filt.reply,
-                                    parse_mode=ParseMode.MARKDOWN,
-                                    disable_web_page_preview=True,
-                                    reply_markup=keyboard,
-                                )
-                            except BadRequest as excp:
-                                LOGGER.exception("Error in filters: " + excp.message)
-                                pass
-                        else:
-                            try:
-                                send_message(
-                                    update.effective_message,
-                                    "This message couldn't be sent as it's incorrectly formatted.",
-                                )
-                            except BadRequest as excp:
-                                LOGGER.exception("Error in filters: " + excp.message)
-                                pass
-                            LOGGER.warning(
-                                "Message %s could not be parsed", str(filt.reply)
-                            )
-                            LOGGER.exception(
-                                "Could not parse filter %s in chat %s",
-                                str(filt.keyword),
-                                str(chat.id),
-                            )
+                        LOGGER.exception(
+                            "Could not parse filter %s in chat %s",
+                            str(filt.keyword),
+                            str(chat.id),
+                        )
 
-                else:
+            else:
                     # LEGACY - all new filters will have has_markdown set to True.
-                    try:
-                        send_message(update.effective_message, filt.reply)
-                    except BadRequest as excp:
-                        LOGGER.exception("Error in filters: " + excp.message)
-                        pass
-                break
+                try:
+                    send_message(update.effective_message, filt.reply)
+                except BadRequest as excp:
+                    LOGGER.exception("Error in filters: " + excp.message)
+            break
 
 
 def rmall_filters(update, _):
