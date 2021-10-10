@@ -1228,6 +1228,7 @@ from same line.
 Tip: Buttons must be placed at the end of welcome messages.
 """.format(
     WELC_HELP_TXT
+)
 
 
 NEW_MEM_HANDLER = MessageHandler(
