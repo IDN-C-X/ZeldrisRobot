@@ -27,3 +27,4 @@ bleach
 markdown2
 alphabet_detector
 redis
+jikanpy
