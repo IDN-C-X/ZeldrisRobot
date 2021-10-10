@@ -626,9 +626,15 @@ def main():
 
     else:
         LOGGER.info("[Zeldris] Using long polling.")
-        updater.start_polling(timeout=15, read_latency=4, clean=True)
+        updater.start_polling(timeout=15, read_latency=4, drop_pending_updates=True)
+        if MESSAGE_DUMP:
+            updater.bot.send_message(
+                chat_id=MESSAGE_DUMP, text="System Started..."
+            )
+        if len(argv) not in (1, 3, 4):
+        client.disconnect()
+    else:
         client.run_until_disconnected()
-
     updater.idle()
 
 
