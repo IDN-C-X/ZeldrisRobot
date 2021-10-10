@@ -40,7 +40,9 @@ from zeldris.modules.helper_funcs.misc import paginate_modules
 from zeldris.modules.purge import client
 
 PM_START_TEXT = f"""
-Hey there! my name is *{dispatcher.bot.first_name}*. If you have any questions on how to use me, Click Help button.
+Hey there! my name is *{dispatcher.bot.first_name}*. 
+If you have any questions on how to use me, 
+Click Help button[.](https://telegra.ph/file/fed9ba09e9add9b197c21.png)
 
 I'm here to make your group management fun and easy! i have lots of handy features, such as flood control, 
 a warning system, a note keeping system, and even replies on predetermined filters.
@@ -53,13 +55,22 @@ Wanna Add me to your Group? Just click the button below!
 buttons = [
     [
         InlineKeyboardButton(
-            text="Add to Group 👥", url="t.me/ZeldrisRobot?startgroup=true"
+            text="Add to Group 👥", 
+            url="t.me/ZeldrisRobot?startgroup=true",
         ),
-        InlineKeyboardButton(text="Updates 📢", url="https://t.me/IDNCoder"),
-    ]
+        InlineKeyboardButton(
+            text="Updates 📢", 
+            url="https://t.me/IDNCoder",
+        ),
+    ],
+    [
+        InlineKeyboardButton(
+            text="Help & Commands ❔", 
+            callback_data="help_back",
+        ),
+    ],
 ]
 
-buttons += [[InlineKeyboardButton(text="Help & Commands ❔", callback_data="help_back")]]
 
 HELP_STRINGS = f"""
 Hello there! My name is *{dispatcher.bot.first_name}*.
@@ -171,8 +182,7 @@ def start(update: Update, context: CallbackContext):
                 IMPORTED["rules"].send_rules(update, args[0], from_pm=True)
 
         else:
-            update.effective_message.reply_photo(
-                "https://telegra.ph/file/fed9ba09e9add9b197c21.png",
+            update.effective_message.reply_text(
                 PM_START_TEXT,
                 reply_markup=InlineKeyboardMarkup(buttons),
                 parse_mode=ParseMode.MARKDOWN,
