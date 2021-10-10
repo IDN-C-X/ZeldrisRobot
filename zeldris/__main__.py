@@ -123,11 +123,34 @@ for module_name in ALL_MODULES:
 def send_help(chat_id, text, keyboard=None):
     if not keyboard:
         keyboard = InlineKeyboardMarkup(paginate_modules(0, HELPABLE, "help"))
+        keyboard.append([InlineKeyboardButton(text="Home", callback_data="zel_back")])
+        kb = InlineKeyboardMarkup(keyboard)
     dispatcher.bot.send_message(
         chat_id=chat_id, text=text, parse_mode=ParseMode.MARKDOWN, reply_markup=keyboard
     )
 
 
+def zel_cb(update, context):
+    query = update.callback_query
+    if query.data == "zel_":
+        query.message.edit_text(
+            text="""Your Callback Data""",
+            parse_mode=ParseMode.MARKDOWN,
+            disable_web_page_preview=True,
+            reply_markup=InlineKeyboardMarkup(
+                [[InlineKeyboardButton(text="Back", callback_data="zel_back")]]
+            ),
+        )
+    elif query.data == "zel_back":
+        query.message.reply_photo(
+                "https://telegra.ph/file/fed9ba09e9add9b197c21.png",
+                PM_START_TEXT,
+                reply_markup=InlineKeyboardMarkup(buttons),
+                parse_mode=ParseMode.MARKDOWN,
+                timeout=60,
+            )
+        
+        
 def test(update, _):
     try:
         print(update)
@@ -217,7 +240,7 @@ def help_button(update, context):
                     )
                     + HELPABLE[module].__help__
             )
-            query.message.reply_text(
+            query.message.edit_text(
                 text=text,
                 parse_mode=ParseMode.MARKDOWN,
                 reply_markup=InlineKeyboardMarkup(
@@ -227,7 +250,7 @@ def help_button(update, context):
 
         elif prev_match:
             curr_page = int(prev_match.group(1))
-            query.message.reply_text(
+            query.message.edit_text(
                 HELP_STRINGS,
                 parse_mode=ParseMode.MARKDOWN,
                 reply_markup=InlineKeyboardMarkup(
@@ -237,7 +260,7 @@ def help_button(update, context):
 
         elif next_match:
             next_page = int(next_match.group(1))
-            query.message.reply_text(
+            query.message.edit_text(
                 HELP_STRINGS,
                 parse_mode=ParseMode.MARKDOWN,
                 reply_markup=InlineKeyboardMarkup(
@@ -246,7 +269,7 @@ def help_button(update, context):
             )
 
         elif back_match:
-            query.message.reply_text(
+            query.message.edit_text(
                 text=HELP_STRINGS,
                 parse_mode=ParseMode.MARKDOWN,
                 reply_markup=InlineKeyboardMarkup(
@@ -255,7 +278,6 @@ def help_button(update, context):
             )
 
         # ensure no spinny white circle
-        query.message.delete()
         context.bot.answer_callback_query(query.id)
     except Exception as excp:
         if excp.message not in [
@@ -464,7 +486,7 @@ def get_settings(update, context):
         "Click here to check your settings."
 
 
-def migrate_chats(update, _):
+def migrate_chats(update, context):
     msg = update.effective_message  # type: Optional[Message]
     if msg.migrate_to_chat_id:
         old_chat = update.effective_chat.id
@@ -519,6 +541,7 @@ def is_chat_allowed(update, context):
 def main():
     # test_handler = CommandHandler("test", test, run_async=True)
     start_handler = CommandHandler("start", start, pass_args=True, run_async=True)
+    home_callback_handler = CallbackQueryHandler(zel_cb, pattern=r"zel_", run_async=True)
 
     help_handler = CommandHandler("help", get_help, run_async=True)
     help_callback_handler = CallbackQueryHandler(help_button, pattern=r"help_", run_async=True)
@@ -537,6 +560,7 @@ def main():
     dispatcher.add_handler(settings_callback_handler)
     dispatcher.add_handler(migrate_handler)
     dispatcher.add_handler(is_chat_allowed_handler)
+    dispatcher.add_handler(home_callback_handler)
 
     dispatcher.add_error_handler(error_handler)
 
