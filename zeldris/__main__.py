@@ -46,7 +46,7 @@ Wanna Add me to your Group? Just click the button below!
 buttons = [
     [
         InlineKeyboardButton(
-            text="Add to Group 👥", url="t.me/ZeldrisRobott?startgroup=true"
+            text="Add to Group 👥", url="t.me/ZeldrisRobot?startgroup=true"
         ),
         InlineKeyboardButton(text="Updates 📢", url="https://t.me/IDNCoder"),
     ]
