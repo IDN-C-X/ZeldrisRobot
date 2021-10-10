@@ -1,8 +1,12 @@
 import re
 import time
 from html import escape
+from typing import Optional
 
 from telegram import (
+    Message,
+    User,
+    Chat,
     ParseMode,
     InlineKeyboardMarkup,
     InlineKeyboardButton,
@@ -188,8 +192,7 @@ def new_member(update, context):
 
             elif new_mem.id == context.bot.id:
                 update.effective_message.reply_text(
-                    "Hey {}, I'm {}! Thank you for adding me to {}"
-                    " and be sure to join our channel: @skyleebot to know more about updates and tricks!".format(
+                    "Hey {}, I'm {}! Thank you for adding me to {}!".format(
                         user.first_name, context.bot.first_name, chat_name
                     ),
                     reply_to_message_id=reply,
@@ -197,7 +200,7 @@ def new_member(update, context):
 
                 context.bot.send_message(
                     MESSAGE_DUMP,
-                    "Skylee have been added to <pre>{}</pre> with ID: \n<pre>{}</pre>".format(
+                    "Zeldris have been added to <pre>{}</pre> with ID: \n<pre>{}</pre>".format(
                         chat.title, chat.id
                     ),
                     parse_mode=ParseMode.HTML,
@@ -345,7 +348,7 @@ def left_member(update, context):
                 sw = spamwtc.get_ban(int(left_mem.id))
                 if sw:
                     return
-            except:
+            except BaseException:
                 pass
 
             # Ignore bot being kicked
@@ -505,7 +508,7 @@ def goodbye(update, context):
 @user_admin
 @loggable
 @typing_action
-def set_welcome(update, context) -> str:
+def set_welcome(update, _) -> str:
     chat = update.effective_chat  # type: Optional[Chat]
     user = update.effective_user  # type: Optional[User]
     msg = update.effective_message  # type: Optional[Message]
@@ -532,7 +535,7 @@ def set_welcome(update, context) -> str:
 @user_admin
 @loggable
 @typing_action
-def reset_welcome(update, context) -> str:
+def reset_welcome(update, _) -> str:
     chat = update.effective_chat  # type: Optional[Chat]
     user = update.effective_user  # type: Optional[User]
     sql.set_custom_welcome(chat.id, sql.DEFAULT_WELCOME, sql.Types.TEXT)
@@ -552,7 +555,7 @@ def reset_welcome(update, context) -> str:
 @user_admin
 @loggable
 @typing_action
-def set_goodbye(update, context) -> str:
+def set_goodbye(update, _) -> str:
     chat = update.effective_chat  # type: Optional[Chat]
     user = update.effective_user  # type: Optional[User]
     msg = update.effective_message  # type: Optional[Message]
@@ -577,7 +580,7 @@ def set_goodbye(update, context) -> str:
 @user_admin
 @loggable
 @typing_action
-def reset_goodbye(update, context) -> str:
+def reset_goodbye(update, _) -> str:
     chat = update.effective_chat  # type: Optional[Chat]
     user = update.effective_user  # type: Optional[User]
     sql.set_custom_gdbye(chat.id, sql.DEFAULT_GOODBYE, sql.Types.TEXT)
@@ -615,7 +618,7 @@ def welcomemute(update, context) -> str:
                     escape(chat.title), mention_html(user.id, user.first_name)
                 )
             )
-        elif args[0].lower() in ("soft"):
+        elif args[0].lower() in "soft":
             sql.set_welcome_mutes(chat.id, "soft")
             msg.reply_text(
                 "I will restrict user's permission to send media for 24 hours"
@@ -628,7 +631,7 @@ def welcomemute(update, context) -> str:
                     escape(chat.title), mention_html(user.id, user.first_name)
                 )
             )
-        elif args[0].lower() in ("strong"):
+        elif args[0].lower() in "strong":
             sql.set_welcome_mutes(chat.id, "strong")
             msg.reply_text(
                 "I will now mute people when they join and"
@@ -803,7 +806,7 @@ WELC_HELP_TXT = (
 
 @user_admin
 @typing_action
-def welcome_help(update, context):
+def welcome_help(update, _):
     update.effective_message.reply_text(WELC_HELP_TXT, parse_mode=ParseMode.MARKDOWN)
 
 
@@ -853,12 +856,14 @@ __help__ = """
  × /resetgoodbye: Resets to the default goodbye message.
  × /cleanwelcome <on/off>: On new member, try to delete the previous welcome message to avoid spamming the chat.
  × /cleanservice <on/off>: Clean 'user is joined' service messages automatically.
- × /welcomemute <off/soft/strong>: All users that join, get muted; a button gets added to the welcome message for them to unmute themselves. \
-This proves they aren't a bot! soft - restricts users ability to post media for 24 hours. strong - mutes on join until they prove they're not bots.
+ × /welcomemute <off/soft/strong>: All users that join, get muted; a button gets added to the welcome message for them 
+ to unmute themselves. \
+This proves they aren't a bot! soft - restricts users ability to post media for 24 hours. strong - mutes on join until 
+they prove they're not bots.
  × /welcomehelp: View more formatting information for custom welcome/goodbye messages.
 
-Buttons in welcome messages are made easy, everyone hates URLs visible. With button links you can make your chats look more \
-tidy and simplified.
+Buttons in welcome messages are made easy, everyone hates URLs visible. With button links you can make your chats look 
+more tidy and simplified.
 
 An example of using buttons:
 You can create a button using `[button text](buttonurl://example.com)`.

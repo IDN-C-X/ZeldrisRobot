@@ -52,6 +52,7 @@ def ban(update, context):
 
         message.reply_text("I can't seem to find this user")
         return ""
+
     if is_user_ban_protected(chat, user_id, member):
         message.reply_text("I'm not gonna ban an admin, don't make fun of yourself!")
         return ""
