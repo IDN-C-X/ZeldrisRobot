@@ -84,17 +84,17 @@ Click help button to know my commands!
 buttons = [
     [
         InlineKeyboardButton(
-            text="❔ Help", 
+            text="❔ Help",
             callback_data="help_back",
         ),
         InlineKeyboardButton(
-            text="Updates 📢", 
+            text="Updates 📢",
             url="https://t.me/IDNCoder",
         ),
     ],
     [
         InlineKeyboardButton(
-            text="Add Zeldris to Your Group 👥", 
+            text="Add Zeldris to Your Group 👥",
             url="t.me/ZeldrisRobot?startgroup=true",
         ),
     ],
