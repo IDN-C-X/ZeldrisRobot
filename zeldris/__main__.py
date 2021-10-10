@@ -29,6 +29,7 @@ from telegram import Message, Chat, User, Update
 from telegram import ParseMode, InlineKeyboardMarkup, InlineKeyboardButton
 from telegram.error import BadRequest
 from telegram.ext import (
+    CommandHandler,
     Filters,
     MessageHandler,
     CallbackQueryHandler,
