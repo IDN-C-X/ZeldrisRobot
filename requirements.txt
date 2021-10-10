@@ -20,6 +20,7 @@ pillow
 psutil
 cachetools
 speedtest-cli>=2.0.2
+gpytranslate
 googletrans
 wikipedia
 spamwatch
