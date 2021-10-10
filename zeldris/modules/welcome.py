@@ -1237,10 +1237,18 @@ LEFT_MEM_HANDLER = MessageHandler(
     Filters.status_update.left_chat_member, left_member, run_async=True
 )
 WELC_PREF_HANDLER = CommandHandler(
-    "welcome", welcome, filters=Filters.chat_type.groups, run_async=True
+    "welcome",
+    welcome,
+    pass_args=True,
+    filters=Filters.chat_type.groups,
+    run_async=True,
 )
 GOODBYE_PREF_HANDLER = CommandHandler(
-    "goodbye", goodbye, filters=Filters.chat_type.groups, run_async=True
+    "goodbye",
+    goodbye,
+    pass_args=True,
+    filters=Filters.chat_type.groups,
+    run_async=True,
 )
 SET_WELCOME = CommandHandler(
     "setwelcome", set_welcome, filters=Filters.chat_type.groups, run_async=True
