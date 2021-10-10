@@ -21,7 +21,7 @@ CMD_STARTERS = CUSTOM_CMD or ["/", "!"]
 class AntiSpam:
     def __init__(self):
         self.whitelist = (
-                (DEV_USERS or [])
+                + (DEV_USERS or [])
                 + (SUDO_USERS or [])
                 + (WHITELIST_USERS or [])
                 + (SUPPORT_USERS or [])
