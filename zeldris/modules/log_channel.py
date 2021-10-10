@@ -53,9 +53,7 @@ if is_module_loaded(FILENAME):
                     except Unauthorized:
                         sql.stop_chat_logging(chat.id)
 
-            elif result == "":
-                pass
-            else:
+            elif result != "":
                 LOGGER.warning(
                     "%s was set as loggable, but had no return statement.",
                     func,
@@ -121,9 +119,7 @@ if is_module_loaded(FILENAME):
             try:
                 message.delete()
             except BadRequest as excp:
-                if excp.message == "Message to delete not found":
-                    pass
-                else:
+                if excp.message != "Message to delete not found":
                     LOGGER.exception(
                         "Error deleting message in log channel. Should work anyway though."
                     )

@@ -51,10 +51,7 @@ def afk(update, _):
         return
 
     start_afk_time = time.time()
-    if len(args) >= 2:
-        reason = args[1]
-    else:
-        reason = "none"
+    reason = args[1] if len(args) >= 2 else "none"
     start_afk(update.effective_user.id, reason)
     REDIS.set(f"afk_time_{update.effective_user.id}", start_afk_time)
     fname = update.effective_user.first_name
@@ -152,18 +149,16 @@ def check_afk(update, context, user_id: int, fst_name: int, userc_id: int):
         since_afk = get_readable_time(
             (time.time() - float(REDIS.get(f"afk_time_{user_id}")))
         )
+        if int(userc_id) == int(user_id):
+            return
         if reason == "none":
-            if int(userc_id) == int(user_id):
-                return
             res = "{} is AFK!\nSince: {}".format(fst_name, since_afk)
-            update.effective_message.reply_text(res)
         else:
-            if int(userc_id) == int(user_id):
-                return
             res = "{} is AFK!\nReason: {}\nSince: {}".format(
                 fst_name, reason, since_afk
             )
-            update.effective_message.reply_text(res)
+
+        update.effective_message.reply_text(res)
 
 
 def __gdpr__(user_id):

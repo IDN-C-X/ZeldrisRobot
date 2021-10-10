@@ -81,9 +81,10 @@ def device(update, context):
             del_msg.delete()
             update.effective_message.delete()
         except BadRequest as err:
-            if (err.message == "Message to delete not found") or (
-                    err.message == "Message can't be deleted"
-            ):
+            if err.message in [
+                "Message to delete not found",
+                "Message can't be deleted",
+            ]:
                 return
     devices = " ".join(args)
     db = get(DEVICES_DATA).json()
@@ -111,9 +112,10 @@ def device(update, context):
             del_msg.delete()
             update.effective_message.delete()
         except BadRequest as err:
-            if (err.message == "Message to delete not found") or (
-                    err.message == "Message can't be deleted"
-            ):
+            if err.message in [
+                "Message to delete not found",
+                "Message can't be deleted",
+            ]:
                 return
     update.message.reply_text(
         "{}".format(reply), parse_mode=ParseMode.HTML, disable_web_page_preview=True
@@ -134,9 +136,10 @@ def twrp(update, context):
             del_msg.delete()
             update.effective_message.delete()
         except BadRequest as err:
-            if (err.message == "Message to delete not found") or (
-                    err.message == "Message can't be deleted"
-            ):
+            if err.message in [
+                "Message to delete not found",
+                "Message can't be deleted",
+            ]:
                 return
 
     _device = " ".join(args)
@@ -153,9 +156,10 @@ def twrp(update, context):
             del_msg.delete()
             update.effective_message.delete()
         except BadRequest as err:
-            if (err.message == "Message to delete not found") or (
-                    err.message == "Message can't be deleted"
-            ):
+            if err.message in [
+                "Message to delete not found",
+                "Message can't be deleted",
+            ]:
                 return
     else:
         reply = f"*Latest Official TWRP for {_device}*\n"
@@ -178,7 +182,7 @@ def twrp(update, context):
         for i, tag in enumerate(trs):
             dl_path = tag.find("a")["href"]
             match = re.search("([\d.]+)", dl_path)
-            new_ver = tuple([int(x) for x in match.group(1).split(".")])
+            new_ver = tuple(int(x) for x in match.group(1).split("."))
             if new_ver > base_ver:
                 base_ver = new_ver
                 idx = i
@@ -243,7 +247,7 @@ def orangefox(update, _):
             msg += f"• Date: `{date}`\n"
             msg += f"• File: `{dl_file}`\n"
             msg += f"• MD5: `{md5}`\n"
-            btn = [[InlineKeyboardButton(text=f"Download", url=dl_link)]]
+            btn = [[InlineKeyboardButton(text='Download', url=dl_link)]]
     else:
         msg = "Enter the device codename to fetch, like:\n`/orangefox mido`"
 
