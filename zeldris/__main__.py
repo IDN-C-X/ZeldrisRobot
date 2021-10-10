@@ -302,6 +302,7 @@ def zel_cb(update, _):
     elif query.data == "zel_back":
         query.message.edit_text(
             PM_START_TEXT.format(
+                escape_markdown(context.bot.first_name),
                 sql.num_users(),
                 sql.num_chats()),
             reply_markup=InlineKeyboardMarkup(buttons),
