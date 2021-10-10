@@ -573,9 +573,7 @@ def get_exception(excp, filt, chat):
         return "noreply"
     else:
     LOGGER.warning("Message %s could not be parsed", str(filt.reply))
-    LOGGER.exception(
-        "Could not parse filter %s in chat %s", str(filt.keyword), str(chat.id)
-        )
+    LOGGER.exception("Could not parse filter %s in chat %s", str(filt.keyword), str(chat.id))
     return "This data could not be sent because it is incorrectly formatted."
 
 
