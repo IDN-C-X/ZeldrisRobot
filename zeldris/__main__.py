@@ -224,7 +224,7 @@ def start(update: Update, context: CallbackContext):
             )
     else:
         update.effective_message.reply_text(
-            <b>I'm awake already!</b>\n<b>Haven't slept since:</b> <code>{}</code>\n<b>Support @IDNCoderX</b>".format(
+            "<b>I'm awake already!</b>\n<b>Haven't slept since:</b> <code>{}</code>\n<b>Support @IDNCoderX</b>".format(
                 uptime),
             parse_mode=ParseMode.HTML,
         )
