@@ -449,7 +449,7 @@ GBAN_STATUS = CommandHandler(
     "spamshield", gbanstat, pass_args=True, filters=Filters.chat_type.groups
 )
 
-GBAN_ENFORCER = MessageHandler(Filters.all & Filters.group, enforce_gban)
+GBAN_ENFORCER = MessageHandler(Filters.all & Filters.chat_type.groups, enforce_gban)
 
 dispatcher.add_handler(GBAN_HANDLER)
 dispatcher.add_handler(UNGBAN_HANDLER)
