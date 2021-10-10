@@ -81,6 +81,8 @@ DATA_EXPORT = []
 CHAT_SETTINGS = {}
 USER_SETTINGS = {}
 
+GDPR = []
+
 for module_name in ALL_MODULES:
     imported_module = importlib.import_module("zeldris.modules." + module_name)
     if not hasattr(imported_module, "__mod_name__"):
@@ -100,6 +102,9 @@ for module_name in ALL_MODULES:
 
     if hasattr(imported_module, "__stats__"):
         STATS.append(imported_module)
+
+    if hasattr(imported_module, "__gdpr__"):
+        GDPR.append(imported_module)
 
     if hasattr(imported_module, "__user_info__"):
         USER_INFO.append(imported_module)
