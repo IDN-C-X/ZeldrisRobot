@@ -17,7 +17,7 @@ from telegram.utils.helpers import escape_markdown
 from telegram.utils.helpers import mention_html
 
 from zeldris import dispatcher
-from zeldris import DRAGONS
+from zeldris import SUDO_USERS
 from zeldris import LOGGER
 from zeldris.modules.connection import connected
 from zeldris.modules.disable import DisableAbleCommandHandler
@@ -234,7 +234,7 @@ def stop_filter(update, context):
     args = update.effective_message.text.split(None, 1)
 
     conn = connected(context.bot, update, chat, user.id)
-    if not conn is False:
+    if conn is not False:
         chat_id = conn
         chat_name = dispatcher.bot.getChat(conn).title
     else:
