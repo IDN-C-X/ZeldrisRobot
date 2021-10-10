@@ -24,6 +24,7 @@ from zeldris import (
     OWNER_ID,
     WEBHOOK,
     CERT_PATH,
+    MESSAGE_DUMP,
     PORT,
     URL,
     LOGGER,
@@ -212,7 +213,7 @@ def error_handler(update, context):
     if len(message) >= 4096:
         message = message[:4096]
     # Finally, send the message
-    context.bot.send_message(chat_id=OWNER_ID, text=message, parse_mode=ParseMode.HTML)
+    context.bot.send_message(chat_id=MESSAGE_DUMP, text=message, parse_mode=ParseMode.HTML)
 
 
 def help_button(update, context):
