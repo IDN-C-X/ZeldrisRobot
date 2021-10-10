@@ -19,7 +19,7 @@ from telegram import (
     TelegramError,
 )
 from telegram.error import BadRequest
-from telegram.ext import CommandHandler, run_async, Filters
+from telegram.ext import CommandHandler, Filters
 from telegram.utils.helpers import escape_markdown, mention_html
 
 from zeldris import (
@@ -38,7 +38,6 @@ from zeldris.modules.helper_funcs.extraction import extract_user
 from zeldris.modules.helper_funcs.filters import CustomFilters
 
 
-@run_async
 @typing_action
 def get_id(update, context):
     args = context.args
@@ -79,7 +78,6 @@ def get_id(update, context):
             )
 
 
-@run_async
 def info(update, context):
     args = context.args
     msg = update.effective_message  # type: Optional[Message]
@@ -193,7 +191,6 @@ def info(update, context):
         del_msg.delete()
 
 
-@run_async
 @typing_action
 def echo(update, context):
     args = update.effective_message.text.split(None, 1)
@@ -205,7 +202,6 @@ def echo(update, context):
     message.delete()
 
 
-@run_async
 @typing_action
 def gdpr(update, context):
     update.effective_message.reply_text("Deleting identifiable data...")
@@ -253,7 +249,6 @@ Keep in mind that your message <b>MUST</b> contain some text other than just a b
 )
 
 
-@run_async
 @typing_action
 def markdown_help(update, context):
     update.effective_message.reply_text(MARKDOWN_HELP, parse_mode=ParseMode.HTML)
@@ -267,7 +262,6 @@ def markdown_help(update, context):
     )
 
 
-@run_async
 @typing_action
 def wiki(update, context):
     kueri = re.split(pattern="wiki", string=update.effective_message.text)
@@ -302,7 +296,6 @@ def wiki(update, context):
             )
 
 
-@run_async
 @typing_action
 def ud(update, context):
     msg = update.effective_message
@@ -334,17 +327,15 @@ def ud(update, context):
         msg.reply_text(f"Error! {err.message}")
 
 
-@run_async
 @typing_action
 def src(update, context):
     update.effective_message.reply_text(
-        "Hey there! You can find what makes me click [here](www.github.com/starry69/skyleebot).",
+        "Hey there! You can find what makes me click [here](www.github.com/IDN-C/ZeldrisRobot).",
         parse_mode=ParseMode.MARKDOWN,
         disable_web_page_preview=True,
     )
 
 
-@run_async
 @send_action(ChatAction.UPLOAD_PHOTO)
 def wall(update, context):
     chat_id = update.effective_chat.id
@@ -391,7 +382,6 @@ def wall(update, context):
                 )
 
 
-@run_async
 @typing_action
 def getlink(update, context):
     args = context.args
@@ -420,7 +410,6 @@ def getlink(update, context):
     message.reply_text(links)
 
 
-@run_async
 @send_action(ChatAction.UPLOAD_PHOTO)
 def rmemes(update, context):
     msg = update.effective_message
@@ -472,7 +461,6 @@ def rmemes(update, context):
         return msg.reply_text(f"Error! {excp.message}")
 
 
-@run_async
 def staff_ids(update, context):
     sfile = "List of SUDO & SUPPORT users:\n"
     sfile += f"× SUDO USER IDs; {SUDO_USERS}\n"
@@ -486,7 +474,6 @@ def staff_ids(update, context):
         )
 
 
-@run_async
 def stats(update, context):
     update.effective_message.reply_text(
         "Current stats:\n" + "\n".join([mod.__stats__() for mod in STATS])
@@ -510,23 +497,23 @@ An "odds and ends" module for small, simple commands which don't really fit anyw
 
 __mod_name__ = "Miscs"
 
-ID_HANDLER = DisableAbleCommandHandler("id", get_id, pass_args=True)
-INFO_HANDLER = DisableAbleCommandHandler("info", info, pass_args=True)
-ECHO_HANDLER = CommandHandler("echo", echo, filters=CustomFilters.sudo_filter)
-MD_HELP_HANDLER = CommandHandler("markdownhelp", markdown_help, filters=Filters.private)
-STATS_HANDLER = CommandHandler("stats", stats, filters=Filters.user(OWNER_ID))
-GDPR_HANDLER = CommandHandler("gdpr", gdpr, filters=Filters.private)
-WIKI_HANDLER = DisableAbleCommandHandler("wiki", wiki)
-WALLPAPER_HANDLER = DisableAbleCommandHandler("wall", wall, pass_args=True)
-UD_HANDLER = DisableAbleCommandHandler("ud", ud)
+ID_HANDLER = DisableAbleCommandHandler("id", get_id, pass_args=True, run_async=True)
+INFO_HANDLER = DisableAbleCommandHandler("info", info, pass_args=True, run_async=True)
+ECHO_HANDLER = CommandHandler("echo", echo, filters=CustomFilters.sudo_filter, run_async=True)
+MD_HELP_HANDLER = CommandHandler("markdownhelp", markdown_help, filters=Filters.chat_type.private, run_async=True)
+STATS_HANDLER = CommandHandler("stats", stats, filters=Filters.user(OWNER_ID), run_async=True)
+GDPR_HANDLER = CommandHandler("gdpr", gdpr, filters=Filters.chat_type.private, run_async=True)
+WIKI_HANDLER = DisableAbleCommandHandler("wiki", wiki, run_async=True)
+WALLPAPER_HANDLER = DisableAbleCommandHandler("wall", wall, pass_args=True, run_async=True)
+UD_HANDLER = DisableAbleCommandHandler("ud", ud, run_async=True)
 GETLINK_HANDLER = CommandHandler(
-    "getlink", getlink, pass_args=True, filters=Filters.user(OWNER_ID)
+    "getlink", getlink, pass_args=True, filters=Filters.user(OWNER_ID), run_async=True
 )
 STAFFLIST_HANDLER = CommandHandler(
-    "staffids", staff_ids, filters=Filters.user(OWNER_ID)
+    "staffids", staff_ids, filters=Filters.user(OWNER_ID), run_async=True
 )
-REDDIT_MEMES_HANDLER = DisableAbleCommandHandler("rmeme", rmemes)
-SRC_HANDLER = CommandHandler("source", src, filters=Filters.private)
+REDDIT_MEMES_HANDLER = DisableAbleCommandHandler("rmeme", rmemes, run_async=True)
+SRC_HANDLER = CommandHandler("source", src, filters=Filters.chat_type.private, run_async=True)
 
 dispatcher.add_handler(WALLPAPER_HANDLER)
 dispatcher.add_handler(UD_HANDLER)
