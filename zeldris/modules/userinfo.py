@@ -12,7 +12,6 @@ from zeldris.modules.helper_funcs.alternate import typing_action
 from zeldris.modules.helper_funcs.extraction import extract_user
 
 
-
 @typing_action
 def about_me(update, context):
     message = update.effective_message  # type: Optional[Message]
@@ -38,7 +37,6 @@ def about_me(update, context):
         )
 
 
-
 @typing_action
 def set_about_me(update, context):
     message = update.effective_message  # type: Optional[Message]
@@ -57,7 +55,6 @@ def set_about_me(update, context):
                     MAX_MESSAGE_LENGTH // 4, len(info[1])
                 )
             )
-
 
 
 @typing_action
@@ -81,7 +78,6 @@ def about_bio(update, context):
         )
     else:
         update.effective_message.reply_text(" Your bio  about you has been saved !")
-
 
 
 @typing_action

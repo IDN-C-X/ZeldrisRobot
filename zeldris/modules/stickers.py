@@ -13,7 +13,6 @@ from zeldris.modules.disable import DisableAbleCommandHandler
 from zeldris.modules.helper_funcs.alternate import typing_action
 
 
-
 @typing_action
 def kang(update, context):
     msg = update.effective_message
@@ -386,7 +385,6 @@ def makepack_internal(
         msg.reply_text("Failed to create sticker pack. Possibly due to blek mejik.")
 
 
-
 def getsticker(update, context):
     msg = update.effective_message
     chat_id = update.effective_chat.id
@@ -415,7 +413,6 @@ def getsticker(update, context):
             + ", Please reply to sticker message to get sticker image",
             parse_mode=ParseMode.HTML,
         )
-
 
 
 @typing_action

@@ -21,7 +21,6 @@ from zeldris.modules.sql import reporting_sql as sql
 REPORT_GROUP = 5
 
 
-
 @user_admin
 @typing_action
 def report_setting(update, context):
@@ -68,7 +67,6 @@ def report_setting(update, context):
             ),
             parse_mode=ParseMode.MARKDOWN,
         )
-
 
 
 @user_not_admin

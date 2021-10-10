@@ -267,9 +267,9 @@ def gbun(update, context):
     if update.effective_message.chat.type == "private":
         return
     if (
-        int(user.id) in SUDO_USERS
-        or int(user.id) in SUPPORT_USERS
-        or int(user.id) in DEV_USERS
+            int(user.id) in SUDO_USERS
+            or int(user.id) in SUPPORT_USERS
+            or int(user.id) in DEV_USERS
     ):
         context.bot.sendMessage(chat.id, (random.choice(fun.GBUN)))
 

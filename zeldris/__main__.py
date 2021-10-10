@@ -7,16 +7,15 @@ from typing import Optional
 
 from telegram import Message, Chat, User, Update
 from telegram import ParseMode, InlineKeyboardMarkup, InlineKeyboardButton
+from telegram.error import BadRequest
 from telegram.ext import (
-    CommandHandler,
-    Filters, 
-    MessageHandler, 
+    Filters,
+    MessageHandler,
     CallbackQueryHandler,
     CallbackContext,
 )
 from telegram.ext.dispatcher import DispatcherHandlerStop
 from telegram.utils.helpers import escape_markdown
-
 
 from zeldris import (
     dispatcher,
@@ -34,12 +33,10 @@ from zeldris import (
 # needed to dynamically load modules
 # NOTE: Module order is not guaranteed, specify that in the config file!
 from zeldris.modules import ALL_MODULES
-from zeldris.modules.disable import DisableAbleCommandHandler, DisableAbleMessageHandler
-from zeldris.modules.helper_funcs.alternate import typing_action
+from zeldris.modules.disable import DisableAbleCommandHandler
 from zeldris.modules.helper_funcs.chat_status import is_user_admin
 from zeldris.modules.helper_funcs.misc import paginate_modules
 from zeldris.modules.purge import client
-
 
 PM_START_TEXT = f"""
 Hey there! my name is *{dispatcher.bot.first_name}*. If you have any questions on how to use me, Click Help button.
@@ -63,7 +60,6 @@ buttons = [
 
 buttons += [[InlineKeyboardButton(text="Help & Commands ❔", callback_data="help_back")]]
 
-
 HELP_STRINGS = f"""
 Hello there! My name is *{dispatcher.bot.first_name}*.
 I'm a modular group management bot with a few fun extras! Have a look at the following for an idea of some of \
@@ -75,7 +71,6 @@ the things I can help you with.
 × /settings: in PM: will send you your settings for all supported modules.
 - in a group: will redirect you to pm, with all that chat's settings.
 \nClick on the buttons below to get documentation about specific modules!"""
-
 
 IMPORTED = {}
 MIGRATEABLE = []
@@ -141,7 +136,7 @@ def send_help(chat_id, text, keyboard=None):
     )
 
 
-def test(update: Update, context: CallbackContext):
+def test(update: Update, _):
     # pprint(eval(str(update)))
     # update.effective_message.reply_text("Hola tester! _I_ *have* `markdown`", parse_mode=ParseMode.MARKDOWN)
     update.effective_message.reply_text("This person edited a message")
@@ -180,12 +175,12 @@ def start(update: Update, context: CallbackContext):
 
         else:
             update.effective_message.reply_photo(
-            "https://telegra.ph/file/fed9ba09e9add9b197c21.png",
-            PM_START_TEXT,
-            reply_markup=InlineKeyboardMarkup(buttons),
-            parse_mode=ParseMode.MARKDOWN,
-            timeout=60,
-        )
+                "https://telegra.ph/file/fed9ba09e9add9b197c21.png",
+                PM_START_TEXT,
+                reply_markup=InlineKeyboardMarkup(buttons),
+                parse_mode=ParseMode.MARKDOWN,
+                timeout=60,
+            )
     else:
         update.effective_message.reply_text(
             "Sending you a warm hi & wishing your day is a happy one!"
@@ -233,10 +228,10 @@ def help_button(update, context):
         if mod_match:
             module = mod_match.group(1)
             text = (
-                "Here is the help for the *{}* module:\n".format(
-                    HELPABLE[module].__mod_name__
-                )
-                + HELPABLE[module].__help__
+                    "Here is the help for the *{}* module:\n".format(
+                        HELPABLE[module].__mod_name__
+                    )
+                    + HELPABLE[module].__help__
             )
             query.message.edit_text(
                 text=text,
@@ -303,7 +298,7 @@ def zel_cb(update, context):
             parse_mode=ParseMode.MARKDOWN,
             timeout=60,
         )
-        
+
 
 def get_help(update: Update, context: CallbackContext):
     chat = update.effective_chat  # type: Optional[Chat]
@@ -347,10 +342,10 @@ def get_help(update: Update, context: CallbackContext):
     elif len(args) >= 2 and any(args[1].lower() == x for x in HELPABLE):
         module = args[1].lower()
         text = (
-            "Here is the available help for the *{}* module:\n".format(
-                HELPABLE[module].__mod_name__
-            )
-            + HELPABLE[module].__help__
+                "Here is the available help for the *{}* module:\n".format(
+                    HELPABLE[module].__mod_name__
+                )
+                + HELPABLE[module].__help__
         )
         send_help(
             chat.id,
@@ -469,7 +464,7 @@ def settings_button(update: Update, context: CallbackContext):
             chat = bot.get_chat(chat_id)
             query.message.reply_text(
                 text="Hi there! There are quite a few settings for {} - go ahead and pick what "
-                "you're interested in.".format(escape_markdown(chat.title)),
+                     "you're interested in.".format(escape_markdown(chat.title)),
                 parse_mode=ParseMode.MARKDOWN,
                 reply_markup=InlineKeyboardMarkup(
                     paginate_modules(0, CHAT_SETTINGS, "stngs", chat=chat_id)
@@ -513,13 +508,13 @@ def get_settings(update: Update, context: CallbackContext):
                 ),
             )
         else:
-            text = "Click here to check your settings."
+            "Click here to check your settings."
 
     else:
         send_settings(chat.id, user.id, True)
 
 
-def migrate_chats(update, context):
+def migrate_chats(update, _):
     msg = update.effective_message  # type: Optional[Message]
     if msg.migrate_to_chat_id:
         old_chat = update.effective_chat.id

@@ -53,8 +53,8 @@ ENUM_FUNC_MAP = {
 # Do not async
 def get(bot, update, notename, show_none=True, no_format=False):
     chat_id = update.effective_chat.id
-    chat = update.effective_chat  # type: Optional[Chat]
-    user = update.effective_user  # type: Optional[User]
+    chat = update.effective_chat
+    user = update.effective_user
     conn = connected(bot, update, chat, user.id, need_admin=False)
     if conn:
         chat_id = conn
@@ -210,7 +210,6 @@ def get(bot, update, notename, show_none=True, no_format=False):
         message.reply_text("This note doesn't exist")
 
 
-
 @typing_action
 def cmd_get(update, context):
     args = context.args
@@ -222,7 +221,6 @@ def cmd_get(update, context):
         update.effective_message.reply_text("Get rekt")
 
 
-
 def hash_get(update, context):
     message = update.effective_message.text
     fst_word = message.split()[0]
@@ -230,14 +228,13 @@ def hash_get(update, context):
     get(context.bot, update, no_hash, show_none=False)
 
 
-
 @user_admin
 @typing_action
 def save(update, context):
-    chat = update.effective_chat  # type: Optional[Chat]
-    user = update.effective_user  # type: Optional[User]
+    chat = update.effective_chat
+    user = update.effective_user
     conn = connected(context.bot, update, chat, user.id)
-    if conn != False:
+    if conn:
         chat_id = conn
         chat_name = dispatcher.bot.getChat(conn).title
     else:
@@ -267,18 +264,17 @@ def save(update, context):
     )
 
 
-
 @user_admin
 @typing_action
 def clear(update, context):
     args = context.args
-    chat = update.effective_chat  # type: Optional[Chat]
-    user = update.effective_user  # type: Optional[User]
+    chat = update.effective_chat
+    user = update.effective_user
     msg = update.effective_message
     conn = connected(context.bot, update, chat, user.id)
     note_name, text, data_type, content, buttons = get_note_type(msg)
 
-    if conn != False:
+    if conn:
         chat_id = conn
         chat_name = dispatcher.bot.getChat(conn).title
     else:
@@ -302,14 +298,13 @@ def clear(update, context):
             )
 
 
-
 @typing_action
 def list_notes(update, context):
     chat_id = update.effective_chat.id
-    chat = update.effective_chat  # type: Optional[Chat]
-    user = update.effective_user  # type: Optional[User]
+    chat = update.effective_chat
+    user = update.effective_user
     conn = connected(context.bot, update, chat, user.id, need_admin=False)
-    if conn != False:
+    if conn:
         chat_id = conn
         chat_name = dispatcher.bot.getChat(conn).title
         msg = "*Notes in {}:*\n"
@@ -341,13 +336,13 @@ def list_notes(update, context):
             )
         except ValueError:
             update.effective_message.reply_text(
-                "There was a problem in showing notes list, maybe due to some invalid character in note names. Ask in @skyleebot if you're unable to figure it out!"
+                "There was a problem in showing notes list, maybe due to some invalid character in note names. Ask in "
+                "@IDNCoderX if you're unable to figure it out! "
             )
 
 
-
 @user_admin
-def clear_notes(update, context):
+def clear_notes(update, _):
     chat = update.effective_chat
     user = update.effective_user
     msg = update.effective_message
@@ -381,9 +376,8 @@ def clear_notes(update, context):
         msg.reply_text("This command can be only used by chat OWNER!")
 
 
-
 @user_admin_no_reply
-def rmbutton(update, context):
+def rmbutton(update, _):
     query = update.callback_query
     userid = update.effective_user.id
     match = query.data.split("_")[1]
@@ -556,12 +550,12 @@ A button can be added to a note by using standard markdown link syntax - the lin
 
 Now, anyone using "/get notedata", or "#notedata" will be replied to with "This is some data!".
 
-If you want to save an image, gif, or sticker, or any other data, do the following:
-`/save notename` while replying to a sticker or whatever data you'd like. Now, the note at "#notename" contains a sticker which will be sent as a reply.
+If you want to save an image, gif, or sticker, or any other data, do the following: `/save notename` while replying 
+to a sticker or whatever data you'd like. Now, the note at "#notename" contains a sticker which will be sent as a 
+reply. 
 
-Tip: to retrieve a note without the formatting, use /get <notename> noformat
-This will retrieve the note and send it without formatting it; getting you the raw markdown, allowing you to make easy edits.
-"""
+Tip: to retrieve a note without the formatting, use /get <notename> noformat This will retrieve the note and send it 
+without formatting it; getting you the raw markdown, allowing you to make easy edits. """
 
 __mod_name__ = "Notes"
 

@@ -11,7 +11,6 @@ from zeldris.modules.disable import DisableAbleCommandHandler
 from zeldris.modules.helper_funcs.alternate import typing_action
 
 
-
 @typing_action
 def weather(update, context):
     args = context.args

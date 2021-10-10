@@ -1,3 +1,4 @@
+import ast
 import csv
 import json
 import os
@@ -252,7 +253,7 @@ def join_fed(update, context):
             return
 
         get_fedlog = sql.get_fed_log(args[0])
-        if get_fedlog and eval(get_fedlog):
+        if get_fedlog and ast.literal_eval(get_fedlog):
             context.bot.send_message(
                 get_fedlog,
                 "Chat *{}* has joined the federation *{}*".format(
@@ -286,7 +287,7 @@ def leave_fed(update, context):
     if getuser in "creator" or user.id in SUDO_USERS:
         if sql.chat_leave_fed(chat.id):
             get_fedlog = sql.get_fed_log(fed_id)
-            if get_fedlog and eval(get_fedlog):
+            if get_fedlog and ast.literal_eval(get_fedlog):
                 context.bot.send_message(
                     get_fedlog,
                     "Chat *{}* has left the federation *{}*".format(

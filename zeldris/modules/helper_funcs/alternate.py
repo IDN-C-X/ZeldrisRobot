@@ -27,9 +27,9 @@ def typing_action(func):
         except error.BadRequest as err:
             if str(err) == "Have no rights to send a message":
                 LOGGER.warning("Bot muted in {} {}".format(
-                        update.effective_message.chat.title,
-                        update.effective_message.chat.id
-                    )
+                    update.effective_message.chat.title,
+                    update.effective_message.chat.id
+                )
                 )
         except error.Unauthorized:
             return

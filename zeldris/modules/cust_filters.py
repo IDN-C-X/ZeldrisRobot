@@ -1,5 +1,5 @@
-import re
 import random
+import re
 from html import escape
 
 import telegram
@@ -14,11 +14,13 @@ from telegram.ext import (
 from telegram.utils.helpers import mention_html, escape_markdown
 
 from zeldris import dispatcher, LOGGER, SUDO_USERS
+from zeldris.modules.connection import connected
 from zeldris.modules.disable import DisableAbleCommandHandler
-from zeldris.modules.helper_funcs.handlers import MessageHandlerChecker
+from zeldris.modules.helper_funcs.alternate import send_message, typing_action
 from zeldris.modules.helper_funcs.chat_status import user_admin
 from zeldris.modules.helper_funcs.extraction import extract_text
 from zeldris.modules.helper_funcs.filters import CustomFilters
+from zeldris.modules.helper_funcs.handlers import MessageHandlerChecker
 from zeldris.modules.helper_funcs.misc import build_keyboard_parser
 from zeldris.modules.helper_funcs.msg_types import get_filter_type
 from zeldris.modules.helper_funcs.string_handling import (
@@ -28,10 +30,6 @@ from zeldris.modules.helper_funcs.string_handling import (
     markdown_to_html,
 )
 from zeldris.modules.sql import cust_filters_sql as sql
-
-from zeldris.modules.connection import connected
-
-from zeldris.modules.helper_funcs.alternate import send_message, typing_action
 
 HANDLER_GROUP = 10
 

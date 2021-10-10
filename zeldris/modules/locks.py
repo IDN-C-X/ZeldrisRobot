@@ -1,7 +1,7 @@
 import html
 
 from alphabet_detector import AlphabetDetector
-from telegram import Message, Chat, ParseMode, MessageEntity
+from telegram import ParseMode, MessageEntity
 from telegram import TelegramError, ChatPermissions
 from telegram.error import BadRequest
 from telegram.ext import CommandHandler, MessageHandler, Filters
@@ -30,8 +30,7 @@ LOCK_TYPES = {
     "video": Filters.video,
     "contact": Filters.contact,
     "photo": Filters.photo,
-    "url": Filters.entity(MessageEntity.URL)
-           | Filters.caption_entity(MessageEntity.URL),
+    "url": Filters.entity(MessageEntity.URL) | Filters.caption_entity(MessageEntity.URL),
     "bots": Filters.status_update.new_chat_members,
     "forward": Filters.forwarded,
     "game": Filters.game,
@@ -126,7 +125,7 @@ def unrestr_members(
             pass
 
 
-def locktypes(update, context):
+def locktypes(update, _):
     update.effective_message.reply_text(
         "\n × ".join(
             ["Locks available: "]
@@ -344,8 +343,8 @@ def unlock(update, context) -> str:
 
 @user_not_admin
 def del_lockables(update, context):
-    chat = update.effective_chat  # type: Optional[Chat]
-    message = update.effective_message  # type: Optional[Message]
+    chat = update.effective_chat
+    message = update.effective_message
 
     for lockable, filter in LOCK_TYPES.items():
         if lockable == "rtl":
@@ -479,7 +478,7 @@ def build_lock_message(chat_id):
 @user_admin
 @typing_action
 def list_locks(update, context):
-    chat = update.effective_chat  # type: Optional[Chat]
+    chat = update.effective_chat
     user = update.effective_user
 
     # Connection check
@@ -557,19 +556,30 @@ Locking urls will auto-delete all messages with urls, locking stickers will rest
 non-admin users from sending stickers, etc.
 Locking bots will stop non-admins from adding bots to the chat.
 
-Note:
- • Unlocking permission *info* will allow members (non-admins) to change the group information, such as the description or the group name
- • Unlocking permission *pin* will allow members (non-admins) to pinned a message in a group
+Note: 
+• Unlocking permission *info* will allow members (non-admins) to change the group information, such as the 
+description or the group name 
+• Unlocking permission *pin* will allow members (non-admins) to pinned a message in a 
+group 
 """
 
 __mod_name__ = "Locks"
 
-LOCKTYPES_HANDLER = DisableAbleCommandHandler("locktypes", locktypes, run_async=True)
-LOCK_HANDLER = CommandHandler("lock", lock, pass_args=True, run_async=True)  # , filters=Filters.chat_type.groups)
+LOCKTYPES_HANDLER = DisableAbleCommandHandler(
+    "locktypes", locktypes, run_async=True
+)
+LOCK_HANDLER = CommandHandler(
+    "lock", lock, pass_args=True, run_async=True
+)
+# , filters=Filters.chat_type.groups)
 UNLOCK_HANDLER = CommandHandler(
     "unlock", unlock, pass_args=True, run_async=True
-)  # , filters=Filters.chat_type.groups)
-LOCKED_HANDLER = CommandHandler("locks", list_locks, run_async=True)  # , filters=Filters.chat_type.groups)
+)
+# , filters=Filters.chat_type.groups)
+LOCKED_HANDLER = CommandHandler(
+    "locks", list_locks, run_async=True
+)
+# , filters=Filters.chat_type.groups)
 
 dispatcher.add_handler(LOCK_HANDLER)
 dispatcher.add_handler(UNLOCK_HANDLER)

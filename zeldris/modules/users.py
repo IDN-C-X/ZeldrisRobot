@@ -5,7 +5,6 @@ from telegram import TelegramError
 from telegram.error import BadRequest
 from telegram.ext import MessageHandler, Filters, CommandHandler
 
-
 import zeldris.modules.sql.users_sql as sql
 from zeldris import dispatcher, OWNER_ID, LOGGER
 from zeldris.modules.helper_funcs.filters import CustomFilters
@@ -44,7 +43,6 @@ def get_user_id(username):
     return None
 
 
-
 def broadcast(update, context):
     to_send = update.effective_message.text.split(None, 1)
     if len(to_send) >= 2:
@@ -68,7 +66,6 @@ def broadcast(update, context):
         )
 
 
-
 def log_user(update, _):
     chat = update.effective_chat
     msg = update.effective_message
@@ -87,7 +84,6 @@ def log_user(update, _):
         sql.update_user(msg.forward_from.id, msg.forward_from.username)
 
 
-
 def chats(update, _):
     all_chats = sql.get_all_chats() or []
     chatfile = "List of chats.\n"
@@ -101,7 +97,6 @@ def chats(update, _):
             filename="chatlist.txt",
             caption="Here is the list of chats in my database.",
         )
-
 
 
 def chat_checker(update, context):

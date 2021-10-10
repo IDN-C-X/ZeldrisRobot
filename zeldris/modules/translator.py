@@ -12,7 +12,6 @@ from zeldris.modules.disable import DisableAbleCommandHandler
 from zeldris.modules.helper_funcs.alternate import typing_action, send_action
 
 
-
 @typing_action
 def gtrans(update, context):
     msg = update.effective_message
@@ -34,7 +33,6 @@ def gtrans(update, context):
         msg.reply_text("Translated from {} to {}.\n {}".format(trl, lang, results))
     except:
         msg.reply_text("Error! invalid language code.")
-
 
 
 @send_action(ChatAction.RECORD_AUDIO)
@@ -63,7 +61,6 @@ def gtts(update, context):
 # Open API key
 API_KEY = "6ae0c3a0-afdc-4532-a810-82ded0054236"
 URL = "http://services.gingersoftware.com/Ginger/correct/json/GingerTheText"
-
 
 
 @typing_action

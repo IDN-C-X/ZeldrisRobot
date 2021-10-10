@@ -21,7 +21,6 @@ from zeldris.modules.helper_funcs.string_handling import extract_time
 from zeldris.modules.log_channel import loggable
 
 
-
 @bot_admin
 @user_admin
 @loggable
@@ -77,7 +76,6 @@ def mute(update, context):
         message.reply_text("This user isn't in the chat!")
 
     return ""
-
 
 
 @bot_admin
@@ -143,7 +141,6 @@ def unmute(update, context):
             )
         )
     return ""
-
 
 
 @bot_admin

@@ -21,10 +21,10 @@ CMD_STARTERS = CUSTOM_CMD or ["/", "!"]
 class AntiSpam:
     def __init__(self):
         self.whitelist = (
-            (DEV_USERS or [])
-            + (SUDO_USERS or [])
-            + (WHITELIST_USERS or [])
-            + (SUPPORT_USERS or [])
+                (DEV_USERS or [])
+                + (SUDO_USERS or [])
+                + (WHITELIST_USERS or [])
+                + (SUPPORT_USERS or [])
         )
         # Values are HIGHLY experimental, its recommended you pay attention to our commits as we will be adjusting the values over time with what suits best.
         Duration.CUSTOM = 15  # Custom duration, 15 seconds
@@ -76,7 +76,7 @@ class CustomCommandHandler(tg.CommandHandler):
         if message.text and len(message.text) > 1:
             fst_word = message.text.split(None, 1)[0]
             if len(fst_word) > 1 and any(
-                fst_word.startswith(start) for start in CMD_STARTERS
+                    fst_word.startswith(start) for start in CMD_STARTERS
             ):
                 args = message.text.split()[1:]
                 command = fst_word[1:].split("@")
@@ -85,8 +85,8 @@ class CustomCommandHandler(tg.CommandHandler):
                 )  # in case the command was sent without a username
 
                 if not (
-                    command[0].lower() in self.command
-                    and command[1].lower() == message.bot.username.lower()
+                        command[0].lower() in self.command
+                        and command[1].lower() == message.bot.username.lower()
                 ):
                     return None
 

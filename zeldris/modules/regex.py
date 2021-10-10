@@ -67,7 +67,6 @@ def separate_sed(sed_string):
     return replace, replace_with, flags.lower()
 
 
-
 def sed(update, context):
     sed_result = separate_sed(update.effective_message.text)
     if sed_result and update.effective_message.reply_to_message:

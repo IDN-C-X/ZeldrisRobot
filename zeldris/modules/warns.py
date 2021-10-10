@@ -138,7 +138,6 @@ def warn(
     return log_reason
 
 
-
 @user_admin_no_reply
 @bot_admin
 @loggable
@@ -177,7 +176,6 @@ def button(update, context):
     return ""
 
 
-
 @user_admin
 @can_restrict
 @loggable
@@ -206,7 +204,6 @@ def warn_user(update, context):
     else:
         message.reply_text("No user was designated!")
     return ""
-
 
 
 @user_admin
@@ -240,7 +237,6 @@ def reset_warns(update, context):
     return ""
 
 
-
 @user_admin
 @bot_admin
 @loggable
@@ -271,7 +267,6 @@ def remove_warns(update, context):
     else:
         message.reply_text("No user has been designated!")
     return ""
-
 
 
 @typing_action
@@ -373,7 +368,6 @@ def remove_warn_filter(update, context):
     )
 
 
-
 def list_warn_filters(update, context):
     chat = update.effective_chat  # type: Optional[Chat]
     all_handlers = sql.get_chat_warn_triggers(chat.id)
@@ -395,7 +389,6 @@ def list_warn_filters(update, context):
         update.effective_message.reply_text(filter_list, parse_mode=ParseMode.HTML)
 
 
-
 @loggable
 def reply_filter(update, context) -> str:
     chat = update.effective_chat  # type: Optional[Chat]
@@ -413,7 +406,6 @@ def reply_filter(update, context) -> str:
             warn_filter = sql.get_warn_filter(chat.id, keyword)
             return warn(user, chat, warn_filter.reply, message)
     return ""
-
 
 
 @user_admin
@@ -448,7 +440,6 @@ def set_warn_limit(update, context) -> str:
 
         msg.reply_text("The current warn limit is {}".format(limit))
     return ""
-
 
 
 @user_admin

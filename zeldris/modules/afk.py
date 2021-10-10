@@ -3,7 +3,6 @@ import time
 from telegram import MessageEntity
 from telegram.error import BadRequest
 from telegram.ext import Filters, MessageHandler
-from zeldris.modules.helper_funcs.readable_time import get_readable_time
 
 from zeldris import REDIS
 from zeldris import dispatcher
@@ -11,6 +10,7 @@ from zeldris.modules.disable import (
     DisableAbleCommandHandler,
     DisableAbleMessageHandler,
 )
+from zeldris.modules.helper_funcs.readable_time import get_readable_time
 from zeldris.modules.redis.afk_redis import (
     start_afk,
     end_afk,
@@ -160,7 +160,6 @@ When marked as AFK, any mentions will be replied to with a message to say you're
 × brb <reason>: Same as the afk command - but not a command.
 """
 
-
 AFK_HANDLER = DisableAbleCommandHandler("afk", afk, run_async=True)
 AFK_REGEX_HANDLER = DisableAbleMessageHandler(
     Filters.regex("(?i)^brb"), afk, friendly="afk", run_async=True,
@@ -174,12 +173,10 @@ AFK_REPLY_HANDLER = MessageHandler(
     run_async=True,
 )
 
-
 dispatcher.add_handler(AFK_HANDLER, AFK_GROUP)
 dispatcher.add_handler(AFK_REGEX_HANDLER, AFK_GROUP)
 dispatcher.add_handler(NO_AFK_HANDLER, AFK_GROUP)
 dispatcher.add_handler(AFK_REPLY_HANDLER, AFK_REPLY_GROUP)
-
 
 __mod_name__ = "AFK"
 __command_list__ = ["afk"]

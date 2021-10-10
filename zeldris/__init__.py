@@ -18,7 +18,6 @@ logging.basicConfig(
     level=logging.INFO,
 )
 
-
 LOGGER = logging.getLogger(__name__)
 
 LOGGER.info("Starting Zeldris...")

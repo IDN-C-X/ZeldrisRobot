@@ -18,6 +18,7 @@ bs4
 telegraph
 pillow
 psutil
+cachetools
 speedtest-cli>=2.0.2
 googletrans
 wikipedia

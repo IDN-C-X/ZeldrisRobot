@@ -141,7 +141,6 @@ def send(update, message, keyboard, backup_message):
     return msg
 
 
-
 def new_member(update, context):
     chat = update.effective_chat
     user = update.effective_user
@@ -319,7 +318,6 @@ def new_member(update, context):
                 sql.set_clean_welcome(chat.id, sent.message_id)
 
 
-
 def left_member(update, context):
     chat = update.effective_chat  # type: Optional[Chat]
     should_goodbye, cust_goodbye, goodbye_type = sql.get_gdbye_pref(chat.id)
@@ -402,7 +400,6 @@ def left_member(update, context):
             send(update, res, keyboard, sql.DEFAULT_GOODBYE)
 
 
-
 @user_admin
 @typing_action
 def welcome(update, context):
@@ -452,7 +449,6 @@ def welcome(update, context):
             update.effective_message.reply_text(
                 "I understand 'on/yes' or 'off/no' only!"
             )
-
 
 
 @user_admin
@@ -506,7 +502,6 @@ def goodbye(update, context):
             )
 
 
-
 @user_admin
 @loggable
 @typing_action
@@ -534,7 +529,6 @@ def set_welcome(update, context) -> str:
     )
 
 
-
 @user_admin
 @loggable
 @typing_action
@@ -553,7 +547,6 @@ def reset_welcome(update, context) -> str:
             escape(chat.title), mention_html(user.id, user.first_name)
         )
     )
-
 
 
 @user_admin
@@ -581,7 +574,6 @@ def set_goodbye(update, context) -> str:
     )
 
 
-
 @user_admin
 @loggable
 @typing_action
@@ -600,7 +592,6 @@ def reset_goodbye(update, context) -> str:
             escape(chat.title), mention_html(user.id, user.first_name)
         )
     )
-
 
 
 @user_admin
@@ -664,7 +655,6 @@ def welcomemute(update, context) -> str:
         return ""
 
 
-
 @user_admin
 @loggable
 @typing_action
@@ -713,7 +703,6 @@ def clean_welcome(update, context) -> str:
         return ""
 
 
-
 @user_admin
 @typing_action
 def cleanservice(update, context):
@@ -750,7 +739,6 @@ def cleanservice(update, context):
         update.effective_message.reply_text(
             "Usage is on/yes or off/no", parse_mode=ParseMode.MARKDOWN
         )
-
 
 
 def user_button(update, context):
@@ -811,7 +799,6 @@ WELC_HELP_TXT = (
         dispatcher.bot.username
     )
 )
-
 
 
 @user_admin

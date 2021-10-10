@@ -16,7 +16,6 @@ from zeldris.modules.helper_funcs.alternate import typing_action
 from zeldris.modules.helper_funcs.filters import CustomFilters
 
 
-
 @typing_action
 def ping(update, context):
     tg_api = ping3("api.telegram.org", count=4)
@@ -44,7 +43,6 @@ def speed_convert(size):
     return f"{round(size, 2)} {units[zero]}"
 
 
-
 @typing_action
 def get_bot_ip(update, context):
     """ Sends the bot's IP address, so as to be able to ssh in if necessary.
@@ -52,7 +50,6 @@ def get_bot_ip(update, context):
     """
     res = requests.get("http://ipinfo.io/ip")
     update.message.reply_text(res.text)
-
 
 
 @typing_action
@@ -77,7 +74,6 @@ def speedtst(update, context):
         update.effective_chat.id,
         ed_msg.message_id,
     )
-
 
 
 @typing_action

@@ -19,6 +19,7 @@ from zeldris.modules.helper_funcs.chat_status import (
     bot_admin,
     can_promote,
     user_admin,
+    ADMIN_CACHE,
     can_pin,
 )
 from zeldris.modules.helper_funcs.extraction import extract_user, extract_user_and_text
@@ -284,6 +285,12 @@ def unpin(update, context):
             html.escape(chat.title), mention_html(user.id, user.first_name)
         )
     )
+
+
+@user_admin
+def refresh_admin(update, _):
+    ADMIN_CACHE.pop(update.effective_chat.id)
+    update.effective_message.reply_text("Admins cache refreshed!")
 
 
 @bot_admin
@@ -580,12 +587,14 @@ An example of promoting someone to admins:
 
 __mod_name__ = "Admin"
 
-
 PIN_HANDLER = CommandHandler(
     "pin", pin, pass_args=True, filters=Filters.chat_type.groups, run_async=True
 )
 UNPIN_HANDLER = CommandHandler(
     "unpin", unpin, filters=Filters.chat_type.groups, run_async=True
+)
+ADMIN_REFRESH_HANDLER = CommandHandler(
+    "admincache", refresh_admin, run_async=True
 )
 INVITE_HANDLER = CommandHandler(
     "invitelink", invite, run_async=True
@@ -621,9 +630,9 @@ ADMINLIST_HANDLER = DisableAbleCommandHandler(
     "adminlist", adminlist, filters=Filters.chat_type.groups, run_async=True
 )
 
-
 dispatcher.add_handler(PIN_HANDLER)
 dispatcher.add_handler(UNPIN_HANDLER)
+dispatcher.add_handler(ADMIN_REFRESH_HANDLER)
 dispatcher.add_handler(INVITE_HANDLER)
 dispatcher.add_handler(PROMOTE_HANDLER)
 dispatcher.add_handler(FULLPROMOTE_HANDLER)
