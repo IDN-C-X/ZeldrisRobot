@@ -2,6 +2,7 @@ import html
 import importlib
 import json
 import re
+import requests
 import traceback
 from typing import Optional
 
@@ -125,7 +126,7 @@ for module_name in ALL_MODULES:
 # do not async
 def send_help(chat_id, text, keyboard=None):
     if not keyboard:
-        keyboard = paginate_modules(0, HELPABLE, "help")
+        keyboard = (paginate_modules(0, HELPABLE, "help"))
         keyboard.append([InlineKeyboardButton(text="Home", callback_data="zel_back")])
         kb = InlineKeyboardMarkup(keyboard)
     dispatcher.bot.send_message(
@@ -146,12 +147,12 @@ def zel_cb(update, context):
         )
     elif query.data == "zel_back":
         query.message.reply_photo(
-                "https://telegra.ph/file/fed9ba09e9add9b197c21.png",
-                PM_START_TEXT,
-                reply_markup=InlineKeyboardMarkup(buttons),
-                parse_mode=ParseMode.MARKDOWN,
-                timeout=60,
-            )
+            "https://telegra.ph/file/fed9ba09e9add9b197c21.png",
+            PM_START_TEXT,
+            reply_markup=InlineKeyboardMarkup(buttons),
+            parse_mode=ParseMode.MARKDOWN,
+            timeout=60,
+        )
         
         
 def test(update, _):
