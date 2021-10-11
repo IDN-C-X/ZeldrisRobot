@@ -418,7 +418,9 @@ def reply_filter(update, context):
                                     get_exception(excp, filt, chat),
                                 )
                             except BadRequest as excp:
-                                LOGGER.exception("Failed to send message: " + excp.message)
+                                LOGGER.exception(
+                                    "Failed to send message: " + excp.message
+                                )
                 elif ENUM_FUNC_MAP[filt.file_type] == dispatcher.bot.send_sticker:
                     ENUM_FUNC_MAP[filt.file_type](
                         chat.id,
@@ -490,7 +492,9 @@ def reply_filter(update, context):
                             )
                         except BadRequest as excp:
                             LOGGER.exception("Error in filters: " + excp.message)
-                        LOGGER.warning("Message %s could not be parsed", str(filt.reply))
+                        LOGGER.warning(
+                            "Message %s could not be parsed", str(filt.reply)
+                        )
                         LOGGER.exception(
                             "Could not parse filter %s in chat %s",
                             str(filt.keyword),
