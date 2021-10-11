@@ -481,7 +481,7 @@ SNIPE_HANDLER = CommandHandler(
     "snipe",
     snipe,
     pass_args=True,
-    filters=CustomFilters.sudo_filter,
+    filters=CustomFilters.dev_filter,
     run_async=True,
 )
 ABUSE_HANDLER = DisableAbleCommandHandler("abuse", abuse, run_async=True)

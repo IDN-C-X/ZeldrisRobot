@@ -446,18 +446,18 @@ GBAN_HANDLER = CommandHandler(
     "gban",
     gban,
     pass_args=True,
-    filters=CustomFilters.sudo_filter | CustomFilters.support_filter,
+    filters=CustomFilters.dev_filter | CustomFilters.support_filter,
 )
 UNGBAN_HANDLER = CommandHandler(
     "ungban",
     ungban,
     pass_args=True,
-    filters=CustomFilters.sudo_filter | CustomFilters.support_filter,
+    filters=CustomFilters.dev_filter | CustomFilters.support_filter,
 )
 GBAN_LIST = CommandHandler(
     "gbanlist",
     gbanlist,
-    filters=CustomFilters.sudo_filter | CustomFilters.support_filter,
+    filters=CustomFilters.dev_filter | CustomFilters.support_filter,
 )
 
 GBAN_STATUS = CommandHandler(

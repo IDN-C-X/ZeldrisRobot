@@ -124,13 +124,13 @@ IP_HANDLER = CommandHandler(
     "ip", get_bot_ip, filters=Filters.chat(OWNER_ID), run_async=True
 )
 PING_HANDLER = CommandHandler(
-    "ping", ping, filters=CustomFilters.sudo_filter, run_async=True
+    "ping", ping, filters=CustomFilters.dev_filter, run_async=True
 )
 SPEED_HANDLER = CommandHandler(
-    "speedtest", speedtst, filters=CustomFilters.sudo_filter, run_async=True
+    "speedtest", speedtst, filters=CustomFilters.dev_filter, run_async=True
 )
 SYS_STATUS_HANDLER = CommandHandler(
-    "sysinfo", system_status, filters=CustomFilters.sudo_filter, run_async=True
+    "sysinfo", system_status, filters=CustomFilters.dev_filter, run_async=True
 )
 
 dispatcher.add_handler(IP_HANDLER)

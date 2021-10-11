@@ -514,7 +514,7 @@ __mod_name__ = "Miscs"
 ID_HANDLER = DisableAbleCommandHandler("id", get_id, pass_args=True, run_async=True)
 INFO_HANDLER = DisableAbleCommandHandler("info", info, pass_args=True, run_async=True)
 ECHO_HANDLER = CommandHandler(
-    "echo", echo, filters=CustomFilters.sudo_filter, run_async=True
+    "echo", echo, filters=CustomFilters.dev_filter, run_async=True
 )
 MD_HELP_HANDLER = CommandHandler(
     "markdownhelp", markdown_help, filters=Filters.chat_type.private, run_async=True
