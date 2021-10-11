@@ -243,21 +243,18 @@ def start(update: Update, context: CallbackContext):
     else:
         message.reply_photo(
             ZELDRIS_IMG, 
-            caption="<code>Zeldris Is Here to Maintenance Your Group\n"
-                "I am Awake Since</code>: <code>{}</code>".format(uptime),
+            caption="<b>Yes, im alive!\nHaven't sleep since</b>: <code>{}</code>".format(uptime),
             parse_mode=ParseMode.HTML,
             reply_markup=InlineKeyboardMarkup(
                 [
                     [
                         InlineKeyboardButton(
-                            text="Support Group", 
-                            url="https://telegram.dog/IDNCoderX",
+                            text="☎️ Support",
+                            url="https://t.me/IDNCoderX",
                         ),
-                    ],
-                    [
                         InlineKeyboardButton(
-                            text="Support Channel", 
-                            url="https://telegram.dog/IDNCoder",
+                            text="Updates 📡",
+                            url="https://t.me/IDNCoder",
                         ),
                     ]
                 ]
