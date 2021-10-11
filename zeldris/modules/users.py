@@ -116,8 +116,8 @@ def chats(update, _):
 
 def chat_checker(update, context):
     if (
-            update.effective_message.chat.get_member(context.bot.id).can_send_messages
-            is False
+        update.effective_message.chat.get_member(context.bot.id).can_send_messages
+        is False
     ):
         context.bot.leaveChat(update.effective_message.chat.id)
 
@@ -145,8 +145,12 @@ BROADCAST_HANDLER = CommandHandler(
     "broadcast", broadcast, filters=Filters.user(OWNER_ID), run_async=True
 )
 USER_HANDLER = MessageHandler(Filters.all & Filters.chat_type.groups, log_user)
-CHATLIST_HANDLER = CommandHandler("chatlist", chats, filters=CustomFilters.sudo_filter, run_async=True)
-CHAT_CHECKER_HANDLER = MessageHandler(Filters.all & Filters.chat_type.groups, chat_checker)
+CHATLIST_HANDLER = CommandHandler(
+    "chatlist", chats, filters=CustomFilters.sudo_filter, run_async=True
+)
+CHAT_CHECKER_HANDLER = MessageHandler(
+    Filters.all & Filters.chat_type.groups, chat_checker
+)
 
 dispatcher.add_handler(USER_HANDLER, USERS_GROUP)
 dispatcher.add_handler(BROADCAST_HANDLER)

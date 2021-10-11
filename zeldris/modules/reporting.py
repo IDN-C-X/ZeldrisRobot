@@ -169,7 +169,7 @@ def report(update, context) -> str:
                         message.reply_to_message.forward(admin.user.id)
 
                         if (
-                                len(message.text.split()) > 1
+                            len(message.text.split()) > 1
                         ):  # If user is giving a reason, send his message too
                             message.forward(admin.user.id)
 
@@ -266,8 +266,12 @@ You MUST reply to a message to report a user; you can't just use @admin to tag a
 Note that the report commands do not work when admins use them; or when used to report an admin. Bot assumes that \
 admins don't need to report, or be reported!
 """
-REPORT_HANDLER = CommandHandler("report", report, filters=Filters.chat_type.groups, run_async=True)
-SETTING_HANDLER = CommandHandler("reports", report_setting, pass_args=True, run_async=True)
+REPORT_HANDLER = CommandHandler(
+    "report", report, filters=Filters.chat_type.groups, run_async=True
+)
+SETTING_HANDLER = CommandHandler(
+    "reports", report_setting, pass_args=True, run_async=True
+)
 ADMIN_REPORT_HANDLER = MessageHandler(Filters.regex("(?i)@admin(s)?"), report)
 REPORT_BUTTON_HANDLER = CallbackQueryHandler(report_buttons, pattern=r"report_")
 

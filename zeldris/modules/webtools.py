@@ -61,8 +61,8 @@ def speed_convert(size):
 
 @typing_action
 def get_bot_ip(update, _):
-    """ Sends the bot's IP address, so as to be able to ssh in if necessary.
-        OWNER ONLY.
+    """Sends the bot's IP address, so as to be able to ssh in if necessary.
+    OWNER ONLY.
     """
     res = requests.get("http://ipinfo.io/ip")
     update.message.reply_text(res.text)
@@ -120,9 +120,15 @@ def system_status(update, context):
     context.bot.sendMessage(update.effective_chat.id, status, parse_mode=ParseMode.HTML)
 
 
-IP_HANDLER = CommandHandler("ip", get_bot_ip, filters=Filters.chat(OWNER_ID), run_async=True)
-PING_HANDLER = CommandHandler("ping", ping, filters=CustomFilters.sudo_filter, run_async=True)
-SPEED_HANDLER = CommandHandler("speedtest", speedtst, filters=CustomFilters.sudo_filter, run_async=True)
+IP_HANDLER = CommandHandler(
+    "ip", get_bot_ip, filters=Filters.chat(OWNER_ID), run_async=True
+)
+PING_HANDLER = CommandHandler(
+    "ping", ping, filters=CustomFilters.sudo_filter, run_async=True
+)
+SPEED_HANDLER = CommandHandler(
+    "speedtest", speedtst, filters=CustomFilters.sudo_filter, run_async=True
+)
 SYS_STATUS_HANDLER = CommandHandler(
     "sysinfo", system_status, filters=CustomFilters.sudo_filter, run_async=True
 )

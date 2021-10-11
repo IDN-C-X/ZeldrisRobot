@@ -283,16 +283,12 @@ def connected(bot, update, chat, user_id, need_admin=True):
         ismember = getstatusadmin.status in "member"
         isallow = sql.allow_connect_to_chat(conn_id)
 
-        if (
-                isadmin
-                or (isallow and ismember)
-                or (user.id in DEV_USERS)
-        ):
+        if isadmin or (isallow and ismember) or (user.id in DEV_USERS):
             if not need_admin:
                 return conn_id
             if (
-                    getstatusadmin.status in ("administrator", "creator")
-                    or user_id in DEV_USERS
+                getstatusadmin.status in ("administrator", "creator")
+                or user_id in DEV_USERS
             ):
                 return conn_id
             send_message(
@@ -404,12 +400,8 @@ the group can view your data.
 CONNECT_CHAT_HANDLER = CommandHandler(
     "connect", connect_chat, pass_args=True, run_async=True
 )
-CONNECTION_CHAT_HANDLER = CommandHandler(
-    "connection", connection_chat, run_async=True
-)
-DISCONNECT_CHAT_HANDLER = CommandHandler(
-    "disconnect", disconnect_chat, run_async=True
-)
+CONNECTION_CHAT_HANDLER = CommandHandler("connection", connection_chat, run_async=True)
+DISCONNECT_CHAT_HANDLER = CommandHandler("disconnect", disconnect_chat, run_async=True)
 ALLOW_CONNECTIONS_HANDLER = CommandHandler(
     "allowconnect", allow_connections, pass_args=True, run_async=True
 )

@@ -401,7 +401,9 @@ An example of temporarily banning someone:
 
 __mod_name__ = "Bans"
 
-BAN_HANDLER = CommandHandler("ban", ban, pass_args=True, filters=Filters.chat_type.groups, run_async=True)
+BAN_HANDLER = CommandHandler(
+    "ban", ban, pass_args=True, filters=Filters.chat_type.groups, run_async=True
+)
 TEMPBAN_HANDLER = CommandHandler(
     ["tban", "tempban"],
     temp_ban,

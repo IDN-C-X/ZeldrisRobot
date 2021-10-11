@@ -612,12 +612,8 @@ PIN_HANDLER = CommandHandler(
 UNPIN_HANDLER = CommandHandler(
     "unpin", unpin, filters=Filters.chat_type.groups, run_async=True
 )
-ADMIN_REFRESH_HANDLER = CommandHandler(
-    "admincache", refresh_admin, run_async=True
-)
-INVITE_HANDLER = CommandHandler(
-    "invitelink", invite, run_async=True
-)
+ADMIN_REFRESH_HANDLER = CommandHandler("admincache", refresh_admin, run_async=True)
+INVITE_HANDLER = CommandHandler("invitelink", invite, run_async=True)
 CHAT_PIC_HANDLER = CommandHandler(
     "setgpic", setchatpic, filters=Filters.chat_type.groups, run_async=True
 )
@@ -637,7 +633,11 @@ PROMOTE_HANDLER = CommandHandler(
     "promote", promote, pass_args=True, filters=Filters.chat_type.groups, run_async=True
 )
 FULLPROMOTE_HANDLER = CommandHandler(
-    "fullpromote", fullpromote, pass_args=True, filters=Filters.chat_type.groups, run_async=True
+    "fullpromote",
+    fullpromote,
+    pass_args=True,
+    filters=Filters.chat_type.groups,
+    run_async=True,
 )
 DEMOTE_HANDLER = CommandHandler(
     "demote", demote, pass_args=True, filters=Filters.chat_type.groups, run_async=True

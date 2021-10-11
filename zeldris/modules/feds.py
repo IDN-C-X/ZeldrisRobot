@@ -184,9 +184,7 @@ def del_fed(update, context):
         update.effective_message.reply_text(
             "Are you sure you want to delete your federation? This action cannot be canceled, you will lose your "
             "entire "
-            "ban list, and '{}' will be permanently lost.".format(
-                getinfo["fname"]
-            ),
+            "ban list, and '{}' will be permanently lost.".format(getinfo["fname"]),
             reply_markup=InlineKeyboardMarkup(
                 [
                     [
@@ -347,13 +345,13 @@ def user_join_fed(update, context):
         elif not msg.reply_to_message and not args:
             user = msg.from_user
         elif not msg.reply_to_message and (
-                not args
-                or (
-                        len(args) >= 1
-                        and not args[0].startswith("@")
-                        and not args[0].isdigit()
-                        and not msg.parse_entities([MessageEntity.TEXT_MENTION])
-                )
+            not args
+            or (
+                len(args) >= 1
+                and not args[0].startswith("@")
+                and not args[0].isdigit()
+                and not msg.parse_entities([MessageEntity.TEXT_MENTION])
+            )
         ):
             msg.reply_text("I cannot extract user from this message")
             return
@@ -413,13 +411,13 @@ def user_demote_fed(update, context):
             user = msg.from_user
 
         elif not msg.reply_to_message and (
-                not args
-                or (
-                        len(args) >= 1
-                        and not args[0].startswith("@")
-                        and not args[0].isdigit()
-                        and not msg.parse_entities([MessageEntity.TEXT_MENTION])
-                )
+            not args
+            or (
+                len(args) >= 1
+                and not args[0].startswith("@")
+                and not args[0].isdigit()
+                and not msg.parse_entities([MessageEntity.TEXT_MENTION])
+            )
         ):
             msg.reply_text("I cannot extract user from this message")
             return
@@ -1399,12 +1397,14 @@ def fed_ban_list(update, context):
             backups = "id,firstname,lastname,username,reason\n"
             for users in getfban:
                 getuserinfo = sql.get_all_fban_users_target(fed_id, users)
-                backups += "{user_id},{first_name},{last_name},{user_name},{reason}".format(
-                    user_id=users,
-                    first_name=getuserinfo["first_name"],
-                    last_name=getuserinfo["last_name"],
-                    user_name=getuserinfo["user_name"],
-                    reason=getuserinfo["reason"],
+                backups += (
+                    "{user_id},{first_name},{last_name},{user_name},{reason}".format(
+                        user_id=users,
+                        first_name=getuserinfo["first_name"],
+                        last_name=getuserinfo["last_name"],
+                        user_name=getuserinfo["user_name"],
+                        reason=getuserinfo["reason"],
+                    )
                 )
                 backups += "\n"
             with BytesIO(str.encode(backups)) as output:
@@ -1442,9 +1442,7 @@ def fed_ban_list(update, context):
         new_jam = jam + 1800
         cek = get_chat(chat.id, chat_data)
         if cek.get("status") and jam <= int(cek.get("value")):
-            waktu = time.strftime(
-                "%H:%M:%S %d/%m/%Y", time.localtime(cek.get("value"))
-            )
+            waktu = time.strftime("%H:%M:%S %d/%m/%Y", time.localtime(cek.get("value")))
             update.effective_message.reply_text(
                 "You can back up data once every 30 minutes!\nYou can back up data again at `{}`".format(
                     waktu
@@ -1599,9 +1597,7 @@ def fed_import_bans(update, context):
         new_jam = jam + 1800
         cek = get_chat(chat.id, chat_data)
         if cek.get("status") and jam <= int(cek.get("value")):
-            waktu = time.strftime(
-                "%H:%M:%S %d/%m/%Y", time.localtime(cek.get("value"))
-            )
+            waktu = time.strftime("%H:%M:%S %d/%m/%Y", time.localtime(cek.get("value")))
             update.effective_message.reply_text(
                 "You can get your data once every 30 minutes!\nYou can get data again at `{}`".format(
                     waktu
@@ -1711,9 +1707,9 @@ def fed_import_bans(update, context):
                 "fban_{}.csv".format(msg.reply_to_message.document.file_id)
             )
             with open(
-                    "fban_{}.csv".format(msg.reply_to_message.document.file_id),
-                    "r",
-                    encoding="utf8",
+                "fban_{}.csv".format(msg.reply_to_message.document.file_id),
+                "r",
+                encoding="utf8",
             ) as csvFile:
                 reader = csv.reader(csvFile)
                 for data in reader:
@@ -1795,9 +1791,7 @@ def del_fed_button(update, _):
         if delete:
             query.message.edit_text(
                 "You have removed your Federation! Now all the Groups that are connected with `{}` do not have a "
-                "Federation.".format(
-                    getfed["fname"]
-                ),
+                "Federation.".format(getfed["fname"]),
                 parse_mode="markdown",
             )
 
@@ -2151,9 +2145,7 @@ def get_myfedsubs(update, context):
             parse_mode="markdown",
         )
         return
-    listfed = "Federation `{}` is subscribing federation:\n".format(
-        fedinfo["fname"]
-    )
+    listfed = "Federation `{}` is subscribing federation:\n".format(fedinfo["fname"])
     for x in getmy:
         listfed += "- `{}`\n".format(x)
     listfed += (
@@ -2230,12 +2222,16 @@ def __user_info__(user_id, chat_id):
         infoname = info["fname"]
 
         if int(info["owner"]) == user_id:
-            text = "This user is the owner of the current Federation: <b>{}</b>.".format(
-                infoname
+            text = (
+                "This user is the owner of the current Federation: <b>{}</b>.".format(
+                    infoname
+                )
             )
         elif is_user_fed_admin(fed_id, user_id):
-            text = "This user is the admin of the current Federation: <b>{}</b>.".format(
-                infoname
+            text = (
+                "This user is the admin of the current Federation: <b>{}</b>.".format(
+                    infoname
+                )
             )
 
         elif fban:
@@ -2294,15 +2290,9 @@ You can even designate admin federations, so your trusted admin can ban all the 
  × /importfbans: Reply to the Federation backup message file to import the banned list to the Federation now.
 """
 
-NEW_FED_HANDLER = CommandHandler(
-    "newfed", new_fed, run_async=True
-)
-DEL_FED_HANDLER = CommandHandler(
-    "delfed", del_fed, pass_args=True, run_async=True
-)
-JOIN_FED_HANDLER = CommandHandler(
-    "joinfed", join_fed, pass_args=True, run_async=True
-)
+NEW_FED_HANDLER = CommandHandler("newfed", new_fed, run_async=True)
+DEL_FED_HANDLER = CommandHandler("delfed", del_fed, pass_args=True, run_async=True)
+JOIN_FED_HANDLER = CommandHandler("joinfed", join_fed, pass_args=True, run_async=True)
 LEAVE_FED_HANDLER = CommandHandler(
     "leavefed", leave_fed, pass_args=True, run_async=True
 )
@@ -2312,18 +2302,14 @@ PROMOTE_FED_HANDLER = CommandHandler(
 DEMOTE_FED_HANDLER = CommandHandler(
     "fdemote", user_demote_fed, pass_args=True, run_async=True
 )
-INFO_FED_HANDLER = CommandHandler(
-    "fedinfo", fed_info, pass_args=True, run_async=True
-)
+INFO_FED_HANDLER = CommandHandler("fedinfo", fed_info, pass_args=True, run_async=True)
 BAN_FED_HANDLER = DisableAbleCommandHandler(
     ["fban", "fedban"],
     fed_ban,
     pass_args=True,
     run_async=True,
 )
-UN_BAN_FED_HANDLER = CommandHandler(
-    "unfban", unfban, pass_args=True, run_async=True
-)
+UN_BAN_FED_HANDLER = CommandHandler("unfban", unfban, pass_args=True, run_async=True)
 FED_BROADCAST_HANDLER = CommandHandler(
     "fbroadcast", fed_broadcast, pass_args=True, run_async=True
 )
@@ -2333,9 +2319,7 @@ FED_SET_RULES_HANDLER = CommandHandler(
 FED_GET_RULES_HANDLER = CommandHandler(
     "frules", get_frules, pass_args=True, run_async=True
 )
-FED_CHAT_HANDLER = CommandHandler(
-    "chatfed", fed_chat, pass_args=True, run_async=True
-)
+FED_CHAT_HANDLER = CommandHandler("chatfed", fed_chat, pass_args=True, run_async=True)
 FED_ADMIN_HANDLER = CommandHandler(
     "fedadmins", fed_admin, pass_args=True, run_async=True
 )
@@ -2346,7 +2330,9 @@ FED_USERBAN_HANDLER = CommandHandler(
     pass_chat_data=True,
     run_async=True,
 )
-FED_NOTIF_HANDLER = CommandHandler("fednotif", fed_notif, pass_args=True, run_async=True)
+FED_NOTIF_HANDLER = CommandHandler(
+    "fednotif", fed_notif, pass_args=True, run_async=True
+)
 FED_CHATLIST_HANDLER = CommandHandler(
     "fedchats", fed_chats, pass_args=True, run_async=True
 )
@@ -2359,24 +2345,14 @@ FEDSTAT_USER = DisableAbleCommandHandler(
     pass_args=True,
     run_async=True,
 )
-SET_FED_LOG = CommandHandler(
-    "setfedlog", set_fed_log, pass_args=True, run_async=True
-)
+SET_FED_LOG = CommandHandler("setfedlog", set_fed_log, pass_args=True, run_async=True)
 UNSET_FED_LOG = CommandHandler(
     "unsetfedlog", unset_fed_log, pass_args=True, run_async=True
 )
-SUBS_FED = CommandHandler(
-    "subfed", subs_feds, pass_args=True, run_async=True
-)
-UNSUBS_FED = CommandHandler(
-    "unsubfed", unsubs_feds, pass_args=True, run_async=True
-)
-MY_SUB_FED = CommandHandler(
-    "fedsubs", get_myfedsubs, pass_args=True, run_async=True
-)
-MY_FEDS_LIST = CommandHandler(
-    "myfeds", get_myfeds_list, run_async=True
-)
+SUBS_FED = CommandHandler("subfed", subs_feds, pass_args=True, run_async=True)
+UNSUBS_FED = CommandHandler("unsubfed", unsubs_feds, pass_args=True, run_async=True)
+MY_SUB_FED = CommandHandler("fedsubs", get_myfedsubs, pass_args=True, run_async=True)
+MY_FEDS_LIST = CommandHandler("myfeds", get_myfeds_list, run_async=True)
 DELETEBTN_FED_HANDLER = CallbackQueryHandler(
     del_fed_button, pattern=r"rmfed_", run_async=True
 )

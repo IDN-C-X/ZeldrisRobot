@@ -15,6 +15,7 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 
+
 def get_readable_time(seconds: int) -> str:
     count = 0
     readable_time = ""

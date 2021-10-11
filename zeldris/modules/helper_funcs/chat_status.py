@@ -38,15 +38,13 @@ def can_delete(chat: Chat, bot_id: int) -> bool:
     return chat.get_member(bot_id).can_delete_messages
 
 
-def is_user_ban_protected(
-        chat: Chat, user_id: int, member: ChatMember = None
-) -> bool:
+def is_user_ban_protected(chat: Chat, user_id: int, member: ChatMember = None) -> bool:
     if (
-            chat.type == "private"
-            or user_id in DEV_USERS
-            or user_id in WHITELIST_USERS
-            or chat.all_members_are_administrators
-            or user_id in {777000, 1087968824}
+        chat.type == "private"
+        or user_id in DEV_USERS
+        or user_id in WHITELIST_USERS
+        or chat.all_members_are_administrators
+        or user_id in {777000, 1087968824}
     ):
         return True
 
@@ -57,10 +55,10 @@ def is_user_ban_protected(
 
 def is_user_admin(chat: Chat, user_id: int, member: ChatMember = None) -> bool:
     if (
-            chat.type == "private"
-            or user_id in DEV_USERS
-            or user_id in {777000, 1087968824}
-            or chat.all_members_are_administrators
+        chat.type == "private"
+        or user_id in DEV_USERS
+        or user_id in {777000, 1087968824}
+        or chat.all_members_are_administrators
     ):
         return True
 
@@ -84,9 +82,7 @@ def is_user_admin(chat: Chat, user_id: int, member: ChatMember = None) -> bool:
                     return False
 
 
-def is_bot_admin(
-        chat: Chat, bot_id: int, bot_member: ChatMember = None
-) -> bool:
+def is_bot_admin(chat: Chat, bot_id: int, bot_member: ChatMember = None) -> bool:
     if chat.type == "private" or chat.all_members_are_administrators:
         return True
 
@@ -119,8 +115,7 @@ def can_pin(func):
         if update.effective_chat.get_member(context.bot.id).can_pin_messages:
             return func(update, context, *args, **kwargs)
         update.effective_message.reply_text(
-            "I can't pin messages here! "
-            "Make sure I'm admin and can pin messages."
+            "I can't pin messages here! " "Make sure I'm admin and can pin messages."
         )
 
     return pin_rights
@@ -129,9 +124,7 @@ def can_pin(func):
 def can_promote(func):
     @wraps(func)
     def promote_rights(update, context, *args, **kwargs):
-        if update.effective_chat.get_member(
-                context.bot.id
-        ).can_promote_members:
+        if update.effective_chat.get_member(context.bot.id).can_promote_members:
             return func(update, context, *args, **kwargs)
         update.effective_message.reply_text(
             "I can't promote/demote people here! "
@@ -144,9 +137,7 @@ def can_promote(func):
 def can_restrict(func):
     @wraps(func)
     def promote_rights(update, context, *args, **kwargs):
-        if update.effective_chat.get_member(
-                context.bot.id
-        ).can_restrict_members:
+        if update.effective_chat.get_member(context.bot.id).can_restrict_members:
             return func(update, context, *args, **kwargs)
         update.effective_message.reply_text(
             "I can't restrict people here! "

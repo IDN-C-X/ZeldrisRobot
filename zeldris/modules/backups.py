@@ -26,10 +26,12 @@ from telegram.ext import CommandHandler
 
 # from zeldris.modules.sql import warns_sql as warnssql
 import zeldris.modules.sql.blacklist_sql as blacklistsql
+
 # from zeldris.modules.sql import cust_filters_sql as filtersql
 # import zeldris.modules.sql.welcome_sql as welcsql
 import zeldris.modules.sql.locks_sql as locksql
 import zeldris.modules.sql.notes_sql as sql
+
 # from zeldris.modules.rules import get_rules
 import zeldris.modules.sql.rules_sql as rulessql
 from zeldris import dispatcher, LOGGER, OWNER_ID, MESSAGE_DUMP
@@ -55,7 +57,9 @@ def import_data(update, context):
         chat_name = dispatcher.bot.getChat(conn).title
     else:
         if update.effective_message.chat.type == "private":
-            update.effective_message.reply_text("This command can only be runned on group, not PM.")
+            update.effective_message.reply_text(
+                "This command can only be runned on group, not PM."
+            )
             return ""
 
         chat = update.effective_chat
@@ -65,7 +69,9 @@ def import_data(update, context):
         try:
             file_info = context.bot.get_file(msg.reply_to_message.document.file_id)
         except BadRequest:
-            msg.reply_text("Try downloading and uploading the file yourself again, This one seem broken!")
+            msg.reply_text(
+                "Try downloading and uploading the file yourself again, This one seem broken!"
+            )
             return
 
         with BytesIO() as file:
@@ -76,7 +82,8 @@ def import_data(update, context):
         # only import one group
         if len(data) > 1 and str(chat.id) not in data:
             msg.reply_text(
-                "There are more than one group in this file and the chat.id is not same! How am i supposed to import it?")
+                "There are more than one group in this file and the chat.id is not same! How am i supposed to import it?"
+            )
             return
 
         # Check if backup is this chat
@@ -95,7 +102,8 @@ def import_data(update, context):
         try:
             if str(context.bot.id) != str(data[str(chat.id)]["bot"]):
                 return msg.reply_text(
-                    "Backup from another bot that is not suggested might cause the problem, documents, photos, videos, audios, records might not work as it should be.")
+                    "Backup from another bot that is not suggested might cause the problem, documents, photos, videos, audios, records might not work as it should be."
+                )
         except Exception:
             pass
         # Select data source
@@ -109,7 +117,8 @@ def import_data(update, context):
                 mod.__import_data__(str(chat.id), data)
         except Exception:
             msg.reply_text(
-                "An error occurred while recovering your data. The process failed. If you experience a problem with this, please ask on @IDNCoderX.")
+                "An error occurred while recovering your data. The process failed. If you experience a problem with this, please ask on @IDNCoderX."
+            )
 
             LOGGER.exception(
                 "Imprt for the chat %s with the name %s failed.",
@@ -143,7 +152,9 @@ def export_data(update, context):
         # chat_name = dispatcher.bot.getChat(conn).title
     else:
         if update.effective_message.chat.type == "private":
-            update.effective_message.reply_text("This command can only be used on group, not PM")
+            update.effective_message.reply_text(
+                "This command can only be used on group, not PM"
+            )
             return ""
         chat = update.effective_chat
         chat_id = update.effective_chat.id
@@ -400,7 +411,9 @@ __help__ = """
 """
 
 IMPORT_HANDLER = CommandHandler("import", import_data, run_async=True)
-EXPORT_HANDLER = CommandHandler("export", export_data, pass_chat_data=True, run_async=True)
+EXPORT_HANDLER = CommandHandler(
+    "export", export_data, pass_chat_data=True, run_async=True
+)
 
 dispatcher.add_handler(IMPORT_HANDLER)
 dispatcher.add_handler(EXPORT_HANDLER)

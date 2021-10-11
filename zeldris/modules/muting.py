@@ -125,10 +125,10 @@ def unmute(update, context):
         )
 
     elif (
-            member.can_send_messages
-            and member.can_send_media_messages
-            and member.can_send_other_messages
-            and member.can_add_web_page_previews
+        member.can_send_messages
+        and member.can_send_media_messages
+        and member.can_send_other_messages
+        and member.can_add_web_page_previews
     ):
         message.reply_text("This user already has the right to speak.")
     else:
@@ -272,10 +272,18 @@ An example of temporarily mute someone:
 
 __mod_name__ = "Muting"
 
-MUTE_HANDLER = CommandHandler("mute", mute, pass_args=True, filters=Filters.chat_type.groups, run_async=True)
-UNMUTE_HANDLER = CommandHandler("unmute", unmute, pass_args=True, filters=Filters.chat_type.groups, run_async=True)
+MUTE_HANDLER = CommandHandler(
+    "mute", mute, pass_args=True, filters=Filters.chat_type.groups, run_async=True
+)
+UNMUTE_HANDLER = CommandHandler(
+    "unmute", unmute, pass_args=True, filters=Filters.chat_type.groups, run_async=True
+)
 TEMPMUTE_HANDLER = CommandHandler(
-    ["tmute", "tempmute"], temp_mute, pass_args=True, filters=Filters.chat_type.groups, run_async=True
+    ["tmute", "tempmute"],
+    temp_mute,
+    pass_args=True,
+    filters=Filters.chat_type.groups,
+    run_async=True,
 )
 
 dispatcher.add_handler(MUTE_HANDLER)

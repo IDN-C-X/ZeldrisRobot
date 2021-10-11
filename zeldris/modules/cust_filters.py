@@ -565,8 +565,10 @@ def rmall_callback(update, _):
 # NOT ASYNC NOT A HANDLER
 def get_exception(excp, filt, chat):
     if excp.message == "Unsupported url protocol":
-        return "You seem to be trying to use the URL protocol which is not supported. Telegram does not support key " \
-               "for multiple protocols, such as tg: //. Please try again! "
+        return (
+            "You seem to be trying to use the URL protocol which is not supported. Telegram does not support key "
+            "for multiple protocols, such as tg: //. Please try again! "
+        )
     if excp.message == "Reply message not found":
         return "noreply"
     LOGGER.warning("Message %s could not be parsed", str(filt.reply))

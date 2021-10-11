@@ -98,9 +98,7 @@ def gban(update, context):
         return
 
     if int(user_id) in DEV_USERS:
-        message.reply_text(
-            "Trying to gban dev huh? Are you looking to die?"
-        )
+        message.reply_text("Trying to gban dev huh? Are you looking to die?")
         return
 
     if int(user_id) in SUPPORT_USERS:
@@ -350,8 +348,8 @@ def check_and_ban(update, user_id, should_message=True):
 def enforce_gban(update, context):
     # Not using @restrict handler to avoid spamming - just ignore if cant gban.
     if (
-            not sql.does_chat_gban(update.effective_chat.id)
-            or not update.effective_chat.get_member(context.bot.id).can_restrict_members
+        not sql.does_chat_gban(update.effective_chat.id)
+        or not update.effective_chat.get_member(context.bot.id).can_restrict_members
     ):
         return
     user = update.effective_user
