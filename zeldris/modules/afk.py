@@ -80,7 +80,7 @@ def no_longer_afk(update, _):
         firstname = update.effective_user.first_name
         try:
             message.reply_text(
-                "{} is back online!\nYou were away since: {}".format(
+                "{} is back online!\nYou were away for: {}".format(
                     firstname, end_afk_time
                 )
             )
