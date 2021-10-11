@@ -31,6 +31,7 @@ from telegram.ext import (
     CommandHandler,
     DispatcherHandlerStop,
     Filters,
+    MessageHandler,
 )
 from telegram.utils.helpers import escape_markdown, mention_html
 
