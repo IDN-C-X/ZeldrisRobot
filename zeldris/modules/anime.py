@@ -468,7 +468,7 @@ def upcoming(update: Update, _):
     upcoming_list = [entry["title"] for entry in upcomin["top"]]
     upcoming_message = ""
 
-    for entry_num in range(len(upcoming_list)):
+    for entry_num, _ in enumerate(upcoming_list):
         if entry_num == 10:
             break
         upcoming_message += f"{entry_num + 1}. {upcoming_list[entry_num]}\n"
@@ -489,12 +489,24 @@ Get information about anime, manga or characters from [AniList](anilist.co).
 × /airing <anime>: returns anime airing info.
  """
 
-ANIME_HANDLER = DisableAbleCommandHandler("anime", anime, run_async=True)
-AIRING_HANDLER = DisableAbleCommandHandler("airing", airing, run_async=True)
-CHARACTER_HANDLER = DisableAbleCommandHandler("character", character, run_async=True)
-MANGA_HANDLER = DisableAbleCommandHandler("manga", manga, run_async=True)
-USER_HANDLER = DisableAbleCommandHandler("user", user, run_async=True)
-UPCOMING_HANDLER = DisableAbleCommandHandler("upcoming", upcoming, run_async=True)
+ANIME_HANDLER = DisableAbleCommandHandler(
+    "anime", anime, run_async=True
+)
+AIRING_HANDLER = DisableAbleCommandHandler(
+    "airing", airing, run_async=True
+)
+CHARACTER_HANDLER = DisableAbleCommandHandler(
+    "character", character, run_async=True
+)
+MANGA_HANDLER = DisableAbleCommandHandler(
+    "manga", manga, run_async=True
+)
+USER_HANDLER = DisableAbleCommandHandler(
+    "user", user, run_async=True
+)
+UPCOMING_HANDLER = DisableAbleCommandHandler(
+    "upcoming", upcoming, run_async=True
+)
 
 dispatcher.add_handler(ANIME_HANDLER)
 dispatcher.add_handler(CHARACTER_HANDLER)
