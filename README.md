@@ -13,9 +13,9 @@
 <a href="https://www.codacy.com?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=IDN-C-X/ZeldrisRobot&amp;utm_campaign=Badge_Grade"> <img src="https://app.codacy.com/project/badge/Grade/f0985646bec24b6b9f5318d9a2a39b75" alt="Codacy" /> </a>
 <a href="https://www.codefactor.io/repository/github/idn-c-x/zeldrisrobot/overview/main"> <img src="https://www.codefactor.io/repository/github/idn-c-x/zeldrisrobot/badge/main?s=159cd037a0c02ec5a9d60eeaac7efa728430f58a" alt="Codefactor" /> </a><br>
 <a href="https://deepsource.io/gh/IDN-C-X/ZeldrisRobot/?ref=repository-badge"><img src="https://static.deepsource.io/deepsource-badge-light-mini.svg" alt="DeepSource"></a><br>
-<a href="https://python-telegram-bot.org"> <img src="https://img.shields.io/badge/PTB-13.1-brightgreen?&style=flat-round&logo=github" alt="Python Telegram Bot" /> </a><br>
+<a href="https://python-telegram-bot.org"> <img src="https://img.shields.io/badge/PTB-13.5-brightgreen?&style=flat-round&logo=github" alt="Python Telegram Bot" /> </a><br>
 <a href="https://docs.telethon.dev"> <img src="https://img.shields.io/badge/Telethon-1.16.4-brightgreen?&style=flat-round&logo=github" alt="Telethon" /> </a>
-<a href="https://docs.python.org"> <img src="https://img.shields.io/badge/Python-3.8.6-brightgreen?&style=flat-round&logo=python" alt="Python" /> </a><br>
+<a href="https://docs.python.org"> <img src="https://img.shields.io/badge/Python-3.9.7-brightgreen?&style=flat-round&logo=python" alt="Python" /> </a><br>
 <a href="https://github.com/IDN-C-X"> <img src="https://badges.frapsoft.com/os/v1/open-source.svg?v=103" alt="Open Source" /> </a>
 <a href="https://GitHub.com/IDN-C-X/ZeldrisRobot"> <img src="https://img.shields.io/badge/Maintained-Yes-brightgreen.svg" alt="Maintenance" /> </a><br>
 <a href="https://github.com/IDN-C-X/ZeldrisRobot/blob/main/LICENSE"> <img src="https://img.shields.io/badge/License-GPLv3-blue.svg" alt="License" /> </a>
@@ -174,13 +174,13 @@ anything.
 - [MrYacha](https://github.com/MrYacha) for connections module.
 - [ATechnoHazard](https://github.com/SphericalKat) for many stuffs.
 - [corsicanu](https://github.com/corsicanu) and nunopenim for android modules.
-- [Saitama Robot](https://github.com/AnimeKaizoku/SaitamaRobot) for anime modules and other stuff.
-- [Kigyo Robot](https://github.com/EnterpriseALRobot) for greetings modules.
+- [Saitama](https://github.com/AnimeKaizoku/SaitamaRobot) for anime modules and other stuff.
+- [Kigyo](https://github.com/EnterpriseALRobot) for greetings modules.
 - Any other missing Credits can be seen in commits!
 
 ## Projects!
 
 ```
-Zeldris is project parts from [IDNCoder](https://github.com/IDN-C-X)
-Thanks to Everyone that have contribute on this Project.
+Zeldris is part of the project of [IDNCoder](https://github.com/IDN-C-X)
+Thanks to Everyone who has contributed to this Project.
 ```
