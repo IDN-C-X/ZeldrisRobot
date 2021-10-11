@@ -906,14 +906,13 @@ def welcomemute(update: Update, context: CallbackContext) -> str:
             parse_mode=ParseMode.MARKDOWN,
         )
         return ""
-    else:
-        curr_setting = sql.welcome_mutes(chat.id)
-        reply = (
-            f"\n Give me a setting!\nChoose one out of: `off`/`no` or `soft`, `strong` or `captcha` only! \n"
-            f"Current setting: `{curr_setting}`"
-        )
-        msg.reply_text(reply, parse_mode=ParseMode.MARKDOWN)
-        return ""
+    curr_setting = sql.welcome_mutes(chat.id)
+    reply = (
+        f"\n Give me a setting!\nChoose one out of: `off`/`no` or `soft`, `strong` or `captcha` only! \n"
+        f"Current setting: `{curr_setting}`"
+    )
+    msg.reply_text(reply, parse_mode=ParseMode.MARKDOWN)
+    return ""
 
 
 @user_admin

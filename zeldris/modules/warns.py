@@ -216,8 +216,7 @@ def warn_user(update, context):
                 warner,
             )
         return warn(chat.get_member(user_id).user, chat, reason, message, warner)
-    else:
-        message.reply_text("No user was designated!")
+    message.reply_text("No user was designated!")
     return ""
 
 

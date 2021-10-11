@@ -73,7 +73,6 @@ def extract_user_and_text(
                 "you reply to that person's message instead, or forward one of that user's messages."
             )
             return None, None
-        user_id = user_id
         res = message.text.split(None, 2)
         if len(res) >= 3:
             text = res[2]
@@ -149,7 +148,6 @@ def extract_unt_fedban(
                 "Try replying to that person's msg or forward their message so i can act upon them"
             )
             return None, None
-        user_id = user_id
         res = message.text.split(None, 2)
         if len(res) >= 3:
             text = res[2]

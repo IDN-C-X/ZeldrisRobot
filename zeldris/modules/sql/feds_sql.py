@@ -618,12 +618,6 @@ def search_fed_by_id(fed_id):
     if get is None:
         return False
     return get
-    result = False
-    for Q in curr:
-        if Q.fed_id == fed_id:
-            result = Q.fed_id
-
-    return result
 
 
 def user_feds_report(user_id: int) -> bool:
