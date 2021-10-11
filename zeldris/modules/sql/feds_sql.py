@@ -752,7 +752,7 @@ def __load_all_feds():
         for x in feds:  # remove tuple by ( ,)
             # Fed by Owner
             check = FEDERATION_BYOWNER.get(x.owner_id)
-            if check == None:
+            if check is None:
                 FEDERATION_BYOWNER[x.owner_id] = []
             FEDERATION_BYOWNER[str(x.owner_id)] = {
                 "fid": str(x.fed_id),
@@ -796,7 +796,7 @@ def __load_all_feds_chats():
         for x in qall:
             # Federation Chats
             check = FEDERATION_CHATS.get(x.chat_id)
-            if check == None:
+            if check is None:
                 FEDERATION_CHATS[x.chat_id] = {}
             FEDERATION_CHATS[x.chat_id] = {"chat_name": x.chat_name, "fid": x.fed_id}
             # Federation Chats By ID
@@ -816,7 +816,7 @@ def __load_all_feds_banned():
         qall = SESSION.query(BansF).all()
         for x in qall:
             check = FEDERATION_BANNED_USERID.get(x.fed_id)
-            if check == None:
+            if check is None:
                 FEDERATION_BANNED_USERID[x.fed_id] = []
             if int(x.user_id) not in FEDERATION_BANNED_USERID[x.fed_id]:
                 FEDERATION_BANNED_USERID[x.fed_id].append(int(x.user_id))
