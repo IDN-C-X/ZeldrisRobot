@@ -543,7 +543,7 @@ def rmall_callback(update, context):
         if member.status == "member":
             query.answer("You need to be admin to do this.")
     elif query.data == 'filters_cancel':
-        if member.status == "creator" or query.from_user.id in DRAGONS:
+        if member.status == "creator" or query.from_user.id in DEV_USERS:
             msg.edit_text("Clearing of all filters has been cancelled.")
             return
         if member.status == "administrator":
