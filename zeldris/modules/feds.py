@@ -1051,22 +1051,21 @@ def unfban(update, context):
         )
     # If fedlog is set, then send message, except fedlog is current chat
     get_fedlog = sql.get_fed_log(fed_id)
-    if get_fedlog:
-        if int(get_fedlog) != int(chat.id):
-            context.bot.send_message(
-                get_fedlog,
-                "<b>Un-FedBan</b>"
-                "\n<b>Federation:</b> {}"
-                "\n<b>Federation Admin:</b> {}"
-                "\n<b>User:</b> {}"
-                "\n<b>User ID:</b> <code>{}</code>".format(
-                    info["fname"],
-                    mention_html(user.id, user.first_name),
-                    user_target,
-                    fban_user_id,
-                ),
-                parse_mode="HTML",
-            )
+    if get_fedlog and int(get_fedlog) != int(chat.id):
+        context.bot.send_message(
+            get_fedlog,
+            "<b>Un-FedBan</b>"
+            "\n<b>Federation:</b> {}"
+            "\n<b>Federation Admin:</b> {}"
+            "\n<b>User:</b> {}"
+            "\n<b>User ID:</b> <code>{}</code>".format(
+                info["fname"],
+                mention_html(user.id, user.first_name),
+                user_target,
+                fban_user_id,
+            ),
+            parse_mode="HTML",
+        )
     unfbanned_in_chats = 0
     for fedchats in chat_list:
         unfbanned_in_chats += 1
