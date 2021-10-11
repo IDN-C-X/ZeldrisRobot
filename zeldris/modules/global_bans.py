@@ -28,6 +28,7 @@ from zeldris import (
     dispatcher,
     OWNER_ID,
     SUDO_USERS,
+    DEV_USERS,
     SUPPORT_USERS,
     STRICT_GBAN,
     MESSAGE_DUMP,
@@ -95,6 +96,12 @@ def gban(update, context):
 
     if user_id == OWNER_ID:
         message.reply_text("Nice try -_- but I'm never gonna gban him.")
+        return
+
+    if int(user_id) in DEV_USERS:
+        message.reply_text(
+            "Trying to gban my dev huh? Are you search for die?"
+        )
         return
 
     if int(user_id) in SUDO_USERS:
