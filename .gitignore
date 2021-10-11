@@ -1,7 +1,7 @@
 zeldris/config.py
 logfile
-skylee.session
-skylee.session-journal
+zeldris.session
+zeldris.session-journal
 *.pyc
 .idea/
 .project
@@ -14,5 +14,5 @@ sticker.png
 kangsticker.png
 kangsticker.tgs
 kangsticker
-skylee.mp3
+zeldris.mp3
 gpic.png

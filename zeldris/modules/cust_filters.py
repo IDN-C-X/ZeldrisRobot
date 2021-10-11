@@ -20,20 +20,19 @@ import re
 from html import escape
 
 import telegram
-from telegram import ParseMode, InlineKeyboardMarkup, Message, InlineKeyboardButton
+from telegram import ParseMode, InlineKeyboardMarkup, InlineKeyboardButton
 from telegram.error import BadRequest
 from telegram.ext import (
     CommandHandler,
     MessageHandler,
     DispatcherHandlerStop,
     CallbackQueryHandler,
-    run_async,
     Filters,
 )
 from telegram.utils.helpers import escape_markdown, mention_html
 
-from zeldris import LOGGER
 from zeldris import DEV_USERS
+from zeldris import LOGGER
 from zeldris import dispatcher
 from zeldris.modules.connection import connected
 from zeldris.modules.disable import DisableAbleCommandHandler
@@ -566,7 +565,8 @@ def rmall_callback(update, _):
 # NOT ASYNC NOT A HANDLER
 def get_exception(excp, filt, chat):
     if excp.message == "Unsupported url protocol":
-        return "You seem to be trying to use the URL protocol which is not supported. Telegram does not support key for multiple protocols, such as tg: //. Please try again!"
+        return "You seem to be trying to use the URL protocol which is not supported. Telegram does not support key " \
+               "for multiple protocols, such as tg: //. Please try again! "
     if excp.message == "Reply message not found":
         return "noreply"
     LOGGER.warning("Message %s could not be parsed", str(filt.reply))
