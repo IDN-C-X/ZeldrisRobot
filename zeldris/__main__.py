@@ -85,6 +85,7 @@ def get_readable_time(seconds: int) -> str:
 
     return ping_time
 
+ZELDRIS_IMG = "https://telegra.ph/file/63d5cd17674fcc33f91b8.jpg"
 
 PM_START_TEXT = """
 Hey there! my name is *{}*. 
@@ -239,11 +240,21 @@ def start(update: Update, context: CallbackContext):
                 timeout=60,
             )
     else:
-        update.effective_message.reply_text(
-            "<b>I'm awake already!</b>\n<b>Haven't slept since:</b> <code>{}</code>\n<b>Support @IDNCoderX</b>".format(
-                uptime,
+        update.effective_message.reply_animation(
+            ZELDRIS_IMG, caption= "<code>Yui Oregairu Is Here For Maintenance Your Group\nI am Awake Since</code>: <code>{}</code>".format(
+                uptime
             ),
             parse_mode=ParseMode.HTML,
+            reply_markup=InlineKeyboardMarkup(
+                [
+                  [
+                  InlineKeyboardButton(text="Support Group", url="https://telegram.dog/IDNCoderX")
+                  ],
+                  [
+                  InlineKeyboardButton(text="Support Channel", url="https://telegram.dog/IDNCoder")
+                  ]
+                ]
+            ),
         )
 
 
