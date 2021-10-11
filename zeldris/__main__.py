@@ -241,7 +241,7 @@ def start(update: Update, context: CallbackContext):
             )
     else:
         update.effective_message.reply_animation(
-            ZELDRIS_IMG, caption= "<code>Yui Oregairu Is Here For Maintenance Your Group\nI am Awake Since</code>: <code>{}</code>".format(
+            ZELDRIS_IMG, caption= "<code>Zeldris Is Here For Maintenance Your Group\nI am Awake Since</code>: <code>{}</code>".format(
                 uptime
             ),
             parse_mode=ParseMode.HTML,
