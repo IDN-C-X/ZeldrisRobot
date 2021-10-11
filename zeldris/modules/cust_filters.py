@@ -28,6 +28,7 @@ from telegram import (
 from telegram.error import BadRequest
 from telegram.ext import (
     CallbackQueryHandler,
+    CommandHandler,
     DispatcherHandlerStop,
     Filters,
 )
