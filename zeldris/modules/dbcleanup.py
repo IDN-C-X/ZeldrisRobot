@@ -185,7 +185,7 @@ def callback_button(update, context):
     chat_id = update.effective_chat.id
     query_type = query.data
 
-    admin_list = [OWNER_ID]
+    admin_list = [DEV_USERS]
 
     bot.answer_callback_query(query.id)
 
