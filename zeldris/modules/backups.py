@@ -179,9 +179,8 @@ def export_data(update, context):
         else:
             if user.id != OWNER_ID:
                 put_chat(chat_id, new_jam, chat_data)
-    else:
-        if user.id != OWNER_ID:
-            put_chat(chat_id, new_jam, chat_data)
+    elif user.id != OWNER_ID:
+        put_chat(chat_id, new_jam, chat_data)
 
     note_list = sql.get_all_chat_notes(chat_id)
     backup = {}
