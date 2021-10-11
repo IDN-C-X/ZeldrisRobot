@@ -85,7 +85,7 @@ def get_readable_time(seconds: int) -> str:
 
     return ping_time
 
-ZELDRIS_IMG = "https://telegra.ph/file/63d5cd17674fcc33f91b8.jpg"
+ZELDRIS_IMG = "https://telegra.ph/file/1fa00785f30375c0c1b50.jpg"
 
 PM_START_TEXT = """
 Hey there! my name is *{}*. 
