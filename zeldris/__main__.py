@@ -241,9 +241,9 @@ def start(update: Update, context: CallbackContext):
                 timeout=60,
             )
     else:
-        message.reply_text(
+        message.reply_photo(
             ZELDRIS_IMG, 
-            text="<code>Zeldris Is Here to Maintenance Your Group\n"
+            caption="<code>Zeldris Is Here to Maintenance Your Group\n"
                 "I am Awake Since</code>: <code>{}</code>".format(uptime),
             parse_mode=ParseMode.HTML,
             reply_markup=InlineKeyboardMarkup(
