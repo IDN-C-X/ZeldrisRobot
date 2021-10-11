@@ -287,14 +287,12 @@ def connected(bot, update, chat, user_id, need_admin=True):
                 isadmin
                 or (isallow and ismember)
                 or (user.id in DEV_USERS)
-                or (user.id in DEV_USERS)
         ):
             if not need_admin:
                 return conn_id
             if (
                     getstatusadmin.status in ("administrator", "creator")
                     or user_id in DEV_USERS
-                    or user.id in DEV_USERS
             ):
                 return conn_id
             send_message(
@@ -388,7 +386,8 @@ def connect_button(update, context):
 
 __mod_name__ = "Connection"
 
-__help__ = """Sometimes, you just want to add some notes and filters to a group chat, but you don't want everyone to 
+__help__ = """
+Sometimes, you just want to add some notes and filters to a group chat, but you don't want everyone to 
 see; This is where connections come in... This allows you to connect to a chat's database, and add things to it 
 without the commands appearing in chat! For obvious reasons, you need to be an admin to add things; but any member in 
 the group can view your data. 
