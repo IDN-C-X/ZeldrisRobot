@@ -109,16 +109,15 @@ def ban(update, context):
             # Do not reply
             message.reply_text("Banned!", quote=False)
             return log
-        else:
-            LOGGER.warning(update)
-            LOGGER.exception(
-                "ERROR banning user %s in chat %s (%s) due to %s",
-                user_id,
-                chat.title,
-                chat.id,
-                excp.message,
-            )
-            message.reply_text("Well damn, I can't ban that user.")
+        LOGGER.warning(update)
+        LOGGER.exception(
+            "ERROR banning user %s in chat %s (%s) due to %s",
+            user_id,
+            chat.title,
+            chat.id,
+            excp.message,
+        )
+        message.reply_text("Well damn, I can't ban that user.")
 
     return ""
 
@@ -202,16 +201,15 @@ def temp_ban(update, context):
                 "Goodbye.. we'll meet after {}.".format(time_val), quote=False
             )
             return log
-        else:
-            LOGGER.warning(update)
-            LOGGER.exception(
-                "ERROR banning user %s in chat %s (%s) due to %s",
-                user_id,
-                chat.title,
-                chat.id,
-                excp.message,
-            )
-            message.reply_text("Well damn, I can't ban that user.")
+        LOGGER.warning(update)
+        LOGGER.exception(
+            "ERROR banning user %s in chat %s (%s) due to %s",
+            user_id,
+            chat.title,
+            chat.id,
+            excp.message,
+        )
+        message.reply_text("Well damn, I can't ban that user.")
 
     return ""
 
@@ -277,9 +275,7 @@ def kick(update, context):
             log += "\n<b>Reason:</b> {}".format(reason)
 
         return log
-
-    else:
-        message.reply_text("Get Out!.")
+    message.reply_text("Get Out!.")
 
     return ""
 
@@ -309,8 +305,7 @@ def banme(update, _):
                 user_id,
             )
         )
-    else:
-        update.effective_message.reply_text("Huh? I can't :/")
+    update.effective_message.reply_text("Huh? I can't :/")
 
 
 @bot_admin

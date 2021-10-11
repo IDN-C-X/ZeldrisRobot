@@ -237,24 +237,22 @@ def temp_mute(update, context):
             )
             message.reply_text("shut up! 🤐 Taped for {}!".format(time_val))
             return log
-        else:
-            message.reply_text("This user is already muted.")
+        message.reply_text("This user is already muted.")
 
     except BadRequest as excp:
         if excp.message == "Reply message not found":
             # Do not reply
             message.reply_text("shut up! 🤐 Taped for {}!".format(time_val), quote=False)
             return log
-        else:
-            LOGGER.warning(update)
-            LOGGER.exception(
-                "ERROR muting user %s in chat %s (%s) due to %s",
-                user_id,
-                chat.title,
-                chat.id,
-                excp.message,
-            )
-            message.reply_text("Well damn, I can't mute that user.")
+        LOGGER.warning(update)
+        LOGGER.exception(
+            "ERROR muting user %s in chat %s (%s) due to %s",
+            user_id,
+            chat.title,
+            chat.id,
+            excp.message,
+        )
+        message.reply_text("Well damn, I can't mute that user.")
 
     return ""
 

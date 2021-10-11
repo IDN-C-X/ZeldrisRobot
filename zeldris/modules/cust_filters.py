@@ -145,8 +145,7 @@ def filters(update, context):
                 "Please provide keyword for this filter to reply with!",
             )
             return
-        else:
-            keyword = args[1]
+        keyword = args[1]
     else:
         extracted = split_quotes(args[1])
         if len(extracted) < 1:
@@ -568,7 +567,7 @@ def get_exception(excp, filt, chat):
             "You seem to be trying to use the URL protocol which is not supported. Telegram does not support key "
             "for multiple protocols, such as tg: //. Please try again! "
         )
-    elif excp.message == "Reply message not found":
+    if excp.message == "Reply message not found":
         return "noreply"
     LOGGER.warning("Message %s could not be parsed", str(filt.reply))
     LOGGER.exception(

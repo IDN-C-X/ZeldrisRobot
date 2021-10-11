@@ -236,8 +236,7 @@ def yesnowtf(update, context):
     res = r.get("https://yesno.wtf/api")
     if res.status_code != 200:
         return msg.reply_text(random.choice(fun.DECIDE))
-    else:
-        res = res.json()
+    res = res.json()
     try:
         context.bot.send_animation(
             chat.id, animation=res["image"], caption=str(res["answer"]).upper()
