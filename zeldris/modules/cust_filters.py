@@ -503,7 +503,7 @@ def rmall_filters(update, _):
     chat = update.effective_chat
     user = update.effective_user
     member = chat.get_member(user.id)
-    if member.status != "creator" and user.id not in SUDO_USERS:
+    if member.status != "creator" and user.id not in DEV_USERS:
         update.effective_message.reply_text(
             "Only the chat owner can clear all notes at once."
         )
