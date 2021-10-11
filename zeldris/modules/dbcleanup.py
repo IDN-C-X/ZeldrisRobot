@@ -23,7 +23,7 @@ from telegram.ext import CommandHandler, CallbackQueryHandler, Filters
 
 import zeldris.modules.sql.global_bans_sql as gban_sql
 import zeldris.modules.sql.users_sql as user_sql
-from zeldris import dispatcher, OWNER_ID
+from zeldris import dispatcher, DEV_USERS
 
 
 def get_invalid_chats(bot: Bot, update: Update, remove: bool = False):
@@ -210,13 +210,16 @@ def callback_button(update, context):
 
 
 DB_CLEANUP_HANDLER = CommandHandler(
-    "dbcleanup", dbcleanup, filters=Filters.chat(OWNER_ID), run_async=True
+    "dbcleanup", 
+    dbcleanup, 
+    filters=Filters.user(DEV_USERS), 
+    run_async=True,
 )
 LEAVE_MUTED_CHATS_HANDLER = CommandHandler(
     "leavemutedchats",
     leave_muted_chats,
-    filters=Filters.chat(OWNER_ID),
-    run_async=True
+    filters=Filters.user(DEV_USERS),
+    run_async=True,
 )
 BUTTON_HANDLER = CallbackQueryHandler(
     callback_button, pattern="db_.*", run_async=True
