@@ -199,6 +199,7 @@ def test(update: Update, _):
 
 def start(update: Update, context: CallbackContext):
     args = context.args
+    message = update.effective_message
     uptime = get_readable_time((time.time() - StartTime))
     if update.effective_chat.type == "private":
         if len(args) >= 1:
@@ -229,7 +230,7 @@ def start(update: Update, context: CallbackContext):
                 IMPORTED["rules"].send_rules(update, args[0], from_pm=True)
 
         else:
-            update.effective_message.reply_text(
+            message.reply_text(
                 PM_START_TEXT.format(
                     escape_markdown(context.bot.first_name),
                     escape_markdown(uptime),
@@ -240,19 +241,25 @@ def start(update: Update, context: CallbackContext):
                 timeout=60,
             )
     else:
-        update.effective_message.reply_animation(
-            ZELDRIS_IMG, caption= "<code>Zeldris Is Here For Maintenance Your Group\nI am Awake Since</code>: <code>{}</code>".format(
-                uptime
-            ),
+        message.reply_animation(
+            ZELDRIS_IMG, 
+            caption="<code>Zeldris Is Here to Maintenance Your Group\n"
+                "I am Awake Since</code>: <code>{}</code>".format(uptime),
             parse_mode=ParseMode.HTML,
             reply_markup=InlineKeyboardMarkup(
                 [
-                  [
-                  InlineKeyboardButton(text="Support Group", url="https://telegram.dog/IDNCoderX")
-                  ],
-                  [
-                  InlineKeyboardButton(text="Support Channel", url="https://telegram.dog/IDNCoder")
-                  ]
+                    [
+                        InlineKeyboardButton(
+                            text="Support Group", 
+                            url="https://telegram.dog/IDNCoderX",
+                        ),
+                    ],
+                    [
+                        InlineKeyboardButton(
+                            text="Support Channel", 
+                            url="https://telegram.dog/IDNCoder",
+                        ),
+                    ]
                 ]
             ),
         )
@@ -639,7 +646,7 @@ def is_chat_allowed(update, context):
 
 def main():
     # test_handler = DisableAbleCommandHandler("test", test, run_async=True)
-    start_handler = CommandHandler(
+    start_handler = DisableAbleCommandHandler(
         "start", start, pass_args=True, run_async=True
     )
     home_callback_handler = CallbackQueryHandler(
