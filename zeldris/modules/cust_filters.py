@@ -631,9 +631,9 @@ Check `/markdownhelp` to know more!
 __mod_name__ = "Filters"
 
 
-FILTER_HANDLER = DisableAbleCommandHandler("filter", filters, run_async=False)
-STOP_HANDLER = DisableAbleCommandHandler("stop", stop_filter, run_async=False)
-RMALLFILTER_HANDLER = DisableAbleCommandHandler(
+FILTER_HANDLER = CommandHandler("filter", filters)
+STOP_HANDLER = CommandHandler("stop", stop_filter)
+RMALLFILTER_HANDLER = CommandHandler(
     "removeallfilters", rmall_filters, filters=Filters.chat_type.groups, run_async=True
 )
 RMALLFILTER_CALLBACK = CallbackQueryHandler(
@@ -642,7 +642,7 @@ RMALLFILTER_CALLBACK = CallbackQueryHandler(
 LIST_HANDLER = DisableAbleCommandHandler(
     "filters", list_handlers, admin_ok=True, run_async=True
 )
-CUST_FILTER_HANDLER = DisableAbleMessageHandler(
+CUST_FILTER_HANDLER = MessageHandler(
     CustomFilters.has_text & ~Filters.update.edited_message,
     reply_filter,
     run_async=True,
