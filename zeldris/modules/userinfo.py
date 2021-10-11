@@ -107,7 +107,7 @@ def set_about_bio(update, context):
         if user_id == message.from_user.id:
             message.reply_text("Are you looking to change your own ... ?? That 's it.")
             return
-        elif user_id == context.bot.id and sender.id not in SUDO_USERS:
+        if user_id == context.bot.id and sender.id not in SUDO_USERS:
             message.reply_text(" Only SUDO USERS can change my information.")
             return
 
@@ -141,12 +141,11 @@ def __user_info__(user_id):
         return "<b>About user:</b>\n{me}\n\n<b>What others say:</b>\n{bio}".format(
             me=me, bio=bio
         )
-    elif bio:
+    if bio:
         return "<b>What others say:</b>\n{bio}\n".format(me=me, bio=bio)
-    elif me:
+    if me:
         return "<b>About user:</b>\n{me}" "".format(me=me, bio=bio)
-    else:
-        return ""
+    return ""
 
 
 __help__ = """

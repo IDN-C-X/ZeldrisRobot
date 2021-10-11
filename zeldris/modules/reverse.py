@@ -93,7 +93,7 @@ def reverse(update, context):
                     "bot or the website does not existed. "
                 )
                 return
-            elif HE.reason == "Not Found":
+            if HE.reason == "Not Found":
                 msg.reply_text("Image not found.")
                 return
         except URLError as UE:
