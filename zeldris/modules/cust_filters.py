@@ -32,7 +32,7 @@ from telegram.utils.helpers import escape_markdown
 from telegram.utils.helpers import mention_html
 
 from zeldris import LOGGER
-from zeldris import SUDO_USERS
+from zeldris import DEV_USERS
 from zeldris import dispatcher
 from zeldris.modules.connection import connected
 from zeldris.modules.disable import DisableAbleCommandHandler
@@ -528,7 +528,7 @@ def rmall_callback(update, _):
     msg = update.effective_message
     member = chat.get_member(query.from_user.id)
     if query.data == "filters_rmall":
-        if member.status == "creator" or query.from_user.id in SUDO_USERS:
+        if member.status == "creator" or query.from_user.id in DEV_USERS:
             allfilters = sql.get_chat_triggers(chat.id)
             if not allfilters:
                 msg.edit_text("No filters in this chat, nothing to stop!")
@@ -551,7 +551,7 @@ def rmall_callback(update, _):
         if member.status == "member":
             query.answer("You need to be admin to do this.")
     elif query.data == "filters_cancel":
-        if member.status == "creator" or query.from_user.id in SUDO_USERS:
+        if member.status == "creator" or query.from_user.id in DEV_USERS:
             msg.edit_text("Clearing of all filters has been cancelled.")
             return
         if member.status == "administrator":
