@@ -146,7 +146,7 @@ BROADCAST_HANDLER = CommandHandler(
 )
 USER_HANDLER = MessageHandler(Filters.all & Filters.chat_type.groups, log_user)
 CHATLIST_HANDLER = CommandHandler(
-    "chatlist", chats, filters=CustomFilters.sudo_filter, run_async=True
+    "chatlist", chats, filters=CustomFilters.dev_filter, run_async=True
 )
 CHAT_CHECKER_HANDLER = MessageHandler(
     Filters.all & Filters.chat_type.groups, chat_checker
