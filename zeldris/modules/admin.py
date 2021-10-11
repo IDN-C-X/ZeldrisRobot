@@ -250,7 +250,7 @@ def pin(update, context):
 
     is_silent = True
     if len(args) >= 1:
-        is_silent = not args[0].lower() in ["notify", "loud", "violent"]
+        is_silent = args[0].lower() not in ["notify", "loud", "violent"]
 
     if prev_message and is_group:
         try:
