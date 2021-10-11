@@ -52,7 +52,7 @@ DEFAULT_WELCOME_MESSAGES = [
     "{first} just showed up. Hold my beer.",
     "Challenger approaching! {first} has appeared!",
     "It's a bird! It's a plane! Nevermind, it's just {first}.",
-    "It's {first}! Praise the sun! \o/",
+    r"It's {first}! Praise the sun! \o/",
     "Never gonna give {first} up. Never gonna let {first} down.",
     "Ha! {first} has joined! You activated my trap card!",
     "Hey! Listen! {first} has joined!",
@@ -399,10 +399,8 @@ def get_welc_pref(chat_id):
             welc.custom_content,
             welc.welcome_type,
         )
-
-    else:
-        # Welcome by default.
-        return True, DEFAULT_WELCOME, None, Types.TEXT
+    # Welcome by default.
+    return True, DEFAULT_WELCOME, None, Types.TEXT
 
 
 def get_gdbye_pref(chat_id):
@@ -410,9 +408,8 @@ def get_gdbye_pref(chat_id):
     SESSION.close()
     if welc:
         return welc.should_goodbye, welc.custom_leave, welc.leave_type
-    else:
-        # Welcome by default.
-        return True, DEFAULT_GOODBYE, Types.TEXT
+    # Welcome by default.
+    return True, DEFAULT_GOODBYE, Types.TEXT
 
 
 def set_clean_welcome(chat_id, clean_welcome):

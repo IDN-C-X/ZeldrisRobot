@@ -42,9 +42,7 @@ def weather(update, context):
             del_msg.delete()
             update.effective_message.delete()
         except BadRequest as err:
-            if (err.message == "Message to delete not found") or (
-                    err.message == "Message can't be deleted"
-            ):
+            if err.message in ("Message to delete not found", "Message can't be deleted"):
                 return
 
         return
@@ -65,9 +63,7 @@ def weather(update, context):
             del_msg.delete()
             update.effective_message.delete()
         except BadRequest as err:
-            if (err.message == "Message to delete not found") or (
-                    err.message == "Message can't be deleted"
-            ):
+            if err.message in ("Message to delete not found", "Message can't be deleted"):
                 return
         return
 
@@ -128,13 +124,11 @@ def weather(update, context):
         del_msg.delete()
         update.effective_message.delete()
     except BadRequest as err:
-        if (err.message == "Message to delete not found") or (
-                err.message == "Message can't be deleted"
-        ):
+        if err.message in ("Message to delete not found", "Message can't be deleted"):
             return
 
 
-__help__ = """
+__help__ = r"""
 Weather module:
 
  × /weather <city>: Gets weather information of particular place!

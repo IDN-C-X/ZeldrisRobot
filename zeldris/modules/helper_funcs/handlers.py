@@ -122,5 +122,4 @@ class CustomCommandHandler(tg.CommandHandler):
                 filter_result = self.filters(update)
                 if filter_result:
                     return args, filter_result
-                else:
-                    return False
+                return False

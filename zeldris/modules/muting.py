@@ -48,7 +48,7 @@ def mute(update, context):
     message = update.effective_message  # type: Optional[Message]
     args = context.args
 
-    if user_can_ban(chat, user, context.bot.id) == False:
+    if user_can_ban(chat, user, context.bot.id) is False:
         message.reply_text(
             "You don't have enough rights to restrict someone from talking!"
         )
@@ -105,7 +105,7 @@ def unmute(update, context):
     message = update.effective_message  # type: Optional[Message]
     args = context.args
 
-    if user_can_ban(chat, user, context.bot.id) == False:
+    if user_can_ban(chat, user, context.bot.id) is False:
         message.reply_text("You don't have enough rights to unmute people")
         return ""
 
@@ -171,7 +171,7 @@ def temp_mute(update, context):
     message = update.effective_message  # type: Optional[Message]
     args = context.args
 
-    if user_can_ban(chat, user, context.bot.id) == False:
+    if user_can_ban(chat, user, context.bot.id) is False:
         message.reply_text(
             "You don't have enough rights to restrict someone from talking!"
         )
@@ -237,24 +237,22 @@ def temp_mute(update, context):
             )
             message.reply_text("shut up! 🤐 Taped for {}!".format(time_val))
             return log
-        else:
-            message.reply_text("This user is already muted.")
+        message.reply_text("This user is already muted.")
 
     except BadRequest as excp:
         if excp.message == "Reply message not found":
             # Do not reply
             message.reply_text("shut up! 🤐 Taped for {}!".format(time_val), quote=False)
             return log
-        else:
-            LOGGER.warning(update)
-            LOGGER.exception(
-                "ERROR muting user %s in chat %s (%s) due to %s",
-                user_id,
-                chat.title,
-                chat.id,
-                excp.message,
-            )
-            message.reply_text("Well damn, I can't mute that user.")
+        LOGGER.warning(update)
+        LOGGER.exception(
+            "ERROR muting user %s in chat %s (%s) due to %s",
+            user_id,
+            chat.title,
+            chat.id,
+            excp.message,
+        )
+        message.reply_text("Well damn, I can't mute that user.")
 
     return ""
 

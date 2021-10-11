@@ -181,7 +181,7 @@ def twrp(update, context):
         idx = 0
         for i, tag in enumerate(trs):
             dl_path = tag.find("a")["href"]
-            match = re.search("([\d.]+)", dl_path)
+            match = re.search(r"([\d.]+)", dl_path)
             new_ver = tuple(int(x) for x in match.group(1).split("."))
             if new_ver > base_ver:
                 base_ver = new_ver

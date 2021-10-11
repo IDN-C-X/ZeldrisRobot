@@ -86,12 +86,10 @@ if is_module_loaded(FILENAME):
                                           ] in ADMIN_CMDS and is_user_admin(chat, user.id)
                             if not is_disabled:
                                 return None
-                            else:
-                                return args, filter_result
+                            return args, filter_result
 
                         return args, filter_result
-                    else:
-                        return False
+                    return False
 
 
     class DisableAbleMessageHandler(MessageHandler):
