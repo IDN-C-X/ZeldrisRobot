@@ -631,8 +631,12 @@ Check `/markdownhelp` to know more!
 __mod_name__ = "Filters"
 
 
-FILTER_HANDLER = DisableAbleCommandHandler("filter", filters, filters=Filters.chat_type.groups, run_async=False)
-STOP_HANDLER = DisableAbleCommandHandler("stop", stop_filter, filters=Filters.chat_type.groups, run_async=False)
+FILTER_HANDLER = DisableAbleCommandHandler(
+    "filter", filters, filters=Filters.chat_type.groups, run_async=False
+)
+STOP_HANDLER = DisableAbleCommandHandler(
+    "stop", stop_filter, filters=Filters.chat_type.groups, run_async=False
+)
 RMALLFILTER_HANDLER = DisableAbleCommandHandler(
     "removeallfilters", rmall_filters, filters=Filters.chat_type.groups, run_async=True
 )
