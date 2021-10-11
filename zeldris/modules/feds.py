@@ -2029,15 +2029,14 @@ def subs_feds(update, context):
                 parse_mode="markdown",
             )
             get_fedlog = sql.get_fed_log(args[0])
-            if get_fedlog:
-                if int(get_fedlog) != int(chat.id):
-                    context.bot.send_message(
-                        get_fedlog,
-                        "Federation `{}` has subscribe the federation `{}`".format(
-                            fedinfo["fname"], getfed["fname"]
-                        ),
-                        parse_mode="markdown",
-                    )
+            if get_fedlog and int(get_fedlog) != int(chat.id):
+                context.bot.send_message(
+                    get_fedlog,
+                    "Federation `{}` has subscribe the federation `{}`".format(
+                        fedinfo["fname"], getfed["fname"]
+                    ),
+                    parse_mode="markdown",
+                )
         else:
             send_message(
                 update.effective_message,
@@ -2094,15 +2093,14 @@ def unsubs_feds(update, context):
                 parse_mode="markdown",
             )
             get_fedlog = sql.get_fed_log(args[0])
-            if get_fedlog:
-                if int(get_fedlog) != int(chat.id):
-                    context.bot.send_message(
-                        get_fedlog,
-                        "Federation `{}` has unsubscribe fed `{}`.".format(
-                            fedinfo["fname"], getfed["fname"]
-                        ),
-                        parse_mode="markdown",
-                    )
+            if get_fedlog and int(get_fedlog) != int(chat.id):
+                context.bot.send_message(
+                    get_fedlog,
+                    "Federation `{}` has unsubscribe fed `{}`.".format(
+                        fedinfo["fname"], getfed["fname"]
+                    ),
+                    parse_mode="markdown",
+                )
         else:
             send_message(
                 update.effective_message,
@@ -2198,9 +2196,7 @@ def is_user_fed_owner(fed_id, user_id):
     if getfedowner is None or getfedowner is False:
         return False
     getfedowner = getfedowner["owner"]
-    if str(user_id) == getfedowner or int(user_id) == OWNER_ID:
-        return True
-    return False
+    return str(user_id) == getfedowner or int(user_id) == OWNER_ID
 
 
 def welcome_fed(update, context):
@@ -2255,18 +2251,14 @@ def __user_info__(user_id, chat_id):
 # Temporary data
 def put_chat(chat_id, value, chat_data):
     # print(chat_data)
-    if not value:
-        status = False
-    else:
-        status = True
+    status = bool(value)
     chat_data[chat_id] = {"federation": {"status": status, "value": value}}
 
 
 def get_chat(chat_id, chat_data):
     # print(chat_data)
     try:
-        value = chat_data[chat_id]["federation"]
-        return value
+        return chat_data[chat_id]["federation"]
     except KeyError:
         return {"status": False, "value": False}
 
