@@ -102,9 +102,7 @@ def get_welcome_type(msg: Message):
     content = None
     text = ""
     raw_text = msg.text or msg.caption
-    args = raw_text.split(
-        None, 1
-    )  # use python's maxsplit to separate cmd and args
+    args = raw_text.split(None, 1)  # use python's maxsplit to separate cmd and args
 
     buttons = []
     # determine what the contents of the filter are - text, image, sticker, etc
@@ -169,9 +167,9 @@ def get_filter_type(msg: Message):
         data_type = Types.TEXT
 
     elif (
-            msg.reply_to_message
-            and msg.reply_to_message.text
-            and len(msg.text.split()) >= 2
+        msg.reply_to_message
+        and msg.reply_to_message.text
+        and len(msg.text.split()) >= 2
     ):
         content = None
         text = msg.reply_to_message.text

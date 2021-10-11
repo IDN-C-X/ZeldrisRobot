@@ -50,6 +50,7 @@ from zeldris import (
     BLACKLIST_CHATS,
     WHITELIST_CHATS,
 )
+
 # needed to dynamically load modules
 # NOTE: Module order is not guaranteed, specify that in the config file!
 from zeldris.modules import ALL_MODULES
@@ -213,7 +214,13 @@ def start(update: Update, context: CallbackContext):
                     update.effective_chat.id,
                     HELPABLE[mod].__help__,
                     InlineKeyboardMarkup(
-                        [[InlineKeyboardButton(text="⬅️ BACK", callback_data="help_back")]]
+                        [
+                            [
+                                InlineKeyboardButton(
+                                    text="⬅️ BACK", callback_data="help_back"
+                                )
+                            ]
+                        ]
                     ),
                 )
 
@@ -235,7 +242,8 @@ def start(update: Update, context: CallbackContext):
                     escape_markdown(context.bot.first_name),
                     escape_markdown(uptime),
                     sql.num_users(),
-                    sql.num_chats()),
+                    sql.num_chats(),
+                ),
                 reply_markup=InlineKeyboardMarkup(buttons),
                 parse_mode=ParseMode.MARKDOWN,
                 timeout=60,
@@ -243,7 +251,9 @@ def start(update: Update, context: CallbackContext):
     else:
         message.reply_photo(
             ZELDRIS_IMG,
-            caption="<b>Yes, im alive!\nHaven't sleep since</b>: <code>{}</code>".format(uptime),
+            caption="<b>Yes, im alive!\nHaven't sleep since</b>: <code>{}</code>".format(
+                uptime
+            ),
             parse_mode=ParseMode.HTML,
             reply_markup=InlineKeyboardMarkup(
                 [
@@ -287,7 +297,9 @@ def error_handler(update, context):
     if len(message) >= 4096:
         message = message[:4096]
     # Finally, send the message
-    context.bot.send_message(chat_id=MESSAGE_DUMP, text=message, parse_mode=ParseMode.HTML)
+    context.bot.send_message(
+        chat_id=MESSAGE_DUMP, text=message, parse_mode=ParseMode.HTML
+    )
 
 
 def help_button(update, context):
@@ -303,10 +315,10 @@ def help_button(update, context):
         if mod_match:
             module = mod_match.group(1)
             text = (
-                    "Here is the help for the *{}* module:\n".format(
-                        HELPABLE[module].__mod_name__
-                    )
-                    + HELPABLE[module].__help__
+                "Here is the help for the *{}* module:\n".format(
+                    HELPABLE[module].__mod_name__
+                )
+                + HELPABLE[module].__help__
             )
             query.message.edit_text(
                 text=text,
@@ -371,7 +383,8 @@ def zel_cb(update, context):
                 escape_markdown(context.bot.first_name),
                 escape_markdown(get_readable_time((time.time() - StartTime))),
                 sql.num_users(),
-                sql.num_chats()),
+                sql.num_chats(),
+            ),
             reply_markup=InlineKeyboardMarkup(buttons),
             parse_mode=ParseMode.MARKDOWN,
             timeout=60,
@@ -420,10 +433,10 @@ def get_help(update: Update, context: CallbackContext):
     if len(args) >= 2 and any(args[1].lower() == x for x in HELPABLE):
         module = args[1].lower()
         text = (
-                "Here is the available help for the *{}* module:\n".format(
-                    HELPABLE[module].__mod_name__
-                )
-                + HELPABLE[module].__help__
+            "Here is the available help for the *{}* module:\n".format(
+                HELPABLE[module].__mod_name__
+            )
+            + HELPABLE[module].__help__
         )
         send_help(
             chat.id,
@@ -541,7 +554,7 @@ def settings_button(update: Update, context: CallbackContext):
             chat = bot.get_chat(chat_id)
             query.message.edit_text(
                 text="Hi there! There are quite a few settings for {} - go ahead and pick what "
-                     "you're interested in.".format(escape_markdown(chat.title)),
+                "you're interested in.".format(escape_markdown(chat.title)),
                 parse_mode=ParseMode.MARKDOWN,
                 reply_markup=InlineKeyboardMarkup(
                     paginate_modules(0, CHAT_SETTINGS, "stngs", chat=chat_id)
@@ -649,9 +662,7 @@ def main():
     home_callback_handler = CallbackQueryHandler(
         zel_cb, pattern=r"zel_", run_async=True
     )
-    help_handler = DisableAbleCommandHandler(
-        "help", get_help, run_async=True
-    )
+    help_handler = DisableAbleCommandHandler("help", get_help, run_async=True)
     help_callback_handler = CallbackQueryHandler(
         help_button, pattern=r"help_", run_async=True
     )
@@ -663,12 +674,8 @@ def main():
         settings_button, pattern=r"stngs_", run_async=True
     )
 
-    migrate_handler = MessageHandler(
-        Filters.status_update.migrate, migrate_chats
-    )
-    is_chat_allowed_handler = MessageHandler(
-        Filters.chat_type.groups, is_chat_allowed
-    )
+    migrate_handler = MessageHandler(Filters.status_update.migrate, migrate_chats)
+    is_chat_allowed_handler = MessageHandler(Filters.chat_type.groups, is_chat_allowed)
 
     # dispatcher.add_handler(test_handler)
     dispatcher.add_handler(start_handler)

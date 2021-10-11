@@ -40,7 +40,6 @@ if is_module_loaded(FILENAME):
     DISABLE_OTHER = []
     ADMIN_CMDS = []
 
-
     class DisableAbleCommandHandler(CommandHandler):
         def __init__(self, command, callback, admin_ok=False, **kwargs):
             super().__init__(command, callback, **kwargs)
@@ -62,15 +61,15 @@ if is_module_loaded(FILENAME):
             if message.text and len(message.text) > 1:
                 fst_word = message.text.split(None, 1)[0]
                 if len(fst_word) > 1 and any(
-                        fst_word.startswith(start) for start in CMD_STARTERS
+                    fst_word.startswith(start) for start in CMD_STARTERS
                 ):
                     args = message.text.split()[1:]
                     command = fst_word[1:].split("@")
                     command.append(message.bot.username)
 
                     if not (
-                            command[0].lower() in self.command
-                            and command[1].lower() == message.bot.username.lower()
+                        command[0].lower() in self.command
+                        and command[1].lower() == message.bot.username.lower()
                     ):
                         return None
 
@@ -81,16 +80,15 @@ if is_module_loaded(FILENAME):
                         # disabled, admincmd, user admin
                         if sql.is_command_disabled(chat.id, command[0].lower()):
                             # check if command was disabled
-                            is_disabled = command[
-                                              0
-                                          ] in ADMIN_CMDS and is_user_admin(chat, user.id)
+                            is_disabled = command[0] in ADMIN_CMDS and is_user_admin(
+                                chat, user.id
+                            )
                             if not is_disabled:
                                 return None
                             return args, filter_result
 
                         return args, filter_result
                     return False
-
 
     class DisableAbleMessageHandler(MessageHandler):
         def __init__(self, pattern, callback, friendly="", **kwargs):
@@ -104,7 +102,6 @@ if is_module_loaded(FILENAME):
                 return self.filters(update) and not sql.is_command_disabled(
                     chat.id, self.friendly
                 )
-
 
     @user_admin
     @typing_action
@@ -148,7 +145,6 @@ if is_module_loaded(FILENAME):
 
         else:
             send_message(update.effective_message, "What should I disable?")
-
 
     @user_admin
     @typing_action
@@ -194,7 +190,6 @@ if is_module_loaded(FILENAME):
         else:
             send_message(update.effective_message, "What should I enable?")
 
-
     @user_admin
     def list_cmds(update, _):
         if DISABLE_CMDS + DISABLE_OTHER:
@@ -210,7 +205,6 @@ if is_module_loaded(FILENAME):
         else:
             update.effective_message.reply_text("No commands can be disabled.")
 
-
     # do not async
     def build_curr_disabled(chat_id: Union[str, int]) -> str:
         disabled = sql.get_all_disabled(chat_id)
@@ -219,7 +213,6 @@ if is_module_loaded(FILENAME):
 
         result = "".join(" - `{}`\n".format(escape_markdown(cmd)) for cmd in disabled)
         return "The following commands are currently restricted:\n{}".format(result)
-
 
     @typing_action
     def commands(update, context):
@@ -242,26 +235,21 @@ if is_module_loaded(FILENAME):
         text = build_curr_disabled(chat.id)
         send_message(update.effective_message, text, parse_mode=ParseMode.MARKDOWN)
 
-
     def __import_data__(chat_id, data):
         disabled = data.get("disabled", {})
         for disable_cmd in disabled:
             sql.disable_command(chat_id, disable_cmd)
-
 
     def __stats__():
         return "× {} disabled items, across {} chats.".format(
             sql.num_disabled(), sql.num_chats()
         )
 
-
     def __migrate__(old_chat_id, new_chat_id):
         sql.migrate_chat(old_chat_id, new_chat_id)
 
-
     def __chat_settings__(chat_id, user_id):
         return build_curr_disabled(chat_id)
-
 
     __mod_name__ = "Disabling"
 
@@ -289,8 +277,9 @@ It'll also allow you to autodelete them, stopping people from bluetexting.
     COMMANDS_HANDLER = CommandHandler(
         ["cmds", "disabled"], commands, run_async=True
     )  # , filters=Filters.chat_type.groups, run_async=True)
-    TOGGLE_HANDLER = CommandHandler("listcmds", list_cmds,
-                                    run_async=True)  # , filters=Filters.chat_type.groups, run_async=True)
+    TOGGLE_HANDLER = CommandHandler(
+        "listcmds", list_cmds, run_async=True
+    )  # , filters=Filters.chat_type.groups, run_async=True)
 
     dispatcher.add_handler(DISABLE_HANDLER)
     dispatcher.add_handler(ENABLE_HANDLER)

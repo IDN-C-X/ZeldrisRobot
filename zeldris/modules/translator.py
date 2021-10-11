@@ -54,10 +54,11 @@ def translate(update: Update, context: CallbackContext) -> None:
     except IndexError:
         source = trans.detect(to_translate)
         dest = "en"
-    translation = trans(to_translate,
-                        sourcelang=source, targetlang=dest)
-    reply = f"<b>Translated from {source} to {dest}</b>:\n" \
-            f"<code>{translation.text}</code>"
+    translation = trans(to_translate, sourcelang=source, targetlang=dest)
+    reply = (
+        f"<b>Translated from {source} to {dest}</b>:\n"
+        f"<code>{translation.text}</code>"
+    )
 
     bot.send_message(text=reply, chat_id=message.chat.id, parse_mode=ParseMode.HTML)
 
@@ -126,6 +127,8 @@ __help__ = """
 """
 __mod_name__ = "Translate"
 
-dispatcher.add_handler(DisableAbleCommandHandler(["tr", "tl"], translate, pass_args=True))
+dispatcher.add_handler(
+    DisableAbleCommandHandler(["tr", "tl"], translate, pass_args=True)
+)
 dispatcher.add_handler(DisableAbleCommandHandler("tts", gtts, pass_args=True))
 dispatcher.add_handler(DisableAbleCommandHandler("splcheck", spellcheck))

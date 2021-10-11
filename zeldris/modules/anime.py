@@ -20,7 +20,13 @@ import textwrap
 
 import jikanpy
 import requests
-from telegram import InlineKeyboardButton, InlineKeyboardMarkup, ParseMode, Update, Message
+from telegram import (
+    InlineKeyboardButton,
+    InlineKeyboardMarkup,
+    ParseMode,
+    Update,
+    Message,
+)
 
 from zeldris import dispatcher
 from zeldris.modules.disable import DisableAbleCommandHandler
@@ -50,11 +56,11 @@ def t(milliseconds: int) -> str:
     hours, minutes = divmod(minutes, 60)
     days, hours = divmod(hours, 24)
     tmp = (
-            ((str(days) + " Days, ") if days else "")
-            + ((str(hours) + " Hours, ") if hours else "")
-            + ((str(minutes) + " Minutes, ") if minutes else "")
-            + ((str(seconds) + " Seconds, ") if seconds else "")
-            + ((str(milliseconds) + " ms, ") if milliseconds else "")
+        ((str(days) + " Days, ") if days else "")
+        + ((str(hours) + " Hours, ") if hours else "")
+        + ((str(minutes) + " Minutes, ") if minutes else "")
+        + ((str(seconds) + " Seconds, ") if seconds else "")
+        + ((str(milliseconds) + " ms, ") if milliseconds else "")
     )
     return tmp[:-2]
 
@@ -193,7 +199,8 @@ def airing(update: Update, _):
         return
     variables = {"search": search_str}
     response = requests.post(
-        url, json={"query": airing_query, "variables": variables},
+        url,
+        json={"query": airing_query, "variables": variables},
     ).json()["data"]["Media"]
     msg = f"*Name*: *{response['title']['romaji']}*(`{response['title']['native']}`)\n*ID*: `{response['id']}`"
     if response["nextAiringEpisode"]:
@@ -213,19 +220,22 @@ def anime(update: Update, _):
         return
     variables = {"search": search}
     json = requests.post(
-        url, json={"query": anime_query, "variables": variables},
+        url,
+        json={"query": anime_query, "variables": variables},
     ).json()
     if "errors" in json.keys():
         update.effective_message.reply_text("Anime not found")
         return
     if json:
         json = json["data"]["Media"]
-        msg = f"*{json['title']['romaji']}*(`{json['title']['native']}`)\n" \
-              f"*Type*: {json['format']}\n*Status*: {json['status']}\n" \
-              f"*Episodes*: {json.get('episodes', 'N/A')}\n" \
-              f"*Duration*: {json.get('duration', 'N/A')} Per Ep.\n" \
-              f"*Score*: {json['averageScore']}\n" \
-              f"*Genres*: `"
+        msg = (
+            f"*{json['title']['romaji']}*(`{json['title']['native']}`)\n"
+            f"*Type*: {json['format']}\n*Status*: {json['status']}\n"
+            f"*Episodes*: {json.get('episodes', 'N/A')}\n"
+            f"*Duration*: {json.get('duration', 'N/A')} Per Ep.\n"
+            f"*Score*: {json['averageScore']}\n"
+            f"*Genres*: `"
+        )
         for x in json["genres"]:
             msg += f"{x}, "
         msg = msg[:-2] + "`\n"
@@ -243,9 +253,9 @@ def anime(update: Update, _):
                 trailer = "https://youtu.be/" + trailer_id
         description = (
             json.get("description", "N/A")
-                .replace("<i>", "")
-                .replace("</i>", "")
-                .replace("<br>", "")
+            .replace("<i>", "")
+            .replace("</i>", "")
+            .replace("<br>", "")
         )
         msg += shorten(description, info)
         image = json.get("bannerImage", None)
@@ -289,7 +299,8 @@ def character(update: Update, _):
         return
     variables = {"query": search}
     json = requests.post(
-        url, json={"query": character_query, "variables": variables},
+        url,
+        json={"query": character_query, "variables": variables},
     ).json()
     if "errors" in json.keys():
         update.effective_message.reply_text("Character not found")
@@ -310,7 +321,8 @@ def character(update: Update, _):
             )
         else:
             update.effective_message.reply_text(
-                msg.replace("<b>", "</b>"), parse_mode=ParseMode.MARKDOWN,
+                msg.replace("<b>", "</b>"),
+                parse_mode=ParseMode.MARKDOWN,
             )
 
 
@@ -322,7 +334,8 @@ def manga(update: Update, _):
         return
     variables = {"search": search}
     json = requests.post(
-        url, json={"query": manga_query, "variables": variables},
+        url,
+        json={"query": manga_query, "variables": variables},
     ).json()
     msg = ""
     if "errors" in json.keys():
@@ -331,7 +344,8 @@ def manga(update: Update, _):
     if json:
         json = json["data"]["Media"]
         title, title_native = json["title"].get("romaji", False), json["title"].get(
-            "native", False,
+            "native",
+            False,
         )
         start_date, status, score = (
             json["startDate"].get("year", False),
@@ -447,7 +461,8 @@ def user(update: Update, _):
         [InlineKeyboardButton(info_btn, url=us["url"])],
         [
             InlineKeyboardButton(
-                close_btn, callback_data=f"anime_close, {message.from_user.id}",
+                close_btn,
+                callback_data=f"anime_close, {message.from_user.id}",
             ),
         ],
     ]
@@ -489,24 +504,12 @@ Get information about anime, manga or characters from [AniList](anilist.co).
 × /airing <anime>: returns anime airing info.
  """
 
-ANIME_HANDLER = DisableAbleCommandHandler(
-    "anime", anime, run_async=True
-)
-AIRING_HANDLER = DisableAbleCommandHandler(
-    "airing", airing, run_async=True
-)
-CHARACTER_HANDLER = DisableAbleCommandHandler(
-    "character", character, run_async=True
-)
-MANGA_HANDLER = DisableAbleCommandHandler(
-    "manga", manga, run_async=True
-)
-USER_HANDLER = DisableAbleCommandHandler(
-    "user", user, run_async=True
-)
-UPCOMING_HANDLER = DisableAbleCommandHandler(
-    "upcoming", upcoming, run_async=True
-)
+ANIME_HANDLER = DisableAbleCommandHandler("anime", anime, run_async=True)
+AIRING_HANDLER = DisableAbleCommandHandler("airing", airing, run_async=True)
+CHARACTER_HANDLER = DisableAbleCommandHandler("character", character, run_async=True)
+MANGA_HANDLER = DisableAbleCommandHandler("manga", manga, run_async=True)
+USER_HANDLER = DisableAbleCommandHandler("user", user, run_async=True)
+UPCOMING_HANDLER = DisableAbleCommandHandler("upcoming", upcoming, run_async=True)
 
 dispatcher.add_handler(ANIME_HANDLER)
 dispatcher.add_handler(CHARACTER_HANDLER)

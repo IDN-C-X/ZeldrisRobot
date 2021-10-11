@@ -399,7 +399,7 @@ __mod_name__ = "Antiflood"
 FLOOD_BAN_HANDLER = MessageHandler(
     Filters.all & ~Filters.status_update & Filters.chat_type.groups,
     check_flood,
-    run_async=True
+    run_async=True,
 )
 SET_FLOOD_HANDLER = CommandHandler(
     "setflood", set_flood, pass_args=True, run_async=True
@@ -407,7 +407,9 @@ SET_FLOOD_HANDLER = CommandHandler(
 SET_FLOOD_MODE_HANDLER = CommandHandler(
     "setfloodmode", set_flood_mode, pass_args=True, run_async=True
 )  # , filters=Filters.chat_type.groups)
-FLOOD_HANDLER = CommandHandler("flood", flood)  # , filters=Filters.chat_type.groups, run_async=True)
+FLOOD_HANDLER = CommandHandler(
+    "flood", flood
+)  # , filters=Filters.chat_type.groups, run_async=True)
 
 dispatcher.add_handler(FLOOD_BAN_HANDLER, FLOOD_GROUP)
 dispatcher.add_handler(SET_FLOOD_HANDLER)

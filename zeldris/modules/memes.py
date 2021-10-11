@@ -48,9 +48,7 @@ def slap(update, context):
 
     # reply to correct message
     reply_text = (
-        msg.reply_to_message.reply_text
-        if msg.reply_to_message
-        else msg.reply_text
+        msg.reply_to_message.reply_text if msg.reply_to_message else msg.reply_text
     )
 
     # get user who sent message
@@ -74,9 +72,7 @@ def slap(update, context):
 
     # if no target found, bot targets the sender
     else:
-        user1 = "[{}](tg://user?id={})".format(
-            context.bot.first_name, context.bot.id
-        )
+        user1 = "[{}](tg://user?id={})".format(context.bot.first_name, context.bot.id)
         user2 = curr_user
 
     temp = random.choice(fun.SLAP_TEMPLATES)
@@ -84,9 +80,7 @@ def slap(update, context):
     hit = random.choice(fun.HIT)
     throw = random.choice(fun.THROW)
 
-    repl = temp.format(
-        user1=user1, user2=user2, item=item, hits=hit, throws=throw
-    )
+    repl = temp.format(user1=user1, user2=user2, item=item, hits=hit, throws=throw)
 
     reply_text(repl, parse_mode=ParseMode.MARKDOWN)
 
@@ -98,9 +92,7 @@ def punch(update, context):
 
     # reply to correct message
     reply_text = (
-        msg.reply_to_message.reply_text
-        if msg.reply_to_message
-        else msg.reply_text
+        msg.reply_to_message.reply_text if msg.reply_to_message else msg.reply_text
     )
 
     # get user who sent message
@@ -124,9 +116,7 @@ def punch(update, context):
 
     # if no target found, bot targets the sender
     else:
-        user1 = "[{}](tg://user?id={})".format(
-            context.bot.first_name, context.bot.id
-        )
+        user1 = "[{}](tg://user?id={})".format(context.bot.first_name, context.bot.id)
         user2 = curr_user
 
     temp = random.choice(fun.PUNCH_TEMPLATES)
@@ -153,9 +143,7 @@ def hug(update, context):
 
     # reply to correct message
     reply_text = (
-        msg.reply_to_message.reply_text
-        if msg.reply_to_message
-        else msg.reply_text
+        msg.reply_to_message.reply_text if msg.reply_to_message else msg.reply_text
     )
 
     # get user who sent message
@@ -283,9 +271,9 @@ def gbun(update, context):
     if update.effective_message.chat.type == "private":
         return
     if (
-            int(user.id) in DEV_USERS
-            or int(user.id) in SUPPORT_USERS
-            or int(user.id) in DEV_USERS
+        int(user.id) in DEV_USERS
+        or int(user.id) in SUPPORT_USERS
+        or int(user.id) in DEV_USERS
     ):
         context.bot.sendMessage(chat.id, (random.choice(fun.GBUN)))
 
@@ -297,9 +285,7 @@ def snipe(update, context):
         chat_id = str(args[0])
         del args[0]
     except (TypeError, IndexError):
-        update.effective_message.reply_text(
-            "Please give me a chat to echo to!"
-        )
+        update.effective_message.reply_text("Please give me a chat to echo to!")
     to_send = " ".join(args)
     if len(to_send) >= 2:
         try:
@@ -442,9 +428,7 @@ def stretch(update, context):
 
 def me_too(update, context):
     message = update.effective_message
-    reply = random.choice(
-        ["Me too thanks", "Haha yes, me too", "Same lol", "Me irl"]
-    )
+    reply = random.choice(["Me too thanks", "Haha yes, me too", "Same lol", "Me irl"])
     message.reply_text(reply)
 
 
@@ -503,15 +487,11 @@ SNIPE_HANDLER = CommandHandler(
 ABUSE_HANDLER = DisableAbleCommandHandler("abuse", abuse, run_async=True)
 POLICE_HANDLER = DisableAbleCommandHandler("police", police, run_async=True)
 RUNS_HANDLER = DisableAbleCommandHandler("runs", runs, run_async=True)
-SLAP_HANDLER = DisableAbleCommandHandler(
-    "slap", slap, pass_args=True, run_async=True
-)
+SLAP_HANDLER = DisableAbleCommandHandler("slap", slap, pass_args=True, run_async=True)
 PUNCH_HANDLER = DisableAbleCommandHandler(
     "punch", punch, pass_args=True, run_async=True
 )
-HUG_HANDLER = DisableAbleCommandHandler(
-    "warm", hug, pass_args=True, run_async=True
-)
+HUG_HANDLER = DisableAbleCommandHandler("warm", hug, pass_args=True, run_async=True)
 GBUN_HANDLER = CommandHandler("gbun", gbun, run_async=True)
 TABLE_HANDLER = DisableAbleCommandHandler("table", table, run_async=True)
 CRI_HANDLER = DisableAbleCommandHandler("cri", cri, run_async=True)
@@ -524,9 +504,7 @@ MEETOO_HANDLER = DisableAbleMessageHandler(
 )
 RECITE_HANDLER = DisableAbleCommandHandler("recite", recite, run_async=True)
 DICE_HANDLER = DisableAbleCommandHandler("roll", dice, run_async=True)
-YESNOWTF_HANDLER = DisableAbleCommandHandler(
-    "decide", yesnowtf, run_async=True
-)
+YESNOWTF_HANDLER = DisableAbleCommandHandler("decide", yesnowtf, run_async=True)
 GDMORNING_HANDLER = DisableAbleMessageHandler(
     Filters.regex(r"(?i)(good morning)"),
     goodmorning,

@@ -61,8 +61,8 @@ def get_id(update, context):
     user_id = extract_user(update.effective_message, args)
     if user_id:
         if (
-                update.effective_message.reply_to_message
-                and update.effective_message.reply_to_message.forward_from
+            update.effective_message.reply_to_message
+            and update.effective_message.reply_to_message.forward_from
         ):
             user1 = update.effective_message.reply_to_message.from_user
             user2 = update.effective_message.reply_to_message.forward_from
@@ -108,13 +108,13 @@ def info(update, context):
         user = msg.from_user
 
     elif not msg.reply_to_message and (
-            not args
-            or (
-                    len(args) >= 1
-                    and not args[0].startswith("@")
-                    and not args[0].isdigit()
-                    and not msg.parse_entities([MessageEntity.TEXT_MENTION])
-            )
+        not args
+        or (
+            len(args) >= 1
+            and not args[0].startswith("@")
+            and not args[0].isdigit()
+            and not msg.parse_entities([MessageEntity.TEXT_MENTION])
+        )
     ):
         msg.reply_text("I can't extract a user from this.")
         return
@@ -415,7 +415,7 @@ def getlink(update, context):
                 links += str(chat_id) + ":\n" + invitelink + "\n"
             else:
                 links += (
-                        str(chat_id) + ":\nI don't have access to the invite link." + "\n"
+                    str(chat_id) + ":\nI don't have access to the invite link." + "\n"
                 )
         except BadRequest as excp:
             links += str(chat_id) + ":\n" + excp.message + "\n"
@@ -513,12 +513,22 @@ __mod_name__ = "Miscs"
 
 ID_HANDLER = DisableAbleCommandHandler("id", get_id, pass_args=True, run_async=True)
 INFO_HANDLER = DisableAbleCommandHandler("info", info, pass_args=True, run_async=True)
-ECHO_HANDLER = CommandHandler("echo", echo, filters=CustomFilters.sudo_filter, run_async=True)
-MD_HELP_HANDLER = CommandHandler("markdownhelp", markdown_help, filters=Filters.chat_type.private, run_async=True)
-STATS_HANDLER = CommandHandler("stats", stats, filters=Filters.user(OWNER_ID), run_async=True)
-GDPR_HANDLER = CommandHandler("gdpr", gdpr, filters=Filters.chat_type.private, run_async=True)
+ECHO_HANDLER = CommandHandler(
+    "echo", echo, filters=CustomFilters.sudo_filter, run_async=True
+)
+MD_HELP_HANDLER = CommandHandler(
+    "markdownhelp", markdown_help, filters=Filters.chat_type.private, run_async=True
+)
+STATS_HANDLER = CommandHandler(
+    "stats", stats, filters=Filters.user(OWNER_ID), run_async=True
+)
+GDPR_HANDLER = CommandHandler(
+    "gdpr", gdpr, filters=Filters.chat_type.private, run_async=True
+)
 WIKI_HANDLER = DisableAbleCommandHandler("wiki", wiki, run_async=True)
-WALLPAPER_HANDLER = DisableAbleCommandHandler("wall", wall, pass_args=True, run_async=True)
+WALLPAPER_HANDLER = DisableAbleCommandHandler(
+    "wall", wall, pass_args=True, run_async=True
+)
 UD_HANDLER = DisableAbleCommandHandler("ud", ud, run_async=True)
 GETLINK_HANDLER = CommandHandler(
     "getlink", getlink, pass_args=True, filters=Filters.user(OWNER_ID), run_async=True
@@ -527,7 +537,9 @@ STAFFLIST_HANDLER = CommandHandler(
     "staffids", staff_ids, filters=Filters.user(OWNER_ID), run_async=True
 )
 REDDIT_MEMES_HANDLER = DisableAbleCommandHandler("rmeme", rmemes, run_async=True)
-SRC_HANDLER = CommandHandler("source", src, filters=Filters.chat_type.private, run_async=True)
+SRC_HANDLER = CommandHandler(
+    "source", src, filters=Filters.chat_type.private, run_async=True
+)
 
 dispatcher.add_handler(WALLPAPER_HANDLER)
 dispatcher.add_handler(UD_HANDLER)

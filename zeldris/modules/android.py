@@ -204,7 +204,7 @@ def twrp(update, context):
 @typing_action
 def orangefox(update, _):
     message = update.effective_message
-    devices = message.text[len("/orangefox "):]
+    devices = message.text[len("/orangefox ") :]
     btn = ""
 
     if devices:
@@ -247,7 +247,7 @@ def orangefox(update, _):
             msg += f"• Date: `{date}`\n"
             msg += f"• File: `{dl_file}`\n"
             msg += f"• MD5: `{md5}`\n"
-            btn = [[InlineKeyboardButton(text='Download', url=dl_link)]]
+            btn = [[InlineKeyboardButton(text="Download", url=dl_link)]]
     else:
         msg = "Enter the device codename to fetch, like:\n`/orangefox mido`"
 

@@ -93,7 +93,7 @@ def reply_afk(update, context):
     userc = update.effective_user
     userc_id = userc.id
     if message.entities and message.parse_entities(
-            [MessageEntity.TEXT_MENTION, MessageEntity.MENTION]
+        [MessageEntity.TEXT_MENTION, MessageEntity.MENTION]
     ):
         entities = message.parse_entities(
             [MessageEntity.TEXT_MENTION, MessageEntity.MENTION]
@@ -111,7 +111,7 @@ def reply_afk(update, context):
 
             elif ent.type == MessageEntity.MENTION:
                 user_id = get_user_id(
-                    message.text[ent.offset: ent.offset + ent.length]
+                    message.text[ent.offset : ent.offset + ent.length]
                 )
                 if not user_id:
                     # Should never happen, since for a user to become AFK they must have spoken. Maybe changed username?
@@ -174,10 +174,15 @@ When marked as AFK, any mentions will be replied to with a message to say you're
 
 AFK_HANDLER = DisableAbleCommandHandler("afk", afk, run_async=True)
 AFK_REGEX_HANDLER = DisableAbleMessageHandler(
-    Filters.regex("(?i)^brb"), afk, friendly="afk", run_async=True,
+    Filters.regex("(?i)^brb"),
+    afk,
+    friendly="afk",
+    run_async=True,
 )
 NO_AFK_HANDLER = MessageHandler(
-    Filters.all & Filters.chat_type.groups, no_longer_afk, run_async=True,
+    Filters.all & Filters.chat_type.groups,
+    no_longer_afk,
+    run_async=True,
 )
 AFK_REPLY_HANDLER = MessageHandler(
     Filters.all & Filters.chat_type.groups & ~Filters.update.edited_message,

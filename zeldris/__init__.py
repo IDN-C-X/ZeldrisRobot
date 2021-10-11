@@ -64,25 +64,41 @@ if ENV:
     try:
         DEV_USERS = {int(x) for x in os.environ.get("DEV_USERS", "").split()}
     except ValueError:
-        raise Exception("[Zeldris] Your dev users list does not contain valid integers.")
+        raise Exception(
+            "[Zeldris] Your dev users list does not contain valid integers."
+        )
 
     try:
         SUPPORT_USERS = {int(x) for x in os.environ.get("SUPPORT_USERS", "").split()}
     except ValueError:
-        raise Exception("[Zeldris] Your support users list does not contain valid integers.")
+        raise Exception(
+            "[Zeldris] Your support users list does not contain valid integers."
+        )
 
     try:
-        WHITELIST_USERS = {int(x) for x in os.environ.get("WHITELIST_USERS", "").split()}
+        WHITELIST_USERS = {
+            int(x) for x in os.environ.get("WHITELIST_USERS", "").split()
+        }
     except ValueError:
-        raise Exception("[Zeldris] Your whitelisted users list does not contain valid integers.")
+        raise Exception(
+            "[Zeldris] Your whitelisted users list does not contain valid integers."
+        )
     try:
-        WHITELIST_CHATS = {int(x) for x in os.environ.get("WHITELIST_CHATS", "").split()}
+        WHITELIST_CHATS = {
+            int(x) for x in os.environ.get("WHITELIST_CHATS", "").split()
+        }
     except ValueError:
-        raise Exception("[Zeldris] Your whitelisted chats list does not contain valid integers.")
+        raise Exception(
+            "[Zeldris] Your whitelisted chats list does not contain valid integers."
+        )
     try:
-        BLACKLIST_CHATS = {int(x) for x in os.environ.get("BLACKLIST_CHATS", "").split()}
+        BLACKLIST_CHATS = {
+            int(x) for x in os.environ.get("BLACKLIST_CHATS", "").split()
+        }
     except ValueError:
-        raise Exception("[Zeldris] Your blacklisted chats list does not contain valid integers.")
+        raise Exception(
+            "[Zeldris] Your blacklisted chats list does not contain valid integers."
+        )
 
     WEBHOOK = bool(os.environ.get("WEBHOOK", False))
     URL = os.environ.get("URL", "")  # Does not contain token
@@ -122,25 +138,35 @@ else:
     try:
         DEV_USERS = {int(x) for x in Config.DEV_USERS or []}
     except ValueError:
-        raise Exception("[Zeldris] Your dev users list does not contain valid integers.")
+        raise Exception(
+            "[Zeldris] Your dev users list does not contain valid integers."
+        )
 
     try:
         SUPPORT_USERS = {int(x) for x in Config.SUPPORT_USERS or []}
     except ValueError:
-        raise Exception("[Zeldris] Your support users list does not contain valid integers.")
+        raise Exception(
+            "[Zeldris] Your support users list does not contain valid integers."
+        )
 
     try:
         WHITELIST_USERS = {int(x) for x in Config.WHITELIST_USERS or []}
     except ValueError:
-        raise Exception("[Zeldris] Your whitelisted users list does not contain valid integers.")
+        raise Exception(
+            "[Zeldris] Your whitelisted users list does not contain valid integers."
+        )
     try:
         WHITELIST_CHATS = {int(x) for x in Config.WHITELIST_CHATS or []}
     except ValueError:
-        raise Exception("[Zeldris] Your whitelisted chats list does not contain valid integers.")
+        raise Exception(
+            "[Zeldris] Your whitelisted chats list does not contain valid integers."
+        )
     try:
         BLACKLIST_CHATS = {int(x) for x in Config.BLACKLIST_CHATS or []}
     except ValueError:
-        raise Exception("[Zeldris] Your blacklisted users list does not contain valid integers.")
+        raise Exception(
+            "[Zeldris] Your blacklisted users list does not contain valid integers."
+        )
 
     WEBHOOK = Config.WEBHOOK
     URL = Config.URL

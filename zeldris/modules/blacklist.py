@@ -102,11 +102,7 @@ def add_blacklist(update, context):
     if len(words) > 1:
         text = words[1]
         to_blacklist = list(
-            {
-                trigger.strip()
-                for trigger in text.split("\n")
-                if trigger.strip()
-            }
+            {trigger.strip() for trigger in text.split("\n") if trigger.strip()}
         )
 
         for trigger in to_blacklist:
@@ -158,11 +154,7 @@ def unblacklist(update, context):
     if len(words) > 1:
         text = words[1]
         to_unblacklist = list(
-            {
-                trigger.strip()
-                for trigger in text.split("\n")
-                if trigger.strip()
-            }
+            {trigger.strip() for trigger in text.split("\n") if trigger.strip()}
         )
 
         successful = 0
@@ -479,9 +471,7 @@ blacklisted words. """
 BLACKLIST_HANDLER = DisableAbleCommandHandler(
     "blacklist", blacklist, pass_args=True, admin_ok=True, run_async=True
 )
-ADD_BLACKLIST_HANDLER = CommandHandler(
-    "addblacklist", add_blacklist, run_async=True
-)
+ADD_BLACKLIST_HANDLER = CommandHandler("addblacklist", add_blacklist, run_async=True)
 UNBLACKLIST_HANDLER = CommandHandler(
     ["unblacklist", "rmblacklist"], unblacklist, run_async=True
 )
