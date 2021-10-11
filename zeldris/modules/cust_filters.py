@@ -97,7 +97,7 @@ def list_handlers(update, context):
         return
 
     for keyword in all_handlers:
-        entry = ">> `{}`\n".format(escape_markdown(keyword))
+        entry = "• `{}`\n".format(escape_markdown(keyword))
         if len(entry) + len(filter_list) > telegram.MAX_MESSAGE_LENGTH:
             send_message(
                 update.effective_message,
@@ -236,8 +236,8 @@ def filters(update, context):
     if add is True:
         send_message(
             update.effective_message,
-            "Saved filter <code>{}</code> in <b>{}</b>!".format(keyword, chat_name),
-            parse_mode=telegram.ParseMode.HTML,
+            "Saved filter '{}' in *{}*!".format(keyword, chat_name),
+            parse_mode=telegram.ParseMode.MARKDOWN,
         )
     raise DispatcherHandlerStop
 
@@ -276,10 +276,8 @@ def stop_filter(update, context):
             sql.remove_filter(chat_id, args[1])
             send_message(
                 update.effective_message,
-                "Okay, I'll remove <code>{}</code> filter in <b>{}</b>.".format(
-                    keyword, chat_name
-                ),
-                parse_mode=telegram.ParseMode.HTML,
+                "Okay, I'll stop replying to that filter in *{}*.".format(chat_name),
+                parse_mode=telegram.ParseMode.MARKDOWN,
             )
             raise DispatcherHandlerStop
 
