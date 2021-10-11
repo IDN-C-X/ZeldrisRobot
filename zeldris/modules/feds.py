@@ -1051,22 +1051,21 @@ def unfban(update, context):
         )
     # If fedlog is set, then send message, except fedlog is current chat
     get_fedlog = sql.get_fed_log(fed_id)
-    if get_fedlog:
-        if int(get_fedlog) != int(chat.id):
-            context.bot.send_message(
-                get_fedlog,
-                "<b>Un-FedBan</b>"
-                "\n<b>Federation:</b> {}"
-                "\n<b>Federation Admin:</b> {}"
-                "\n<b>User:</b> {}"
-                "\n<b>User ID:</b> <code>{}</code>".format(
-                    info["fname"],
-                    mention_html(user.id, user.first_name),
-                    user_target,
-                    fban_user_id,
-                ),
-                parse_mode="HTML",
-            )
+    if get_fedlog and int(get_fedlog) != int(chat.id):
+        context.bot.send_message(
+            get_fedlog,
+            "<b>Un-FedBan</b>"
+            "\n<b>Federation:</b> {}"
+            "\n<b>Federation Admin:</b> {}"
+            "\n<b>User:</b> {}"
+            "\n<b>User ID:</b> <code>{}</code>".format(
+                info["fname"],
+                mention_html(user.id, user.first_name),
+                user_target,
+                fban_user_id,
+            ),
+            parse_mode="HTML",
+        )
     unfbanned_in_chats = 0
     for fedchats in chat_list:
         unfbanned_in_chats += 1
@@ -1208,15 +1207,14 @@ def set_frules(update, context):
         rules = sql.get_fed_info(fed_id)["frules"]
         getfed = sql.get_fed_info(fed_id)
         get_fedlog = sql.get_fed_log(fed_id)
-        if get_fedlog:
-            if ast.literal_eval(get_fedlog):
-                context.bot.send_message(
-                    get_fedlog,
-                    "*{}* has changed federation rules for fed *{}*".format(
-                        user.first_name, getfed["fname"]
-                    ),
-                    parse_mode="markdown",
-                )
+        if get_fedlog and ast.literal_eval(get_fedlog):
+            context.bot.send_message(
+                get_fedlog,
+                "*{}* has changed federation rules for fed *{}*".format(
+                    user.first_name, getfed["fname"]
+                ),
+                parse_mode="markdown",
+            )
         update.effective_message.reply_text(f"Rules have been changed to :\n{rules}!")
     else:
         update.effective_message.reply_text("Please write rules to set it up!")
@@ -1346,23 +1344,19 @@ def fed_ban_list(update, context):
             jam = time.time()
             new_jam = jam + 1800
             cek = get_chat(chat.id, chat_data)
-            if cek.get("status"):
-                if jam <= int(cek.get("value")):
-                    waktu = time.strftime(
-                        "%H:%M:%S %d/%m/%Y", time.localtime(cek.get("value"))
-                    )
-                    update.effective_message.reply_text(
-                        "You can backup your data once every 30 minutes!\nYou can back up data again at `{}`".format(
-                            waktu
-                        ),
-                        parse_mode=ParseMode.MARKDOWN,
-                    )
-                    return
-                if user.id not in SUDO_USERS:
-                    put_chat(chat.id, new_jam, chat_data)
-            else:
-                if user.id not in SUDO_USERS:
-                    put_chat(chat.id, new_jam, chat_data)
+            if cek.get("status") and jam <= int(cek.get("value")):
+                waktu = time.strftime(
+                    "%H:%M:%S %d/%m/%Y", time.localtime(cek.get("value"))
+                )
+                update.effective_message.reply_text(
+                    "You can backup your data once every 30 minutes!\nYou can back up data again at `{}`".format(
+                        waktu
+                    ),
+                    parse_mode=ParseMode.MARKDOWN,
+                )
+                return
+            if user.id not in SUDO_USERS:
+                put_chat(chat.id, new_jam, chat_data)
             backups = ""
             for users in getfban:
                 getuserinfo = sql.get_all_fban_users_target(fed_id, users)
@@ -1389,23 +1383,19 @@ def fed_ban_list(update, context):
             jam = time.time()
             new_jam = jam + 1800
             cek = get_chat(chat.id, chat_data)
-            if cek.get("status"):
-                if jam <= int(cek.get("value")):
-                    waktu = time.strftime(
-                        "%H:%M:%S %d/%m/%Y", time.localtime(cek.get("value"))
-                    )
-                    update.effective_message.reply_text(
-                        "You can back up data once every 30 minutes!\nYou can back up data again at `{}`".format(
-                            waktu
-                        ),
-                        parse_mode=ParseMode.MARKDOWN,
-                    )
-                    return
-                if user.id not in SUDO_USERS:
-                    put_chat(chat.id, new_jam, chat_data)
-            else:
-                if user.id not in SUDO_USERS:
-                    put_chat(chat.id, new_jam, chat_data)
+            if cek.get("status") and jam <= int(cek.get("value")):
+                waktu = time.strftime(
+                    "%H:%M:%S %d/%m/%Y", time.localtime(cek.get("value"))
+                )
+                update.effective_message.reply_text(
+                    "You can back up data once every 30 minutes!\nYou can back up data again at `{}`".format(
+                        waktu
+                    ),
+                    parse_mode=ParseMode.MARKDOWN,
+                )
+                return
+            if user.id not in SUDO_USERS:
+                put_chat(chat.id, new_jam, chat_data)
             backups = "id,firstname,lastname,username,reason\n"
             for users in getfban:
                 getuserinfo = sql.get_all_fban_users_target(fed_id, users)
@@ -1451,23 +1441,19 @@ def fed_ban_list(update, context):
         jam = time.time()
         new_jam = jam + 1800
         cek = get_chat(chat.id, chat_data)
-        if cek.get("status"):
-            if jam <= int(cek.get("value")):
-                waktu = time.strftime(
-                    "%H:%M:%S %d/%m/%Y", time.localtime(cek.get("value"))
-                )
-                update.effective_message.reply_text(
-                    "You can back up data once every 30 minutes!\nYou can back up data again at `{}`".format(
-                        waktu
-                    ),
-                    parse_mode=ParseMode.MARKDOWN,
-                )
-                return
-            if user.id not in SUDO_USERS:
-                put_chat(chat.id, new_jam, chat_data)
-        else:
-            if user.id not in SUDO_USERS:
-                put_chat(chat.id, new_jam, chat_data)
+        if cek.get("status") and jam <= int(cek.get("value")):
+            waktu = time.strftime(
+                "%H:%M:%S %d/%m/%Y", time.localtime(cek.get("value"))
+            )
+            update.effective_message.reply_text(
+                "You can back up data once every 30 minutes!\nYou can back up data again at `{}`".format(
+                    waktu
+                ),
+                parse_mode=ParseMode.MARKDOWN,
+            )
+            return
+        if user.id not in SUDO_USERS:
+            put_chat(chat.id, new_jam, chat_data)
         cleanr = re.compile("<.*?>")
         cleantext = re.sub(cleanr, "", text)
         with BytesIO(str.encode(cleantext)) as output:
@@ -1612,23 +1598,19 @@ def fed_import_bans(update, context):
         jam = time.time()
         new_jam = jam + 1800
         cek = get_chat(chat.id, chat_data)
-        if cek.get("status"):
-            if jam <= int(cek.get("value")):
-                waktu = time.strftime(
-                    "%H:%M:%S %d/%m/%Y", time.localtime(cek.get("value"))
-                )
-                update.effective_message.reply_text(
-                    "You can get your data once every 30 minutes!\nYou can get data again at `{}`".format(
-                        waktu
-                    ),
-                    parse_mode=ParseMode.MARKDOWN,
-                )
-                return
-            if user.id not in SUDO_USERS:
-                put_chat(chat.id, new_jam, chat_data)
-        else:
-            if user.id not in SUDO_USERS:
-                put_chat(chat.id, new_jam, chat_data)
+        if cek.get("status") and jam <= int(cek.get("value")):
+            waktu = time.strftime(
+                "%H:%M:%S %d/%m/%Y", time.localtime(cek.get("value"))
+            )
+            update.effective_message.reply_text(
+                "You can get your data once every 30 minutes!\nYou can get data again at `{}`".format(
+                    waktu
+                ),
+                parse_mode=ParseMode.MARKDOWN,
+            )
+            return
+        if user.id not in SUDO_USERS:
+            put_chat(chat.id, new_jam, chat_data)
         # if int(int(msg.reply_to_message.document.file_size)/1024) >= 200:
         # 	msg.reply_text("This file is too big!")
         # 	return
@@ -1711,14 +1693,13 @@ def fed_import_bans(update, context):
             if failed >= 1:
                 text += " {} Failed to import.".format(failed)
             get_fedlog = sql.get_fed_log(fed_id)
-            if get_fedlog:
-                if ast.literal_eval(get_fedlog):
-                    teks = "Fed *{}* has successfully imported data. {} banned.".format(
-                        getfed["fname"], success
-                    )
-                    if failed >= 1:
-                        teks += " {} Failed to import.".format(failed)
-                    context.bot.send_message(get_fedlog, teks, parse_mode="markdown")
+            if get_fedlog and ast.literal_eval(get_fedlog):
+                teks = "Fed *{}* has successfully imported data. {} banned.".format(
+                    getfed["fname"], success
+                )
+                if failed >= 1:
+                    teks += " {} Failed to import.".format(failed)
+                context.bot.send_message(get_fedlog, teks, parse_mode="markdown")
         elif fileformat == "csv":
             multi_fed_id = []
             multi_import_userid = []
@@ -1787,14 +1768,13 @@ def fed_import_bans(update, context):
             if failed >= 1:
                 text += " {} Failed to import.".format(failed)
             get_fedlog = sql.get_fed_log(fed_id)
-            if get_fedlog:
-                if ast.literal_eval(get_fedlog):
-                    teks = "Fed *{}* has successfully imported data. {} banned.".format(
-                        getfed["fname"], success
-                    )
-                    if failed >= 1:
-                        teks += " {} Failed to import.".format(failed)
-                    context.bot.send_message(get_fedlog, teks, parse_mode="markdown")
+            if get_fedlog and ast.literal_eval(get_fedlog):
+                teks = "Fed *{}* has successfully imported data. {} banned.".format(
+                    getfed["fname"], success
+                )
+                if failed >= 1:
+                    teks += " {} Failed to import.".format(failed)
+                context.bot.send_message(get_fedlog, teks, parse_mode="markdown")
         else:
             send_message(update.effective_message, "This file is not supported.")
             return
@@ -1828,14 +1808,10 @@ def fed_stat_user(update, context):
     msg = update.effective_message
     args = context.args
 
-    if args:
-        if args[0].isdigit():
-            user_id = args[0]
-        else:
-            user_id = extract_user(msg, args)
+    if args and args[0].isdigit():
+        user_id = args[0]
     else:
         user_id = extract_user(msg, args)
-
     if user_id:
         if len(args) == 2 and args[0].isdigit():
             fed_id = args[1]
@@ -2053,15 +2029,14 @@ def subs_feds(update, context):
                 parse_mode="markdown",
             )
             get_fedlog = sql.get_fed_log(args[0])
-            if get_fedlog:
-                if int(get_fedlog) != int(chat.id):
-                    context.bot.send_message(
-                        get_fedlog,
-                        "Federation `{}` has subscribe the federation `{}`".format(
-                            fedinfo["fname"], getfed["fname"]
-                        ),
-                        parse_mode="markdown",
-                    )
+            if get_fedlog and int(get_fedlog) != int(chat.id):
+                context.bot.send_message(
+                    get_fedlog,
+                    "Federation `{}` has subscribe the federation `{}`".format(
+                        fedinfo["fname"], getfed["fname"]
+                    ),
+                    parse_mode="markdown",
+                )
         else:
             send_message(
                 update.effective_message,
@@ -2118,15 +2093,14 @@ def unsubs_feds(update, context):
                 parse_mode="markdown",
             )
             get_fedlog = sql.get_fed_log(args[0])
-            if get_fedlog:
-                if int(get_fedlog) != int(chat.id):
-                    context.bot.send_message(
-                        get_fedlog,
-                        "Federation `{}` has unsubscribe fed `{}`.".format(
-                            fedinfo["fname"], getfed["fname"]
-                        ),
-                        parse_mode="markdown",
-                    )
+            if get_fedlog and int(get_fedlog) != int(chat.id):
+                context.bot.send_message(
+                    get_fedlog,
+                    "Federation `{}` has unsubscribe fed `{}`.".format(
+                        fedinfo["fname"], getfed["fname"]
+                    ),
+                    parse_mode="markdown",
+                )
         else:
             send_message(
                 update.effective_message,
@@ -2222,9 +2196,7 @@ def is_user_fed_owner(fed_id, user_id):
     if getfedowner is None or getfedowner is False:
         return False
     getfedowner = getfedowner["owner"]
-    if str(user_id) == getfedowner or int(user_id) == OWNER_ID:
-        return True
-    return False
+    return str(user_id) == getfedowner or int(user_id) == OWNER_ID
 
 
 def welcome_fed(update, context):
@@ -2279,18 +2251,14 @@ def __user_info__(user_id, chat_id):
 # Temporary data
 def put_chat(chat_id, value, chat_data):
     # print(chat_data)
-    if not value:
-        status = False
-    else:
-        status = True
+    status = bool(value)
     chat_data[chat_id] = {"federation": {"status": status, "value": value}}
 
 
 def get_chat(chat_id, chat_data):
     # print(chat_data)
     try:
-        value = chat_data[chat_id]["federation"]
-        return value
+        return chat_data[chat_id]["federation"]
     except KeyError:
         return {"status": False, "value": False}
 
