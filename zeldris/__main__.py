@@ -28,7 +28,6 @@ from telegram import Message, Chat, User, Update
 from telegram import ParseMode, InlineKeyboardMarkup, InlineKeyboardButton
 from telegram.error import BadRequest
 from telegram.ext import (
-    CommandHandler,
     Filters,
     MessageHandler,
     CallbackQueryHandler,
@@ -84,6 +83,7 @@ def get_readable_time(seconds: int) -> str:
     ping_time += ":".join(time_list)
 
     return ping_time
+
 
 ZELDRIS_IMG = "https://telegra.ph/file/1fa00785f30375c0c1b50.jpg"
 
@@ -242,7 +242,7 @@ def start(update: Update, context: CallbackContext):
             )
     else:
         message.reply_photo(
-            ZELDRIS_IMG, 
+            ZELDRIS_IMG,
             caption="<b>Yes, im alive!\nHaven't sleep since</b>: <code>{}</code>".format(uptime),
             parse_mode=ParseMode.HTML,
             reply_markup=InlineKeyboardMarkup(

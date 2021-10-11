@@ -75,7 +75,8 @@ def import_data(update, context):
 
         # only import one group
         if len(data) > 1 and str(chat.id) not in data:
-            msg.reply_text("There are more than one group in this file and the chat.id is not same! How am i supposed to import it?")
+            msg.reply_text(
+                "There are more than one group in this file and the chat.id is not same! How am i supposed to import it?")
             return
 
         # Check if backup is this chat

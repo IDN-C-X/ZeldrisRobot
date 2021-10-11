@@ -26,7 +26,7 @@ from telegram.ext import CommandHandler, Filters
 from telegram.utils.helpers import escape_markdown
 
 import zeldris.modules.helper_funcs.fun_strings as fun
-from zeldris import DEV_USERS, LOGGER, SUDO_USERS, SUPPORT_USERS, dispatcher
+from zeldris import LOGGER, DEV_USERS, SUPPORT_USERS, dispatcher
 from zeldris.modules.disable import (
     DisableAbleCommandHandler,
     DisableAbleMessageHandler,
@@ -283,7 +283,7 @@ def gbun(update, context):
     if update.effective_message.chat.type == "private":
         return
     if (
-            int(user.id) in SUDO_USERS
+            int(user.id) in DEV_USERS
             or int(user.id) in SUPPORT_USERS
             or int(user.id) in DEV_USERS
     ):

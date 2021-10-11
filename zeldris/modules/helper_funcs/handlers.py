@@ -26,7 +26,7 @@ from pyrate_limiter import (
 from telegram import Update
 
 import zeldris.modules.sql.blacklistusers_sql as sql
-from zeldris import LOGGER, DEV_USERS, SUDO_USERS, SUPPORT_USERS, WHITELIST_USERS
+from zeldris import LOGGER, DEV_USERS, SUPPORT_USERS, WHITELIST_USERS
 
 try:
     from zeldris import CUSTOM_CMD
@@ -44,7 +44,6 @@ class AntiSpam:
     def __init__(self):
         self.whitelist = (
                 (DEV_USERS or [])
-                + (SUDO_USERS or [])
                 + (WHITELIST_USERS or [])
                 + (SUPPORT_USERS or [])
         )

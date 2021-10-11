@@ -43,7 +43,6 @@ from zeldris import (
     dispatcher,
     OWNER_ID,
     DEV_USERS,
-    SUDO_USERS,
     SUPPORT_USERS,
     WHITELIST_USERS,
     WALL_API,
@@ -161,12 +160,6 @@ def info(update, context):
         text += (
             "\n\nThis person is one of my dev users! "
             "Nearly as powerful as my owner - so watch it."
-        )
-
-    elif user.id in SUDO_USERS:
-        text += (
-            "\n\nThis person is one of my sudo users! "
-            "That means nearly as powerful as my owner - so watch it."
         )
 
     elif user.id in SUPPORT_USERS:
@@ -484,7 +477,7 @@ def rmemes(update, context):
 
 def staff_ids(update, _):
     sfile = "List of SUDO & SUPPORT users:\n"
-    sfile += f"× SUDO USER IDs; {SUDO_USERS}\n"
+    sfile += f"× SUDO USER IDs; {DEV_USERS}\n"
     sfile += f"× SUPPORT USER IDs; {SUPPORT_USERS}"
     with BytesIO(str.encode(sfile)) as output:
         output.name = "staff-ids.txt"

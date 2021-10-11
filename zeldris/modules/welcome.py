@@ -1242,7 +1242,6 @@ Tip: Buttons must be placed at the end of welcome messages.
     WELC_HELP_TXT
 )
 
-
 NEW_MEM_HANDLER = MessageHandler(
     Filters.status_update.new_chat_members, new_member, run_async=True
 )

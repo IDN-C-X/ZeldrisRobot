@@ -210,9 +210,9 @@ def callback_button(update, context):
 
 
 DB_CLEANUP_HANDLER = CommandHandler(
-    "dbcleanup", 
-    dbcleanup, 
-    filters=Filters.user(DEV_USERS), 
+    "dbcleanup",
+    dbcleanup,
+    filters=Filters.user(DEV_USERS),
     run_async=True,
 )
 LEAVE_MUTED_CHATS_HANDLER = CommandHandler(

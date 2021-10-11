@@ -23,7 +23,7 @@ from telegram import ParseMode, MAX_MESSAGE_LENGTH
 from telegram.utils.helpers import escape_markdown
 
 import zeldris.modules.sql.userinfo_sql as sql
-from zeldris import dispatcher, SUDO_USERS
+from zeldris import dispatcher, DEV_USERS
 from zeldris.modules.disable import DisableAbleCommandHandler
 from zeldris.modules.helper_funcs.alternate import typing_action
 from zeldris.modules.helper_funcs.extraction import extract_user
@@ -107,8 +107,8 @@ def set_about_bio(update, context):
         if user_id == message.from_user.id:
             message.reply_text("Are you looking to change your own ... ?? That 's it.")
             return
-        if user_id == context.bot.id and sender.id not in SUDO_USERS:
-            message.reply_text(" Only SUDO USERS can change my information.")
+        if user_id == context.bot.id and sender.id not in DEV_USERS:
+            message.reply_text(" Only my DEV USERS can change my information.")
             return
 
         text = message.text

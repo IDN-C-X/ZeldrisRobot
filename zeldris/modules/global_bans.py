@@ -27,7 +27,6 @@ import zeldris.modules.sql.global_bans_sql as sql
 from zeldris import (
     dispatcher,
     OWNER_ID,
-    SUDO_USERS,
     DEV_USERS,
     SUPPORT_USERS,
     STRICT_GBAN,
@@ -100,13 +99,7 @@ def gban(update, context):
 
     if int(user_id) in DEV_USERS:
         message.reply_text(
-            "Trying to gban my dev huh? Are you search for die?"
-        )
-        return
-
-    if int(user_id) in SUDO_USERS:
-        message.reply_text(
-            "I spy, with my little eye... a sudo user war! Why are you guys turning on each other?"
+            "Trying to gban dev huh? Are you looking to die?"
         )
         return
 
@@ -416,14 +409,14 @@ def __user_info__(user_id):
 
     text = "<b>Globally banned</b>: {}"
 
-    if int(user_id) in SUDO_USERS + SUPPORT_USERS:
+    if int(user_id) in DEV_USERS + SUPPORT_USERS:
         return ""
     if is_gbanned:
         text = text.format("Yes")
         user = sql.get_gbanned_user(user_id)
         if user.reason:
             text += "\nReason: {}".format(html.escape(user.reason))
-            text += "\n\nAppeal at @skyleebot if you think it's invalid."
+            text += "\n\nAppeal at @IDNCoderX if you think it's invalid."
     else:
         text = text.format("No")
     return text

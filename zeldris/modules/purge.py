@@ -21,7 +21,7 @@ from telethon import events
 from telethon.errors.rpcerrorlist import MessageDeleteForbiddenError
 from telethon.tl.types import ChannelParticipantsAdmins
 
-from zeldris import client, SUDO_USERS
+from zeldris import client, DEV_USERS
 
 
 # Check if user has admin rights
@@ -30,7 +30,7 @@ async def is_administrator(user_id: int, message):
     async for user in client.iter_participants(
             message.chat_id, filter=ChannelParticipantsAdmins
     ):
-        if user_id == user.id or user_id in SUDO_USERS:
+        if user_id == user.id or user_id in DEV_USERS:
             admin = True
             break
     return admin

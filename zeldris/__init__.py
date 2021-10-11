@@ -62,10 +62,9 @@ if ENV:
     OWNER_USERNAME = os.environ.get("OWNER_USERNAME", None)
 
     try:
-        SUDO_USERS = {int(x) for x in os.environ.get("SUDO_USERS", "").split()}
         DEV_USERS = {int(x) for x in os.environ.get("DEV_USERS", "").split()}
     except ValueError:
-        raise Exception("[Zeldris] Your sudo or dev users list does not contain valid integers.")
+        raise Exception("[Zeldris] Your dev users list does not contain valid integers.")
 
     try:
         SUPPORT_USERS = {int(x) for x in os.environ.get("SUPPORT_USERS", "").split()}
@@ -105,6 +104,7 @@ if ENV:
     API_ID = int(os.environ.get("API_ID", None))
     API_HASH = os.environ.get("API_HASH", None)
     SPAMWATCH = os.environ.get("SPAMWATCH_API", None)
+    SPAMMERS = os.environ.get("SPAMMERS", None)
 
 else:
     from zeldris.config import Development as Config
@@ -119,9 +119,9 @@ else:
     OWNER_USERNAME = Config.OWNER_USERNAME
 
     try:
-        SUDO_USERS = {int(x) for x in Config.SUDO_USERS or []}
+        DEV_USERS = {int(x) for x in Config.DEV_USERS or []}
     except ValueError:
-        raise Exception("[Zeldris] Your sudo users list does not contain valid integers.")
+        raise Exception("[Zeldris] Your dev users list does not contain valid integers.")
 
     try:
         SUPPORT_USERS = {int(x) for x in Config.SUPPORT_USERS or []}
@@ -162,10 +162,10 @@ else:
     API_HASH = Config.API_HASH
     API_ID = Config.API_ID
     SPAMWATCH = Config.SPAMWATCH_API
+    SPAMMERS = Config.SPAMMERS
 
 # Dont Remove This
 DEV_USERS.add(OWNER_ID)
-SUDO_USERS.add(OWNER_ID)
 
 # Pass if SpamWatch token not set.
 if SPAMWATCH is None:
@@ -186,13 +186,10 @@ finally:
 
 # Telethon
 client = TelegramClient(MemorySession(), API_ID, API_HASH)
-
 updater = tg.Updater(TOKEN, workers=WORKERS)
-
 dispatcher = updater.dispatcher
 
 DEV_USERS = list(DEV_USERS)
-SUDO_USERS = list(SUDO_USERS)
 WHITELIST_USERS = list(WHITELIST_USERS)
 SUPPORT_USERS = list(SUPPORT_USERS)
 

@@ -42,7 +42,7 @@ import zeldris.modules.sql.feds_sql as sql
 from zeldris import (
     dispatcher,
     OWNER_ID,
-    SUDO_USERS,
+    DEV_USERS,
     WHITELIST_USERS,
     MESSAGE_DUMP,
     LOGGER,
@@ -246,7 +246,7 @@ def join_fed(update, context):
     fed_id = sql.get_fed_id(chat.id)
     args = context.args
 
-    if user.id not in SUDO_USERS:
+    if user.id not in DEV_USERS:
         for admin in administrators:
             status = admin.status
             if status == "creator" and str(admin.user.id) != str(user.id):
@@ -301,7 +301,7 @@ def leave_fed(update, context):
 
     # administrators = chat.get_administrators().status
     getuser = context.bot.get_chat_member(chat.id, user.id).status
-    if getuser in "creator" or user.id in SUDO_USERS:
+    if getuser in "creator" or user.id in DEV_USERS:
         if sql.chat_leave_fed(chat.id):
             get_fedlog = sql.get_fed_log(fed_id)
             if get_fedlog and ast.literal_eval(get_fedlog):
@@ -340,7 +340,7 @@ def user_join_fed(update, context):
 
     fed_id = sql.get_fed_id(chat.id)
 
-    if is_user_fed_owner(fed_id, user.id) or user.id in SUDO_USERS:
+    if is_user_fed_owner(fed_id, user.id) or user.id in DEV_USERS:
         user_id = extract_user(msg, args)
         if user_id:
             user = context.bot.get_chat(user_id)
@@ -599,7 +599,7 @@ def fed_ban(update, context):
         message.reply_text("That's a very STUPID idea!")
         return
 
-    if int(user_id) in SUDO_USERS:
+    if int(user_id) in DEV_USERS:
         message.reply_text("I will not use sudo fban!")
         return
 
@@ -1355,7 +1355,7 @@ def fed_ban_list(update, context):
                     parse_mode=ParseMode.MARKDOWN,
                 )
                 return
-            if user.id not in SUDO_USERS:
+            if user.id not in DEV_USERS:
                 put_chat(chat.id, new_jam, chat_data)
             backups = ""
             for users in getfban:
@@ -1394,7 +1394,7 @@ def fed_ban_list(update, context):
                     parse_mode=ParseMode.MARKDOWN,
                 )
                 return
-            if user.id not in SUDO_USERS:
+            if user.id not in DEV_USERS:
                 put_chat(chat.id, new_jam, chat_data)
             backups = "id,firstname,lastname,username,reason\n"
             for users in getfban:
@@ -1452,7 +1452,7 @@ def fed_ban_list(update, context):
                 parse_mode=ParseMode.MARKDOWN,
             )
             return
-        if user.id not in SUDO_USERS:
+        if user.id not in DEV_USERS:
             put_chat(chat.id, new_jam, chat_data)
         cleanr = re.compile("<.*?>")
         cleantext = re.sub(cleanr, "", text)
@@ -1609,7 +1609,7 @@ def fed_import_bans(update, context):
                 parse_mode=ParseMode.MARKDOWN,
             )
             return
-        if user.id not in SUDO_USERS:
+        if user.id not in DEV_USERS:
             put_chat(chat.id, new_jam, chat_data)
         # if int(int(msg.reply_to_message.document.file_size)/1024) >= 200:
         # 	msg.reply_text("This file is too big!")
@@ -1666,7 +1666,7 @@ def fed_import_bans(update, context):
                     if str(import_userid) == str(OWNER_ID):
                         failed += 1
                         continue
-                    if int(import_userid) in SUDO_USERS:
+                    if int(import_userid) in DEV_USERS:
                         failed += 1
                         continue
                     if int(import_userid) in WHITELIST_USERS:
@@ -1739,7 +1739,7 @@ def fed_import_bans(update, context):
                     if str(import_userid) == str(OWNER_ID):
                         failed += 1
                         continue
-                    if int(import_userid) in SUDO_USERS:
+                    if int(import_userid) in DEV_USERS:
                         failed += 1
                         continue
                     if int(import_userid) in WHITELIST_USERS:

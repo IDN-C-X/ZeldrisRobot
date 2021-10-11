@@ -19,9 +19,10 @@ import random
 import threading
 from typing import Union
 
+from sqlalchemy import BigInteger, Boolean, Column, Integer, String, UnicodeText
+
 from zeldris.modules.helper_funcs.msg_types import Types
 from zeldris.modules.sql import BASE, SESSION
-from sqlalchemy import BigInteger, Boolean, Column, Integer, String, UnicodeText
 
 DEFAULT_WELCOME = "Hey {first}, how are you?"
 DEFAULT_GOODBYE = "Nice knowing ya!"
@@ -224,6 +225,8 @@ DEFAULT_GOODBYE_MESSAGES = [
     "Go outside",
     "Always your head in the clouds",
 ]
+
+
 # Line 111 to 152 are references from https://bindingofisaac.fandom.com/wiki/Fortune_Telling_Machine
 
 
@@ -459,7 +462,7 @@ def set_gdbye_preference(chat_id, should_goodbye):
 
 
 def set_custom_welcome(
-    chat_id, custom_content, custom_welcome, welcome_type, buttons=None
+        chat_id, custom_content, custom_welcome, welcome_type, buttons=None
 ):
     if buttons is None:
         buttons = []
@@ -483,8 +486,8 @@ def set_custom_welcome(
         with WELC_BTN_LOCK:
             prev_buttons = (
                 SESSION.query(WelcomeButtons)
-                .filter(WelcomeButtons.chat_id == str(chat_id))
-                .all()
+                    .filter(WelcomeButtons.chat_id == str(chat_id))
+                    .all()
             )
             for btn in prev_buttons:
                 SESSION.delete(btn)
@@ -528,8 +531,8 @@ def set_custom_gdbye(chat_id, custom_goodbye, goodbye_type, buttons=None):
         with LEAVE_BTN_LOCK:
             prev_buttons = (
                 SESSION.query(GoodbyeButtons)
-                .filter(GoodbyeButtons.chat_id == str(chat_id))
-                .all()
+                    .filter(GoodbyeButtons.chat_id == str(chat_id))
+                    .all()
             )
             for btn in prev_buttons:
                 SESSION.delete(btn)
@@ -555,9 +558,9 @@ def get_welc_buttons(chat_id):
     try:
         return (
             SESSION.query(WelcomeButtons)
-            .filter(WelcomeButtons.chat_id == str(chat_id))
-            .order_by(WelcomeButtons.id)
-            .all()
+                .filter(WelcomeButtons.chat_id == str(chat_id))
+                .order_by(WelcomeButtons.id)
+                .all()
         )
     finally:
         SESSION.close()
@@ -567,9 +570,9 @@ def get_gdbye_buttons(chat_id):
     try:
         return (
             SESSION.query(GoodbyeButtons)
-            .filter(GoodbyeButtons.chat_id == str(chat_id))
-            .order_by(GoodbyeButtons.id)
-            .all()
+                .filter(GoodbyeButtons.chat_id == str(chat_id))
+                .order_by(GoodbyeButtons.id)
+                .all()
         )
     finally:
         SESSION.close()
@@ -605,8 +608,8 @@ def migrate_chat(old_chat_id, new_chat_id):
         with WELC_BTN_LOCK:
             chat_buttons = (
                 SESSION.query(WelcomeButtons)
-                .filter(WelcomeButtons.chat_id == str(old_chat_id))
-                .all()
+                    .filter(WelcomeButtons.chat_id == str(old_chat_id))
+                    .all()
             )
             for btn in chat_buttons:
                 btn.chat_id = str(new_chat_id)
@@ -614,8 +617,8 @@ def migrate_chat(old_chat_id, new_chat_id):
         with LEAVE_BTN_LOCK:
             chat_buttons = (
                 SESSION.query(GoodbyeButtons)
-                .filter(GoodbyeButtons.chat_id == str(old_chat_id))
-                .all()
+                    .filter(GoodbyeButtons.chat_id == str(old_chat_id))
+                    .all()
             )
             for btn in chat_buttons:
                 btn.chat_id = str(new_chat_id)
