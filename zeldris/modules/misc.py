@@ -42,6 +42,7 @@ from telegram.utils.helpers import escape_markdown, mention_html
 from zeldris import (
     dispatcher,
     OWNER_ID,
+    DEV_USERS,
     SUDO_USERS,
     SUPPORT_USERS,
     WHITELIST_USERS,
@@ -156,10 +157,16 @@ def info(update, context):
     if user.id == OWNER_ID:
         text += "\n\nAye this guy is my owner.\nI would never do anything against him!"
 
+    elif user.id in DEV_USERS:
+        text += (
+            "\n\nThis person is one of my dev users! "
+            "Nearly as powerful as my owner - so watch it."
+        )
+
     elif user.id in SUDO_USERS:
         text += (
             "\n\nThis person is one of my sudo users! "
-            "Nearly as powerful as my owner - so watch it."
+            "That means nearly as powerful as my owner - so watch it."
         )
 
     elif user.id in SUPPORT_USERS:
