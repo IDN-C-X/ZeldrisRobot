@@ -21,8 +21,7 @@ from telegram import MessageEntity
 from telegram.error import BadRequest
 from telegram.ext import Filters, MessageHandler
 
-from zeldris import REDIS
-from zeldris import dispatcher
+from zeldris import dispatcher, REDIS
 from zeldris.modules.disable import (
     DisableAbleCommandHandler,
     DisableAbleMessageHandler,
@@ -41,7 +40,8 @@ AFK_REPLY_GROUP = 8
 
 
 def afk(update, _):
-    args = update.effective_message.text.split(None, 1)
+    message = update.effective_message
+    args = message.text.split(None, 1)
     user = update.effective_user
 
     if not user:  # ignore channels
@@ -52,11 +52,11 @@ def afk(update, _):
 
     start_afk_time = time.time()
     reason = args[1] if len(args) >= 2 else "none"
-    start_afk(update.effective_user.id, reason)
-    REDIS.set(f"afk_time_{update.effective_user.id}", start_afk_time)
-    fname = update.effective_user.first_name
+    start_afk(user.id, reason)
+    REDIS.set(f"afk_time_{user.id}", start_afk_time)
+    fname = user.first_name
     try:
-        update.effective_message.reply_text("{} is now AFK!".format(fname))
+        message.reply_text("{} is now AFK!".format(fname))
     except BadRequest:
         pass
 
@@ -80,7 +80,7 @@ def no_longer_afk(update, _):
         firstname = update.effective_user.first_name
         try:
             message.reply_text(
-                "{} is no longer AFK!\nTime you AFK: {}".format(
+                "{} is back online!\nYou were away since: {}".format(
                     firstname, end_afk_time
                 )
             )
@@ -152,9 +152,9 @@ def check_afk(update, context, user_id: int, fst_name: int, userc_id: int):
         if int(userc_id) == int(user_id):
             return
         if reason == "none":
-            res = "{} is AFK!\nSince: {}".format(fst_name, since_afk)
+            res = "{} is AFK!\nLast seen: {}".format(fst_name, since_afk)
         else:
-            res = "{} is AFK!\nReason: {}\nSince: {}".format(
+            res = "{} is AFK!\nReason: {}\nLast seen: {}".format(
                 fst_name, reason, since_afk
             )
 
