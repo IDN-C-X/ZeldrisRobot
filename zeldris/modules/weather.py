@@ -134,7 +134,7 @@ def weather(update, context):
             return
 
 
-__help__ = """
+__help__ = r"""
 Weather module:
 
  × /weather <city>: Gets weather information of particular place!
