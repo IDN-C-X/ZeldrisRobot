@@ -237,5 +237,5 @@ def spamfilters(text, user_id, chat_id):
     if int(user_id) not in SPAMMERS:
         return False
 
-    print("This user is a spammer!")
+    print("[Zeldris] This user is a spammer!")
     return True
