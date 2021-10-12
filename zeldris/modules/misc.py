@@ -520,7 +520,7 @@ MD_HELP_HANDLER = CommandHandler(
     "markdownhelp", markdown_help, filters=Filters.chat_type.private, run_async=True
 )
 STATS_HANDLER = CommandHandler(
-    "stats", stats, filters=Filters.user(OWNER_ID), run_async=True
+    "stats", stats, filters=Filters.user([OWNER_ID + DEV_USERS]), run_async=True
 )
 GDPR_HANDLER = CommandHandler(
     "gdpr", gdpr, filters=Filters.chat_type.private, run_async=True
