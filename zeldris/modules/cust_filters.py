@@ -282,12 +282,10 @@ def stop_filter(update, context):
 
 
 def reply_filter(update, context):
-    bot = context.bot
-    chat = update.effective_chat
-    user = update.effective_user
-    message = update.effective_message
+    chat = update.effective_chat  # type: Optional[Chat]
+    message = update.effective_message  # type: Optional[Message]
 
-    if not user or user.id == 777000:
+    if not update.effective_user or update.effective_user.id == 777000:
         return
     to_match = extract_text(message)
     if not to_match:
@@ -297,12 +295,12 @@ def reply_filter(update, context):
     for keyword in chat_filters:
         pattern = r"( |^|[^\w])" + re.escape(keyword) + r"( |$|[^\w])"
         if re.search(pattern, to_match, flags=re.IGNORECASE):
-            if MessageHandlerChecker.check_user(user.id):
+            if MessageHandlerChecker.check_user(update.effective_user.id):
                 return
             filt = sql.get_filter(chat.id, keyword)
             if filt.reply == "there is should be a new reply":
                 buttons = sql.get_buttons(chat.id, filt.keyword)
-                keyb = build_keyboard_parser(bot, chat.id, buttons)
+                keyb = build_keyboard_parser(context.bot, chat.id, buttons)
                 keyboard = InlineKeyboardMarkup(keyb)
 
                 VALID_WELCOME_FORMATTERS = [
@@ -323,7 +321,7 @@ def reply_filter(update, context):
                     if text.startswith("~!") and text.endswith("!~"):
                         sticker_id = text.replace("~!", "").replace("!~", "")
                         try:
-                            bot.send_sticker(
+                            context.bot.send_sticker(
                                 chat.id,
                                 sticker_id,
                                 reply_to_message_id=message.message_id,
@@ -334,15 +332,15 @@ def reply_filter(update, context):
                                 excp.message
                                 == "Wrong remote file identifier specified: wrong padding in the string"
                             ):
-                                bot.send_message(
+                                context.bot.send_message(
                                     chat.id,
                                     "Message couldn't be sent, Is the sticker id valid?",
                                 )
-                            else:
-                                LOGGER.exception("Error in filters: " + excp.message)
+                                return
+                            LOGGER.exception("Error in filters: " + excp.message)
                             return
                     valid_format = escape_invalid_curly_brackets(
-                        markdown_to_html(text), VALID_WELCOME_FORMATTERS
+                        text, VALID_WELCOME_FORMATTERS
                     )
                     if valid_format:
                         filtext = valid_format.format(
@@ -379,9 +377,9 @@ def reply_filter(update, context):
 
                 if filt.file_type in (sql.Types.BUTTON_TEXT, sql.Types.TEXT):
                     try:
-                        bot.send_message(
+                        context.bot.send_message(
                             chat.id,
-                            filtext,
+                            markdown_to_html(filtext),
                             reply_to_message_id=message.message_id,
                             parse_mode=ParseMode.HTML,
                             disable_web_page_preview=True,
@@ -391,9 +389,9 @@ def reply_filter(update, context):
                         error_catch = get_exception(excp, filt, chat)
                         if error_catch == "noreply":
                             try:
-                                bot.send_message(
+                                context.bot.send_message(
                                     chat.id,
-                                    filtext,
+                                    markdown_to_html(filtext),
                                     parse_mode=ParseMode.HTML,
                                     disable_web_page_preview=True,
                                     reply_markup=keyboard,
@@ -414,23 +412,25 @@ def reply_filter(update, context):
                                 LOGGER.exception(
                                     "Failed to send message: " + excp.message
                                 )
-                elif ENUM_FUNC_MAP[filt.file_type] == dispatcher.bot.send_sticker:
-                    ENUM_FUNC_MAP[filt.file_type](
-                        chat.id,
-                        filt.file_id,
-                        reply_to_message_id=message.message_id,
-                        reply_markup=keyboard,
-                    )
                 else:
-                    ENUM_FUNC_MAP[filt.file_type](
-                        chat.id,
-                        filt.file_id,
-                        caption=filtext,
-                        reply_to_message_id=message.message_id,
-                        parse_mode=ParseMode.HTML,
-                        reply_markup=keyboard,
-                    )
-            elif filt.is_sticker:
+                    if ENUM_FUNC_MAP[filt.file_type] == dispatcher.bot.send_sticker:
+                        ENUM_FUNC_MAP[filt.file_type](
+                            chat.id,
+                            filt.file_id,
+                            reply_to_message_id=message.message_id,
+                            reply_markup=keyboard,
+                        )
+                    else:
+                        ENUM_FUNC_MAP[filt.file_type](
+                            chat.id,
+                            filt.file_id,
+                            caption=markdown_to_html(filtext),
+                            reply_to_message_id=message.message_id,
+                            parse_mode=ParseMode.HTML,
+                            reply_markup=keyboard,
+                        )
+                break
+            if filt.is_sticker:
                 message.reply_sticker(filt.reply)
             elif filt.is_document:
                 message.reply_document(filt.reply)
@@ -444,7 +444,7 @@ def reply_filter(update, context):
                 message.reply_video(filt.reply)
             elif filt.has_markdown:
                 buttons = sql.get_buttons(chat.id, filt.keyword)
-                keyb = build_keyboard_parser(bot, chat.id, buttons)
+                keyb = build_keyboard_parser(context.bot, chat.id, buttons)
                 keyboard = InlineKeyboardMarkup(keyb)
 
                 try:
@@ -468,7 +468,7 @@ def reply_filter(update, context):
                             LOGGER.exception("Error in filters: " + excp.message)
                     elif excp.message == "Reply message not found":
                         try:
-                            bot.send_message(
+                            context.bot.send_message(
                                 chat.id,
                                 filt.reply,
                                 parse_mode=ParseMode.MARKDOWN,
@@ -588,7 +588,7 @@ def get_exception(excp, filt, chat):
 def addnew_filter(update, chat_id, keyword, text, file_type, file_id, buttons):
     msg = update.effective_message
     totalfilt = sql.get_chat_triggers(chat_id)
-    if len(totalfilt) >= 1000:  # Idk why i made this like function....
+    if len(totalfilt) >= 150:  # Idk why i made this like function....
         msg.reply_text("This group has reached its max filters limit of 150.")
         return False
     sql.new_add_filter(chat_id, keyword, text, file_type, file_id, buttons)
