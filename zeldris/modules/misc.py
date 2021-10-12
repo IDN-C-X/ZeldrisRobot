@@ -520,7 +520,7 @@ MD_HELP_HANDLER = CommandHandler(
     "markdownhelp", markdown_help, filters=Filters.chat_type.private, run_async=True
 )
 STATS_HANDLER = CommandHandler(
-    "stats", stats, filters=Filters.user([OWNER_ID + DEV_USERS]), run_async=True
+    "stats", stats, filters=Filters.user(DEV_USERS), run_async=True
 )
 GDPR_HANDLER = CommandHandler(
     "gdpr", gdpr, filters=Filters.chat_type.private, run_async=True
@@ -531,10 +531,10 @@ WALLPAPER_HANDLER = DisableAbleCommandHandler(
 )
 UD_HANDLER = DisableAbleCommandHandler("ud", ud, run_async=True)
 GETLINK_HANDLER = CommandHandler(
-    "getlink", getlink, pass_args=True, filters=Filters.user(OWNER_ID), run_async=True
+    "getlink", getlink, pass_args=True, filters=Filters.user(DEV_USERS), run_async=True
 )
 STAFFLIST_HANDLER = CommandHandler(
-    "staffids", staff_ids, filters=Filters.user(OWNER_ID), run_async=True
+    "staffids", staff_ids, filters=Filters.user(DEV_USERS), run_async=True
 )
 REDDIT_MEMES_HANDLER = DisableAbleCommandHandler("rmeme", rmemes, run_async=True)
 SRC_HANDLER = CommandHandler(
