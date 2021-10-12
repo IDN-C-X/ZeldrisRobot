@@ -110,9 +110,7 @@ def gban(update, context):
         return
 
     if user_id in (777000, 1087968824):
-        message.reply_text(
-            "How can i ban someone that i don't know who is it."
-        )
+        message.reply_text("How can i ban someone that i don't know who is it.")
         return
 
     if user_id == context.bot.id:
@@ -120,9 +118,7 @@ def gban(update, context):
         return
 
     if not reason:
-        message.reply_text(
-            "Please Specified a reason. I won't allow a bare gban :)"
-        )
+        message.reply_text("Please Specified a reason. I won't allow a bare gban :)")
         return
 
     try:
