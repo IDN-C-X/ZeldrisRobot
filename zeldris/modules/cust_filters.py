@@ -636,7 +636,10 @@ __mod_name__ = "Filters"
 FILTER_HANDLER = CommandHandler("filter", filters)
 STOP_HANDLER = CommandHandler("stop", stop_filter)
 RMALLFILTER_HANDLER = CommandHandler(
-    "removeallfilters", rmall_filters, filters=Filters.chat_type.groups, run_async=True
+    ["rmallfilter", "removeallfilters"], 
+    rmall_filters, 
+    filters=Filters.chat_type.groups, 
+    run_async=True,
 )
 RMALLFILTER_CALLBACK = CallbackQueryHandler(
     rmall_callback, pattern=r"filters_.*", run_async=True
