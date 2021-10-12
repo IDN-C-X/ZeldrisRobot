@@ -98,7 +98,9 @@ def gban(update, context):
         return
 
     if int(user_id) in DEV_USERS:
-        message.reply_text("Trying to gban dev huh? Are you looking to die?")
+        message.reply_text(
+            "I spy, with my little eye... a sudo user war! Why are you guys turning on each other?"
+        )
         return
 
     if int(user_id) in SUPPORT_USERS:
@@ -107,8 +109,20 @@ def gban(update, context):
         )
         return
 
+    if user_id in (777000, 1087968824):
+        message.reply_text(
+            "How can i ban someone that i don't know who is it."
+        )
+        return
+
     if user_id == context.bot.id:
         message.reply_text("-_- So funny, lets gban myself why don't I? Nice try.")
+        return
+
+    if not reason:
+        message.reply_text(
+            "Please Specified a reason. I won't allow a bare gban :)"
+        )
         return
 
     try:
