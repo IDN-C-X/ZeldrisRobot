@@ -316,7 +316,7 @@ def reply_filter(update, context):
                 ]
                 if filt.reply_text:
                     valid_format = escape_invalid_curly_brackets(
-                        filt.reply_text, VALID_WELCOME_FORMATTERS
+                        markdown_to_html(filt.reply_text), VALID_WELCOME_FORMATTERS
                     )
                     if valid_format:
                         filtext = valid_format.format(
@@ -357,7 +357,7 @@ def reply_filter(update, context):
                     try:
                         context.bot.send_message(
                             chat.id,
-                            markdown_to_html(filtext),
+                            filtext,
                             reply_to_message_id=message.message_id,
                             parse_mode=ParseMode.HTML,
                             reply_markup=keyboard,
@@ -368,7 +368,7 @@ def reply_filter(update, context):
                             try:
                                 context.bot.send_message(
                                     chat.id,
-                                    markdown_to_html(filtext),
+                                    filtext,
                                     parse_mode=ParseMode.HTML,
                                     reply_markup=keyboard,
                                 )
@@ -405,7 +405,7 @@ def reply_filter(update, context):
                         ENUM_FUNC_MAP[filt.file_type](
                             chat.id,
                             filt.file_id,
-                            caption=markdown_to_html(filtext),
+                            caption=filtext,
                             reply_to_message_id=message.message_id,
                             parse_mode=ParseMode.HTML,
                             reply_markup=keyboard,
