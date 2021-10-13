@@ -67,7 +67,7 @@ def list_handlers(update, context):
     user = update.effective_user
 
     conn = connected(context.bot, update, chat, user.id, need_admin=False)
-    if not conn == False:
+    if conn is not False:
         chat_id = conn
         chat_name = dispatcher.bot.getChat(conn).title
         filter_list = "*Filter in {}:*\n"
@@ -120,15 +120,12 @@ def filters(update, context):
     )  # use python's maxsplit to separate Cmd, keyword, and reply_text
 
     conn = connected(context.bot, update, chat, user.id)
-    if not conn == False:
+    if conn is not False:
         chat_id = conn
         chat_name = dispatcher.bot.getChat(conn).title
     else:
         chat_id = update.effective_chat.id
-        if chat.type == "private":
-            chat_name = "local filters"
-        else:
-            chat_name = chat.title
+        chat_name = "local filters" if chat.type == "private" else chat.title
 
     if not msg.reply_to_message and len(args) < 2:
         send_message(
@@ -249,15 +246,12 @@ def stop_filter(update, context):
     args = update.effective_message.text.split(None, 1)
 
     conn = connected(context.bot, update, chat, user.id)
-    if not conn == False:
+    if conn is not False:
         chat_id = conn
         chat_name = dispatcher.bot.getChat(conn).title
     else:
         chat_id = update.effective_chat.id
-        if chat.type == "private":
-            chat_name = "Local filters"
-        else:
-            chat_name = chat.title
+        chat_name = "Local filters" if chat.type == "private" else chat.title
 
     if len(args) < 2:
         send_message(update.effective_message, "What should i stop?")
@@ -499,7 +493,7 @@ def rmall_filters(update, context):
     msg = update.effective_message
 
     usermem = chat.get_member(user.id)
-    if not usermem.status == "creator":
+    if usermem.status != "creator":
         msg.reply_text("This command can be only used by chat OWNER!")
         return
 
@@ -527,16 +521,15 @@ def get_exception(excp, filt, chat):
         return "You seem to be trying to use the URL protocol which is not supported. Telegram does not support key for multiple protocols, such as tg: //. Please try again!"
     elif excp.message == "Reply message not found":
         return "noreply"
-    else:
-        LOGGER.warning("Message %s could not be parsed", str(filt.reply))
-        LOGGER.exception(
-            "Could not parse filter %s in chat %s",
-            str(filt.keyword),
-            str(chat.id),
-        )
-        return (
-            "This data could not be sent because it is incorrectly formatted."
-        )
+    LOGGER.warning("Message %s could not be parsed", str(filt.reply))
+    LOGGER.exception(
+        "Could not parse filter %s in chat %s",
+        str(filt.keyword),
+        str(chat.id),
+    )
+    return (
+        "This data could not be sent because it is incorrectly formatted."
+    )
 
 
 # NOT ASYNC NOT A HANDLER
@@ -548,9 +541,8 @@ def addnew_filter(update, chat_id, keyword, text, file_type, file_id, buttons):
             "You can't have more that fifty filters at once! try removing some before adding new filters."
         )
         return False
-    else:
-        sql.new_add_filter(chat_id, keyword, text, file_type, file_id, buttons)
-        return True
+    sql.new_add_filter(chat_id, keyword, text, file_type, file_id, buttons)
+    return True
 
 
 def __stats__():
