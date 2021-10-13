@@ -15,46 +15,42 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-import random
 import re
+import random
 from html import escape
 
 import telegram
-from telegram import (
-    InlineKeyboardButton,
-    InlineKeyboardMarkup,
-    ParseMode,
-)
+from telegram import ParseMode, InlineKeyboardMarkup, Message, InlineKeyboardButton
 from telegram.error import BadRequest
 from telegram.ext import (
-    CallbackQueryHandler,
     CommandHandler,
-    DispatcherHandlerStop,
-    Filters,
     MessageHandler,
+    DispatcherHandlerStop,
+    CallbackQueryHandler,
+    run_async,
+    Filters,
 )
-from telegram.utils.helpers import escape_markdown, mention_html
+from telegram.utils.helpers import mention_html, escape_markdown
 
-from zeldris import dispatcher, DEV_USERS, LOGGER
-from zeldris.modules.connection import connected
-from zeldris.modules.disable import (
-    DisableAbleCommandHandler,
-    DisableAbleMessageHandler,
-)
-from zeldris.modules.helper_funcs.alternate import send_message, typing_action
+from zeldris import dispatcher, LOGGER, DEV_USERS
+from zeldris.modules.disable import DisableAbleCommandHandler, DisableAbleMessageHandler
+from zeldris.modules.helper_funcs.handlers import MessageHandlerChecker
 from zeldris.modules.helper_funcs.chat_status import user_admin
 from zeldris.modules.helper_funcs.extraction import extract_text
 from zeldris.modules.helper_funcs.filters import CustomFilters
-from zeldris.modules.helper_funcs.handlers import MessageHandlerChecker
 from zeldris.modules.helper_funcs.misc import build_keyboard_parser
 from zeldris.modules.helper_funcs.msg_types import get_filter_type
 from zeldris.modules.helper_funcs.string_handling import (
+    split_quotes,
     button_markdown_parser,
     escape_invalid_curly_brackets,
     markdown_to_html,
-    split_quotes,
 )
 from zeldris.modules.sql import cust_filters_sql as sql
+
+from zeldris.modules.connection import connected
+
+from zeldris.modules.helper_funcs.alternate import send_message, typing_action
 
 HANDLER_GROUP = 10
 
@@ -502,7 +498,7 @@ def rmall_filters(update, context):
     chat = update.effective_chat
     user = update.effective_user
     member = chat.get_member(user.id)
-    if member.status != "creator" and user.id not in DRAGONS:
+    if member.status != "creator" and user.id not in DEV_USERS:
         update.effective_message.reply_text(
             "Only the chat owner can clear all notes at once.")
     else:
@@ -559,16 +555,12 @@ def rmall_callback(update, context):
 # NOT ASYNC NOT A HANDLER
 def get_exception(excp, filt, chat):
     if excp.message == "Unsupported url protocol":
-        return (
-            "You seem to be trying to use the URL protocol which is not supported. Telegram does not support key "
-            "for multiple protocols, such as tg: //. Please try again! "
-        )
-    elif excp.message == "Reply message not found":
+        return "You seem to be trying to use the URL protocol which is not supported. Telegram does not support key for multiple protocols, such as tg: //. Please try again!"
+    if excp.message == "Reply message not found":
         return "noreply"
     LOGGER.warning("Message %s could not be parsed", str(filt.reply))
-    LOGGER.exception(
-        "Could not parse filter %s in chat %s", str(filt.keyword), str(chat.id)
-    )
+    LOGGER.exception("Could not parse filter %s in chat %s",
+                     str(filt.keyword), str(chat.id))
     return "This data could not be sent because it is incorrectly formatted."
 
 
