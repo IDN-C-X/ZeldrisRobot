@@ -93,13 +93,12 @@ def list_handlers(update, context):
     all_handlers = sql.get_chat_triggers(chat_id)
 
     if not all_handlers:
-        send_message(
-            update.effective_message, "No filters saved in {}!".format(chat_name)
-        )
+        send_message(update.effective_message,
+                     "No filters saved in {}!".format(chat_name))
         return
 
     for keyword in all_handlers:
-        entry = "• `{}`\n".format(escape_markdown(keyword))
+        entry = " • `{}`\n".format(escape_markdown(keyword))
         if len(entry) + len(filter_list) > telegram.MAX_MESSAGE_LENGTH:
             send_message(
                 update.effective_message,
@@ -125,8 +124,8 @@ def filters(update, context):
     user = update.effective_user
     msg = update.effective_message
     args = msg.text.split(
-        None, 1
-    )  # use python's maxsplit to separate Cmd, keyword, and reply_text
+        None,
+        1)  # use python's maxsplit to separate Cmd, keyword, and reply_text
 
     conn = connected(context.bot, update, chat, user.id)
     if conn is not False:
@@ -134,7 +133,11 @@ def filters(update, context):
         chat_name = dispatcher.bot.getChat(conn).title
     else:
         chat_id = update.effective_chat.id
-        chat_name = "local filters" if chat.type == "private" else chat.title
+        if chat.type == "private":
+            chat_name = "local filters"
+        else:
+            chat_name = chat.title
+
     if not msg.reply_to_message and len(args) < 2:
         send_message(
             update.effective_message,
@@ -149,8 +152,7 @@ def filters(update, context):
                 "Please provide keyword for this filter to reply with!",
             )
             return
-        else:
-            keyword = args[1]
+        keyword = args[1]
     else:
         extracted = split_quotes(args[1])
         if len(extracted) < 1:
@@ -167,11 +169,9 @@ def filters(update, context):
     text, file_type, file_id = get_filter_type(msg)
     if not msg.reply_to_message and len(extracted) >= 2:
         offset = len(extracted[1]) - len(
-            msg.text
-        )  # set correct offset relative to command + notename
+            msg.text)  # set correct offset relative to command + notename
         text, buttons = button_markdown_parser(
-            extracted[1], entities=msg.parse_entities(), offset=offset
-        )
+            extracted[1], entities=msg.parse_entities(), offset=offset)
         text = text.strip()
         if not text:
             send_message(
@@ -187,12 +187,10 @@ def filters(update, context):
             text_to_parsing = msg.reply_to_message.caption
         else:
             text_to_parsing = ""
-        offset = len(
-            text_to_parsing
-        )  # set correct offset relative to command + notename
+        offset = len(text_to_parsing
+                    )  # set correct offset relative to command + notename
         text, buttons = button_markdown_parser(
-            text_to_parsing, entities=msg.parse_entities(), offset=offset
-        )
+            text_to_parsing, entities=msg.parse_entities(), offset=offset)
         text = text.strip()
 
     elif not text and not file_type:
@@ -209,14 +207,13 @@ def filters(update, context):
             text_to_parsing = msg.reply_to_message.caption
         else:
             text_to_parsing = ""
-        offset = len(
-            text_to_parsing
-        )  # set correct offset relative to command + notename
+        offset = len(text_to_parsing
+                    )  # set correct offset relative to command + notename
         text, buttons = button_markdown_parser(
-            text_to_parsing, entities=msg.parse_entities(), offset=offset
-        )
+            text_to_parsing, entities=msg.parse_entities(), offset=offset)
         text = text.strip()
-        if (msg.reply_to_message.text or msg.reply_to_message.caption) and not text:
+        if (msg.reply_to_message.text or
+                msg.reply_to_message.caption) and not text:
             send_message(
                 update.effective_message,
                 "There is no note message - You can't JUST have buttons, you need a message to go with it!",
@@ -227,9 +224,10 @@ def filters(update, context):
         send_message(update.effective_message, "Invalid filter!")
         return
 
-    add = addnew_filter(update, chat_id, keyword, text, file_type, file_id, buttons)
-    # This is an old method sql.add_filter(chat_id, keyword, content, is_sticker, is_document, is_image, is_audio,
-    # is_voice, is_video, buttons)
+    add = addnew_filter(update, chat_id, keyword, text, file_type, file_id,
+                        buttons)
+    # This is an old method
+    # sql.add_filter(chat_id, keyword, content, is_sticker, is_document, is_image, is_audio, is_voice, is_video, buttons)
 
     if add is True:
         send_message(
@@ -254,7 +252,11 @@ def stop_filter(update, context):
         chat_name = dispatcher.bot.getChat(conn).title
     else:
         chat_id = update.effective_chat.id
-        chat_name = "Local filters" if chat.type == "private" else chat.title
+        if chat.type == "private":
+            chat_name = "Local filters"
+        else:
+            chat_name = chat.title
+
     if len(args) < 2:
         send_message(update.effective_message, "What should i stop?")
         return
@@ -270,7 +272,8 @@ def stop_filter(update, context):
             sql.remove_filter(chat_id, args[1])
             send_message(
                 update.effective_message,
-                "Okay, I'll stop replying to that filter in *{}*.".format(chat_name),
+                "Okay, I'll stop replying to that filter in *{}*.".format(
+                    chat_name),
                 parse_mode=telegram.ParseMode.MARKDOWN,
             )
             raise DispatcherHandlerStop
@@ -413,22 +416,14 @@ def reply_filter(update, context):
                                     "Failed to send message: " + excp.message
                                 )
                 else:
-                    if ENUM_FUNC_MAP[filt.file_type] == dispatcher.bot.send_sticker:
-                        ENUM_FUNC_MAP[filt.file_type](
-                            chat.id,
-                            filt.file_id,
-                            reply_to_message_id=message.message_id,
-                            reply_markup=keyboard,
-                        )
-                    else:
-                        ENUM_FUNC_MAP[filt.file_type](
-                            chat.id,
-                            filt.file_id,
-                            caption=markdown_to_html(filtext),
-                            reply_to_message_id=message.message_id,
-                            parse_mode=ParseMode.HTML,
-                            reply_markup=keyboard,
-                        )
+                    ENUM_FUNC_MAP[filt.file_type](
+                        chat.id,
+                        filt.file_id,
+                        caption=filtext,
+                        reply_to_message_id=message.message_id,
+                        parse_mode=ParseMode.HTML,
+                        reply_markup=keyboard,
+                    )
                 break
             if filt.is_sticker:
                 message.reply_sticker(filt.reply)
@@ -503,40 +498,33 @@ def reply_filter(update, context):
             break
 
 
-def rmall_filters(update, _):
+def rmall_filters(update, context):
     chat = update.effective_chat
     user = update.effective_user
     member = chat.get_member(user.id)
-    if member.status != "creator" and user.id not in DEV_USERS:
+    if member.status != "creator" and user.id not in DRAGONS:
         update.effective_message.reply_text(
-            "Only the chat owner can clear all notes at once."
-        )
+            "Only the chat owner can clear all notes at once.")
     else:
-        buttons = InlineKeyboardMarkup(
-            [
-                [
-                    InlineKeyboardButton(
-                        text="Stop all filters", callback_data="filters_rmall"
-                    )
-                ],
-                [InlineKeyboardButton(text="Cancel", callback_data="filters_cancel")],
-            ]
-        )
+        buttons = InlineKeyboardMarkup([[
+            InlineKeyboardButton(
+                text="Stop all filters", callback_data="filters_rmall")
+        ], [
+            InlineKeyboardButton(text="Cancel", callback_data="filters_cancel")
+        ]])
         update.effective_message.reply_text(
             f"Are you sure you would like to stop ALL filters in {chat.title}? This action cannot be undone.",
             reply_markup=buttons,
-            parse_mode=ParseMode.MARKDOWN,
-        )
+            parse_mode=ParseMode.MARKDOWN)
 
 
-def rmall_callback(update, _):
+def rmall_callback(update, context):
     query = update.callback_query
     chat = update.effective_chat
     msg = update.effective_message
     member = chat.get_member(query.from_user.id)
-    if query.data == "filters_rmall":
+    if query.data == 'filters_rmall':
         if member.status == "creator" or query.from_user.id in DEV_USERS:
-
             allfilters = sql.get_chat_triggers(chat.id)
             if not allfilters:
                 msg.edit_text("No filters in this chat, nothing to stop!")
@@ -558,7 +546,7 @@ def rmall_callback(update, _):
 
         if member.status == "member":
             query.answer("You need to be admin to do this.")
-    elif query.data == "filters_cancel":
+    elif query.data == 'filters_cancel':
         if member.status == "creator" or query.from_user.id in DEV_USERS:
             msg.edit_text("Clearing of all filters has been cancelled.")
             return
