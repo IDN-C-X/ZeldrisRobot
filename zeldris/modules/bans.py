@@ -92,7 +92,7 @@ def ban(update, context):
     if reason:
         log += "\n<b>Reason:</b> {}".format(reason)
 
-    reply = f"let {mention_html(member.user.id, member.user.first_name)} walk the plank."
+    reply = f"Let {mention_html(member.user.id, member.user.first_name)} walk the plank.\n"
     if reason:
         reply += f"<b>Reason:</b> {html.escape(reason)}"
     try:
@@ -190,7 +190,7 @@ def temp_ban(update, context):
     if reason:
         log += "\n<b>Reason:</b> {}".format(reason)
 
-    reply = f"Banned! User will be banned for {time_val}."
+    reply = f"Banned! User will be banned for {time_val}.\n"
     if reason:
         reply += f"<b>Reason:</b> {html.escape(reason)}" 
     try:
