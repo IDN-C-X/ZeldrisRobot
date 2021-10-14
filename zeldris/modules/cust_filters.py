@@ -501,16 +501,18 @@ def rmall_filters(update, context):
 # NOT ASYNC NOT A HANDLER
 def get_exception(excp, filt, chat):
     if excp.message == "Unsupported url protocol":
-        return "You seem to be trying to use the URL protocol which is not supported. Telegram does not support key for multiple protocols, such as tg: //. Please try again!"
+        return (
+            "You seem to be trying to use the URL protocol which is not supported. Telegram does not support key "
+            "for multiple protocols, such as tg: //. Please try again! "
+        )
     elif excp.message == "Reply message not found":
         return "noreply"
     LOGGER.warning("Message %s could not be parsed", str(filt.reply))
     LOGGER.exception(
-        "Could not parse filter %s in chat %s",
-        str(filt.keyword),
-        str(chat.id),
+        "Could not parse filter %s in chat %s", str(filt.keyword), str(chat.id)
     )
     return "This data could not be sent because it is incorrectly formatted."
+
 
 
 # NOT ASYNC NOT A HANDLER
