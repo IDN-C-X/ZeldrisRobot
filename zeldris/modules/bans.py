@@ -46,12 +46,12 @@ from zeldris.modules.log_channel import loggable
 @loggable
 @typing_action
 def ban(update, context):
-    chat = update.effective_chat  # type: Optional[Chat]
-    user = update.effective_user  # type: Optional[User]
-    message = update.effective_message  # type: Optional[Message]
-    args = context.args
+    chat = update.effective_chat
+    user = update.effective_user
+    message = update.effective_message
+    bot, args = context.bot, context.args
 
-    if user_can_ban(chat, user, context.bot.id) is False:
+    if user_can_ban(chat, user, bot.id) is False:
         message.reply_text("You don't have enough rights to ban users!")
         return ""
 
@@ -74,7 +74,7 @@ def ban(update, context):
         message.reply_text("I'm not gonna ban an admin, don't make fun of yourself!")
         return ""
 
-    if user_id == context.bot.id:
+    if user_id == bot.id:
         message.reply_text("I'm not gonna BAN myself, are you crazy or wot?")
         return ""
 
@@ -92,14 +92,15 @@ def ban(update, context):
     if reason:
         log += "\n<b>Reason:</b> {}".format(reason)
 
+    reply = f"let {mention_html(member.user.id, member.user.first_name)} walk the plank."
+    if reason:
+        reply += f"<b>Reason:</b> {html.escape(reason)}"
     try:
         chat.kick_member(user_id)
-        # context.bot.send_sticker(chat.id, BAN_STICKER)  # banhammer marie sticker
-        context.bot.sendMessage(
+        # bot.send_sticker(chat.id, BAN_STICKER)  # banhammer marie sticker
+        bot.sendMessage(
             chat.id,
-            "let {} walk the plank.".format(
-                mention_html(member.user.id, member.user.first_name)
-            ),
+            reply,
             parse_mode=ParseMode.HTML,
         )
         return log
@@ -128,12 +129,12 @@ def ban(update, context):
 @loggable
 @typing_action
 def temp_ban(update, context):
-    chat = update.effective_chat  # type: Optional[Chat]
-    user = update.effective_user  # type: Optional[User]
-    message = update.effective_message  # type: Optional[Message]
-    args = context.args
+    chat = update.effective_chat
+    user = update.effective_user
+    message = update.effective_message
+    bot, args = context.bot, context.args
 
-    if user_can_ban(chat, user, context.bot.id) is False:
+    if user_can_ban(chat, user, bot.id) is False:
         message.reply_text("You don't have enough rights to temporarily ban someone!")
         return ""
 
@@ -151,11 +152,12 @@ def temp_ban(update, context):
 
         message.reply_text("I can't seem to find this user")
         return ""
+
     if is_user_ban_protected(chat, user_id, member):
         message.reply_text("Wow! let's start banning Admins themselves?...")
         return ""
 
-    if user_id == context.bot.id:
+    if user_id == bot.id:
         message.reply_text("I'm not gonna BAN myself, are you crazy or wot?")
         return ""
 
@@ -188,17 +190,24 @@ def temp_ban(update, context):
     if reason:
         log += "\n<b>Reason:</b> {}".format(reason)
 
+    reply = f"Banned! User will be banned for {time_val}."
+    if reason:
+        reply += f"<b>Reason:</b> {html.escape(reason)}" 
     try:
         chat.kick_member(user_id, until_date=bantime)
-        # context.bot.send_sticker(chat.id, BAN_STICKER)  # banhammer marie sticker
-        message.reply_text("Banned! User will be banned for {}.".format(time_val))
+        # bot.send_sticker(chat.id, BAN_STICKER)  # banhammer marie sticker
+        bot.sendMessage(
+            chat.id,
+            reply,
+            parse_mode=ParseMode.HTML,
+        )
         return log
 
     except BadRequest as excp:
         if excp.message == "Reply message not found":
             # Do not reply
             message.reply_text(
-                "Goodbye.. we'll meet after {}.".format(time_val), quote=False
+                "Goodbye.. we'll meet after {}.".format(), quote=False
             )
             return log
         LOGGER.warning(update)
