@@ -207,7 +207,7 @@ def temp_ban(update, context):
         if excp.message == "Reply message not found":
             # Do not reply
             message.reply_text(
-                "Goodbye.. we'll meet after {}.".format(), quote=False
+                "Goodbye.. we'll meet after {}.".format(time_val), quote=False
             )
             return log
         LOGGER.warning(update)
