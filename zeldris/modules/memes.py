@@ -516,7 +516,7 @@ GDNIGHT_HANDLER = DisableAbleMessageHandler(
 
 dispatcher.add_handler(POLICE_HANDLER)
 dispatcher.add_handler(SHRUG_HANDLER)
-dispatcher.add_handler(DECIDE_HANDLER)
+# dispatcher.add_handler(DECIDE_HANDLER)
 dispatcher.add_handler(ABUSE_HANDLER)
 dispatcher.add_handler(SNIPE_HANDLER)
 dispatcher.add_handler(RUNS_HANDLER)
