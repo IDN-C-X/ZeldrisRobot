@@ -511,7 +511,6 @@ def get_exception(excp, filt, chat):
     return "This data could not be sent because it is incorrectly formatted."
 
 
-
 # NOT ASYNC NOT A HANDLER
 def addnew_filter(update, chat_id, keyword, text, file_type, file_id, buttons):
     msg = update.effective_message
