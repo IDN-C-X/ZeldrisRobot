@@ -472,7 +472,7 @@ All regex filters can be disabled incase u don't want... like: `/disable metoo`.
 __mod_name__ = "Memes"
 
 SHRUG_HANDLER = DisableAbleCommandHandler("shrug", shrug, run_async=True)
-DECIDE_HANDLER = DisableAbleMessageHandler(
+# DECIDE_HANDLER = DisableAbleMessageHandler(
     Filters.regex(r"(?i)(zeldris)"), decide, friendly="decide", run_async=True
 )
 SNIPE_HANDLER = CommandHandler(
