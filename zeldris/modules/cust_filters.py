@@ -416,7 +416,7 @@ def reply_filter(update, context):
                         send_message(
                             update.effective_message,
                             filt.reply,
-                            parse_mode=ParseMode.MARKDOWN,
+                            parse_mode=ParseMode.MARKDOWN_V2,
                             reply_markup=keyboard,
                         )
                     except BadRequest as excp:
@@ -435,7 +435,7 @@ def reply_filter(update, context):
                                 context.bot.send_message(
                                     chat.id,
                                     filt.reply,
-                                    parse_mode=ParseMode.MARKDOWN,
+                                    parse_mode=ParseMode.MARKDOWN_V2,
                                     reply_markup=keyboard,
                                 )
                             except BadRequest as excp:
