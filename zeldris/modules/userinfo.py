@@ -42,6 +42,7 @@ def about_me(update, context):
         update.effective_message.reply_text(
             "*{}*:\n{}".format(user.first_name, escape_markdown(info)),
             parse_mode=ParseMode.MARKDOWN,
+            disable_web_page_preview=True,
         )
     elif message.reply_to_message:
         username = message.reply_to_message.from_user.first_name
@@ -87,6 +88,7 @@ def about_bio(update, context):
         update.effective_message.reply_text(
             "*{}*:\n{}".format(user.first_name, escape_markdown(info)),
             parse_mode=ParseMode.MARKDOWN,
+            disable_web_page_preview=True,
         )
     elif message.reply_to_message:
         username = user.first_name

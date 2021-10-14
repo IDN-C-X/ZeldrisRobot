@@ -237,10 +237,23 @@ def new_member(update: Update, context: CallbackContext):  # sourcery no-metrics
             # Welcome yourself
             if new_mem.id == bot.id:
                 update.effective_message.reply_text(
-                    "Hey 😍 {}, I'm {}! Thank you for adding me to {}".format(
+                    "Hey {}, I'm {}! Thank you for adding me to {}\n"
+                    "Join support and channel update with clicking button below!".format(
                         user.first_name, context.bot.first_name, chat.title
                     ),
                     reply_to_message_id=reply,
+                    reply_markup=InlineKeyboardMarkup(
+                        [
+                            [
+                                InlineKeyboardButton(
+                                    text="☎️ Support", url="https://t.me/IDNCoderX"
+                                ),
+                                InlineKeyboardButton(
+                                    text="Updates 📡", url="https://t.me/IDNCoder"
+                                ),
+                            ]
+                        ],
+                    ),
                 )
                 continue
             buttons = sql.get_welc_buttons(chat.id)
