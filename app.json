@@ -202,17 +202,17 @@
          "description": "Required for wallpaper. Get your's from https://wall.alphacoders.com/",
          "required": false,
          "value": ""
-      }
+      },
       "MONGO_DB": {
          "description": "Do not change anything from this vars",
          "required": "True", 
          "value": "ZeldrisRobot"
-      }
+      },
       "MONGO_PORT": {
          "description": "Do not change anything from this vars",
          "required": "True", 
          "value": "27017" 
-      }
+      },
       "REDIS_URL": {
          "description": "Take it from redislabs.com and the format should be redis://username:password@cluster/"
          "required": "True",
