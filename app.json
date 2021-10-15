@@ -165,10 +165,10 @@
          "required": false,
          "value": ""
       },
-      "No_LOAD": {
+      "NO_LOAD": {
          "description": "Dont load these modules cause they shit, space separation",
          "required": false,
-         "value": "rss"
+         "value": ""
       }, 
       "BL_CHATS": {
          "description": "List of chats you want blacklisted.",
@@ -217,6 +217,15 @@
          "description": "Take it from redislabs.com and the format should be redis://username:password@cluster/",
          "required": "True",
          "value": ""
-      }   
+      },
+      "MESSAGES_DUMP": {
+         "description": "some group chat that your bot is a member of",
+         "required": "True",
+         "value": "-1007263"
+      }, 
+      "USE_MESSAGES_DUMP": {
+         "description": "Don't change this vars",
+         "required": "True"
+      }
    }
 }
