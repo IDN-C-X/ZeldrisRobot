@@ -214,7 +214,7 @@
          "value": "27017" 
       },
       "REDIS_URL": {
-         "description": "Take it from redislabs.com and the format should be redis://username:password@cluster/"
+         "description": "Take it from redislabs.com and the format should be redis://username:password@cluster/",
          "required": "True",
          "value": ""
       }   
