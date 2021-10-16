@@ -116,8 +116,8 @@ def chats(update, _):
 
 def chat_checker(update, context):
     if (
-            update.effective_message.chat.get_member(context.bot.id).can_send_messages
-            is False
+        update.effective_message.chat.get_member(context.bot.id).can_send_messages
+        is False
     ):
         context.bot.leaveChat(update.effective_message.chat.id)
 

@@ -204,7 +204,7 @@ def twrp(update, context):
 @typing_action
 def orangefox(update, _):
     message = update.effective_message
-    devices = message.text[len("/orangefox "):]
+    devices = message.text[len("/orangefox ") :]
     btn = ""
 
     if devices:

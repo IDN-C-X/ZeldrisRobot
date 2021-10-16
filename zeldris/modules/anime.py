@@ -56,11 +56,11 @@ def t(milliseconds: int) -> str:
     hours, minutes = divmod(minutes, 60)
     days, hours = divmod(hours, 24)
     tmp = (
-            ((str(days) + " Days, ") if days else "")
-            + ((str(hours) + " Hours, ") if hours else "")
-            + ((str(minutes) + " Minutes, ") if minutes else "")
-            + ((str(seconds) + " Seconds, ") if seconds else "")
-            + ((str(milliseconds) + " ms, ") if milliseconds else "")
+        ((str(days) + " Days, ") if days else "")
+        + ((str(hours) + " Hours, ") if hours else "")
+        + ((str(minutes) + " Minutes, ") if minutes else "")
+        + ((str(seconds) + " Seconds, ") if seconds else "")
+        + ((str(milliseconds) + " ms, ") if milliseconds else "")
     )
     return tmp[:-2]
 
@@ -253,9 +253,9 @@ def anime(update: Update, _):
                 trailer = "https://youtu.be/" + trailer_id
         description = (
             json.get("description", "N/A")
-                .replace("<i>", "")
-                .replace("</i>", "")
-                .replace("<br>", "")
+            .replace("<i>", "")
+            .replace("</i>", "")
+            .replace("<br>", "")
         )
         msg += shorten(description, info)
         image = json.get("bannerImage", None)

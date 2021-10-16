@@ -287,8 +287,8 @@ def connected(bot, update, chat, user_id, need_admin=True):
             if not need_admin:
                 return conn_id
             if (
-                    getstatusadmin.status in ("administrator", "creator")
-                    or user_id in DEV_USERS
+                getstatusadmin.status in ("administrator", "creator")
+                or user_id in DEV_USERS
             ):
                 return conn_id
             send_message(

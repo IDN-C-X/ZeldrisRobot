@@ -345,13 +345,13 @@ def user_join_fed(update, context):
         elif not msg.reply_to_message and not args:
             user = msg.from_user
         elif not msg.reply_to_message and (
-                not args
-                or (
-                        len(args) >= 1
-                        and not args[0].startswith("@")
-                        and not args[0].isdigit()
-                        and not msg.parse_entities([MessageEntity.TEXT_MENTION])
-                )
+            not args
+            or (
+                len(args) >= 1
+                and not args[0].startswith("@")
+                and not args[0].isdigit()
+                and not msg.parse_entities([MessageEntity.TEXT_MENTION])
+            )
         ):
             msg.reply_text("I cannot extract user from this message")
             return
@@ -411,13 +411,13 @@ def user_demote_fed(update, context):
             user = msg.from_user
 
         elif not msg.reply_to_message and (
-                not args
-                or (
-                        len(args) >= 1
-                        and not args[0].startswith("@")
-                        and not args[0].isdigit()
-                        and not msg.parse_entities([MessageEntity.TEXT_MENTION])
-                )
+            not args
+            or (
+                len(args) >= 1
+                and not args[0].startswith("@")
+                and not args[0].isdigit()
+                and not msg.parse_entities([MessageEntity.TEXT_MENTION])
+            )
         ):
             msg.reply_text("I cannot extract user from this message")
             return
@@ -1707,9 +1707,9 @@ def fed_import_bans(update, context):
                 "fban_{}.csv".format(msg.reply_to_message.document.file_id)
             )
             with open(
-                    "fban_{}.csv".format(msg.reply_to_message.document.file_id),
-                    "r",
-                    encoding="utf8",
+                "fban_{}.csv".format(msg.reply_to_message.document.file_id),
+                "r",
+                encoding="utf8",
             ) as csvFile:
                 reader = csv.reader(csvFile)
                 for data in reader:
