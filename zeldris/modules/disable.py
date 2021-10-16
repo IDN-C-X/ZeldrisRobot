@@ -320,7 +320,7 @@ if is_module_loaded(FILENAME):
         )
 
     def __stats__():
-        return f"• {sql.num_disabled()} disabled items, across {sql.num_chats()} chats."
+        return f"× {sql.num_disabled()} disabled items, across {sql.num_chats()} chats."
 
     def __migrate__(old_chat_id, new_chat_id):
         sql.migrate_chat(old_chat_id, new_chat_id)
@@ -347,14 +347,19 @@ if is_module_loaded(FILENAME):
     dispatcher.add_handler(TOGGLE_HANDLER)
 
     __help__ = """
-     ➢ `/cmds`*:* check the current status of disabled commands
-   
-   *Admins only:*
-     ➢ `/enable <cmd name>`*:* enable that command
-     ➢ `/disable <cmd name>`*:* disable that command
-     ➢ `/enablemodule <module name>`*:* enable all commands in that module
-     ➢ `/disablemodule <module name>`*:* disable all commands in that module
-     ➢ `/listcmds`*:* list all possible toggleable commands
+Not everyone wants every feature that the bot offers. Some commands are best \
+left unused; to avoid spam and abuse.
+
+This allows you to disable some commonly used commands, so noone can use them. \
+It'll also allow you to autodelete them, stopping people from bluetexting.
+
+ × /cmds: Check the current status of disabled commands
+*Admin only:*
+ × /enable <cmd name>: Enable that command
+ × /disable <cmd name>: Disable that command
+ ×/enablemodule <module name>: enable all commands in that module
+ ×/disablemodule <module name>: disable all commands in that module
+ × /listcmds: List all possible disablable commands
     """
 
     __mod_name__ = "Disabling"
