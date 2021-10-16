@@ -103,7 +103,7 @@ def promote(update, context):
             message.reply_text("I can't set custom title for admins that I didn't promote!")
     
     message.reply_text(
-        "Promoted🧡\nSucessfully set title for <b>{}</b> to <code>{}</code>!".format(
+        "Promoted <b>{}</b>" + "with title <code>{}</code>!".format(
         user_member.user.first_name or user_id, title[:16]
         ),
         parse_mode=ParseMode.HTML,
@@ -182,7 +182,7 @@ def fullpromote(update, context):
             message.reply_text("I can't set custom title for admins that I didn't promote!")
     
     message.reply_text(
-        "Full Promoted🧡\nSucessfully set title for <b>{}</b> to <code>{}</code>!".format(
+        "Full Promoted <b>{}</b>" + "with title <code>{}</code>!".format(
         user_member.user.first_name or user_id, title[:16]
         ),
         parse_mode=ParseMode.HTML,
