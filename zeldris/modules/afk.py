@@ -170,6 +170,9 @@ When marked as AFK, any mentions will be replied to with a message to say you're
 
 × /afk <reason>: Mark yourself as AFK.
 × brb <reason>: Same as the afk command - but not a command.
+
+An example of how to afk or brb:
+`/afk dinner` or brb dinner.
 """
 
 AFK_HANDLER = DisableAbleCommandHandler("afk", afk, run_async=True)

@@ -442,6 +442,7 @@ def goodmorning(update, context):
 
 __help__ = """
 Some dank memes for fun or whatever!
+
 × /shrug | /cri: Get shrug or ToT.
 × /decide: Randomly answer yes no etc.
 × /abuse: Abuses the retard!
@@ -456,10 +457,10 @@ Some dank memes for fun or whatever!
 × /stretch:  streeeeeeetch iiiiiiit.
 × /warm: Hug a user warmly, or get hugged if not a reply.
 × /punch: Punch a user, or get punched if not a reply.
-× /police: Give Police siren Animation
+× /police: Give Police siren Animation.
 
 *Regex based memes:*
-`/decide` can be also used with regex like: `zeldris What? <question>: randomly answer "Yes, No" etc.`
+`/decide` (disabled rn) can be also used with regex like: `zeldris What? <question>: randomly answer "Yes, No" etc.`
 Some other regex filters are:
 `me too` | `good morning` | `good night`.
 

@@ -19,8 +19,9 @@ from functools import wraps
 from threading import RLock
 
 from cachetools import TTLCache
-from telegram import Chat, ChatMember
+from telegram import Chat, ChatMember, Update
 from telegram.error import BadRequest, Unauthorized
+from telegram.ext import CallbackContext
 
 from zeldris import (
     DEL_CMDS,
@@ -231,3 +232,35 @@ def dev_plus(func):
             )
 
     return is_dev_plus_func
+
+
+def connection_status(func):
+    @wraps(func)
+    def connected_status(update: Update, context: CallbackContext, *args, **kwargs):
+        conn = connected(
+            context.bot,
+            update,
+            update.effective_chat,
+            update.effective_user.id,
+            need_admin=False,
+        )
+
+        if conn:
+            chat = dispatcher.bot.getChat(conn)
+            update.__setattr__("_effective_chat", chat)
+            return func(update, context, *args, **kwargs)
+        if update.effective_message.chat.type == "private":
+            update.effective_message.reply_text(
+                "Send /connect in a group that you and I have in common first.",
+            )
+            return connected_status
+
+        return func(update, context, *args, **kwargs)
+
+    return connected_status
+
+
+# Workaround for circular import with connection.py
+from zeldris.modules import connection
+
+connected = connection.connected

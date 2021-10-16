@@ -158,7 +158,7 @@ def warn(
 @user_admin_no_reply
 @bot_admin
 @loggable
-def button(update, context):
+def button(update, _):
     query = update.callback_query  # type: Optional[CallbackQuery]
     user = update.effective_user  # type: Optional[User]
     match = re.match(r"rm_warn\((.+?)\)", query.data)
@@ -201,7 +201,10 @@ def warn_user(update, context):
     chat = update.effective_chat  # type: Optional[Chat]
     warner = update.effective_user  # type: Optional[User]
     args = context.args
+
     user_id, reason = extract_user_and_text(message, args)
+    if message.text.startswith("/d") and message.reply_to_message:
+        message.reply_to_message.delete()
 
     if user_id:
         if (
@@ -313,7 +316,7 @@ def warns(update, context):
 
 # Dispatcher handler stop - do not async
 @user_admin
-def add_warn_filter(update, context):
+def add_warn_filter(update, _):
     chat = update.effective_chat  # type: Optional[Chat]
     msg = update.effective_message  # type: Optional[Message]
 
@@ -345,7 +348,7 @@ def add_warn_filter(update, context):
 
 
 @user_admin
-def remove_warn_filter(update, context):
+def remove_warn_filter(update, _):
     chat = update.effective_chat  # type: Optional[Chat]
     msg = update.effective_message  # type: Optional[Message]
 
@@ -380,7 +383,7 @@ def remove_warn_filter(update, context):
     )
 
 
-def list_warn_filters(update, context):
+def list_warn_filters(update, _):
     chat = update.effective_chat  # type: Optional[Chat]
     all_handlers = sql.get_chat_warn_triggers(chat.id)
 
@@ -402,7 +405,7 @@ def list_warn_filters(update, context):
 
 
 @loggable
-def reply_filter(update, context) -> str:
+def reply_filter(update, _) -> str:
     chat = update.effective_chat  # type: Optional[Chat]
     message = update.effective_message  # type: Optional[Message]
 
@@ -535,32 +538,39 @@ def __chat_settings__(chat_id, user_id):
 
 
 __help__ = """
- If you're looking for a way to automatically warn users when they say certain things, use the /addwarn command.
- An example of setting multiword warns filter:
- × `/addwarn "very angry" This is an angry user`
- This will automatically warn a user that triggers "very angry", with reason of 'This is an angry user'.
- An example of how to set a new multiword warning:
-`/warn @user Because warning is fun`
+If you're looking for a way to automatically warn users when they say certain things, use the /addwarn command.
+An example of setting multiword warns filter:
+× `/addwarn "very angry" This is an angry user`
+This will automatically warn a user that triggers "very angry", with reason of 'This is an angry user'.
+An example of how to set a new multiword warning:
+/warn @user Because warning is fun`
 
- × /warns <userhandle>: Gets a user's number, and reason, of warnings.
- × /warnlist: Lists all current warning filters
+× /warns <userhandle>: Gets a user's number, and reason, of warnings.
+× /warnlist: Lists all current warning filters.
 
 *Admin only:*
- × /warn <userhandle>: Warns a user. After 3 warns, the user will be banned from the group. Can also be used as a reply.
- × /resetwarn <userhandle>: Resets the warnings for a user. Can also be used as a reply.
- × /rmwarn <userhandle>: Removes latest warn for a user. It also can be used as reply.
- × /unwarn <userhandle>: Same as /rmwarn
- × /addwarn <keyword> <reply message>: Sets a warning filter on a certain keyword. If you want your keyword to \
+× /warn <userhandle>: Warns a user. After 3 warns (as default), the user will be banned from the group. \
+Can also be used as a reply.
+× /dwarn <userhandle>: Warns a user and delete the message. After 3 warns (as default), \
+the user will be banned from the group. Can also be used as a reply
+× /resetwarn <userhandle>: Resets the warnings for a user. Can also be used as a reply.
+× /rmwarn <userhandle>: Removes latest warn for a user. It also can be used as reply.
+× /unwarn <userhandle>: Same as /rmwarn
+× /addwarn <keyword> <reply message>: Sets a warning filter on a certain keyword. If you want your keyword to \
 be a sentence, encompass it with quotes, as such: `/addwarn "very angry" This is an angry user`. 
- × /nowarn <keyword>: Stops a warning filter
- × /warnlimit <num>: Sets the warning limit
- × /strongwarn <on/yes/off/no>: If set to on, exceeding the warn limit will result in a ban. Else, will just kick.
+× /nowarn <keyword>: Stops a warning filter
+× /warnlimit <num>: Sets the warning limit
+× /strongwarn <on/yes/off/no>: If set to on, exceeding the warn limit will result in a ban. Else, will just kick.
 """
 
 __mod_name__ = "Warnings"
 
 WARN_HANDLER = CommandHandler(
-    "warn", warn_user, pass_args=True, filters=Filters.chat_type.groups, run_async=True
+    ["warn", "dwarn"],
+    warn_user,
+    pass_args=True,
+    filters=Filters.chat_type.groups,
+    run_async=True,
 )
 RESET_WARN_HANDLER = CommandHandler(
     ["resetwarn", "resetwarns"],

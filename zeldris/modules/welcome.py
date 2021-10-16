@@ -788,7 +788,7 @@ def goodbye(update: Update, context: CallbackContext):
 
 @user_admin
 @loggable
-def set_welcome(update: Update, context: CallbackContext) -> str:
+def set_welcome(update: Update, _) -> str:
     chat = update.effective_chat
     user = update.effective_user
     msg = update.effective_message
@@ -812,7 +812,7 @@ def set_welcome(update: Update, context: CallbackContext) -> str:
 
 @user_admin
 @loggable
-def reset_welcome(update: Update, context: CallbackContext) -> str:
+def reset_welcome(update: Update, _) -> str:
     chat = update.effective_chat
     user = update.effective_user
 
@@ -831,7 +831,7 @@ def reset_welcome(update: Update, context: CallbackContext) -> str:
 
 @user_admin
 @loggable
-def set_goodbye(update: Update, context: CallbackContext) -> str:
+def set_goodbye(update: Update, _) -> str:
     chat = update.effective_chat
     user = update.effective_user
     msg = update.effective_message
@@ -853,7 +853,7 @@ def set_goodbye(update: Update, context: CallbackContext) -> str:
 
 @user_admin
 @loggable
-def reset_goodbye(update: Update, context: CallbackContext) -> str:
+def reset_goodbye(update: Update, _) -> str:
     chat = update.effective_chat
     user = update.effective_user
 
@@ -902,7 +902,8 @@ def welcomemute(update: Update, context: CallbackContext) -> str:
         if args[0].lower() in ["strong"]:
             sql.set_welcome_mutes(chat.id, "strong")
             msg.reply_text(
-                "I will now mute people when they join until they prove they're not a bot.\nThey will have 120seconds before they get kicked."
+                "I will now mute people when they join until they prove they're not a bot.\nThey will have 120seconds "
+                "before they get kicked. "
             )
             return (
                 f"<b>{html.escape(chat.title)}:</b>\n"
@@ -913,7 +914,8 @@ def welcomemute(update: Update, context: CallbackContext) -> str:
         if args[0].lower() in ["captcha"]:
             sql.set_welcome_mutes(chat.id, "captcha")
             msg.reply_text(
-                "I will now mute people when they join until they prove they're not a bot.\nThey have to solve a captcha to get unmuted."
+                "I will now mute people when they join until they prove they're not a bot.\nThey have to solve a "
+                "captcha to get unmuted. "
             )
             return (
                 f"<b>{html.escape(chat.title)}:</b>\n"
@@ -1174,7 +1176,8 @@ WELC_HELP_TXT = (
     "Welcome messages also support markdown, so you can make any elements bold/italic/code/links. "
     "Buttons are also supported, so you can make your welcomes look awesome with some nice intro "
     "buttons.\n"
-    f"To create a button linking to your rules, use this: `[Rules](buttonurl://t.me/{dispatcher.bot.username}?start=group_id)`. "
+    f"To create a button linking to your rules, use this: "
+    f"`[Rules](buttonurl://t.me/{dispatcher.bot.username}?start=group_id)`. "
     "Simply replace `group_id` with your group's id, which can be obtained via /id, and you're good to "
     "go. Note that group ids are usually preceded by a `-` sign; this is required, so please don't "
     "remove it.\n"
@@ -1194,12 +1197,12 @@ WELC_MUTE_HELP_TXT = (
 
 
 @user_admin
-def welcome_help(update: Update, context: CallbackContext):
+def welcome_help(update: Update, _):
     update.effective_message.reply_text(WELC_HELP_TXT, parse_mode=ParseMode.MARKDOWN)
 
 
 @user_admin
-def welcome_mute_help(update: Update, context: CallbackContext):
+def welcome_mute_help(update: Update, _):
     update.effective_message.reply_text(
         WELC_MUTE_HELP_TXT, parse_mode=ParseMode.MARKDOWN
     )
@@ -1233,21 +1236,21 @@ def __chat_settings__(chat_id, user_id):
 __help__ = """
 {}
 *Admin only:*
- × /welcome <on/off>: enable/disable Welcome messages.
- × /welcome: Shows current welcome settings.
- × /welcome noformat: Shows current welcome settings, without the formatting - useful to recycle your welcome messages!
- × /goodbye -> Same usage and args as /welcome.
- × /setwelcome <sometext>: Sets a custom welcome message. If used replying to media, uses that media.
- × /setgoodbye <sometext>: Sets a custom goodbye message. If used replying to media, uses that media.
- × /resetwelcome: Resets to the default welcome message.
- × /resetgoodbye: Resets to the default goodbye message.
- × /cleanwelcome <on/off>: On new member, try to delete the previous welcome message to avoid spamming the chat.
- × /cleanservice <on/off>: Clean 'user is joined' service messages automatically.
- × /welcomemute <off/soft/strong>: All users that join, get muted; a button gets added to the welcome message for them 
+× /welcome <on/off>: enable/disable Welcome messages.
+× /welcome: Shows current welcome settings.
+× /welcome noformat: Shows current welcome settings, without the formatting - useful to recycle your welcome messages!
+× /goodbye -> Same usage and args as /welcome.
+× /setwelcome <sometext>: Sets a custom welcome message. If used replying to media, uses that media.
+× /setgoodbye <sometext>: Sets a custom goodbye message. If used replying to media, uses that media.
+× /resetwelcome: Resets to the default welcome message.
+× /resetgoodbye: Resets to the default goodbye message.
+× /cleanwelcome <on/off>: On new member, try to delete the previous welcome message to avoid spamming the chat.
+× /cleanservice <on/off>: Clean 'user is joined' service messages automatically.
+× /welcomemute <off/soft/strong>: All users that join, get muted; a button gets added to the welcome message for them 
  to unmute themselves. \
 This proves they aren't a bot! soft - restricts users ability to post media for 24 hours. strong - mutes on join until 
 they prove they're not bots.
- × /welcomehelp: View more formatting information for custom welcome/goodbye messages.
+× /welcomehelp: View more formatting information for custom welcome/goodbye messages.
 Buttons in welcome messages are made easy, everyone hates URLs visible. With button links you can make your chats look 
 more tidy and simplified.
 An example of using buttons:

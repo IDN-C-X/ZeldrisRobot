@@ -388,13 +388,13 @@ see; This is where connections come in... This allows you to connect to a chat's
 without the commands appearing in chat! For obvious reasons, you need to be an admin to add things; but any member in 
 the group can view your data. 
 
- × /connect: Connects to chat (Can be done in a group by /connect or /connect <chat id> in PM)
- × /connection: List connected chats
- × /disconnect: Disconnect from a chat
- × /helpconnect: List available commands that can be used remotely
+× /connect: Connects to chat (Can be done in a group by /connect or /connect <chat id> in PM).
+× /connection: List connected chats.
+× /disconnect: Disconnect from a chat.
+× /helpconnect: List available commands that can be used remotely.
 
 *Admin only:*
- × /allowconnect <yes/no>: allow a user to connect to a chat
+× /allowconnect <yes/no>: allow a user to connect to a chat.
 """
 
 CONNECT_CHAT_HANDLER = CommandHandler(

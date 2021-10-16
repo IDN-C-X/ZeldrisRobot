@@ -255,9 +255,9 @@ Presenting reports; if someone in your group thinks someone needs reporting, the
 an easy way to call all admins.
 
 *Admin only:*
- × /reports <on/off>: Change report setting, or view current status.
-   • If done in pm, toggles your status.
-   • If in chat, toggles that chat's status.
+× /reports <on/off>: Change report setting, or view current status.
+  • If done in pm, toggles your status.
+  • If in chat, toggles that chat's status.
 
 To report a user, simply reply to user's message with @admin or /report. \
 This message tags all the chat admins; same as if they had been @'ed.

@@ -180,7 +180,7 @@ Log channels can help you keep track of exactly what the other admins are doing.
 Bans, Mutes, warns, notes - everything can be moderated.
 
 *Admin only:*
-× /logchannel: Get log channel info
+× /logchannel: Get log channel info.
 × /setlog: Set the log channel.
 × /unsetlog: Unset the log channel.
 

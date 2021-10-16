@@ -34,6 +34,7 @@ from zeldris.modules.helper_funcs.chat_status import (
     can_restrict,
     is_user_admin,
     is_user_in_chat,
+    can_delete,
 )
 from zeldris.modules.helper_funcs.extraction import extract_user_and_text
 from zeldris.modules.helper_funcs.string_handling import extract_time
@@ -74,13 +75,23 @@ def ban(update, context):
         message.reply_text("I'm not gonna ban an admin, don't make fun of yourself!")
         return ""
 
+    if message.text.startswith("/d") and message.reply_to_message:
+        message.reply_to_message.delete()
+
     if user_id == bot.id:
         message.reply_text("I'm not gonna BAN myself, are you crazy or wot?")
         return ""
 
+    if message.text.startswith("/s"):
+        silent = True
+        if not can_delete(chat, context.bot.id):
+            return ""
+    else:
+        silent = False
+
     log = (
         "<b>{}:</b>"
-        "\n#BANNED"
+        "\n#{'S' if silent else ''}BANNED"
         "\n<b>Admin:</b> {}"
         "\n<b>User:</b> {} (<code>{}</code>)".format(
             html.escape(chat.title),
@@ -99,6 +110,13 @@ def ban(update, context):
         reply += f"<b>Reason:</b> {html.escape(reason)}"
     try:
         chat.kick_member(user_id)
+
+        if silent:
+            if message.reply_to_message:
+                message.reply_to_message.delete()
+            message.delete()
+            return log
+
         # bot.send_sticker(chat.id, BAN_STICKER)  # banhammer marie sticker
         bot.sendMessage(
             chat.id,
@@ -110,6 +128,8 @@ def ban(update, context):
     except BadRequest as excp:
         if excp.message == "Reply message not found":
             # Do not reply
+            if silent:
+                return log
             message.reply_text("Banned!", quote=False)
             return log
         LOGGER.warning(update)
@@ -243,6 +263,7 @@ def kick(update, context):
     user_id, reason = extract_user_and_text(message, args)
 
     if not user_id:
+        message.reply_text("Dude! atleast refer some user to ban...")
         return ""
 
     try:
@@ -266,7 +287,7 @@ def kick(update, context):
         # context.bot.send_sticker(chat.id, BAN_STICKER)  # banhammer marie sticker
         context.bot.sendMessage(
             chat.id,
-            "Untill we meet again {}.".format(
+            "Untill we meet again {}!.".format(
                 mention_html(member.user.id, member.user.first_name)
             ),
             parse_mode=ParseMode.HTML,
@@ -394,17 +415,19 @@ def unban(update, context):
 
 
 __help__ = """
-
 Some people need to be publicly banned; spammers, annoyances, or just trolls.
 This module allows you to do that easily, by exposing some common actions, so everyone will see!
 
- × /kickme: Kicks the user who issued the command
- × /banme: Bans the user who issued the command
+× /kickme: Kicks the user who issued the command.
+× /banme: Bans the user who issued the command.
+
 *Admin only:*
- × /ban <userhandle>: Bans a user. (via handle, or reply)
- × /tban <userhandle> x(m/h/d): Bans a user for x time. (via handle, or reply). m = minutes, h = hours, d = days.
- × /unban <userhandle>: Unbans a user. (via handle, or reply)
- × /kick <userhandle>: Kicks a user, (via handle, or reply)
+× /ban <userhandle>: Bans a user. (via handle, or reply).
+× /sban <userhandle>: Silently ban a user. Deletes command, Replied message and doesn't reply. (via handle, or reply).
+× /dban: Bans a user and delete the message. (via handle, or reply).
+× /tban <userhandle> x(m/h/d): Bans a user for x time. (via handle, or reply). m = minutes, h = hours, d = days.
+× /unban <userhandle>: Unbans a user. (via handle, or reply).
+× /kick <userhandle>: Kicks a user, (via handle, or reply).
 
 An example of temporarily banning someone:
 `/tban @username 2h`; this bans a user for 2 hours.
@@ -413,7 +436,11 @@ An example of temporarily banning someone:
 __mod_name__ = "Bans"
 
 BAN_HANDLER = CommandHandler(
-    "ban", ban, pass_args=True, filters=Filters.chat_type.groups, run_async=True
+    ["ban", "dban", "sban"],
+    ban,
+    pass_args=True,
+    filters=Filters.chat_type.groups,
+    run_async=True,
 )
 TEMPBAN_HANDLER = CommandHandler(
     ["tban", "tempban"],

@@ -261,11 +261,12 @@ def orangefox(update, _):
 
 __help__ = """
 Get the latest Magsik releases or TWRP for your device!
+
 *Android related commands:*
- × /magisk - Gets the latest magisk release for Stable/Beta/Canary.
- × /device <codename> - Gets android device basic info from its codename.
- × /twrp <codename> -  Gets latest twrp for the android device using the codename.
- × /orangefox <codename> -  Gets latest orangefox recovery for the android device using the codename.
+× /magisk - Gets the latest magisk release for Stable/Beta/Canary.
+× /device <codename> - Gets android device basic info from its codename.
+× /twrp <codename> -  Gets latest twrp for the android device using the codename.
+× /orangefox <codename> -  Gets latest orangefox recovery for the android device using the codename.
 """
 
 __mod_name__ = "Android"

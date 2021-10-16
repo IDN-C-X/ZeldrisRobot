@@ -137,9 +137,9 @@ def weather(update, context):
 __help__ = r"""
 Weather module:
 
- × /weather <city>: Gets weather information of particular place!
+× /weather <city>: Gets weather information of particular place!
 
- \* To prevent spams weather command and the output will be deleted after 30 seconds
+\* To prevent spams weather command and the output will be deleted after 30 seconds
 """
 
 __mod_name__ = "Weather"

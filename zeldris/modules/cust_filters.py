@@ -555,9 +555,10 @@ __help__ = """
 is mentioned. If you reply to a sticker with a keyword, the bot will reply with that sticker. NOTE: all filter \
 keywords are in lowercase. If you want your keyword to be a sentence, use quotes. eg: /filter "hey there" How you \
 doin?
- × /stop <filter keyword>: Stop that filter.
+× /stop <filter keyword>: Stop that filter.
+
 *Chat creator only:*
- × /rmallfilter: Stop all chat filters at once.
+× /rmallfilter: Stop all chat filters at once.
  
 *Note*: Filters also support markdown formatters like: {first}, {last} etc.. and buttons.
 Check `/markdownhelp` to know more!
