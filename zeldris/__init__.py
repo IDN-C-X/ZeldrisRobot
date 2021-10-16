@@ -134,6 +134,7 @@ else:
 
     MESSAGE_DUMP = Config.MESSAGE_DUMP
     OWNER_USERNAME = Config.OWNER_USERNAME
+    ALLOW_CHATS = Config.ALLOW_CHATS
 
     try:
         DEV_USERS = {int(x) for x in Config.DEV_USERS or []}
@@ -182,7 +183,7 @@ else:
     STRICT_GBAN = Config.STRICT_GBAN
     WORKERS = Config.WORKERS
     BAN_STICKER = Config.BAN_STICKER
-    # ALLOW_EXCL = Config.ALLOW_EXCL
+    ALLOW_EXCL = Config.ALLOW_EXCL
     CUSTOM_CMD = Config.CUSTOM_CMD
     API_WEATHER = Config.API_OPENWEATHER
     WALL_API = Config.WALL_API

@@ -1,5 +1,13 @@
 import html
 
+from telegram import ParseMode, Update
+from telegram.ext import (
+    CallbackContext,
+    CommandHandler,
+    Filters,
+    MessageHandler,
+)
+
 from zeldris import ALLOW_EXCL, CustomCommandHandler, dispatcher
 from zeldris.modules.disable import DisableAbleCommandHandler
 from zeldris.modules.helper_funcs.chat_status import (
@@ -9,15 +17,6 @@ from zeldris.modules.helper_funcs.chat_status import (
     user_admin,
 )
 from zeldris.modules.sql import cleanblue_sql as sql
-
-from telegram import ParseMode, Update
-from telegram.ext import (
-    CallbackContext,
-    CommandHandler,
-    Filters,
-    MessageHandler,
-    run_async,
-)
 
 CMD_STARTERS = ("/", "!") if ALLOW_EXCL else "/"
 BLUE_TEXT_CLEAN_GROUP = 13
@@ -43,7 +42,6 @@ for handler_list in dispatcher.handlers:
             command_list += handler.command
 
 
-@run_async
 def clean_blue_text_must_click(update: Update, context: CallbackContext):
     bot = context.bot
     chat = update.effective_chat
@@ -52,7 +50,7 @@ def clean_blue_text_must_click(update: Update, context: CallbackContext):
         fst_word = message.text.strip().split(None, 1)[0]
 
         if len(fst_word) > 1 and any(
-            fst_word.startswith(start) for start in CMD_STARTERS
+                fst_word.startswith(start) for start in CMD_STARTERS
         ):
 
             command = fst_word[1:].split("@")
@@ -66,7 +64,6 @@ def clean_blue_text_must_click(update: Update, context: CallbackContext):
                 message.delete()
 
 
-@run_async
 @connection_status
 @bot_can_delete
 @user_admin
@@ -102,7 +99,6 @@ def set_blue_text_must_click(update: Update, context: CallbackContext):
         message.reply_text(reply, parse_mode=ParseMode.HTML)
 
 
-@run_async
 @user_admin
 def add_bluetext_ignore(update: Update, context: CallbackContext):
     message = update.effective_message
@@ -124,7 +120,6 @@ def add_bluetext_ignore(update: Update, context: CallbackContext):
         message.reply_text(reply)
 
 
-@run_async
 @user_admin
 def remove_bluetext_ignore(update: Update, context: CallbackContext):
     message = update.effective_message
@@ -148,7 +143,6 @@ def remove_bluetext_ignore(update: Update, context: CallbackContext):
         message.reply_text(reply)
 
 
-@run_async
 @user_admin
 def add_bluetext_ignore_global(update: Update, context: CallbackContext):
     message = update.effective_message
@@ -169,7 +163,6 @@ def add_bluetext_ignore_global(update: Update, context: CallbackContext):
         message.reply_text(reply)
 
 
-@run_async
 @dev_plus
 def remove_bluetext_ignore_global(update: Update, context: CallbackContext):
     message = update.effective_message
@@ -190,10 +183,8 @@ def remove_bluetext_ignore_global(update: Update, context: CallbackContext):
         message.reply_text(reply)
 
 
-@run_async
 @dev_plus
-def bluetext_ignore_list(update: Update, context: CallbackContext):
-
+def bluetext_ignore_list(update: Update, _):
     message = update.effective_message
     chat = update.effective_chat
 
@@ -223,28 +214,28 @@ def bluetext_ignore_list(update: Update, context: CallbackContext):
 
 __help__ = """
 Blue text cleaner removed any made up commands that people send in your chat.
- • `/cleanblue <on/off/yes/no>`*:* clean commands after sending
- • `/ignoreblue <word>`*:* prevent auto cleaning of the command
- • `/unignoreblue <word>`*:* remove prevent auto cleaning of the command
- • `/listblue`*:* list currently whitelisted commands
+× /cleanblue <on/off/yes/no>: Clean commands after sending.
+× /ignoreblue <word>: Prevent auto cleaning of the command.
+× /unignoreblue <word>: Remove prevent auto cleaning of the command.
+× /listblue: List currently whitelisted commands.
 
- *Following are Disasters only commands, admins cannot use these:*
- • `/gignoreblue <word>`*:* globally ignorea bluetext cleaning of saved word across Saitama.
- • `/ungignoreblue <word>`*:* remove said command from global cleaning list
+*Following are Sudo Users only commands, admins cannot use these:*
+× /gignoreblue <word>: Globally ignorea bluetext cleaning of saved word across Zeldris.
+× /ungignoreblue <word>: Remove said command from global cleaning list.
 """
 
-SET_CLEAN_BLUE_TEXT_HANDLER = CommandHandler("cleanblue", set_blue_text_must_click)
-ADD_CLEAN_BLUE_TEXT_HANDLER = CommandHandler("ignoreblue", add_bluetext_ignore)
-REMOVE_CLEAN_BLUE_TEXT_HANDLER = CommandHandler("unignoreblue", remove_bluetext_ignore)
+SET_CLEAN_BLUE_TEXT_HANDLER = CommandHandler("cleanblue", set_blue_text_must_click, run_async=True)
+ADD_CLEAN_BLUE_TEXT_HANDLER = CommandHandler("ignoreblue", add_bluetext_ignore, run_async=True)
+REMOVE_CLEAN_BLUE_TEXT_HANDLER = CommandHandler("unignoreblue", remove_bluetext_ignore, run_async=True)
 ADD_CLEAN_BLUE_TEXT_GLOBAL_HANDLER = CommandHandler(
-    "gignoreblue", add_bluetext_ignore_global,
+    "gignoreblue", add_bluetext_ignore_global, run_async=True,
 )
 REMOVE_CLEAN_BLUE_TEXT_GLOBAL_HANDLER = CommandHandler(
-    "ungignoreblue", remove_bluetext_ignore_global,
+    "ungignoreblue", remove_bluetext_ignore_global, run_async=True,
 )
 LIST_CLEAN_BLUE_TEXT_HANDLER = CommandHandler("listblue", bluetext_ignore_list)
 CLEAN_BLUE_TEXT_HANDLER = MessageHandler(
-    Filters.command & Filters.group, clean_blue_text_must_click,
+    Filters.command & Filters.group, clean_blue_text_must_click, run_async=True,
 )
 
 dispatcher.add_handler(SET_CLEAN_BLUE_TEXT_HANDLER)
@@ -255,7 +246,7 @@ dispatcher.add_handler(REMOVE_CLEAN_BLUE_TEXT_GLOBAL_HANDLER)
 dispatcher.add_handler(LIST_CLEAN_BLUE_TEXT_HANDLER)
 dispatcher.add_handler(CLEAN_BLUE_TEXT_HANDLER, BLUE_TEXT_CLEAN_GROUP)
 
-__mod_name__ = "Bluetext Cleaning"
+__mod_name__ = "Cleanblue"
 __handlers__ = [
     SET_CLEAN_BLUE_TEXT_HANDLER,
     ADD_CLEAN_BLUE_TEXT_HANDLER,
