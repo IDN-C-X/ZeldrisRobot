@@ -180,11 +180,10 @@ anything.
 - [corsicanu](https://github.com/corsicanu) and nunopenim for android modules.
 - [Saitama](https://github.com/AnimeKaizoku/SaitamaRobot) for anime modules and other stuff.
 - [Kigyo](https://github.com/EnterpriseALRobot) for greetings modules.
-- Any other missing Credits can be seen in commits!
+- Thanks to Everyone who has [contributed](https://github.com/IDN-C-X/ZeldrisRobot/graphs/contributors) to this Project.!
 
 ## Projects!
 
 ```
 Zeldris is part of the [IDNCoder](https://github.com/IDN-C-X) project.
-Thanks to Everyone who has contributed to this Project.
 ```
