@@ -87,7 +87,7 @@ def promote(update, context):
         can_restrict_members=bot_member.can_restrict_members,
         can_pin_messages=bot_member.can_pin_messages,
     )
-    
+
     title = "admin"
     if " " in message.text:
         title = message.text.split(" ", 1)[1]
@@ -95,17 +95,18 @@ def promote(update, context):
             message.reply_text(
                 "The title length is longer than 16 characters.\nTruncating it to 16 characters."
             )
-        
+
         try:
             bot.setChatAdministratorCustomTitle(chat.id, user_id, title)
-        
+
         except BadRequest:
-            message.reply_text("I can't set custom title for admins that I didn't promote!")
-    
+            message.reply_text(
+                "I can't set custom title for admins that I didn't promote!"
+            )
+
     message.reply_text(
         f"Promoted <b>{user_member.user.first_name or user_id}</b>"
-        + 
-        f" with title <code>{title[:16]}</code>!",
+        + f" with title <code>{title[:16]}</code>!",
         parse_mode=ParseMode.HTML,
     )
     return (
@@ -166,7 +167,7 @@ def fullpromote(update, context):
         can_pin_messages=bot_member.can_pin_messages,
         can_manage_voice_chats=bot_member.can_manage_voice_chats,
     )
-    
+
     title = "admin"
     if " " in message.text:
         title = message.text.split(" ", 1)[1]
@@ -174,17 +175,18 @@ def fullpromote(update, context):
             message.reply_text(
                 "The title length is longer than 16 characters.\nTruncating it to 16 characters."
             )
-        
+
         try:
             bot.setChatAdministratorCustomTitle(chat.id, user_id, title)
-        
+
         except BadRequest:
-            message.reply_text("I can't set custom title for admins that I didn't promote!")
-    
+            message.reply_text(
+                "I can't set custom title for admins that I didn't promote!"
+            )
+
     message.reply_text(
         f"Full Promoted <b>{user_member.user.first_name or user_id}</b>"
-        + 
-        f" with title <code>{title[:16]}</code>!",
+        + f" with title <code>{title[:16]}</code>!",
         parse_mode=ParseMode.HTML,
     )
     return (

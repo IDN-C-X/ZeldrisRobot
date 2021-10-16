@@ -35,7 +35,6 @@ from zeldris.modules.helper_funcs.chat_status import (
     is_user_admin,
     is_user_in_chat,
     can_delete,
-    
 )
 from zeldris.modules.helper_funcs.extraction import extract_user_and_text
 from zeldris.modules.helper_funcs.string_handling import extract_time
@@ -76,7 +75,7 @@ def ban(update, context):
         message.reply_text("I'm not gonna ban an admin, don't make fun of yourself!")
         return ""
 
-    if message.text.startswith('/d') and message.reply_to_message:
+    if message.text.startswith("/d") and message.reply_to_message:
         message.reply_to_message.delete()
 
     if user_id == bot.id:
@@ -437,7 +436,11 @@ An example of temporarily banning someone:
 __mod_name__ = "Bans"
 
 BAN_HANDLER = CommandHandler(
-    ["ban", "dban", "sban"], ban, pass_args=True, filters=Filters.chat_type.groups, run_async=True
+    ["ban", "dban", "sban"],
+    ban,
+    pass_args=True,
+    filters=Filters.chat_type.groups,
+    run_async=True,
 )
 TEMPBAN_HANDLER = CommandHandler(
     ["tban", "tempban"],

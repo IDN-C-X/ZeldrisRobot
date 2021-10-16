@@ -204,7 +204,7 @@ def warn_user(update, context):
     args = context.args
 
     user_id, reason = extract_user_and_text(message, args)
-    if message.text.startswith('/d') and message.reply_to_message:
+    if message.text.startswith("/d") and message.reply_to_message:
         message.reply_to_message.delete()
 
     if user_id:
@@ -565,7 +565,11 @@ be a sentence, encompass it with quotes, as such: `/addwarn "very angry" This is
 __mod_name__ = "Warnings"
 
 WARN_HANDLER = CommandHandler(
-    ["warn", "dwarn"], warn_user, pass_args=True, filters=Filters.chat_type.groups, run_async=True
+    ["warn", "dwarn"],
+    warn_user,
+    pass_args=True,
+    filters=Filters.chat_type.groups,
+    run_async=True,
 )
 RESET_WARN_HANDLER = CommandHandler(
     ["resetwarn", "resetwarns"],
