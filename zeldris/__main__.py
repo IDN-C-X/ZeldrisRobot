@@ -50,6 +50,7 @@ from zeldris import (
     BLACKLIST_CHATS,
     WHITELIST_CHATS,
 )
+
 # needed to dynamically load modules
 # NOTE: Module order is not guaranteed, specify that in the config file!
 from zeldris.modules import ALL_MODULES
@@ -314,10 +315,10 @@ def help_button(update, context):
         if mod_match:
             module = mod_match.group(1)
             text = (
-                    "Here is the help for the *{}* module:\n".format(
-                        HELPABLE[module].__mod_name__
-                    )
-                    + HELPABLE[module].__help__
+                "Here is the help for the *{}* module:\n".format(
+                    HELPABLE[module].__mod_name__
+                )
+                + HELPABLE[module].__help__
             )
             query.message.edit_text(
                 text=text,
@@ -432,10 +433,10 @@ def get_help(update: Update, context: CallbackContext):
     if len(args) >= 2 and any(args[1].lower() == x for x in HELPABLE):
         module = args[1].lower()
         text = (
-                "Here is the available help for the *{}* module:\n".format(
-                    HELPABLE[module].__mod_name__
-                )
-                + HELPABLE[module].__help__
+            "Here is the available help for the *{}* module:\n".format(
+                HELPABLE[module].__mod_name__
+            )
+            + HELPABLE[module].__help__
         )
         send_help(
             chat.id,
@@ -553,7 +554,7 @@ def settings_button(update: Update, context: CallbackContext):
             chat = bot.get_chat(chat_id)
             query.message.edit_text(
                 text="Hi there! There are quite a few settings for {} - go ahead and pick what "
-                     "you're interested in.".format(escape_markdown(chat.title)),
+                "you're interested in.".format(escape_markdown(chat.title)),
                 parse_mode=ParseMode.MARKDOWN,
                 reply_markup=InlineKeyboardMarkup(
                     paginate_modules(0, CHAT_SETTINGS, "stngs", chat=chat_id)

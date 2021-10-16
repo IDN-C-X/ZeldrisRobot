@@ -34,5 +34,5 @@ BASE = declarative_base()
 try:
     SESSION = start()
 except Exception as e:
-    LOGGER.exception(f'[PostgreSQL] Failed to connect due to {e}')
+    LOGGER.exception(f"[PostgreSQL] Failed to connect due to {e}")
     exit()

@@ -93,7 +93,7 @@ def reply_afk(update, context):
     userc = update.effective_user
     userc_id = userc.id
     if message.entities and message.parse_entities(
-            [MessageEntity.TEXT_MENTION, MessageEntity.MENTION]
+        [MessageEntity.TEXT_MENTION, MessageEntity.MENTION]
     ):
         entities = message.parse_entities(
             [MessageEntity.TEXT_MENTION, MessageEntity.MENTION]
@@ -111,7 +111,7 @@ def reply_afk(update, context):
 
             elif ent.type == MessageEntity.MENTION:
                 user_id = get_user_id(
-                    message.text[ent.offset: ent.offset + ent.length]
+                    message.text[ent.offset : ent.offset + ent.length]
                 )
                 if not user_id:
                     # Should never happen, since for a user to become AFK they must have spoken. Maybe changed username?

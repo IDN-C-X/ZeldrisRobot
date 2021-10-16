@@ -169,7 +169,7 @@ def report(update, context) -> str:
                         message.reply_to_message.forward(admin.user.id)
 
                         if (
-                                len(message.text.split()) > 1
+                            len(message.text.split()) > 1
                         ):  # If user is giving a reason, send his message too
                             message.forward(admin.user.id)
 

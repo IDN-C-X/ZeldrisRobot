@@ -43,8 +43,8 @@ def weather(update, context):
             update.effective_message.delete()
         except BadRequest as err:
             if err.message in (
-                    "Message to delete not found",
-                    "Message can't be deleted",
+                "Message to delete not found",
+                "Message can't be deleted",
             ):
                 return
 
@@ -67,8 +67,8 @@ def weather(update, context):
             update.effective_message.delete()
         except BadRequest as err:
             if err.message in (
-                    "Message to delete not found",
-                    "Message can't be deleted",
+                "Message to delete not found",
+                "Message can't be deleted",
             ):
                 return
         return
