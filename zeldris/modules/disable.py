@@ -15,26 +15,35 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 
+import importlib
+
 from typing import Union
-
 from future.utils import string_types
-from telegram import ParseMode, Update
-from telegram.ext import CommandHandler, MessageHandler
-from telegram.utils.helpers import escape_markdown
-
 from zeldris import dispatcher
-from zeldris.modules.connection import connected
-from zeldris.modules.helper_funcs.alternate import send_message, typing_action
-from zeldris.modules.helper_funcs.handlers import CMD_STARTERS
+from zeldris.modules.helper_funcs.handlers import CMD_STARTERS, SpamChecker
 from zeldris.modules.helper_funcs.misc import is_module_loaded
+from telegram import ParseMode, Update
+from telegram.ext import (
+    CallbackContext,
+    CommandHandler,
+    Filters,
+    MessageHandler,
+    RegexHandler,
+)
+from telegram.utils.helpers import escape_markdown
 
 FILENAME = __name__.rsplit(".", 1)[-1]
 
 # If module is due to be loaded, then setup all the magical handlers
 if is_module_loaded(FILENAME):
-    from zeldris.modules.helper_funcs.chat_status import user_admin, is_user_admin
 
+    from zeldris.modules.helper_funcs.chat_status import (
+        connection_status,
+        is_user_admin,
+        user_admin,
+    )
     from zeldris.modules.sql import disable_sql as sql
+    from telegram.ext.dispatcher import run_async
 
     DISABLE_CMDS = []
     DISABLE_OTHER = []
@@ -61,8 +70,8 @@ if is_module_loaded(FILENAME):
             if message.text and len(message.text) > 1:
                 fst_word = message.text.split(None, 1)[0]
                 if len(fst_word) > 1 and any(
-                    fst_word.startswith(start) for start in CMD_STARTERS
-                ):
+                        fst_word.startswith(start) for start in CMD_STARTERS
+                    ):
                     args = message.text.split()[1:]
                     command = fst_word[1:].split("@")
                     command.append(message.bot.username)
@@ -72,17 +81,19 @@ if is_module_loaded(FILENAME):
                         and command[1].lower() == message.bot.username.lower()
                     ):
                         return None
-
+                    chat = update.effective_chat
+                    user = update.effective_user
+                    user_id = chat.id if user.id == 1087968824 else user.id
+                    if SpamChecker.check_user(user_id):
+                        return None
                     filter_result = self.filters(update)
                     if filter_result:
-                        chat = update.effective_chat
-                        user = update.effective_user
                         # disabled, admincmd, user admin
                         if sql.is_command_disabled(chat.id, command[0].lower()):
                             # check if command was disabled
-                            is_disabled = command[0] in ADMIN_CMDS and is_user_admin(
-                                chat, user.id
-                            )
+                            is_disabled = command[
+                                0
+                            ] in ADMIN_CMDS and is_user_admin(chat, user.id)
                             if not is_disabled:
                                 return None
                             return args, filter_result
@@ -91,115 +102,200 @@ if is_module_loaded(FILENAME):
                     return False
 
     class DisableAbleMessageHandler(MessageHandler):
-        def __init__(self, pattern, callback, friendly="", **kwargs):
-            super().__init__(pattern, callback, **kwargs)
-            DISABLE_OTHER.append(friendly or pattern)
-            self.friendly = friendly or pattern
+        def __init__(self, filters, callback, friendly, **kwargs):
+
+            super().__init__(filters, callback, **kwargs)
+            DISABLE_OTHER.append(friendly)
+            self.friendly = friendly
+            if filters:
+                self.filters = Filters.update.messages & filters
+            else:
+                self.filters = Filters.update.messages
 
         def check_update(self, update):
-            if isinstance(update, Update) and update.effective_message:
-                chat = update.effective_chat
-                return self.filters(update) and not sql.is_command_disabled(
-                    chat.id, self.friendly
-                )
 
-    @user_admin
-    @typing_action
-    def disable(update, context):
-        chat = update.effective_chat
-        user = update.effective_user
-        args = context.args
-
-        conn = connected(context.bot, update, chat, user.id, need_admin=True)
-        if conn:
-            chat = dispatcher.bot.getChat(conn)
-            chat_name = dispatcher.bot.getChat(conn).title
-        else:
-            if update.effective_message.chat.type == "private":
-                send_message(
-                    update.effective_message,
-                    "This command meant to be used in group not in PM",
-                )
-                return ""
             chat = update.effective_chat
-            chat_name = update.effective_message.chat.title
+            message = update.effective_message
+            filter_result = self.filters(update)
 
+            try:
+                args = message.text.split()[1:]
+            except:
+                args = []
+
+            if super().check_update(update):
+                if sql.is_command_disabled(chat.id, self.friendly):
+                    return False
+                return args, filter_result
+
+    class DisableAbleRegexHandler(RegexHandler):
+        def __init__(self, pattern, callback, friendly="", filters=None, **kwargs):
+            super().__init__(pattern, callback, filters, **kwargs)
+            DISABLE_OTHER.append(friendly)
+            self.friendly = friendly
+
+        def check_update(self, update):
+            chat = update.effective_chat
+            if super().check_update(update):
+                return not sql.is_command_disabled(chat.id, self.friendly)
+
+    @connection_status
+    @user_admin
+    def disable(update: Update, context: CallbackContext):
+        args = context.args
+        chat = update.effective_chat
         if len(args) >= 1:
             disable_cmd = args[0]
             if disable_cmd.startswith(CMD_STARTERS):
                 disable_cmd = disable_cmd[1:]
 
             if disable_cmd in set(DISABLE_CMDS + DISABLE_OTHER):
-                sql.disable_command(chat.id, disable_cmd)
-                if conn:
-                    text = "Disabled the use of `{}` command in *{}*!".format(
-                        disable_cmd, chat_name
-                    )
-                else:
-                    text = "Disabled the use of `{}` command!".format(disable_cmd)
-                send_message(
-                    update.effective_message, text, parse_mode=ParseMode.MARKDOWN
+                sql.disable_command(chat.id, str(disable_cmd).lower())
+                update.effective_message.reply_text(
+                    f"Disabled the use of `{disable_cmd}`",
+                    parse_mode=ParseMode.MARKDOWN,
                 )
             else:
-                send_message(update.effective_message, "This command can't be disabled")
+                update.effective_message.reply_text("That command can't be disabled")
 
         else:
-            send_message(update.effective_message, "What should I disable?")
-
+            update.effective_message.reply_text("What should I disable?")
+    
+    @connection_status
     @user_admin
-    @typing_action
-    def enable(update, context):
-        chat = update.effective_chat
-        user = update.effective_user
+    def disable_module(update: Update, context: CallbackContext):
         args = context.args
+        chat = update.effective_chat
+        if len(args) >= 1:
+            disable_module = "zeldris.modules." + args[0].rsplit(".", 1)[0]
 
-        conn = connected(context.bot, update, chat, user.id, need_admin=True)
-        if conn:
-            chat = dispatcher.bot.getChat(conn)
-            chat_id = conn
-            chat_name = dispatcher.bot.getChat(conn).title
-        else:
-            if update.effective_message.chat.type == "private":
-                send_message(
-                    update.effective_message,
-                    "This command is meant to be used in group not in PM",
+            try:
+                module = importlib.import_module(disable_module)
+            except:
+                update.effective_message.reply_text("Does that module even exist?")
+                return
+
+            try:
+                command_list = module.__command_list__
+            except:
+                update.effective_message.reply_text(
+                    "Module does not contain command list!",
                 )
-                return ""
-            chat = update.effective_chat
-            chat_id = update.effective_chat.id
-            chat_name = update.effective_message.chat.title
+                return
 
+            disabled_cmds = []
+            failed_disabled_cmds = []
+
+            for disable_cmd in command_list:
+                if disable_cmd.startswith(CMD_STARTERS):
+                    disable_cmd = disable_cmd[1:]
+
+                if disable_cmd in set(DISABLE_CMDS + DISABLE_OTHER):
+                    sql.disable_command(chat.id, str(disable_cmd).lower())
+                    disabled_cmds.append(disable_cmd)
+                else:
+                    failed_disabled_cmds.append(disable_cmd)
+
+            if disabled_cmds:
+                disabled_cmds_string = ", ".join(disabled_cmds)
+                update.effective_message.reply_text(
+                    f"Disabled the uses of `{disabled_cmds_string}`",
+                    parse_mode=ParseMode.MARKDOWN,
+                )
+
+            if failed_disabled_cmds:
+                failed_disabled_cmds_string = ", ".join(failed_disabled_cmds)
+                update.effective_message.reply_text(
+                    f"Commands `{failed_disabled_cmds_string}` can't be disabled",
+                    parse_mode=ParseMode.MARKDOWN,
+                )
+
+        else:
+            update.effective_message.reply_text("What should I disable?")
+    
+    @connection_status
+    @user_admin
+    def enable(update: Update, context: CallbackContext):
+        args = context.args
+        chat = update.effective_chat
         if len(args) >= 1:
             enable_cmd = args[0]
             if enable_cmd.startswith(CMD_STARTERS):
                 enable_cmd = enable_cmd[1:]
 
             if sql.enable_command(chat.id, enable_cmd):
-                if conn:
-                    text = "Enabled the use of `{}` command in *{}*!".format(
-                        enable_cmd, chat_name
-                    )
-                else:
-                    text = "Enabled the use of `{}` command!".format(enable_cmd)
-                send_message(
-                    update.effective_message, text, parse_mode=ParseMode.MARKDOWN
+                update.effective_message.reply_text(
+                    f"Enabled the use of `{enable_cmd}`", parse_mode=ParseMode.MARKDOWN,
                 )
             else:
-                send_message(update.effective_message, "Is that even disabled?")
+                update.effective_message.reply_text("Is that even disabled?")
 
         else:
-            send_message(update.effective_message, "What should I enable?")
-
+            update.effective_message.reply_text("What should I enable?")
+    
+    @connection_status
     @user_admin
-    def list_cmds(update, _):
+    def enable_module(update: Update, context: CallbackContext):
+        args = context.args
+        chat = update.effective_chat
+
+        if len(args) >= 1:
+            enable_module = "zeldris.modules." + args[0].rsplit(".", 1)[0]
+
+            try:
+                module = importlib.import_module(enable_module)
+            except:
+                update.effective_message.reply_text("Does that module even exist?")
+                return
+
+            try:
+                command_list = module.__command_list__
+            except:
+                update.effective_message.reply_text(
+                    "Module does not contain command list!",
+                )
+                return
+
+            enabled_cmds = []
+            failed_enabled_cmds = []
+
+            for enable_cmd in command_list:
+                if enable_cmd.startswith(CMD_STARTERS):
+                    enable_cmd = enable_cmd[1:]
+
+                if sql.enable_command(chat.id, enable_cmd):
+                    enabled_cmds.append(enable_cmd)
+                else:
+                    failed_enabled_cmds.append(enable_cmd)
+
+            if enabled_cmds:
+                enabled_cmds_string = ", ".join(enabled_cmds)
+                update.effective_message.reply_text(
+                    f"Enabled the uses of `{enabled_cmds_string}`",
+                    parse_mode=ParseMode.MARKDOWN,
+                )
+
+            if failed_enabled_cmds:
+                failed_enabled_cmds_string = ", ".join(failed_enabled_cmds)
+                update.effective_message.reply_text(
+                    f"Are the commands `{failed_enabled_cmds_string}` even disabled?",
+                    parse_mode=ParseMode.MARKDOWN,
+                )
+
+        else:
+            update.effective_message.reply_text("What should I enable?")
+    
+    @connection_status
+    @user_admin
+    def list_cmds(update: Update, context: CallbackContext):
         if DISABLE_CMDS + DISABLE_OTHER:
             result = "".join(
-                " - `{}`\n".format(escape_markdown(str(cmd)))
+                f" - `{escape_markdown(cmd)}`\n"
                 for cmd in set(DISABLE_CMDS + DISABLE_OTHER)
             )
 
             update.effective_message.reply_text(
-                "The following commands are toggleable:\n{}".format(result),
+                f"The following commands are toggleable:\n{result}",
                 parse_mode=ParseMode.MARKDOWN,
             )
         else:
@@ -213,37 +309,16 @@ if is_module_loaded(FILENAME):
 
         result = "".join(" - `{}`\n".format(escape_markdown(cmd)) for cmd in disabled)
         return "The following commands are currently restricted:\n{}".format(result)
-
-    @typing_action
-    def commands(update, context):
+    
+    @connection_status
+    def commands(update: Update, context: CallbackContext):
         chat = update.effective_chat
-        user = update.effective_user
-        conn = connected(context.bot, update, chat, user.id, need_admin=True)
-        if conn:
-            chat = dispatcher.bot.getChat(conn)
-            chat_id = conn
-        else:
-            if update.effective_message.chat.type == "private":
-                send_message(
-                    update.effective_message,
-                    "This command is meant to use in group not in PM",
-                )
-                return ""
-            chat = update.effective_chat
-            chat_id = update.effective_chat.id
-
-        text = build_curr_disabled(chat.id)
-        send_message(update.effective_message, text, parse_mode=ParseMode.MARKDOWN)
-
-    def __import_data__(chat_id, data):
-        disabled = data.get("disabled", {})
-        for disable_cmd in disabled:
-            sql.disable_command(chat_id, disable_cmd)
+        update.effective_message.reply_text(
+            build_curr_disabled(chat.id), parse_mode=ParseMode.MARKDOWN,
+        )
 
     def __stats__():
-        return "× {} disabled items, across {} chats.".format(
-            sql.num_disabled(), sql.num_chats()
-        )
+        return f"• {sql.num_disabled()} disabled items, across {sql.num_chats()} chats."
 
     def __migrate__(old_chat_id, new_chat_id):
         sql.migrate_chat(old_chat_id, new_chat_id)
@@ -251,41 +326,34 @@ if is_module_loaded(FILENAME):
     def __chat_settings__(chat_id, user_id):
         return build_curr_disabled(chat_id)
 
-    __mod_name__ = "Disabling"
-
-    __help__ = """
-Not everyone wants every feature that the bot offers. Some commands are best \
-left unused; to avoid spam and abuse.
-
-This allows you to disable some commonly used commands, so noone can use them. \
-It'll also allow you to autodelete them, stopping people from bluetexting.
-
- × /cmds: Check the current status of disabled commands
-
-*Admin only:*
- × /enable <cmd name>: Enable that command
- × /disable <cmd name>: Disable that command
- × /listcmds: List all possible disablable commands
-    """
-
-    DISABLE_HANDLER = CommandHandler(
-        "disable", disable, pass_args=True, run_async=True
-    )  # , filters=Filters.chat_type.groups, run_async=True)
-    ENABLE_HANDLER = CommandHandler(
-        "enable", enable, pass_args=True, run_async=True
-    )  # , filters=Filters.chat_type.groups, run_async=True)
-    COMMANDS_HANDLER = CommandHandler(
-        ["cmds", "disabled"], commands, run_async=True
-    )  # , filters=Filters.chat_type.groups, run_async=True)
-    TOGGLE_HANDLER = CommandHandler(
-        "listcmds", list_cmds, run_async=True
-    )  # , filters=Filters.chat_type.groups, run_async=True)
+    DISABLE_HANDLER = CommandHandler("disable", disable, run_async=True)
+    DISABLE_MODULE_HANDLER = CommandHandler("disablemodule", disable_module, run_async=True)
+    ENABLE_HANDLER = CommandHandler("enable", enable, run_async=True)
+    ENABLE_MODULE_HANDLER = CommandHandler("enablemodule", enable_module, run_async=True)
+    COMMANDS_HANDLER = CommandHandler(["cmds", "disabled"], commands, run_async=True)
+    TOGGLE_HANDLER = CommandHandler("listcmds", list_cmds, run_async=True)
 
     dispatcher.add_handler(DISABLE_HANDLER)
+    dispatcher.add_handler(DISABLE_MODULE_HANDLER)
     dispatcher.add_handler(ENABLE_HANDLER)
+    dispatcher.add_handler(ENABLE_MODULE_HANDLER)
     dispatcher.add_handler(COMMANDS_HANDLER)
     dispatcher.add_handler(TOGGLE_HANDLER)
 
+    __help__ = """
+     ➢ `/cmds`*:* check the current status of disabled commands
+   
+   *Admins only:*
+     ➢ `/enable <cmd name>`*:* enable that command
+     ➢ `/disable <cmd name>`*:* disable that command
+     ➢ `/enablemodule <module name>`*:* enable all commands in that module
+     ➢ `/disablemodule <module name>`*:* disable all commands in that module
+     ➢ `/listcmds`*:* list all possible toggleable commands
+    """
+
+    __mod_name__ = "Disabling"
+
 else:
     DisableAbleCommandHandler = CommandHandler
+    DisableAbleRegexHandler = RegexHandler
     DisableAbleMessageHandler = MessageHandler
