@@ -203,13 +203,14 @@ def airing(update: Update, _):
         json={"query": airing_query, "variables": variables},
     ).json()["data"]["Media"]
     msg = f"*Name*: *{response['title']['romaji']}*(`{response['title']['native']}`)\n*ID*: `{response['id']}`"
+    image = info.replace("anilist.co/anime/", "img.anili.st/media/")
     if response["nextAiringEpisode"]:
         time = response["nextAiringEpisode"]["timeUntilAiring"] * 1000
         time = t(time)
         msg += f"\n*Episode*: `{response['nextAiringEpisode']['episode']}`\n*Airing In*: `{time}`"
     else:
         msg += f"\n*Episode*:{response['episodes']}\n*Status*: `N/A`"
-    update.effective_message.reply_text(msg, parse_mode=ParseMode.MARKDOWN)
+    update.effective_message.reply_photo(photo=image, caption=msg, parse_mode=ParseMode.MARKDOWN)
 
 
 def anime(update: Update, _):
@@ -258,7 +259,7 @@ def anime(update: Update, _):
             .replace("<br>", "")
         )
         msg += shorten(description, info)
-        image = json.get("bannerImage", None)
+        image = info.replace("anilist.co/anime/", "img.anili.st/media/")
         if trailer:
             buttons = [
                 [
