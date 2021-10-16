@@ -54,7 +54,7 @@ This is because markdown parsing is done by iterating through a dict, which is o
 
 ## Deploy to Heroku
 
-[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/IDN-C-X/ZeldrisRobot)
+[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/IDN-C-X/ZeldrisRobot/tree/master)
 
 ### Configuration
 
@@ -178,13 +178,12 @@ anything.
 - [MrYacha](https://github.com/MrYacha) for connections module.
 - [ATechnoHazard](https://github.com/SphericalKat) for many stuffs.
 - [corsicanu](https://github.com/corsicanu) and nunopenim for android modules.
-- [Saitama](https://github.com/AnimeKaizoku/SaitamaRobot) for anime modules and other stuff.
+- [Saitama](https://github.com/AnimeKaizoku/SaitamaRobot) for anime modules and other stuffs.
 - [Kigyo](https://github.com/EnterpriseALRobot) for greetings modules.
-- Any other missing Credits can be seen in commits!
+- Thanks to Everyone who has [contributed](https://github.com/IDN-C-X/ZeldrisRobot/graphs/contributors) to this Project!
 
 ## Projects!
 
 ```
 Zeldris is part of the [IDNCoder](https://github.com/IDN-C-X) project.
-Thanks to Everyone who has contributed to this Project.
 ```
