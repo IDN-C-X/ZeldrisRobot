@@ -41,6 +41,7 @@ from zeldris.modules.helper_funcs.chat_status import (
     user_admin_no_reply,
     user_admin,
     can_restrict,
+    can_delete,
 )
 from zeldris.modules.helper_funcs.extraction import (
     extract_text,
@@ -201,7 +202,10 @@ def warn_user(update, context):
     chat = update.effective_chat  # type: Optional[Chat]
     warner = update.effective_user  # type: Optional[User]
     args = context.args
+
     user_id, reason = extract_user_and_text(message, args)
+    if message.text.startswith('/d') and message.reply_to_message:
+        message.reply_to_message.delete()
 
     if user_id:
         if (
@@ -546,7 +550,8 @@ __help__ = """
  × /warnlist: Lists all current warning filters
 
 *Admin only:*
- × /warn <userhandle>: Warns a user. After 3 warns, the user will be banned from the group. Can also be used as a reply.
+ × /warn <userhandle>: Warns a user. After 3 warns (as default), the user will be banned from the group. Can also be used as a reply.
+ × /dwarn <userhandle>: Warns a user and delete the message. After 3 warns (as default), the user will be banned from the group. Can also be used as a reply
  × /resetwarn <userhandle>: Resets the warnings for a user. Can also be used as a reply.
  × /rmwarn <userhandle>: Removes latest warn for a user. It also can be used as reply.
  × /unwarn <userhandle>: Same as /rmwarn
@@ -560,7 +565,7 @@ be a sentence, encompass it with quotes, as such: `/addwarn "very angry" This is
 __mod_name__ = "Warnings"
 
 WARN_HANDLER = CommandHandler(
-    "warn", warn_user, pass_args=True, filters=Filters.chat_type.groups, run_async=True
+    ["warn", "dwarn"], warn_user, pass_args=True, filters=Filters.chat_type.groups, run_async=True
 )
 RESET_WARN_HANDLER = CommandHandler(
     ["resetwarn", "resetwarns"],
