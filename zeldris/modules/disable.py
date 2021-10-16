@@ -122,7 +122,7 @@ if is_module_loaded(FILENAME):
 
             try:
                 args = message.text.split()[1:]
-            except:
+            except BaseException:
                 args = []
 
             if super().check_update(update):
@@ -176,7 +176,7 @@ if is_module_loaded(FILENAME):
 
             try:
                 module = importlib.import_module(disable_module)
-            except:
+            except BaseException:
                 update.effective_message.reply_text("Does that module even exist?")
                 return
 
@@ -252,7 +252,7 @@ if is_module_loaded(FILENAME):
 
             try:
                 module = importlib.import_module(enable_module)
-            except:
+            except BaseException:
                 update.effective_message.reply_text("Does that module even exist?")
                 return
 
