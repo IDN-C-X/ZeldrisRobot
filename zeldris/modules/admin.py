@@ -248,9 +248,17 @@ def pin(update, context):
         message.reply_text("You are missing rights to pin a message!")
         return ""
 
+    if not prev_message:
+        message.reply_text("Reply to the message you want to pin!")
+        return
+
     is_silent = True
     if len(args) >= 1:
-        is_silent = args[0].lower() not in ["notify", "loud", "violent"]
+        is_silent = (
+            args[0].lower() != "notify"
+            or args[0].lower() == "loud"
+            or args[0].lower() == "violent"
+        )
 
     if prev_message and is_group:
         try:
