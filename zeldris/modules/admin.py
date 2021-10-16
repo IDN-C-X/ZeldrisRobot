@@ -105,7 +105,7 @@ def promote(update, context):
     message.reply_text(
         f"Promoted <b>{user_member.user.first_name or user_id}</b>"
         + 
-        f"with title <code>{title[:16]}</code>!",
+        f" with title <code>{title[:16]}</code>!",
         parse_mode=ParseMode.HTML,
     )
     return (
@@ -184,7 +184,7 @@ def fullpromote(update, context):
     message.reply_text(
         f"Full Promoted <b>{user_member.user.first_name or user_id}</b>"
         + 
-        f"with title <code>{title[:16]}</code>!",
+        f" with title <code>{title[:16]}</code>!",
         parse_mode=ParseMode.HTML,
     )
     return (
