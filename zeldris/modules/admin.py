@@ -88,6 +88,7 @@ def promote(update, context):
         can_pin_messages=bot_member.can_pin_messages,
     )
     
+    title = "admin"
     if " " in message.text:
         title = message.text.split(" ", 1)[1]
         if len(title) > 16:
@@ -96,18 +97,17 @@ def promote(update, context):
             )
         
         try:
-            bot.setChatAdministratorCustomTitle(chat.id, user_id, title)
-            message.reply_text(
-                "Sucessfully set title for <b>{}</b> to <code>{}</code>!".format(
-                user_member.user.first_name or user_id, title[:16]
-                ),
-                parse_mode=ParseMode.HTML,
-            )
+            bot.setChatAdministratorCustomTitle(chat.id, user
         
         except BadRequest:
             message.reply_text("I can't set custom title for admins that I didn't promote!")
     
-    message.reply_text("Promoted🧡")
+    message.reply_text(
+        "Promoted🧡\nSucessfully set title for <b>{}</b> to <code>{}</code>!".format(
+        user_member.user.first_name or user_id, title[:16]
+        ),
+        parse_mode=ParseMode.HTML,
+    )
     return (
         "<b>{}:</b>"
         "\n#PROMOTED"
@@ -167,6 +167,7 @@ def fullpromote(update, context):
         can_manage_voice_chats=bot_member.can_manage_voice_chats,
     )
     
+    title = "admin"
     if " " in message.text:
         title = message.text.split(" ", 1)[1]
         if len(title) > 16:
@@ -175,18 +176,17 @@ def fullpromote(update, context):
             )
         
         try:
-            bot.setChatAdministratorCustomTitle(chat.id, user_id, title)
-            message.reply_text(
-                "Sucessfully set title for <b>{}</b> to <code>{}</code>!".format(
-                user_member.user.first_name or user_id, title[:16]
-                ),
-                parse_mode=ParseMode.HTML,
-            )
+            bot.setChatAdministratorCustomTitle(chat.id, user
         
         except BadRequest:
             message.reply_text("I can't set custom title for admins that I didn't promote!")
     
-    message.reply_text("Full Promoted🧡")
+    message.reply_text(
+        "Full Promoted🧡\nSucessfully set title for <b>{}</b> to <code>{}</code>!".format(
+        user_member.user.first_name or user_id, title[:16]
+        ),
+        parse_mode=ParseMode.HTML,
+    )
     return (
         "<b>{}:</b>"
         "\n#FULLPROMOTED"
