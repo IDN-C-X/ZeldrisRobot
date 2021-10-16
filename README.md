@@ -178,9 +178,9 @@ anything.
 - [MrYacha](https://github.com/MrYacha) for connections module.
 - [ATechnoHazard](https://github.com/SphericalKat) for many stuffs.
 - [corsicanu](https://github.com/corsicanu) and nunopenim for android modules.
-- [Saitama](https://github.com/AnimeKaizoku/SaitamaRobot) for anime modules and other stuff.
+- [Saitama](https://github.com/AnimeKaizoku/SaitamaRobot) for anime modules and other stuffs.
 - [Kigyo](https://github.com/EnterpriseALRobot) for greetings modules.
-- Thanks to Everyone who has [contributed](https://github.com/IDN-C-X/ZeldrisRobot/graphs/contributors) to this Project.!
+- Thanks to Everyone who has [contributed](https://github.com/IDN-C-X/ZeldrisRobot/graphs/contributors) to this Project!
 
 ## Projects!
 
