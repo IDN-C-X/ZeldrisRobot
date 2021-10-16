@@ -228,7 +228,7 @@ def scam(imgspage, lim):
 
 
 REVERSE_HANDLER = DisableAbleCommandHandler(
-    ["reverse", "grs"}, 
+    ["reverse", "grs"], 
      reverse, 
      pass_args=True, 
      run_async=True,
