@@ -127,7 +127,6 @@ def promote(update, context):
 @loggable
 @typing_action
 def fullpromote(update, context):
-    chat_id = update.effective_chat.id
     message = update.effective_message
     chat = update.effective_chat
     user = update.effective_user
@@ -295,9 +294,9 @@ def pin(update, context):
     is_silent = True
     if len(args) >= 1:
         is_silent = (
-            args[0].lower() != "notify"
-            or args[0].lower() == "loud"
-            or args[0].lower() == "violent"
+                args[0].lower() != "notify"
+                or args[0].lower() == "loud"
+                or args[0].lower() == "violent"
         )
 
     if prev_message and is_group:
@@ -631,20 +630,21 @@ Lazy to promote or demote someone for admins? Want to see basic information abou
 All stuff about chatroom such as admin lists, pinning or grabbing an invite link can be \
 done easily using the bot.
 
- × /adminlist: list of admins in the chat
+× /adminlist: list of admins in the chat
 
 *Admin only:*
- × /pin: Silently pins the message replied to - add `loud`, `notify` or `violent` to give notificaton to users.
- × /unpin: Unpins the currently pinned message.
- × /invitelink: Gets private chat's invitelink.
- × /promote: Promotes the user replied to.
- × /demote: Demotes the user replied to.
- × /settitle: Sets a custom title for an admin which is promoted by bot.
- × /setgpic: As a reply to file or photo to set group profile pic!
- × /delgpic: Same as above but to remove group profile pic.
- × /setgtitle <newtitle>: Sets new chat title in your group.
- × /setsticker: As a reply to some sticker to set it as group sticker set!
- × /setdescription: <description> Sets new chat description in group.
+× /pin: Silently pins the message replied to - add `loud`, `notify` or `violent` to give notificaton to users.
+× /unpin: Unpins the currently pinned message.
+× /invitelink: Gets private chat's invitelink.
+× /promote <title>: Promotes the user replied to.
+× /fullpromote <title>: Promotes the user replied to with ful rights.
+× /demote: Demotes the user replied to.
+× /settitle: Sets a custom title for an admin which is promoted by bot.
+× /setgpic: As a reply to file or photo to set group profile pic!
+× /delgpic: Same as above but to remove group profile pic.
+× /setgtitle <newtitle>: Sets new chat title in your group.
+× /setsticker: As a reply to some sticker to set it as group sticker set!
+× /setdescription: <description> Sets new chat description in group.
 
 *Note*: To set group sticker set chat must needs to have min 100 members.
 

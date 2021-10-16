@@ -43,8 +43,8 @@ def weather(update, context):
             update.effective_message.delete()
         except BadRequest as err:
             if err.message in (
-                "Message to delete not found",
-                "Message can't be deleted",
+                    "Message to delete not found",
+                    "Message can't be deleted",
             ):
                 return
 
@@ -67,8 +67,8 @@ def weather(update, context):
             update.effective_message.delete()
         except BadRequest as err:
             if err.message in (
-                "Message to delete not found",
-                "Message can't be deleted",
+                    "Message to delete not found",
+                    "Message can't be deleted",
             ):
                 return
         return
@@ -137,9 +137,9 @@ def weather(update, context):
 __help__ = r"""
 Weather module:
 
- × /weather <city>: Gets weather information of particular place!
+× /weather <city>: Gets weather information of particular place!
 
- \* To prevent spams weather command and the output will be deleted after 30 seconds
+\* To prevent spams weather command and the output will be deleted after 30 seconds
 """
 
 __mod_name__ = "Weather"

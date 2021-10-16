@@ -345,13 +345,13 @@ def user_join_fed(update, context):
         elif not msg.reply_to_message and not args:
             user = msg.from_user
         elif not msg.reply_to_message and (
-            not args
-            or (
-                len(args) >= 1
-                and not args[0].startswith("@")
-                and not args[0].isdigit()
-                and not msg.parse_entities([MessageEntity.TEXT_MENTION])
-            )
+                not args
+                or (
+                        len(args) >= 1
+                        and not args[0].startswith("@")
+                        and not args[0].isdigit()
+                        and not msg.parse_entities([MessageEntity.TEXT_MENTION])
+                )
         ):
             msg.reply_text("I cannot extract user from this message")
             return
@@ -411,13 +411,13 @@ def user_demote_fed(update, context):
             user = msg.from_user
 
         elif not msg.reply_to_message and (
-            not args
-            or (
-                len(args) >= 1
-                and not args[0].startswith("@")
-                and not args[0].isdigit()
-                and not msg.parse_entities([MessageEntity.TEXT_MENTION])
-            )
+                not args
+                or (
+                        len(args) >= 1
+                        and not args[0].startswith("@")
+                        and not args[0].isdigit()
+                        and not msg.parse_entities([MessageEntity.TEXT_MENTION])
+                )
         ):
             msg.reply_text("I cannot extract user from this message")
             return
@@ -1707,9 +1707,9 @@ def fed_import_bans(update, context):
                 "fban_{}.csv".format(msg.reply_to_message.document.file_id)
             )
             with open(
-                "fban_{}.csv".format(msg.reply_to_message.document.file_id),
-                "r",
-                encoding="utf8",
+                    "fban_{}.csv".format(msg.reply_to_message.document.file_id),
+                    "r",
+                    encoding="utf8",
             ) as csvFile:
                 reader = csv.reader(csvFile)
                 for data in reader:
@@ -2271,23 +2271,23 @@ You can even designate admin federations, so your trusted admin can ban all the 
 
 *Commands Available*:
 
- × /newfed <fedname>: Create a new Federation with the name given. Users are only allowed to have one Federation. This method can also be used to rename the Federation. (max. 64 characters)
- × /delfed: Delete your Federation, and any information related to it. Will not cancel blocked users.
- × /fedinfo <FedID>: Information about the specified Federation.
- × /joinfed <FedID>: Join the current chat to the Federation. Only chat owners can do this. Every chat can only be in one Federation.
- × /leavefed <FedID>: Leave the Federation given. Only chat owners can do this.
- × /fpromote <user>: Promote Users to give fed admin. Fed owner only.
- × /fdemote <user>: Drops the User from the admin Federation to a normal User. Fed owner only.
- × /fban <user>: Prohibits users from all federations where this chat takes place, and executors have control over.
- × /unfban <user>: Cancel User from all federations where this chat takes place, and that the executor has control over.
- × /setfrules: Arrange Federation rules.
- × /frules: See Federation regulations.
- × /chatfed: See the Federation in the current chat.
- × /fedadmins: Show Federation admin.
- × /fbanlist: Displays all users who are victimized at the Federation at this time.
- × /fednotif <on / off>: Federation settings not in PM when there are users who are fban / unfban.
- × /fedchats: Get all the chats that are connected in the Federation.
- × /importfbans: Reply to the Federation backup message file to import the banned list to the Federation now.
+× /newfed <fedname>: Create a new Federation with the name given. Users are only allowed to have one Federation. This method can also be used to rename the Federation. (max. 64 characters)
+× /delfed: Delete your Federation, and any information related to it. Will not cancel blocked users.
+× /fedinfo <FedID>: Information about the specified Federation.
+× /joinfed <FedID>: Join the current chat to the Federation. Only chat owners can do this. Every chat can only be in one Federation.
+× /leavefed <FedID>: Leave the Federation given. Only chat owners can do this.
+× /fpromote <user>: Promote Users to give fed admin. Fed owner only.
+× /fdemote <user>: Drops the User from the admin Federation to a normal User. Fed owner only.
+× /fban <user>: Prohibits users from all federations where this chat takes place, and executors have control over.
+× /unfban <user>: Cancel User from all federations where this chat takes place, and that the executor has control over.
+× /setfrules: Arrange Federation rules.
+× /frules: See Federation regulations.
+× /chatfed: See the Federation in the current chat.
+× /fedadmins: Show Federation admin.
+× /fbanlist: Displays all users who are victimized at the Federation at this time.
+× /fednotif <on / off>: Federation settings not in PM when there are users who are fban / unfban.
+× /fedchats: Get all the chats that are connected in the Federation.
+× /importfbans: Reply to the Federation backup message file to import the banned list to the Federation now.
 """
 
 NEW_FED_HANDLER = CommandHandler("newfed", new_fed, run_async=True)

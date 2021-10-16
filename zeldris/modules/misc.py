@@ -61,8 +61,8 @@ def get_id(update, context):
     user_id = extract_user(update.effective_message, args)
     if user_id:
         if (
-            update.effective_message.reply_to_message
-            and update.effective_message.reply_to_message.forward_from
+                update.effective_message.reply_to_message
+                and update.effective_message.reply_to_message.forward_from
         ):
             user1 = update.effective_message.reply_to_message.from_user
             user2 = update.effective_message.reply_to_message.forward_from
@@ -108,13 +108,13 @@ def info(update, context):
         user = msg.from_user
 
     elif not msg.reply_to_message and (
-        not args
-        or (
-            len(args) >= 1
-            and not args[0].startswith("@")
-            and not args[0].isdigit()
-            and not msg.parse_entities([MessageEntity.TEXT_MENTION])
-        )
+            not args
+            or (
+                    len(args) >= 1
+                    and not args[0].startswith("@")
+                    and not args[0].isdigit()
+                    and not msg.parse_entities([MessageEntity.TEXT_MENTION])
+            )
     ):
         msg.reply_text("I can't extract a user from this.")
         return
@@ -415,7 +415,7 @@ def getlink(update, context):
                 links += str(chat_id) + ":\n" + invitelink + "\n"
             else:
                 links += (
-                    str(chat_id) + ":\nI don't have access to the invite link." + "\n"
+                        str(chat_id) + ":\nI don't have access to the invite link." + "\n"
                 )
         except BadRequest as excp:
             links += str(chat_id) + ":\n" + excp.message + "\n"
@@ -498,15 +498,15 @@ def stats(update, _):
 __help__ = """
 An "odds and ends" module for small, simple commands which don't really fit anywhere
 
- × /id: Get the current group id. If used by replying to a message, gets that user's id.
- × /info: Get information about a user.
- × /wiki : Search wikipedia articles.
- × /rmeme: Sends random meme scraped from reddit.
- × /ud <query> : Search stuffs in urban dictionary.
- × /wall <query> : Get random wallpapers directly from bot! 
- × /reverse : Reverse searches image or stickers on google.
- × /gdpr: Deletes your information from the bot's database. Private chats only.
- × /markdownhelp: Quick summary of how markdown works in telegram - can only be called in private chats.
+× /id: Get the current group id. If used by replying to a message, gets that user's id.
+× /info: Get information about a user.
+× /wiki : Search wikipedia articles.
+× /rmeme: Sends random meme scraped from reddit.
+× /ud <query> : Search stuffs in urban dictionary.
+× /wall <query> : Get random wallpapers directly from bot! 
+× /reverse : Reverse searches image or stickers on google.
+× /gdpr: Deletes your information from the bot's database. Private chats only.
+× /markdownhelp: Quick summary of how markdown works in telegram - can only be called in private chats.
 """
 
 __mod_name__ = "Miscs"

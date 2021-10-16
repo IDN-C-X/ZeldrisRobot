@@ -358,8 +358,8 @@ def check_and_ban(update, user_id, should_message=True):
 def enforce_gban(update, context):
     # Not using @restrict handler to avoid spamming - just ignore if cant gban.
     if (
-        not sql.does_chat_gban(update.effective_chat.id)
-        or not update.effective_chat.get_member(context.bot.id).can_restrict_members
+            not sql.does_chat_gban(update.effective_chat.id)
+            or not update.effective_chat.get_member(context.bot.id).can_restrict_members
     ):
         return
     user = update.effective_user
@@ -440,7 +440,7 @@ def __chat_settings__(chat_id, user_id):
 
 __help__ = """
 *Admin only:*
- × /spamshield <on/off/yes/no>: Will disable or enable the effect of Spam protection in your group.
+× /spamshield <on/off/yes/no>: Will disable or enable the effect of Spam protection in your group.
 
 Spam shield uses @Spamwatch API and Global bans to remove Spammers as much as possible from your chatroom!
 
@@ -448,7 +448,8 @@ Spam shield uses @Spamwatch API and Global bans to remove Spammers as much as po
 
 SpamWatch maintains a large constantly updated ban-list of spambots, trolls, bitcoin spammers and unsavoury 
 characters. Zeldris will constantly help banning spammers off from your group automatically So, you don't have to 
-worry about spammers storming your group[.](https://telegra.ph/file/c1051d264a5b4146bd71e.jpg) """
+worry about spammers storming your group[.](https://telegra.ph/file/c1051d264a5b4146bd71e.jpg) 
+"""
 
 __mod_name__ = "Spam Shield"
 

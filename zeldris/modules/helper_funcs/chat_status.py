@@ -19,7 +19,7 @@ from functools import wraps
 from threading import RLock
 
 from cachetools import TTLCache
-from telegram import Chat, ChatMember, ParseMode, Update
+from telegram import Chat, ChatMember, Update
 from telegram.error import BadRequest, Unauthorized
 from telegram.ext import CallbackContext
 
@@ -41,11 +41,11 @@ def can_delete(chat: Chat, bot_id: int) -> bool:
 
 def is_user_ban_protected(chat: Chat, user_id: int, member: ChatMember = None) -> bool:
     if (
-        chat.type == "private"
-        or user_id in DEV_USERS
-        or user_id in WHITELIST_USERS
-        or chat.all_members_are_administrators
-        or user_id in {777000, 1087968824}
+            chat.type == "private"
+            or user_id in DEV_USERS
+            or user_id in WHITELIST_USERS
+            or chat.all_members_are_administrators
+            or user_id in {777000, 1087968824}
     ):
         return True
 
@@ -56,10 +56,10 @@ def is_user_ban_protected(chat: Chat, user_id: int, member: ChatMember = None) -
 
 def is_user_admin(chat: Chat, user_id: int, member: ChatMember = None) -> bool:
     if (
-        chat.type == "private"
-        or user_id in DEV_USERS
-        or user_id in {777000, 1087968824}
-        or chat.all_members_are_administrators
+            chat.type == "private"
+            or user_id in DEV_USERS
+            or user_id in {777000, 1087968824}
+            or chat.all_members_are_administrators
     ):
         return True
 

@@ -194,9 +194,9 @@ def callback_button(update, context):
         chat_count = get_muted_chats(bot, update, True)
         bot.sendMessage(chat_id, f"Left {chat_count} chats.")
     elif (
-        query_type == "db_leave_chat"
-        or query_type == "db_cleanup"
-        and query.from_user.id not in admin_list
+            query_type == "db_leave_chat"
+            or query_type == "db_cleanup"
+            and query.from_user.id not in admin_list
     ):
         query.answer("You are not allowed to use this.")
     elif query_type == "db_cleanup":

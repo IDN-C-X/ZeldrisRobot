@@ -415,19 +415,19 @@ def unban(update, context):
 
 
 __help__ = """
-
 Some people need to be publicly banned; spammers, annoyances, or just trolls.
 This module allows you to do that easily, by exposing some common actions, so everyone will see!
 
- × /kickme: Kicks the user who issued the command
- × /banme: Bans the user who issued the command
-*Admin only:*
- × /ban <userhandle>: Bans a user. (via handle, or reply)
- × /sban <userhandle>: Silently ban a user. Deletes command, Replied message and doesn't reply. (via handle, or reply)
- × /dban: Bans a user and delete the message. (via handle, or reply)
- × /tban <userhandle> x(m/h/d): Bans a user for x time. (via handle, or reply). m = minutes, h = hours, d = days.
- × /unban <userhandle>: Unbans a user. (via handle, or reply)
- × /kick <userhandle>: Kicks a user, (via handle, or reply)
+× /kickme: Kicks the user who issued the command.
+× /banme: Bans the user who issued the command.
+
+*Admin only:*.=
+× /ban <userhandle>: Bans a user. (via handle, or reply).
+× /sban <userhandle>: Silently ban a user. Deletes command, Replied message and doesn't reply. (via handle, or reply).
+× /dban: Bans a user and delete the message. (via handle, or reply).
+× /tban <userhandle> x(m/h/d): Bans a user for x time. (via handle, or reply). m = minutes, h = hours, d = days.
+× /unban <userhandle>: Unbans a user. (via handle, or reply).
+× /kick <userhandle>: Kicks a user, (via handle, or reply).
 
 An example of temporarily banning someone:
 `/tban @username 2h`; this bans a user for 2 hours.

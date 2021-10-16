@@ -18,16 +18,16 @@
 import ast
 import io
 import os
-
 # Common imports for eval
 import textwrap
 import traceback
 from contextlib import redirect_stdout
 
-from zeldris import LOGGER, dispatcher
-from zeldris.modules.helper_funcs.chat_status import dev_plus
 from telegram import ParseMode, Update
 from telegram.ext import CallbackContext, CommandHandler
+
+from zeldris import LOGGER, dispatcher
+from zeldris.modules.helper_funcs.chat_status import dev_plus
 
 namespaces = {}
 
@@ -92,8 +92,8 @@ def do(func, bot, update):
 
     os.chdir(os.getcwd())
     with open(
-        os.path.join(os.getcwd(), "zeldris/modules/helper_funcs/temp.txt"),
-        "w",
+            os.path.join(os.getcwd(), "zeldris/modules/helper_funcs/temp.txt"),
+            "w",
     ) as temp:
         temp.write(body)
 

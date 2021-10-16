@@ -48,7 +48,7 @@ LOCK_TYPES = {
     "contact": Filters.contact,
     "photo": Filters.photo,
     "url": Filters.entity(MessageEntity.URL)
-    | Filters.caption_entity(MessageEntity.URL),
+           | Filters.caption_entity(MessageEntity.URL),
     "bots": Filters.status_update.new_chat_members,
     "forward": Filters.forwarded,
     "game": Filters.game,
@@ -109,7 +109,7 @@ REST_GROUP = 2
 
 # NOT ASYNC
 def restr_members(
-    bot, chat_id, members, messages=False, media=False, other=False, previews=False
+        bot, chat_id, members, messages=False, media=False, other=False, previews=False
 ):
     for mem in members:
         try:
@@ -127,7 +127,7 @@ def restr_members(
 
 # NOT ASYNC
 def unrestr_members(
-    bot, chat_id, members, messages=True, media=True, other=True, previews=True
+        bot, chat_id, members, messages=True, media=True, other=True, previews=True
 ):
     for mem in members:
         try:
@@ -161,8 +161,8 @@ def lock(update, context) -> str:
     user = update.effective_user
 
     if (
-        can_delete(chat, context.bot.id)
-        or update.effective_message.chat.type == "private"
+            can_delete(chat, context.bot.id)
+            or update.effective_message.chat.type == "private"
     ):
         if len(args) >= 1:
             ltype = args[0].lower()
@@ -385,10 +385,10 @@ def del_lockables(update, context):
             continue
         if lockable == "button":
             if (
-                sql.is_locked(chat.id, lockable)
-                and can_delete(chat, context.bot.id)
-                and message.reply_markup
-                and message.reply_markup.inline_keyboard
+                    sql.is_locked(chat.id, lockable)
+                    and can_delete(chat, context.bot.id)
+                    and message.reply_markup
+                    and message.reply_markup.inline_keyboard
             ):
                 try:
                     message.delete()
@@ -399,10 +399,10 @@ def del_lockables(update, context):
             continue
         if lockable == "inline":
             if (
-                sql.is_locked(chat.id, lockable)
-                and can_delete(chat, context.bot.id)
-                and message
-                and message.via_bot
+                    sql.is_locked(chat.id, lockable)
+                    and can_delete(chat, context.bot.id)
+                    and message
+                    and message.via_bot
             ):
                 try:
                     message.delete()
@@ -412,9 +412,9 @@ def del_lockables(update, context):
                 break
             continue
         if (
-            filter(update)
-            and sql.is_locked(chat.id, lockable)
-            and can_delete(chat, context.bot.id)
+                filter(update)
+                and sql.is_locked(chat.id, lockable)
+                and can_delete(chat, context.bot.id)
         ):
             if lockable == "bots":
                 new_members = update.effective_message.new_chat_members
@@ -558,12 +558,12 @@ You're in the right place!
 The locks module allows you to lock away some common items in the \
 telegram world; the bot will automatically delete them!
 
- × /locktypes: Lists all possible locktypes
+× /locktypes: Lists all possible locktypes.
  
 *Admin only:*
- × /lock <type>: Lock items of a certain type (not available in private)
- × /unlock <type>: Unlock items of a certain type (not available in private)
- × /locks: The current list of locks in this chat.
+× /lock <type>: Lock items of a certain type (not available in private).
+× /unlock <type>: Unlock items of a certain type (not available in private).
+× /locks: The current list of locks in this chat.
  
 Locks can be used to restrict a group's users.
 eg:
@@ -571,11 +571,11 @@ Locking urls will auto-delete all messages with urls, locking stickers will rest
 non-admin users from sending stickers, etc.
 Locking bots will stop non-admins from adding bots to the chat.
 
-Note: 
+*Note:* 
 • Unlocking permission *info* will allow members (non-admins) to change the group information, such as the 
-description or the group name 
+description or the group name.
 • Unlocking permission *pin* will allow members (non-admins) to pinned a message in a 
-group 
+group.
 """
 
 __mod_name__ = "Locks"

@@ -41,7 +41,6 @@ from zeldris.modules.helper_funcs.chat_status import (
     user_admin_no_reply,
     user_admin,
     can_restrict,
-    can_delete,
 )
 from zeldris.modules.helper_funcs.extraction import (
     extract_text,
@@ -60,7 +59,7 @@ CURRENT_WARNING_FILTER_STRING = "<b>Current warning filters in this chat:</b>\n"
 
 # Not async
 def warn(
-    user: User, chat: Chat, reason: str, message: Message, warner: User = None
+        user: User, chat: Chat, reason: str, message: Message, warner: User = None
 ) -> str:
     if is_user_admin(chat, user.id):
         message.reply_text("Damn admins, can't even be warned!")
@@ -159,7 +158,7 @@ def warn(
 @user_admin_no_reply
 @bot_admin
 @loggable
-def button(update, context):
+def button(update, _):
     query = update.callback_query  # type: Optional[CallbackQuery]
     user = update.effective_user  # type: Optional[User]
     match = re.match(r"rm_warn\((.+?)\)", query.data)
@@ -209,8 +208,8 @@ def warn_user(update, context):
 
     if user_id:
         if (
-            message.reply_to_message
-            and message.reply_to_message.from_user.id == user_id
+                message.reply_to_message
+                and message.reply_to_message.from_user.id == user_id
         ):
             return warn(
                 message.reply_to_message.from_user,
@@ -317,7 +316,7 @@ def warns(update, context):
 
 # Dispatcher handler stop - do not async
 @user_admin
-def add_warn_filter(update, context):
+def add_warn_filter(update, _):
     chat = update.effective_chat  # type: Optional[Chat]
     msg = update.effective_message  # type: Optional[Message]
 
@@ -349,7 +348,7 @@ def add_warn_filter(update, context):
 
 
 @user_admin
-def remove_warn_filter(update, context):
+def remove_warn_filter(update, _):
     chat = update.effective_chat  # type: Optional[Chat]
     msg = update.effective_message  # type: Optional[Message]
 
@@ -384,7 +383,7 @@ def remove_warn_filter(update, context):
     )
 
 
-def list_warn_filters(update, context):
+def list_warn_filters(update, _):
     chat = update.effective_chat  # type: Optional[Chat]
     all_handlers = sql.get_chat_warn_triggers(chat.id)
 
@@ -406,7 +405,7 @@ def list_warn_filters(update, context):
 
 
 @loggable
-def reply_filter(update, context) -> str:
+def reply_filter(update, _) -> str:
     chat = update.effective_chat  # type: Optional[Chat]
     message = update.effective_message  # type: Optional[Message]
 
@@ -539,27 +538,29 @@ def __chat_settings__(chat_id, user_id):
 
 
 __help__ = """
- If you're looking for a way to automatically warn users when they say certain things, use the /addwarn command.
- An example of setting multiword warns filter:
- × `/addwarn "very angry" This is an angry user`
- This will automatically warn a user that triggers "very angry", with reason of 'This is an angry user'.
- An example of how to set a new multiword warning:
-`/warn @user Because warning is fun`
+If you're looking for a way to automatically warn users when they say certain things, use the /addwarn command.
+An example of setting multiword warns filter:
+× `/addwarn "very angry" This is an angry user`
+This will automatically warn a user that triggers "very angry", with reason of 'This is an angry user'.
+An example of how to set a new multiword warning:
+/warn @user Because warning is fun`
 
- × /warns <userhandle>: Gets a user's number, and reason, of warnings.
- × /warnlist: Lists all current warning filters
+× /warns <userhandle>: Gets a user's number, and reason, of warnings.
+× /warnlist: Lists all current warning filters.
 
 *Admin only:*
- × /warn <userhandle>: Warns a user. After 3 warns (as default), the user will be banned from the group. Can also be used as a reply.
- × /dwarn <userhandle>: Warns a user and delete the message. After 3 warns (as default), the user will be banned from the group. Can also be used as a reply
- × /resetwarn <userhandle>: Resets the warnings for a user. Can also be used as a reply.
- × /rmwarn <userhandle>: Removes latest warn for a user. It also can be used as reply.
- × /unwarn <userhandle>: Same as /rmwarn
- × /addwarn <keyword> <reply message>: Sets a warning filter on a certain keyword. If you want your keyword to \
+× /warn <userhandle>: Warns a user. After 3 warns (as default), the user will be banned from the group. \
+Can also be used as a reply.
+× /dwarn <userhandle>: Warns a user and delete the message. After 3 warns (as default), \
+the user will be banned from the group. Can also be used as a reply
+× /resetwarn <userhandle>: Resets the warnings for a user. Can also be used as a reply.
+× /rmwarn <userhandle>: Removes latest warn for a user. It also can be used as reply.
+× /unwarn <userhandle>: Same as /rmwarn
+× /addwarn <keyword> <reply message>: Sets a warning filter on a certain keyword. If you want your keyword to \
 be a sentence, encompass it with quotes, as such: `/addwarn "very angry" This is an angry user`. 
- × /nowarn <keyword>: Stops a warning filter
- × /warnlimit <num>: Sets the warning limit
- × /strongwarn <on/yes/off/no>: If set to on, exceeding the warn limit will result in a ban. Else, will just kick.
+× /nowarn <keyword>: Stops a warning filter
+× /warnlimit <num>: Sets the warning limit
+× /strongwarn <on/yes/off/no>: If set to on, exceeding the warn limit will result in a ban. Else, will just kick.
 """
 
 __mod_name__ = "Warnings"

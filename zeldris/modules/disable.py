@@ -16,12 +16,9 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 import importlib
-
 from typing import Union
+
 from future.utils import string_types
-from zeldris import dispatcher
-from zeldris.modules.helper_funcs.handlers import CMD_STARTERS, SpamChecker
-from zeldris.modules.helper_funcs.misc import is_module_loaded
 from telegram import ParseMode, Update
 from telegram.ext import (
     CallbackContext,
@@ -31,6 +28,10 @@ from telegram.ext import (
     RegexHandler,
 )
 from telegram.utils.helpers import escape_markdown
+
+from zeldris import dispatcher
+from zeldris.modules.helper_funcs.handlers import CMD_STARTERS, SpamChecker
+from zeldris.modules.helper_funcs.misc import is_module_loaded
 
 FILENAME = __name__.rsplit(".", 1)[-1]
 
@@ -43,11 +44,11 @@ if is_module_loaded(FILENAME):
         user_admin,
     )
     from zeldris.modules.sql import disable_sql as sql
-    from telegram.ext.dispatcher import run_async
 
     DISABLE_CMDS = []
     DISABLE_OTHER = []
     ADMIN_CMDS = []
+
 
     class DisableAbleCommandHandler(CommandHandler):
         def __init__(self, command, callback, admin_ok=False, **kwargs):
@@ -70,15 +71,15 @@ if is_module_loaded(FILENAME):
             if message.text and len(message.text) > 1:
                 fst_word = message.text.split(None, 1)[0]
                 if len(fst_word) > 1 and any(
-                    fst_word.startswith(start) for start in CMD_STARTERS
+                        fst_word.startswith(start) for start in CMD_STARTERS
                 ):
                     args = message.text.split()[1:]
                     command = fst_word[1:].split("@")
                     command.append(message.bot.username)
 
                     if not (
-                        command[0].lower() in self.command
-                        and command[1].lower() == message.bot.username.lower()
+                            command[0].lower() in self.command
+                            and command[1].lower() == message.bot.username.lower()
                     ):
                         return None
                     chat = update.effective_chat
@@ -100,6 +101,7 @@ if is_module_loaded(FILENAME):
 
                         return args, filter_result
                     return False
+
 
     class DisableAbleMessageHandler(MessageHandler):
         def __init__(self, filters, callback, friendly, **kwargs):
@@ -128,6 +130,7 @@ if is_module_loaded(FILENAME):
                     return False
                 return args, filter_result
 
+
     class DisableAbleRegexHandler(RegexHandler):
         def __init__(self, pattern, callback, friendly="", filters=None, **kwargs):
             super().__init__(pattern, callback, filters, **kwargs)
@@ -138,6 +141,7 @@ if is_module_loaded(FILENAME):
             chat = update.effective_chat
             if super().check_update(update):
                 return not sql.is_command_disabled(chat.id, self.friendly)
+
 
     @connection_status
     @user_admin
@@ -160,6 +164,7 @@ if is_module_loaded(FILENAME):
 
         else:
             update.effective_message.reply_text("What should I disable?")
+
 
     @connection_status
     @user_admin
@@ -213,6 +218,7 @@ if is_module_loaded(FILENAME):
         else:
             update.effective_message.reply_text("What should I disable?")
 
+
     @connection_status
     @user_admin
     def enable(update: Update, context: CallbackContext):
@@ -233,6 +239,7 @@ if is_module_loaded(FILENAME):
 
         else:
             update.effective_message.reply_text("What should I enable?")
+
 
     @connection_status
     @user_admin
@@ -286,6 +293,7 @@ if is_module_loaded(FILENAME):
         else:
             update.effective_message.reply_text("What should I enable?")
 
+
     @connection_status
     @user_admin
     def list_cmds(update: Update, context: CallbackContext):
@@ -302,6 +310,7 @@ if is_module_loaded(FILENAME):
         else:
             update.effective_message.reply_text("No commands can be disabled.")
 
+
     # do not async
     def build_curr_disabled(chat_id: Union[str, int]) -> str:
         disabled = sql.get_all_disabled(chat_id)
@@ -311,6 +320,7 @@ if is_module_loaded(FILENAME):
         result = "".join(" - `{}`\n".format(escape_markdown(cmd)) for cmd in disabled)
         return "The following commands are currently restricted:\n{}".format(result)
 
+
     @connection_status
     def commands(update: Update, context: CallbackContext):
         chat = update.effective_chat
@@ -319,14 +329,18 @@ if is_module_loaded(FILENAME):
             parse_mode=ParseMode.MARKDOWN,
         )
 
+
     def __stats__():
         return f"× {sql.num_disabled()} disabled items, across {sql.num_chats()} chats."
+
 
     def __migrate__(old_chat_id, new_chat_id):
         sql.migrate_chat(old_chat_id, new_chat_id)
 
+
     def __chat_settings__(chat_id, user_id):
         return build_curr_disabled(chat_id)
+
 
     DISABLE_HANDLER = CommandHandler("disable", disable, run_async=True)
     DISABLE_MODULE_HANDLER = CommandHandler(
@@ -353,13 +367,14 @@ left unused; to avoid spam and abuse.
 This allows you to disable some commonly used commands, so noone can use them. \
 It'll also allow you to autodelete them, stopping people from bluetexting.
 
- × /cmds: Check the current status of disabled commands
+× /cmds: Check the current status of disabled commands.
+
 *Admin only:*
- × /enable <cmd name>: Enable that command
- × /disable <cmd name>: Disable that command
- ×/enablemodule <module name>: enable all commands in that module
- ×/disablemodule <module name>: disable all commands in that module
- × /listcmds: List all possible disablable commands
+× /enable <cmd name>: Enable that command.
+× /disable <cmd name>: Disable that command.
+×/enablemodule <module name>: enable all commands in that module.
+×/disablemodule <module name>: disable all commands in that module.
+× /listcmds: List all possible disablable commands.
     """
 
     __mod_name__ = "Disabling"

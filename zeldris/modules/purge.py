@@ -28,7 +28,7 @@ from zeldris import client, DEV_USERS
 async def is_administrator(user_id: int, message):
     admin = False
     async for user in client.iter_participants(
-        message.chat_id, filter=ChannelParticipantsAdmins
+            message.chat_id, filter=ChannelParticipantsAdmins
     ):
         if user_id == user.id or user_id in DEV_USERS:
             admin = True
@@ -101,8 +101,8 @@ Deleting messages made easy with this command. Bot purges \
 messages all together or individually.
 
 *Admin only:*
- × /del: Deletes the message you replied to
- × /purge: Deletes all messages between this and the replied to message.
+× /del: Deletes the message you replied to
+× /purge: Deletes all messages between this and the replied to message.
 """
 
 __mod_name__ = "Purges"

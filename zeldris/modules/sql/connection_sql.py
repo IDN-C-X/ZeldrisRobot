@@ -141,8 +141,8 @@ def add_history_conn(user_id, chat_id, chat_name):
         if HISTORY_CONNECT.get(int(user_id)):
             counting = (
                 SESSION.query(ConnectionHistory.user_id)
-                .filter(ConnectionHistory.user_id == str(user_id))
-                .count()
+                    .filter(ConnectionHistory.user_id == str(user_id))
+                    .count()
             )
             getchat_id = {
                 HISTORY_CONNECT[int(user_id)][x]["chat_id"]: x
