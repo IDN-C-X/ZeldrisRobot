@@ -543,7 +543,7 @@ An example of setting multiword warns filter:
 × `/addwarn "very angry" This is an angry user`
 This will automatically warn a user that triggers "very angry", with reason of 'This is an angry user'.
 An example of how to set a new multiword warning:
-/warn @user Because warning is fun`
+`/warn @user Because warning is fun`
 
 × /warns <userhandle>: Gets a user's number, and reason, of warnings.
 × /warnlist: Lists all current warning filters.
