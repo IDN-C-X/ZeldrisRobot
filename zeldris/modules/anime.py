@@ -202,6 +202,7 @@ def airing(update: Update, _):
         url,
         json={"query": airing_query, "variables": variables},
     ).json()["data"]["Media"]
+    info = response.get("siteUrl")
     msg = f"*Name*: *{response['title']['romaji']}*(`{response['title']['native']}`)\n*ID*: `{response['id']}`"
     image = info.replace("anilist.co/anime/", "img.anili.st/media/")
     if response["nextAiringEpisode"]:
