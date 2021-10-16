@@ -87,7 +87,26 @@ def promote(update, context):
         can_restrict_members=bot_member.can_restrict_members,
         can_pin_messages=bot_member.can_pin_messages,
     )
-
+    
+    if " " in message.text:
+        title = message.text.split(" ", 1)[1]
+        if len(title) > 16:
+            message.reply_text(
+                "The title length is longer than 16 characters.\nTruncating it to 16 characters."
+            )
+        
+        try:
+            bot.setChatAdministratorCustomTitle(chat.id, user_id, title)
+            message.reply_text(
+                "Sucessfully set title for <b>{}</b> to <code>{}</code>!".format(
+                user_member.user.first_name or user_id, title[:16]
+                ),
+                parse_mode=ParseMode.HTML,
+            )
+        
+        except BadRequest:
+            message.reply_text("I can't set custom title for admins that I didn't promote!")
+    
     message.reply_text("Promoted🧡")
     return (
         "<b>{}:</b>"
@@ -147,7 +166,26 @@ def fullpromote(update, context):
         can_pin_messages=bot_member.can_pin_messages,
         can_manage_voice_chats=bot_member.can_manage_voice_chats,
     )
-
+    
+    if " " in message.text:
+        title = message.text.split(" ", 1)[1]
+        if len(title) > 16:
+            message.reply_text(
+                "The title length is longer than 16 characters.\nTruncating it to 16 characters."
+            )
+        
+        try:
+            bot.setChatAdministratorCustomTitle(chat.id, user_id, title)
+            message.reply_text(
+                "Sucessfully set title for <b>{}</b> to <code>{}</code>!".format(
+                user_member.user.first_name or user_id, title[:16]
+                ),
+                parse_mode=ParseMode.HTML,
+            )
+        
+        except BadRequest:
+            message.reply_text("I can't set custom title for admins that I didn't promote!")
+    
     message.reply_text("Full Promoted🧡")
     return (
         "<b>{}:</b>"
