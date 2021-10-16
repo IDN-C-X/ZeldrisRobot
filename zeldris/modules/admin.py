@@ -97,7 +97,7 @@ def promote(update, context):
             )
         
         try:
-            bot.setChatAdministratorCustomTitle(chat.id, user
+            bot.setChatAdministratorCustomTitle(chat.id, user_id, title)
         
         except BadRequest:
             message.reply_text("I can't set custom title for admins that I didn't promote!")
@@ -176,7 +176,7 @@ def fullpromote(update, context):
             )
         
         try:
-            bot.setChatAdministratorCustomTitle(chat.id, user
+            bot.setChatAdministratorCustomTitle(chat.id, user_id, title)
         
         except BadRequest:
             message.reply_text("I can't set custom title for admins that I didn't promote!")
