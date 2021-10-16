@@ -50,7 +50,7 @@ def clean_blue_text_must_click(update: Update, context: CallbackContext):
         fst_word = message.text.strip().split(None, 1)[0]
 
         if len(fst_word) > 1 and any(
-                fst_word.startswith(start) for start in CMD_STARTERS
+            fst_word.startswith(start) for start in CMD_STARTERS
         ):
 
             command = fst_word[1:].split("@")
@@ -94,7 +94,8 @@ def set_blue_text_must_click(update: Update, context: CallbackContext):
         clean_status = sql.is_enabled(chat.id)
         clean_status = "Enabled" if clean_status else "Disabled"
         reply = "Bluetext cleaning for <b>{}</b> : <b>{}</b>".format(
-            html.escape(chat.title), clean_status,
+            html.escape(chat.title),
+            clean_status,
         )
         message.reply_text(reply, parse_mode=ParseMode.HTML)
 
@@ -224,18 +225,30 @@ Blue text cleaner removed any made up commands that people send in your chat.
 × /ungignoreblue <word>: Remove said command from global cleaning list.
 """
 
-SET_CLEAN_BLUE_TEXT_HANDLER = CommandHandler("cleanblue", set_blue_text_must_click, run_async=True)
-ADD_CLEAN_BLUE_TEXT_HANDLER = CommandHandler("ignoreblue", add_bluetext_ignore, run_async=True)
-REMOVE_CLEAN_BLUE_TEXT_HANDLER = CommandHandler("unignoreblue", remove_bluetext_ignore, run_async=True)
+SET_CLEAN_BLUE_TEXT_HANDLER = CommandHandler(
+    "cleanblue", set_blue_text_must_click, run_async=True
+)
+ADD_CLEAN_BLUE_TEXT_HANDLER = CommandHandler(
+    "ignoreblue", add_bluetext_ignore, run_async=True
+)
+REMOVE_CLEAN_BLUE_TEXT_HANDLER = CommandHandler(
+    "unignoreblue", remove_bluetext_ignore, run_async=True
+)
 ADD_CLEAN_BLUE_TEXT_GLOBAL_HANDLER = CommandHandler(
-    "gignoreblue", add_bluetext_ignore_global, run_async=True,
+    "gignoreblue",
+    add_bluetext_ignore_global,
+    run_async=True,
 )
 REMOVE_CLEAN_BLUE_TEXT_GLOBAL_HANDLER = CommandHandler(
-    "ungignoreblue", remove_bluetext_ignore_global, run_async=True,
+    "ungignoreblue",
+    remove_bluetext_ignore_global,
+    run_async=True,
 )
 LIST_CLEAN_BLUE_TEXT_HANDLER = CommandHandler("listblue", bluetext_ignore_list)
 CLEAN_BLUE_TEXT_HANDLER = MessageHandler(
-    Filters.command & Filters.group, clean_blue_text_must_click, run_async=True,
+    Filters.command & Filters.group,
+    clean_blue_text_must_click,
+    run_async=True,
 )
 
 dispatcher.add_handler(SET_CLEAN_BLUE_TEXT_HANDLER)
