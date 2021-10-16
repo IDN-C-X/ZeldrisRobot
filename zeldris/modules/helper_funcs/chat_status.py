@@ -19,8 +19,9 @@ from functools import wraps
 from threading import RLock
 
 from cachetools import TTLCache
-from telegram import Chat, ChatMember
+from telegram import Chat, ChatMember, ParseMode, Update
 from telegram.error import BadRequest, Unauthorized
+from telegram.ext import CallbackContext
 
 from zeldris import (
     DEL_CMDS,
