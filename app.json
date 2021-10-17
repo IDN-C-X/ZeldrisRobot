@@ -10,21 +10,26 @@
     "Zeldris"
   ],
   "repository": "https://github.com/IDN-C-X/ZeldrisRobot.git",
+  "website": "https://idn-c-x.github.io",
+  "success_url": "t.me/IDNCoder",
   "addons": [
-    {
-      "options": {
-        "version": "12"
-      },
-      "plan": "heroku-postgresql"
-    }
+   {
+     "options": {
+       "version": "12"
+     },
+     "plan": "heroku-postgresql"
+   }
   ],
   "buildpacks": [
-    {
-      "url": "https://github.com/heroku/heroku-buildpack-python"
-    },
-    {
-      "url": "https://github.com/jonathanong/heroku-buildpack-ffmpeg-latest"
-    }
+   {
+     "url": "https://github.com/heroku/heroku-buildpack-python"
+   },
+   {
+     "url": "https://github.com/jonathanong/heroku-buildpack-ffmpeg-latest"
+   },
+   {
+     "url": "heroku/python"
+   }
   ],
   "env": {
     "TOKEN": {
@@ -149,5 +154,6 @@
       "description": "some group chat that your bot is a member of",
       "required": "True",
       "value": "-1007263"
+    }
   }
 }
