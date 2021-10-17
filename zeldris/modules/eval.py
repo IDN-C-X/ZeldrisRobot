@@ -62,8 +62,8 @@ def send(msg, bot, update):
         LOGGER.info(f"OUT: '{msg}'")
         bot.send_message(
             chat_id=update.effective_chat.id,
-            text=f"**Result**:\n`{msg}`",
-            parse_mode=ParseMode.MARKDOWN,
+            text=f"<b>Result</b>:\n<code>{msg}</code>",
+            parse_mode=ParseMode.HTML,
         )
 
 
