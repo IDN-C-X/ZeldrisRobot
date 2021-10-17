@@ -62,7 +62,7 @@ def send(msg, bot, update):
         LOGGER.info(f"OUT: '{msg}'")
         bot.send_message(
             chat_id=update.effective_chat.id,
-            text=f"`{msg}`",
+            text=f"**Result**:\n`{msg}`",
             parse_mode=ParseMode.MARKDOWN,
         )
 
@@ -70,7 +70,7 @@ def send(msg, bot, update):
 @dev_plus
 def evaluate(update: Update, context: CallbackContext):
     bot = context.bot
-    send("**Result**:\n" + do(eval, bot, update), bot, update)
+    send(do(eval, bot, update), bot, update)
 
 
 @dev_plus
