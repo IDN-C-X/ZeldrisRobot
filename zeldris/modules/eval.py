@@ -70,7 +70,7 @@ def send(msg, bot, update):
 @dev_plus
 def evaluate(update: Update, context: CallbackContext):
     bot = context.bot
-    send(do(eval, bot, update), bot, update)
+    send("**Result**:\n" + do(eval, bot, update), bot, update)
 
 
 @dev_plus
