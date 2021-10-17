@@ -21,7 +21,13 @@ import os
 import requests
 from gpytranslate import SyncTranslator
 from gtts import gTTS
-from telegram import ParseMode, Update, ChatAction, InlineKeyboardButton, InlineKeyboardMarkup
+from telegram import (
+    ParseMode,
+    Update,
+    ChatAction,
+    InlineKeyboardButton,
+    InlineKeyboardMarkup,
+)
 from telegram.ext import CallbackContext
 
 from zeldris import dispatcher
@@ -149,7 +155,15 @@ use `/tr <lang code>` for some other language!
 
 __mod_name__ = "Translate"
 
-dispatcher.add_handler(DisableAbleCommandHandler(["tr", "tl"], translate, pass_args=True, run_async=True))
-dispatcher.add_handler(DisableAbleCommandHandler(["langs", "lang"], languages, run_async=True))
-dispatcher.add_handler(DisableAbleCommandHandler("tts", gtts, pass_args=True, run_async=True))
-dispatcher.add_handler(DisableAbleCommandHandler("splcheck", spellcheck, run_async=True))
+dispatcher.add_handler(
+    DisableAbleCommandHandler(["tr", "tl"], translate, pass_args=True, run_async=True)
+)
+dispatcher.add_handler(
+    DisableAbleCommandHandler(["langs", "lang"], languages, run_async=True)
+)
+dispatcher.add_handler(
+    DisableAbleCommandHandler("tts", gtts, pass_args=True, run_async=True)
+)
+dispatcher.add_handler(
+    DisableAbleCommandHandler("splcheck", spellcheck, run_async=True)
+)

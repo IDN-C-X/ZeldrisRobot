@@ -218,7 +218,10 @@ def echo(update, _):
         )
     else:
         message.reply_text(
-            args[1], quote=False, parse_mode=ParseMode.MARKDOWN, disable_web_page_preview=True
+            args[1],
+            quote=False,
+            parse_mode=ParseMode.MARKDOWN,
+            disable_web_page_preview=True,
         )
     message.delete()
 
