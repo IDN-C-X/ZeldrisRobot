@@ -1,6 +1,6 @@
 import threading
 
-from sqlalchemy import Column, UnicodeText, Boolean
+from sqlalchemy import Boolean, Column, UnicodeText
 
 from zeldris.modules.sql import BASE, SESSION
 
@@ -51,20 +51,12 @@ GLOBAL_IGNORE_COMMANDS = set()
 def set_cleanbt(chat_id, is_enable):
     with CLEANER_CHAT_SETTINGS:
         curr = SESSION.query(CleanerBlueTextChatSettings).get(str(chat_id))
+        if curr:
+            SESSION.delete(curr)
 
-        if not curr:
-            curr = CleanerBlueTextChatSettings(str(chat_id), is_enable)
-        else:
-            curr.is_enabled = is_enable
+        newcurr = CleanerBlueTextChatSettings(str(chat_id), is_enable)
 
-        if str(chat_id) not in CLEANER_CHATS:
-            CLEANER_CHATS.setdefault(
-                str(chat_id), {"setting": False, "commands": set()}
-            )
-
-        CLEANER_CHATS[str(chat_id)]["setting"] = is_enable
-
-        SESSION.add(curr)
+        SESSION.add(newcurr)
         SESSION.commit()
 
 
@@ -77,7 +69,8 @@ def chat_ignore_command(chat_id, ignore):
 
             if str(chat_id) not in CLEANER_CHATS:
                 CLEANER_CHATS.setdefault(
-                    str(chat_id), {"setting": False, "commands": set()}
+                    str(chat_id),
+                    {"setting": False, "commands": set()},
                 )
 
             CLEANER_CHATS[str(chat_id)]["commands"].add(ignore)
@@ -99,7 +92,8 @@ def chat_unignore_command(chat_id, unignore):
 
             if str(chat_id) not in CLEANER_CHATS:
                 CLEANER_CHATS.setdefault(
-                    str(chat_id), {"setting": False, "commands": set()}
+                    str(chat_id),
+                    {"setting": False, "commands": set()},
                 )
             if unignore in CLEANER_CHATS.get(str(chat_id)).get("commands"):
                 CLEANER_CHATS[str(chat_id)]["commands"].remove(unignore)
@@ -150,19 +144,22 @@ def is_command_ignored(chat_id, command):
     if command.lower() in GLOBAL_IGNORE_COMMANDS:
         return True
 
-    if str(chat_id) in CLEANER_CHATS:
-        if command.lower() in CLEANER_CHATS.get(str(chat_id)).get("commands"):
-            return True
+    if str(chat_id) in CLEANER_CHATS and command.lower() in CLEANER_CHATS.get(
+        str(chat_id)
+    ).get("commands"):
+        return True
 
     return False
 
 
 def is_enabled(chat_id):
-    if str(chat_id) in CLEANER_CHATS:
-        settings = CLEANER_CHATS.get(str(chat_id)).get("setting")
-        return settings
-
-    return False
+    try:
+        resultcurr = SESSION.query(CleanerBlueTextChatSettings).get(str(chat_id))
+        if resultcurr:
+            return resultcurr.is_enable
+        return False  # default
+    finally:
+        SESSION.close()
 
 
 def get_all_ignored(chat_id):
