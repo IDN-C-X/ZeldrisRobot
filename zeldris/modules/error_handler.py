@@ -91,7 +91,7 @@ def error_callback(update: Update, context: CallbackContext):
                 MESSAGE_DUMP,
                 open("error.txt", "rb"),
                 caption=f"#{context.error.identifier}\n<b>Your enemy's make an error for you, demon king:"
-                        f"</b>\n<code>{e}</code>",
+                f"</b>\n<code>{e}</code>",
                 parse_mode="html",
             )
             return
@@ -100,7 +100,7 @@ def error_callback(update: Update, context: CallbackContext):
         context.bot.send_message(
             MESSAGE_DUMP,
             text=f"#{context.error.identifier}\n<b>Your enemy's make an error for you, demon king:"
-                 f"</b>\n<code>{e}</code>",
+            f"</b>\n<code>{e}</code>",
             reply_markup=InlineKeyboardMarkup(
                 [[InlineKeyboardButton("Cute Error", url=url)]],
             ),
