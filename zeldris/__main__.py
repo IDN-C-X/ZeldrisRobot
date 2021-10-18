@@ -15,12 +15,9 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program. If not, see <http://www.gnu.org/licenses/>..
 
-import html
 import importlib
-import json
 import re
 import time
-import traceback
 from sys import argv
 from typing import Optional
 
@@ -50,7 +47,6 @@ from zeldris import (
     BLACKLIST_CHATS,
     WHITELIST_CHATS,
 )
-
 # needed to dynamically load modules
 # NOTE: Module order is not guaranteed, specify that in the config file!
 from zeldris.modules import ALL_MODULES
@@ -272,34 +268,25 @@ def start(update: Update, context: CallbackContext):
         )
 
 
-def error_handler(update, context):
-    """Log the error and send a telegram message to notify the developer."""
-    # Log the error before we do anything else, so we can see it even if something breaks.
-    LOGGER.error(msg="Exception while handling an update:", exc_info=context.error)
-
-    # traceback.format_exception returns the usual python message about an exception, but as a
-    # list of strings rather than a single string, so we have to join them together.
-    tb_list = traceback.format_exception(
-        None, context.error, context.error.__traceback__
-    )
-    tb = "".join(tb_list)
-
-    # Build the message with some markup and additional information about what happened.
-    message = (
-        "An exception was raised while handling an update\n"
-        "<pre>update = {}</pre>\n\n"
-        "<pre>{}</pre>"
-    ).format(
-        html.escape(json.dumps(update.to_dict(), indent=2, ensure_ascii=False)),
-        html.escape(tb),
-    )
-
-    if len(message) >= 4096:
-        message = message[:4096]
-    # Finally, send the message
-    context.bot.send_message(
-        chat_id=MESSAGE_DUMP, text=message, parse_mode=ParseMode.HTML
-    )
+def error_handler(_, context):
+    """for test purposes"""
+    try:
+        raise context.error
+    except (Unauthorized, BadRequest):
+        pass
+        # remove update.message.chat_id from conversation list
+    except TimedOut:
+        pass
+        # handle slow connection problems
+    except NetworkError:
+        pass
+        # handle other connection problems
+    except ChatMigrated:
+        pass
+        # the chat_id of a group has changed, use e.new_chat_id instead
+    except TelegramError:
+        pass
+        # handle all other telegram related errors
 
 
 def help_button(update, context):
@@ -315,10 +302,10 @@ def help_button(update, context):
         if mod_match:
             module = mod_match.group(1)
             text = (
-                "Here is the help for the *{}* module:\n".format(
-                    HELPABLE[module].__mod_name__
-                )
-                + HELPABLE[module].__help__
+                    "Here is the help for the *{}* module:\n".format(
+                        HELPABLE[module].__mod_name__
+                    )
+                    + HELPABLE[module].__help__
             )
             query.message.edit_text(
                 text=text,
@@ -433,10 +420,10 @@ def get_help(update: Update, context: CallbackContext):
     if len(args) >= 2 and any(args[1].lower() == x for x in HELPABLE):
         module = args[1].lower()
         text = (
-            "Here is the available help for the *{}* module:\n".format(
-                HELPABLE[module].__mod_name__
-            )
-            + HELPABLE[module].__help__
+                "Here is the available help for the *{}* module:\n".format(
+                    HELPABLE[module].__mod_name__
+                )
+                + HELPABLE[module].__help__
         )
         send_help(
             chat.id,
@@ -554,7 +541,7 @@ def settings_button(update: Update, context: CallbackContext):
             chat = bot.get_chat(chat_id)
             query.message.edit_text(
                 text="Hi there! There are quite a few settings for {} - go ahead and pick what "
-                "you're interested in.".format(escape_markdown(chat.title)),
+                     "you're interested in.".format(escape_markdown(chat.title)),
                 parse_mode=ParseMode.MARKDOWN,
                 reply_markup=InlineKeyboardMarkup(
                     paginate_modules(0, CHAT_SETTINGS, "stngs", chat=chat_id)
