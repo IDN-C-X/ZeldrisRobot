@@ -246,7 +246,7 @@ REMOVE_CLEAN_BLUE_TEXT_GLOBAL_HANDLER = CommandHandler(
 )
 LIST_CLEAN_BLUE_TEXT_HANDLER = CommandHandler("listblue", bluetext_ignore_list)
 CLEAN_BLUE_TEXT_HANDLER = MessageHandler(
-    Filters.command & Filters.group,
+    Filters.command & Filters.chat_type.groups,
     clean_blue_text_must_click,
     run_async=True,
 )
