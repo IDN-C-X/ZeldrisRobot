@@ -80,8 +80,7 @@ def error_callback(update: Update, context: CallbackContext):
             tb,
         )
         key = requests.post(
-            "https://hastebin.com/documents",
-            data=pretty_message.encode("UTF-8"),
+            "https://nekobin.com/api/documents", json={"content": pretty_message}
         ).json()
         e = html.escape(f"{context.error}")
         if not key.get("key"):
@@ -95,14 +94,14 @@ def error_callback(update: Update, context: CallbackContext):
                 parse_mode="html",
             )
             return
-        key = key.get("key")
-        url = f"https://hastebin.com/{key}"
+        key = key.get("result").get("key")
+        url = f"https://nekobin.com/{key}.py"
         context.bot.send_message(
             MESSAGE_DUMP,
             text=f"#{context.error.identifier}\n<b>Your enemy's make an error for you, demon king:"
             f"</b>\n<code>{e}</code>",
             reply_markup=InlineKeyboardMarkup(
-                [[InlineKeyboardButton("Cute Error", url=url)]],
+                [[InlineKeyboardButton("Cursed Errors", url=url)]],
             ),
             parse_mode="html",
         )
