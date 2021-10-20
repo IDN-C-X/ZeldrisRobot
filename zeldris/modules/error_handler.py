@@ -45,7 +45,7 @@ def error_callback(update: Update, context: CallbackContext):
         try:
             stringio = io.StringIO()
             pretty_errors.output_stderr = stringio
-            pretty_errors.excepthook(
+            output = pretty_errors.excepthook(
                 type(context.error),
                 context.error,
                 context.error.__traceback__,
@@ -83,7 +83,7 @@ def error_callback(update: Update, context: CallbackContext):
             "https://nekobin.com/api/documents", json={"content": pretty_message}
         ).json()
         e = html.escape(f"{context.error}")
-        if not key.get("key"):
+        if not key.get("result", {}).get("key"):
             with open("error.txt", "w+") as f:
                 f.write(pretty_message)
             context.bot.send_document(
