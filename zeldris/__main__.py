@@ -87,7 +87,7 @@ ZELDRIS_IMG = "https://telegra.ph/file/1fa00785f30375c0c1b50.jpg"
 
 PM_START_TEXT = """
 Hey there! my name is *{}*. 
-A modular group management bot with useful features[.](https://telegra.ph/file/fed9ba09e9add9b197c21.png)
+A modular group management bot with useful features. [ㅤ](https://telegra.ph/file/fed9ba09e9add9b197c21.png)
 
 ◑ *Uptime:* `{}`
 ◑ `{}` *Users, across* `{}` *chats.*
