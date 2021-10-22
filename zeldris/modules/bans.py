@@ -263,7 +263,7 @@ def kick(update, context):
     user_id, reason = extract_user_and_text(message, args)
 
     if not user_id:
-        message.reply_text("Dude! atleast refer some user to ban...")
+        message.reply_text("Dude! at least refer some user to kick...")
         return ""
 
     try:

@@ -21,7 +21,13 @@ import os
 import requests
 from gpytranslate import SyncTranslator
 from gtts import gTTS
-from telegram import ParseMode, Update, ChatAction
+from telegram import (
+    ParseMode,
+    Update,
+    ChatAction,
+    InlineKeyboardButton,
+    InlineKeyboardMarkup,
+)
 from telegram.ext import CallbackContext
 
 from zeldris import dispatcher
@@ -62,6 +68,24 @@ def translate(update: Update, context: CallbackContext) -> None:
     )
 
     bot.send_message(text=reply, chat_id=message.chat.id, parse_mode=ParseMode.HTML)
+
+
+@typing_action
+def languages(update: Update, context: CallbackContext) -> None:
+    update.effective_message.reply_text(
+        "Click on the button below to see the list of supported language codes.",
+        reply_markup=InlineKeyboardMarkup(
+            [
+                [
+                    InlineKeyboardButton(
+                        text="Language codes",
+                        url="https://telegra.ph/Lang-Codes-03-19-3",
+                    ),
+                ],
+            ],
+            disable_web_page_preview=True,
+        ),
+    )
 
 
 @send_action(ChatAction.RECORD_AUDIO)
@@ -123,7 +147,8 @@ def spellcheck(update, _):
 
 __help__ = """
 × /tr or /tl: To translate to your language, by default language is set to english,\
-use `/tr <lang code>` for some other language! 
+use `/tr <lang code>` for some other language!
+× /langs: List of all language code to translates!
 × /splcheck: As a reply to get grammar corrected text of gibberish message. 
 × /tts: To some message to convert it into audio format! 
 """
@@ -131,7 +156,14 @@ use `/tr <lang code>` for some other language!
 __mod_name__ = "Translate"
 
 dispatcher.add_handler(
-    DisableAbleCommandHandler(["tr", "tl"], translate, pass_args=True)
+    DisableAbleCommandHandler(["tr", "tl"], translate, pass_args=True, run_async=True)
 )
-dispatcher.add_handler(DisableAbleCommandHandler("tts", gtts, pass_args=True))
-dispatcher.add_handler(DisableAbleCommandHandler("splcheck", spellcheck))
+dispatcher.add_handler(
+    DisableAbleCommandHandler(["langs", "lang"], languages, run_async=True)
+)
+dispatcher.add_handler(
+    DisableAbleCommandHandler("tts", gtts, pass_args=True, run_async=True)
+)
+dispatcher.add_handler(
+    DisableAbleCommandHandler("splcheck", spellcheck, run_async=True)
+)

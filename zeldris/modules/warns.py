@@ -62,7 +62,7 @@ def warn(
     user: User, chat: Chat, reason: str, message: Message, warner: User = None
 ) -> str:
     if is_user_admin(chat, user.id):
-        message.reply_text("Damn admins, can't even be warned!")
+        # message.reply_text("Damn admins, can't even be warned!")
         return ""
 
     if warner:
@@ -543,7 +543,7 @@ An example of setting multiword warns filter:
 × `/addwarn "very angry" This is an angry user`
 This will automatically warn a user that triggers "very angry", with reason of 'This is an angry user'.
 An example of how to set a new multiword warning:
-/warn @user Because warning is fun`
+`/warn @user Because warning is fun`
 
 × /warns <userhandle>: Gets a user's number, and reason, of warnings.
 × /warnlist: Lists all current warning filters.
