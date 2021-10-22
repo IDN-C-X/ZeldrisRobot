@@ -176,8 +176,8 @@ An example of how to afk or brb:
 """
 
 AFK_HANDLER = DisableAbleCommandHandler(
-    "afk", 
-    afk, 
+    "afk",
+    afk,
     run_async=True,
 )
 AFK_REGEX_HANDLER = DisableAbleMessageHandler(
