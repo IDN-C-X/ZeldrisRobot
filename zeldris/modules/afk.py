@@ -84,8 +84,8 @@ def no_longer_afk(update, _):
                     firstname, end_afk_time
                 )
             )
-        except Exception:
-            return
+        except BaseException:
+            pass
 
 
 def reply_afk(update, context):
@@ -175,7 +175,11 @@ An example of how to afk or brb:
 `/afk dinner` or brb dinner.
 """
 
-AFK_HANDLER = DisableAbleCommandHandler("afk", afk, run_async=True)
+AFK_HANDLER = DisableAbleCommandHandler(
+    "afk", 
+    afk, 
+    run_async=True,
+)
 AFK_REGEX_HANDLER = DisableAbleMessageHandler(
     Filters.regex("(?i)^brb"),
     afk,
