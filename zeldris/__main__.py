@@ -248,7 +248,7 @@ def start(update: Update, context: CallbackContext):
     else:
         message.reply_photo(
             ZELDRIS_IMG,
-            caption="<b>Yes, im alive!\nHaven't sleep since</b>: <code>{}</code>".format(
+            caption="<b>Yes, I'm alive!\nHaven't sleep since</b>: <code>{}</code>".format(
                 uptime
             ),
             parse_mode=ParseMode.HTML,
