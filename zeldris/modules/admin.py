@@ -336,7 +336,13 @@ def unpin(update, context):
     try:
         bot.unpinChatMessage(chat.id)
     except BadRequest as excp:
-        if excp.message != "Chat_not_modified":
+        if excp.message == "Chat_not_modified":
+            pass
+        elif excp.message == "Message to unpin not found":
+            message.reply_text(
+                "I can't see pined message, Maybe already unpined, or pin Message to old 🙂"
+            )
+        else:
             raise
 
     return (
