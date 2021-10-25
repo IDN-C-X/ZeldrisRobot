@@ -59,7 +59,7 @@ def ban(update, context):
     user_id, reason = extract_user_and_text(message, args)
 
     if not user_id:
-        message.reply_text("Dude atleast refer some user to ban!")
+        message.reply_text("Dude at least refer some user to ban!")
         return ""
 
     try:
@@ -163,7 +163,7 @@ def temp_ban(update, context):
     user_id, reason = extract_user_and_text(message, args)
 
     if not user_id:
-        message.reply_text("Dude! atleast refer some user to ban...")
+        message.reply_text("Dude! at least refer some user to ban...")
         return ""
 
     try:

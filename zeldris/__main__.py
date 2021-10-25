@@ -23,7 +23,14 @@ from typing import Optional
 
 from telegram import Message, Chat, User, Update
 from telegram import ParseMode, InlineKeyboardMarkup, InlineKeyboardButton
-from telegram.error import BadRequest, Unauthorized
+from telegram.error import (
+    TelegramError,
+    Unauthorized,
+    BadRequest,
+    TimedOut,
+    ChatMigrated,
+    NetworkError,
+)
 from telegram.ext import (
     Filters,
     MessageHandler,
@@ -248,7 +255,7 @@ def start(update: Update, context: CallbackContext):
     else:
         message.reply_photo(
             ZELDRIS_IMG,
-            caption="<b>Yes, im alive!\nHaven't sleep since</b>: <code>{}</code>".format(
+            caption="<b>Yes, I'm alive!\nHaven't sleep since</b>: <code>{}</code>".format(
                 uptime
             ),
             parse_mode=ParseMode.HTML,
@@ -603,7 +610,10 @@ def migrate_chats(update, _):
 
     LOGGER.info("Migrating from %s, to %s", str(old_chat), str(new_chat))
     for mod in MIGRATEABLE:
-        mod.__migrate__(old_chat, new_chat)
+        try:
+            mod.__migrate__(old_chat, new_chat)
+        except BaseException:
+            pass  # Some sql modules make errors.
 
     LOGGER.info("Successfully migrated!")
     raise DispatcherHandlerStop

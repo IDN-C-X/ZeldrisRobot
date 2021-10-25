@@ -184,7 +184,7 @@ def fullpromote(update, context):
             )
 
     message.reply_text(
-        f"Full Promoted <b>{user_member.user.first_name or user_id}</b>"
+        f"Fully Promoted <b>{user_member.user.first_name or user_id}</b>"
         + f" with title <code>{title[:16]}</code>!",
         parse_mode=ParseMode.HTML,
     )
@@ -248,7 +248,10 @@ def demote(update, context):
             can_pin_messages=False,
             can_manage_voice_chats=False,
         )
-        message.reply_text("Successfully demoted!")
+        message.reply_text(
+            f"Successfully demoted <b>{user_member.user.first_name or user_id}</b>!",
+            parse_mode=ParseMode.HTML,
+        )
         return (
             "<b>{}:</b>"
             "\n#DEMOTED"
@@ -336,7 +339,13 @@ def unpin(update, context):
     try:
         bot.unpinChatMessage(chat.id)
     except BadRequest as excp:
-        if excp.message != "Chat_not_modified":
+        if excp.message == "Chat_not_modified":
+            pass
+        elif excp.message == "Message to unpin not found":
+            message.reply_text(
+                "I can't see pinned message, Maybe already unpinned, or pin message to old!"
+            )
+        else:
             raise
 
     return (
