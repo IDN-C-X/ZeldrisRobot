@@ -40,7 +40,7 @@ class Config(object):
     API_ID = None
 
     # RECOMMENDED
-    DATABASE_URL = "sqldbtype://username:pw@hostname:port/db_name"  # needed for any database modules
+    SQLALCHEMY_DATABASE_URI = "sqldbtype://username:pw@hostname:port/db_name"  # needed for any database modules
     MESSAGE_DUMP = None  # needed to make sure 'save from' messages persist
     REDIS_URL = "redis://something@nothing/anything:10002"  # needed for afk module, get from redislab
     LOAD = []
