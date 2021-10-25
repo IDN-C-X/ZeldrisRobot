@@ -54,7 +54,6 @@ This is because markdown parsing is done by iterating through a dict, which is o
 
 ## Deploy to Heroku
 
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/c74b747203294d52bbdb41c3ed9f1428)](https://app.codacy.com/gh/IDN-C-X/ZeldrisRobot?utm_source=github.com&utm_medium=referral&utm_content=IDN-C-X/ZeldrisRobot&utm_campaign=Badge_Grade_Settings)
 [![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/IDN-C-X/ZeldrisRobot/tree/master)
 
 ### Configuration
