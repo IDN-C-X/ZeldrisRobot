@@ -10,8 +10,7 @@
 <a href="https://t.me/IDNCoderX"> <img src="https://img.shields.io/badge/Support-Chat-blue?&logo=telegram" alt="Support Chat" /> </a>
 <a href="https://t.me/IDNCoder"> <img src="https://img.shields.io/badge/Update-Channel-blue?&logo=telegram" alt="Update Channel" /> </a><br>
 <a href="https://t.me/ZeldrisRobot"> <img src="https://img.shields.io/badge/Zeldris-Robot-blue?&logo=telegram" alt="Zeldris on Telegram" /> </a><br>
-<a href="https://www.codacy.com?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=IDN-C-X/ZeldrisRobot&amp;utm_campaign=Badge_Grade"> <img src="https://app.codacy.com/project/badge/Grade/f0985646bec24b6b9f5318d9a2a39b75" alt="Codacy" /> </a>
-<a href="https://www.codefactor.io/repository/github/idn-c-x/zeldrisrobot"><img src="https://www.codefactor.io/repository/github/idn-c-x/zeldrisrobot/badge" alt="CodeFactor" /></a><br>
+<a href="https://www.codacy.com/gh/IDN-C-X/ZeldrisRobot/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=IDN-C-X/ZeldrisRobot&amp;utm_campaign=Badge_Grade"><img src="https://app.codacy.com/project/badge/Grade/b290cfb10337403ba1e8d29fd474d39b"/></a><a href="https://www.codefactor.io/repository/github/idn-c-x/zeldrisrobot"><img src="https://www.codefactor.io/repository/github/idn-c-x/zeldrisrobot/badge" alt="CodeFactor" /></a><br>
 <a href="https://deepsource.io/gh/IDN-C-X/ZeldrisRobot/?ref=repository-badge"><img src="https://static.deepsource.io/deepsource-badge-light-mini.svg" alt="DeepSource"></a><br>
 <a href="https://python-telegram-bot.org"> <img src="https://img.shields.io/badge/PTB-13.5-brightgreen?&style=flat-round&logo=github" alt="Python Telegram Bot" /> </a>
 <a href="https://github.com/psf/black"><img alt="Code style: black" src="https://img.shields.io/badge/code%20style-black-000000.svg"></a><br>
