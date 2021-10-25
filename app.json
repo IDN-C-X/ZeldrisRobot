@@ -47,10 +47,10 @@
       "required": true,
       "value": ""
     },
-    "SQLALCHEMY_DATABASE_URI": {
-      "description": "Your postgres sql db, empty this field if you dont have one.",
+    "DATABASE_URL": {
+      "description": "Your postgres sql db, empty this field if you dont have one.ex: sqldbtype://username:pw@hostname:port/db_name",
       "required": false,
-      "value": "sqldbtype://username:pw@hostname:port/db_name"
+      "value": ""
     },
     "OWNER_ID": {
       "description": "Your user ID as an integer.",
@@ -82,9 +82,19 @@
     "DEV_USERS": {
       "description": "ID of users who are Devs of your bot (can use /py etc.). If you are a noob and would come and bother Masha support then keep the current ID's here at they are and add yours.",
       "required": false,
-      "value": "1956381927"
+      "value": ""
     },
-    "spamwtc": {
+    "SUPPORT_USERS": {
+      "description": "ID of users who are Devs of your bot (can use /py etc.). If you are a noob and would come and bother Masha support then keep the current ID's here at they are and add yours.",
+      "required": false,
+      "value": ""
+    },
+    "WHITELIST_USERS": {
+      "description": "ID of users who are Devs of your bot (can use /py etc.). If you are a noob and would come and bother Masha support then keep the current ID's here at they are and add yours.",
+      "required": false,
+      "value": ""
+    },
+    "SPAMWATCH_API": {
       "description": "Spamwatch API Token, Get one from @SpamWatchBot.",
       "required": false,
       "value": ""
@@ -117,7 +127,12 @@
       "required": false,
       "value": ""
     },
-    "BL_CHATS": {
+    "BLACKLIST_CHATS": {
+      "description": "List of chats you want blacklisted.",
+      "required": false,
+      "value": ""
+    },
+    "WHITELIST_CHATS": {
       "description": "List of chats you want blacklisted.",
       "required": false,
       "value": ""
@@ -145,15 +160,15 @@
       "required": false,
       "value": ""
     },
+    "API_OPENWEATHER": {
+      "description": "Required for weather module.",
+      "required": false,
+      "value": ""
+    },
     "REDIS_URL": {
       "description": "Take it from redislabs.com and the format should be redis://username:password@cluster/",
       "required": "True",
       "value": ""
-    },
-    "MESSAGE_DUMP": {
-      "description": "some group chat that your bot is a member of",
-      "required": "True",
-      "value": "-1007263"
     }
   }
 }
