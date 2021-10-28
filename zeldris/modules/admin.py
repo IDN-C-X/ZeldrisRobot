@@ -109,6 +109,11 @@ def promote(update, context):
         + f" with title <code>{title[:16]}</code>!",
         parse_mode=ParseMode.HTML,
     )
+    # refresh admin cache
+    try:
+        ADMIN_CACHE.pop(update.effective_chat.id)
+    except KeyError:
+        pass
     return (
         "<b>{}:</b>"
         "\n#PROMOTED"
