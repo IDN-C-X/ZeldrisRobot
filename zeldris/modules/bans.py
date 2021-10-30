@@ -95,7 +95,7 @@ def ban(update, context):
         "\n<b>Admin:</b> {}"
         "\n<b>User:</b> {} (<code>{}</code>)".format(
             html.escape(chat.title),
-            'S' if silent else '',
+            "S" if silent else "",
             mention_html(user.id, user.first_name),
             mention_html(member.user.id, member.user.first_name),
             member.user.id,
