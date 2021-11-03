@@ -98,7 +98,7 @@ def error_callback(update: Update, context: CallbackContext):
         )
         key = requests.post(
             "https://www.toptal.com/developers/hastebin/documents",
-            data=pretty_message.encode("UTF-8")
+            data=pretty_message.encode("UTF-8"),
         ).json()
         e = html.escape(f"{context.error}")
         if not key.get("key"):
