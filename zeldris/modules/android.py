@@ -264,7 +264,6 @@ def orangefox(update, _):
 @typing_action
 def los(update, context) -> str:
     message = update.effective_message
-    update.effective_chat
     args = context.args
     try:
         device = args[0]
@@ -317,10 +316,9 @@ def los(update, context) -> str:
 @typing_action
 def gsi(update, context):
     message = update.effective_message
-    update.effective_chat
 
     usr = get(
-        f"https://api.github.com/repos/phhusson/treble_experimentations/releases/latest"
+        "https://api.github.com/repos/phhusson/treble_experimentations/releases/latest"
     ).json()
     reply_text = "*Gsi'S Latest release*\n"
     for i in range(len(usr)):
@@ -336,7 +334,6 @@ def gsi(update, context):
 @typing_action
 def bootleg(update, context) -> str:
     message = update.effective_message
-    update.effective_chat
     args = context.args
     try:
         codename = args[0]
