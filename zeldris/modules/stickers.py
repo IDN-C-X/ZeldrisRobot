@@ -224,7 +224,7 @@ def kang(update, context):
                     )
                 print(e)
 
-    elif args:
+    elif args and msg.reply_to_message:
         try:
             try:
                 urlemoji = msg.text.split(" ")
@@ -454,7 +454,10 @@ Kanging Stickers made easy with stickers module!
 
 __mod_name__ = "Stickers"
 KANG_HANDLER = DisableAbleCommandHandler(
-    "kang", kang, pass_args=True, admin_ok=True, run_async=True
+    ["kang", "steal"],
+    kang,
+    pass_args=True,
+    run_async=True,
 )
 STICKERID_HANDLER = DisableAbleCommandHandler("stickerid", stickerid, run_async=True)
 GETSTICKER_HANDLER = DisableAbleCommandHandler("getsticker", getsticker, run_async=True)
