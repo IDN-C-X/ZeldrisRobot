@@ -272,9 +272,7 @@ def los(update, context) -> str:
         device = ""
 
     if device == "":
-        reply_text = (
-            "*Please Type Your Device Codename*\nExample : `/los lavender`"
-        )
+        reply_text = "*Please Type Your Device Codename*\nExample : `/los lavender`"
         message.reply_text(
             reply_text,
             parse_mode=ParseMode.MARKDOWN,
@@ -298,11 +296,7 @@ def los(update, context) -> str:
         reply_text += f"*Version :* `{version}`\n"
 
         keyboard = [
-            [
-                InlineKeyboardButton(
-                    text="Click Here To Downloads", url=f"{url}"
-                )
-            ]
+            [InlineKeyboardButton(text="Click Here To Downloads", url=f"{url}")]
         ]
         message.reply_text(
             reply_text,
@@ -433,24 +427,18 @@ Get the latest Magsik releases or TWRP for your device!
 __mod_name__ = "Android"
 
 MAGISK_HANDLER = DisableAbleCommandHandler("magisk", magisk, run_async=True)
-TWRP_HANDLER = DisableAbleCommandHandler(
-    "twrp", twrp, pass_args=True, run_async=True
-)
+TWRP_HANDLER = DisableAbleCommandHandler("twrp", twrp, pass_args=True, run_async=True)
 DEVICE_HANDLER = DisableAbleCommandHandler(
     "device", device, pass_args=True, run_async=True
 )
 ORANGEFOX_HANDLER = DisableAbleCommandHandler(
     "orangefox", orangefox, pass_args=True, run_async=True
 )
-LOS_HANDLER = DisableAbleCommandHandler(
-    "los", los, pass_args=True, run_async=True
-)
+LOS_HANDLER = DisableAbleCommandHandler("los", los, pass_args=True, run_async=True)
 BOOTLEG_HANDLER = DisableAbleCommandHandler(
     "bootleg", bootleg, pass_args=True, run_async=True
 )
-GSI_HANDLER = DisableAbleCommandHandler(
-    "gsi", gsi, pass_args=True, run_async=True
-)
+GSI_HANDLER = DisableAbleCommandHandler("gsi", gsi, pass_args=True, run_async=True)
 
 dispatcher.add_handler(MAGISK_HANDLER)
 dispatcher.add_handler(TWRP_HANDLER)
