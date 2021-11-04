@@ -17,6 +17,7 @@
 
 import math
 import os
+import requests
 import urllib.request as urllib
 from html import escape
 
