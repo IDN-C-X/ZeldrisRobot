@@ -355,7 +355,7 @@ def ud(update, context):
 @typing_action
 def src(update, _) -> None:
     update.effective_message.reply_text(
-        "Hey there! You can find what makes me click button below!"
+        "Hey there! You can find what makes me by clicking the button below!",
         reply_markup=InlineKeyboardMarkup(
             [
                 [
