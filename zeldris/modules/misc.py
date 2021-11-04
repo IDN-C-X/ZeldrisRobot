@@ -22,7 +22,7 @@ from io import BytesIO
 from random import randint
 from typing import Optional
 
-import requests as r
+import requests
 import wikipedia
 from requests import get
 from telegram import (
@@ -353,11 +353,20 @@ def ud(update, context):
 
 
 @typing_action
-def src(update, _):
+def src(update, _) -> None:
     update.effective_message.reply_text(
-        "Hey there! You can find what makes me click [here](www.github.com/IDN-C/ZeldrisRobot).",
-        parse_mode=ParseMode.MARKDOWN,
-        disable_web_page_preview=True,
+        "Hey there! You can find what makes me by clicking the button below!",
+        reply_markup=InlineKeyboardMarkup(
+            [
+                [
+                    InlineKeyboardButton(
+                        text="GitHub repo",
+                        url="www.github.com/IDN-C/ZeldrisRobot",
+                    ),
+                ],
+            ],
+            disable_web_page_preview=True,
+        ),
     )
 
 
@@ -373,7 +382,7 @@ def wall(update, context):
         return
     caption = query
     term = query.replace(" ", "%20")
-    json_rep = r.get(
+    json_rep = requests.get(
         f"https://wall.alphacoders.com/api2.0/get.php?auth={WALL_API}&method=search&term={term}"
     ).json()
     if not json_rep.get("success"):
@@ -453,7 +462,7 @@ def rmemes(update, context):
     ]
 
     subreddit = random.choice(SUBREDS)
-    res = r.get(f"https://meme-api.herokuapp.com/gimme/{subreddit}")
+    res = requests.get(f"https://meme-api.herokuapp.com/gimme/{subreddit}")
 
     if res.status_code != 200:  # Like if api is down?
         msg.reply_text("Sorry some error occurred :(")
@@ -546,7 +555,7 @@ STAFFLIST_HANDLER = CommandHandler(
 )
 REDDIT_MEMES_HANDLER = DisableAbleCommandHandler("rmeme", rmemes, run_async=True)
 SRC_HANDLER = CommandHandler(
-    "source", src, filters=Filters.chat_type.private, run_async=True
+    ["source", "repo"], src, filters=Filters.chat_type.groups, run_async=True
 )
 
 dispatcher.add_handler(WALLPAPER_HANDLER)

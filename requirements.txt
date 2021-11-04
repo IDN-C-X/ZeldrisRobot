@@ -8,6 +8,7 @@ future
 googletrans
 gpytranslate
 gtts
+hurry.filesize
 jikanpy
 lxml
 markdown2

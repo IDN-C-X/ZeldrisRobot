@@ -17,10 +17,12 @@
 
 import math
 import os
+import requests
 import urllib.request as urllib
 from html import escape
 
 from PIL import Image
+from bs4 import BeautifulSoup as bs
 from telegram import ParseMode, InlineKeyboardMarkup, InlineKeyboardButton
 from telegram import TelegramError
 from telegram.utils.helpers import mention_html
@@ -28,6 +30,29 @@ from telegram.utils.helpers import mention_html
 from zeldris import dispatcher
 from zeldris.modules.disable import DisableAbleCommandHandler
 from zeldris.modules.helper_funcs.alternate import typing_action
+
+combot_stickers_url = "https://combot.org/telegram/stickers?q="
+
+
+@typing_action
+def combot_sticker(update, context):
+    msg = update.effective_message
+    split = msg.text.split(" ", 1)
+    if len(split) == 1:
+        msg.reply_text("Provide Some Name To Search For Packs.")
+        return
+    text = requests.get(combot_stickers_url + split[1]).text
+    soup = bs(text, "lxml")
+    results = soup.find_all("a", {"class": "sticker-pack__btn"})
+    titles = soup.find_all("div", "sticker-pack__title")
+    if not results:
+        msg.reply_text("No Results Found! :(")
+        return
+    reply = f"Stickers for *{split[1]}*:"
+    for result, title in zip(results, titles):
+        link = result["href"]
+        reply += f"\n• [{title.get_text()}]({link})"
+    msg.reply_text(reply, parse_mode=ParseMode.MARKDOWN)
 
 
 @typing_action
@@ -57,7 +82,6 @@ def kang(update, context):
         except TelegramError as e:
             if e.message == "Stickerset_invalid":
                 packname_found = 1
-    kangsticker = "kangsticker.png"
     is_animated = False
     file_id = ""
 
@@ -88,9 +112,9 @@ def kang(update, context):
             sticker_emoji = "🤔"
 
         if not is_animated:
+            kangsticker = "kangsticker.png"
             try:
                 im = Image.open(kangsticker)
-                maxsize = (512, 512)
                 if (im.width and im.height) < 512:
                     size1 = im.width
                     size2 = im.height
@@ -107,6 +131,7 @@ def kang(update, context):
                     sizenew = (size1new, size2new)
                     im = im.resize(sizenew)
                 else:
+                    maxsize = (512, 512)
                     im.thumbnail(maxsize)
                 if not msg.reply_to_message.sticker:
                     im.save(kangsticker, "PNG")
@@ -224,93 +249,6 @@ def kang(update, context):
                     )
                 print(e)
 
-    elif args:
-        try:
-            try:
-                urlemoji = msg.text.split(" ")
-                png_sticker = urlemoji[1]
-                sticker_emoji = urlemoji[2]
-            except IndexError:
-                sticker_emoji = "🤔"
-            urllib.urlretrieve(png_sticker, kangsticker)
-            im = Image.open(kangsticker)
-            maxsize = (512, 512)
-            if (im.width and im.height) < 512:
-                size1 = im.width
-                size2 = im.height
-                if im.width > im.height:
-                    scale = 512 / size1
-                    size1new = 512
-                    size2new = size2 * scale
-                else:
-                    scale = 512 / size2
-                    size1new = size1 * scale
-                    size2new = 512
-                size1new = math.floor(size1new)
-                size2new = math.floor(size2new)
-                sizenew = (size1new, size2new)
-                im = im.resize(sizenew)
-            else:
-                im.thumbnail(maxsize)
-            im.save(kangsticker, "PNG")
-            msg.reply_photo(photo=open("kangsticker.png", "rb"))
-            context.bot.add_sticker_to_set(
-                user_id=user.id,
-                name=packname,
-                png_sticker=open("kangsticker.png", "rb"),
-                emojis=sticker_emoji,
-            )
-            msg.reply_text(
-                f"Sticker successfully added to [pack](t.me/addstickers/{packname})"
-                + f"\nEmoji is: {sticker_emoji}",
-                parse_mode=ParseMode.MARKDOWN,
-            )
-        except OSError as e:
-            msg.reply_text("I can only kang images m8.")
-            print(e)
-            return
-        except TelegramError as e:
-            if e.message == "Internal Server Error: sticker set not found (500)":
-                msg.reply_text(
-                    "Sticker successfully added to [pack](t.me/addstickers/%s)"
-                    % packname
-                    + "\n"
-                    "Emoji is:" + " " + sticker_emoji,
-                    parse_mode=ParseMode.MARKDOWN,
-                )
-            elif e.message == "Invalid sticker emojis":
-                msg.reply_text("Invalid emoji(s).")
-            elif e.message == "Sticker_png_dimensions":
-                im.save(kangsticker, "PNG")
-                context.bot.add_sticker_to_set(
-                    user_id=user.id,
-                    name=packname,
-                    png_sticker=open("kangsticker.png", "rb"),
-                    emojis=sticker_emoji,
-                )
-                msg.reply_text(
-                    "Sticker successfully added to [pack](t.me/addstickers/%s)"
-                    % packname
-                    + "\n"
-                    + "Emoji is:"
-                    + " "
-                    + sticker_emoji,
-                    parse_mode=ParseMode.MARKDOWN,
-                )
-            elif e.message == "Stickers_too_much":
-                msg.reply_text("Max packsize reached. Press F to pay respecc.")
-            elif e.message == "Stickerset_invalid":
-                makepack_internal(
-                    update,
-                    context,
-                    msg,
-                    user,
-                    sticker_emoji,
-                    packname,
-                    packnum,
-                    png_sticker=open("kangsticker.png", "rb"),
-                )
-            print(e)
     else:
         packs = "Please reply to a sticker, or image to kang it!\nOh, by the way. here are your packs:\n"
         if packnum > 0:
@@ -447,6 +385,7 @@ def stickerid(update, context):
 __help__ = """
 Kanging Stickers made easy with stickers module!
 
+× /stickers: Find stickers for given term on combot sticker catalogue.
 × /stickerid: Reply to a sticker to me to tell you its file ID.
 × /getsticker: Reply to a sticker to me to upload its raw PNG file.
 × /kang: Reply to a sticker to add it to your pack.
@@ -454,11 +393,19 @@ Kanging Stickers made easy with stickers module!
 
 __mod_name__ = "Stickers"
 KANG_HANDLER = DisableAbleCommandHandler(
-    "kang", kang, pass_args=True, admin_ok=True, run_async=True
+    ["kang", "steal"],
+    kang,
+    pass_args=True,
+    run_async=True,
 )
 STICKERID_HANDLER = DisableAbleCommandHandler("stickerid", stickerid, run_async=True)
 GETSTICKER_HANDLER = DisableAbleCommandHandler("getsticker", getsticker, run_async=True)
+FIND_STICKERS_HANDLER = DisableAbleCommandHandler(
+    "stickers", combot_sticker, run_async=True
+)
+
 
 dispatcher.add_handler(KANG_HANDLER)
 dispatcher.add_handler(STICKERID_HANDLER)
 dispatcher.add_handler(GETSTICKER_HANDLER)
+dispatcher.add_handler(FIND_STICKERS_HANDLER)

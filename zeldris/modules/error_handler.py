@@ -1,3 +1,20 @@
+# ZeldrisRobot
+# Copyright (C) 2017-2019, Paul Larsen
+# Copyright (c) 2021, IDNCoderX Team, <https://github.com/IDN-C-X/ZeldrisRobot>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Affero General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+# GNU Affero General Public License for more details.
+#
+# You should have received a copy of the GNU Affero General Public License
+# along with this program. If not, see <http://www.gnu.org/licenses/>.
+
 import html
 import io
 import random
@@ -80,10 +97,11 @@ def error_callback(update: Update, context: CallbackContext):
             tb,
         )
         key = requests.post(
-            "https://nekobin.com/api/documents", json={"content": pretty_message}
+            "https://www.toptal.com/developers/hastebin/documents",
+            data=pretty_message.encode("UTF-8"),
         ).json()
         e = html.escape(f"{context.error}")
-        if not key.get("result", {}).get("key"):
+        if not key.get("key"):
             with open("error.txt", "w+") as f:
                 f.write(pretty_message)
             context.bot.send_document(
@@ -94,8 +112,8 @@ def error_callback(update: Update, context: CallbackContext):
                 parse_mode="html",
             )
             return
-        key = key.get("result").get("key")
-        url = f"https://nekobin.com/{key}.py"
+        key = key.get("key")
+        url = f"https://www.toptal.com/developers/hastebin/{key}"
         context.bot.send_message(
             MESSAGE_DUMP,
             text=f"#{context.error.identifier}\n<b>Your enemy's make an error for you, demon king:"

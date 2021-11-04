@@ -20,6 +20,7 @@ import time
 from datetime import datetime
 
 from bs4 import BeautifulSoup
+from hurry.filesize import size as sizee
 from requests import get
 from telegram import InlineKeyboardButton
 from telegram import InlineKeyboardMarkup
@@ -259,6 +260,156 @@ def orangefox(update, _):
     )
 
 
+# Picked from UserIndoBot; Thanks to them!
+@typing_action
+def los(update, context) -> str:
+    message = update.effective_message
+    args = context.args
+    try:
+        device = args[0]
+    except Exception:
+        device = ""
+
+    if device == "":
+        reply_text = "*Please Type Your Device Codename*\nExample : `/los lavender`"
+        message.reply_text(
+            reply_text,
+            parse_mode=ParseMode.MARKDOWN,
+            disable_web_page_preview=True,
+        )
+        return
+
+    fetch = get(f"https://download.lineageos.org/api/v1/{device}/nightly/*")
+    if fetch.status_code == 200 and len(fetch.json()["response"]) != 0:
+        usr = fetch.json()
+        data = len(usr["response"]) - 1  # the latest rom are below
+        response = usr["response"][data]
+        filename = response["filename"]
+        url = response["url"]
+        buildsize_a = response["size"]
+        buildsize_b = sizee(int(buildsize_a))
+        version = response["version"]
+
+        reply_text = f"*Download :* [{filename}]({url})\n"
+        reply_text += f"*Build Size :* `{buildsize_b}`\n"
+        reply_text += f"*Version :* `{version}`\n"
+
+        keyboard = [
+            [InlineKeyboardButton(text="Click Here To Downloads", url=f"{url}")]
+        ]
+        message.reply_text(
+            reply_text,
+            reply_markup=InlineKeyboardMarkup(keyboard),
+            parse_mode=ParseMode.MARKDOWN,
+            disable_web_page_preview=True,
+        )
+        return
+
+    else:
+        message.reply_text(
+            "`Couldn't find any results matching your query.`",
+            parse_mode=ParseMode.MARKDOWN,
+            disable_web_page_preview=True,
+        )
+
+
+@typing_action
+def gsi(update, context):
+    message = update.effective_message
+
+    usr = get(
+        "https://api.github.com/repos/phhusson/treble_experimentations/releases/latest"
+    ).json()
+    reply_text = "*Gsi'S Latest release*\n"
+    for i in range(len(usr)):
+        try:
+            name = usr["assets"][i]["name"]
+            url = usr["assets"][i]["browser_download_url"]
+            reply_text += f"[{name}]({url})\n"
+        except IndexError:
+            continue
+    message.reply_text(reply_text, parse_mode=ParseMode.MARKDOWN)
+
+
+@typing_action
+def bootleg(update, context) -> str:
+    message = update.effective_message
+    args = context.args
+    try:
+        codename = args[0]
+    except Exception:
+        codename = ""
+
+    if codename == "":
+        message.reply_text(
+            "*Please Type Your Device Codename*\nExample : `/bootleg lavender`",
+            parse_mode=ParseMode.MARKDOWN,
+            disable_web_page_preview=True,
+        )
+        return
+
+    fetch = get("https://bootleggersrom-devices.github.io/api/devices.json")
+    if fetch.status_code == 200:
+        data = fetch.json()
+
+        if codename.lower() == "x00t":
+            device = "X00T"
+        elif codename.lower() == "rmx1971":
+            device = "RMX1971"
+        else:
+            device = codename.lower()
+
+        try:
+            fullname = data[device]["fullname"]
+            filename = data[device]["filename"]
+            buildate = data[device]["buildate"]
+            buildsize = data[device]["buildsize"]
+            buildsize = sizee(int(buildsize))
+            downloadlink = data[device]["download"]
+            if data[device]["mirrorlink"] != "":
+                mirrorlink = data[device]["mirrorlink"]
+            else:
+                mirrorlink = None
+        except KeyError:
+            message.reply_text(
+                "`Couldn't find any results matching your query.`",
+                parse_mode=ParseMode.MARKDOWN,
+                disable_web_page_preview=True,
+            )
+            return
+
+        reply_text = f"*BootlegersROM for {fullname}*\n"
+        reply_text += f"*Download :* [{filename}]({downloadlink})\n"
+        reply_text += f"*Size :* `{buildsize}`\n"
+        reply_text += f"*Build Date :* `{buildate}`\n"
+        if mirrorlink is not None:
+            reply_text += f"[Mirror link]({mirrorlink})"
+
+        keyboard = [
+            [
+                InlineKeyboardButton(
+                    text="Click Here To Downloads", url=f"{downloadlink}"
+                )
+            ]
+        ]
+
+        message.reply_text(
+            reply_text,
+            reply_markup=InlineKeyboardMarkup(keyboard),
+            parse_mode=ParseMode.MARKDOWN,
+            disable_web_page_preview=True,
+        )
+        return
+
+    elif fetch.status_code == 404:
+        message.reply_text(
+            "`Couldn't reach api`",
+            parse_mode=ParseMode.MARKDOWN,
+            disable_web_page_preview=True,
+        )
+        return
+
+
 __help__ = """
 Get the latest Magsik releases or TWRP for your device!
 
@@ -267,16 +418,29 @@ Get the latest Magsik releases or TWRP for your device!
 × /device <codename> - Gets android device basic info from its codename.
 × /twrp <codename> -  Gets latest twrp for the android device using the codename.
 × /orangefox <codename> -  Gets latest orangefox recovery for the android device using the codename.
+× /los <codename> - Gets Latest los build.
 """
 
 __mod_name__ = "Android"
 
-MAGISK_HANDLER = DisableAbleCommandHandler("magisk", magisk)
-TWRP_HANDLER = DisableAbleCommandHandler("twrp", twrp, pass_args=True)
-DEVICE_HANDLER = DisableAbleCommandHandler("device", device, pass_args=True)
-ORANGEFOX_HANDLER = DisableAbleCommandHandler("orangefox", orangefox, pass_args=True)
+MAGISK_HANDLER = DisableAbleCommandHandler("magisk", magisk, run_async=True)
+TWRP_HANDLER = DisableAbleCommandHandler("twrp", twrp, pass_args=True, run_async=True)
+DEVICE_HANDLER = DisableAbleCommandHandler(
+    "device", device, pass_args=True, run_async=True
+)
+ORANGEFOX_HANDLER = DisableAbleCommandHandler(
+    "orangefox", orangefox, pass_args=True, run_async=True
+)
+LOS_HANDLER = DisableAbleCommandHandler("los", los, pass_args=True, run_async=True)
+BOOTLEG_HANDLER = DisableAbleCommandHandler(
+    "bootleg", bootleg, pass_args=True, run_async=True
+)
+GSI_HANDLER = DisableAbleCommandHandler("gsi", gsi, pass_args=True, run_async=True)
 
 dispatcher.add_handler(MAGISK_HANDLER)
 dispatcher.add_handler(TWRP_HANDLER)
 dispatcher.add_handler(DEVICE_HANDLER)
 dispatcher.add_handler(ORANGEFOX_HANDLER)
+dispatcher.add_handler(LOS_HANDLER)
+dispatcher.add_handler(GSI_HANDLER)
+dispatcher.add_handler(BOOTLEG_HANDLER)
