@@ -37,20 +37,20 @@ combot_stickers_url = "https://combot.org/telegram/stickers?q="
 @typing_action
 def combot_sticker(update, context):
     msg = update.effective_message
-    split = msg.text.split(' ', 1)
+    split = msg.text.split(" ", 1)
     if len(split) == 1:
-        msg.reply_text('Provide Some Name To Search For Packs.')
+        msg.reply_text("Provide Some Name To Search For Packs.")
         return
     text = requests.get(combot_stickers_url + split[1]).text
-    soup = bs(text, 'lxml')
-    results = soup.find_all("a", {'class': "sticker-pack__btn"})
+    soup = bs(text, "lxml")
+    results = soup.find_all("a", {"class": "sticker-pack__btn"})
     titles = soup.find_all("div", "sticker-pack__title")
     if not results:
-        msg.reply_text('No Results Found! :(')
+        msg.reply_text("No Results Found! :(")
         return
     reply = f"Stickers for *{split[1]}*:"
     for result, title in zip(results, titles):
-        link = result['href']
+        link = result["href"]
         reply += f"\n• [{title.get_text()}]({link})"
     msg.reply_text(reply, parse_mode=ParseMode.MARKDOWN)
 
@@ -487,7 +487,9 @@ KANG_HANDLER = DisableAbleCommandHandler(
 )
 STICKERID_HANDLER = DisableAbleCommandHandler("stickerid", stickerid, run_async=True)
 GETSTICKER_HANDLER = DisableAbleCommandHandler("getsticker", getsticker, run_async=True)
-FIND_STICKERS_HANDLER = DisableAbleCommandHandler("stickers", combot_sticker, run_async=True)
+FIND_STICKERS_HANDLER = DisableAbleCommandHandler(
+    "stickers", combot_sticker, run_async=True
+)
 
 
 dispatcher.add_handler(KANG_HANDLER)
