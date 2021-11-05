@@ -15,7 +15,9 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 
+import codecs
 import html
+import os
 import random
 import re
 from io import BytesIO
@@ -511,6 +513,48 @@ def stats(update, _):
     )
 
 
+@typing_action
+def paste(update, context):
+    msg = update.effective_message
+
+    if msg.reply_to_message and msg.reply_to_message.document:
+        file = context.bot.get_file(msg.reply_to_message.document)
+        file.download("file.txt")
+        text = codecs.open("file.txt", "r+", encoding="utf-8")
+        paste_text = text.read()
+        link = (
+            requests.post(
+                "https://nekobin.com/api/documents",
+                json={"content": paste_text},
+            )
+            .json()
+            .get("result")
+            .get("key")
+        )
+        text = "**Nekofied to Nekobin!!!**"
+        buttons = [
+            [
+                InlineKeyboardButton(
+                    text="View Link", url=f"https://nekobin.com/{link}"
+                ),
+                InlineKeyboardButton(
+                    text="View Raw",
+                    url=f"https://nekobin.com/raw/{link}",
+                ),
+            ]
+        ]
+        msg.reply_text(
+            text,
+            reply_markup=InlineKeyboardMarkup(buttons),
+            parse_mode=ParseMode.MARKDOWN,
+            disable_web_page_preview=True,
+        )
+        os.remove("file.txt")
+    else:
+        msg.reply_text("Give me a text file to paste on nekobin")
+        return
+
+
 # /ip is for private use
 __help__ = """
 An "odds and ends" module for small, simple commands which don't really fit anywhere
@@ -520,7 +564,8 @@ An "odds and ends" module for small, simple commands which don't really fit anyw
 × /wiki : Search wikipedia articles.
 × /rmeme: Sends random meme scraped from reddit.
 × /ud <query> : Search stuffs in urban dictionary.
-× /wall <query> : Get random wallpapers directly from bot! 
+× /wall <query> : Get random wallpapers directly from bot!
+× /paste : Paste any text file to Nekobin.
 × /reverse : Reverse searches image or stickers on google.
 × /gdpr: Deletes your information from the bot's database. Private chats only.
 × /markdownhelp: Quick summary of how markdown works in telegram - can only be called in private chats.
@@ -557,6 +602,7 @@ REDDIT_MEMES_HANDLER = DisableAbleCommandHandler("rmeme", rmemes, run_async=True
 SRC_HANDLER = CommandHandler(
     ["source", "repo"], src, filters=Filters.chat_type.groups, run_async=True
 )
+PASTE_HANDLER = DisableAbleCommandHandler("paste", paste, run_async=True)
 
 dispatcher.add_handler(WALLPAPER_HANDLER)
 dispatcher.add_handler(UD_HANDLER)
@@ -571,3 +617,4 @@ dispatcher.add_handler(GETLINK_HANDLER)
 dispatcher.add_handler(STAFFLIST_HANDLER)
 dispatcher.add_handler(REDDIT_MEMES_HANDLER)
 dispatcher.add_handler(SRC_HANDLER)
+dispatcher.add_handler(PASTE_HANDLER)
