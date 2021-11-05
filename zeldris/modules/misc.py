@@ -515,44 +515,58 @@ def stats(update, _):
 
 @typing_action
 def paste(update, context):
-    msg = update.effective_message
+    message = update.effective_message
+    bot, args = context.bot, context.args
 
-    if msg.reply_to_message and msg.reply_to_message.document:
-        file = context.bot.get_file(msg.reply_to_message.document)
+    if not message.reply_to_message.text:
+        file = bot.getFile(message.reply_to_message.document)
         file.download("file.txt")
         text = codecs.open("file.txt", "r+", encoding="utf-8")
         paste_text = text.read()
-        link = (
-            requests.post(
-                "https://nekobin.com/api/documents",
-                json={"content": paste_text},
-            )
-            .json()
-            .get("result")
-            .get("key")
-        )
-        text = "**Nekofied to Nekobin!!!**"
-        buttons = [
-            [
-                InlineKeyboardButton(
-                    text="View Link", url=f"https://nekobin.com/{link}"
-                ),
-                InlineKeyboardButton(
-                    text="View Raw",
-                    url=f"https://nekobin.com/raw/{link}",
-                ),
-            ]
-        ]
-        msg.reply_text(
-            text,
-            reply_markup=InlineKeyboardMarkup(buttons),
-            parse_mode=ParseMode.MARKDOWN,
-            disable_web_page_preview=True,
-        )
+        print(paste_text)
         os.remove("file.txt")
+
+    elif message.reply_to_message.text:
+        paste_text = message.reply_to_message.text
+    elif len(args) >= 1:
+        paste_text = message.text.split(None, 1)[1]
+
     else:
-        msg.reply_text("Give me a text file to paste on nekobin")
+        message.reply_text(
+            "reply to any message or just do /paste <what you want to paste>"
+        )
         return
+
+    extension = "txt"
+    url = "https://spaceb.in/api/v1/documents/"
+    try:
+        response = requests.post(
+            url, data={"content": paste_text, "extension": extension}
+        )
+    except Exception as e:
+        return {"error": str(e)}
+
+    response = response.json()
+    text = (
+        f"**Pasted to [Space.bin]('https://spaceb.in/{response['payload']['id']}')!!!**"
+    )
+    buttons = [
+        [
+            InlineKeyboardButton(
+                text="View Link", url=f"https://spaceb.in/{response['payload']['id']}"
+            ),
+            InlineKeyboardButton(
+                text="View Raw",
+                url=f"https://spaceb.in/api/v1/documents/{response['payload']['id']}/raw",
+            ),
+        ]
+    ]
+    message.reply_text(
+        text,
+        reply_markup=InlineKeyboardMarkup(buttons),
+        parse_mode=ParseMode.MARKDOWN,
+        disable_web_page_preview=True,
+    )
 
 
 # /ip is for private use
@@ -565,7 +579,7 @@ An "odds and ends" module for small, simple commands which don't really fit anyw
 × /rmeme: Sends random meme scraped from reddit.
 × /ud <query> : Search stuffs in urban dictionary.
 × /wall <query> : Get random wallpapers directly from bot!
-× /paste : Paste any text file to Nekobin.
+× /paste : Paste Replied Text Or Document To Spacebin.
 × /reverse : Reverse searches image or stickers on google.
 × /gdpr: Deletes your information from the bot's database. Private chats only.
 × /markdownhelp: Quick summary of how markdown works in telegram - can only be called in private chats.
