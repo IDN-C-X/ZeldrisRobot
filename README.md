@@ -179,7 +179,7 @@ anything.
 - [ATechnoHazard](https://github.com/SphericalKat) for many stuffs.
 - [corsicanu](https://github.com/corsicanu) and nunopenim for android modules.
 - [Saitama](https://github.com/AnimeKaizoku/SaitamaRobot) for anime modules and other stuffs.
-- [Kigyō](https://github.com/EnterpriseALRobot) for greetings modules.
+- [Kigyō](https://github.com/AnimeKaizoku/EnterpriseALRobot) for greetings modules.
 - [UserIndoBot](https://github.com/userbotindo/UserIndoBot) for any other stuffs.
 - Thanks to Everyone who has [contributed](https://github.com/IDN-C-X/ZeldrisRobot/graphs/contributors) to this Project!
 
