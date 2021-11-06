@@ -361,7 +361,7 @@ def src(update, _) -> None:
                 [
                     InlineKeyboardButton(
                         text="GitHub repo",
-                        url="www.github.com/IDN-C/ZeldrisRobot",
+                        url="github.com/IDN-C-X/ZeldrisRobot",
                     ),
                 ],
             ],
