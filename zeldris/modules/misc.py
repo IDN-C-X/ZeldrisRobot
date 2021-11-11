@@ -528,7 +528,7 @@ def paste(update, context):
             [
                 InlineKeyboardButton(
                     text="View Link",
-                    url=f"https://www.toptal.com/developers/hastebin/{key}"
+                    url=f"https://www.toptal.com/developers/hastebin/{key}",
                 ),
                 InlineKeyboardButton(
                     text="View Raw",
@@ -546,6 +546,7 @@ def paste(update, context):
     else:
         msg.reply_text("Give me a text file to paste on hastebin")
         return
+
 
 # /ip is for private use
 __help__ = """
