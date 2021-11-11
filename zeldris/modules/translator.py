@@ -67,7 +67,7 @@ def translate(update: Update, context: CallbackContext) -> None:
         f"<code>{translation.text}</code>"
     )
 
-    bot.send_message(text=reply, chat_id=message.chat.id, parse_mode=ParseMode.HTML)
+    message.reply_text(reply, parse_mode=ParseMode.HTML)
 
 
 @typing_action

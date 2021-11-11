@@ -165,7 +165,7 @@ You should now be able to build your database URI. This will be:
 Replace sqldbtype with whichever DB you're using (e.g. Postgres, MySQL, SQLite, `etc.)
 repeat for your username, password, hostname (localhost?), port (5432?), and DB name.
 
-Or, register on [ElephantSQL](https://www.elephantsql.com/) for free Postgresql. Learn for your self, I won't learn you
+Or, register on [ElephantSQL](https://www.elephantsql.com/) for free Postgresql. Learn for your self, I won't teach you
 anything.
 </details>
 
@@ -179,7 +179,7 @@ anything.
 - [ATechnoHazard](https://github.com/SphericalKat) for many stuffs.
 - [corsicanu](https://github.com/corsicanu) and nunopenim for android modules.
 - [Saitama](https://github.com/AnimeKaizoku/SaitamaRobot) for anime modules and other stuffs.
-- [Kigyō](https://github.com/EnterpriseALRobot) for greetings modules.
+- [Kigyō](https://github.com/AnimeKaizoku/EnterpriseALRobot) for greetings modules.
 - [UserIndoBot](https://github.com/userbotindo/UserIndoBot) for any other stuffs.
 - Thanks to Everyone who has [contributed](https://github.com/IDN-C-X/ZeldrisRobot/graphs/contributors) to this Project!
 
