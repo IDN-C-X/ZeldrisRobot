@@ -24,7 +24,7 @@ requests
 spamwatch
 speedtest-cli>=2.0.2
 sqlalchemy
-telethon
+telethon==1.16.4
 telegraph
 ujson
 wget
