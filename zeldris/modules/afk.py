@@ -152,9 +152,7 @@ def check_afk(update, _, user_id: int, fst_name: int, userc_id: int):
         if reason == "none":
             res = f"{fst_name} is AFK!\nLast seen: {since_afk}"
         else:
-            res = (
-                f"{fst_name} is AFK!\nReason: {reason}\nLast seen: {since_afk}"
-            )
+            res = f"{fst_name} is AFK!\nReason: {reason}\nLast seen: {since_afk}"
 
         update.effective_message.reply_text(res)
 
