@@ -80,8 +80,7 @@ def no_longer_afk(update, _):
         firstname = update.effective_user.first_name
         try:
             message.reply_text(
-                f"{firstname} is back online!\n"
-                f"You were away for: {end_afk_time}"
+                f"{firstname} is back online!\nYou were away for: {end_afk_time}"
             )
         except BadRequest:
             return
@@ -151,15 +150,10 @@ def check_afk(update, _, user_id: int, fst_name: int, userc_id: int):
         if int(userc_id) == int(user_id):
             return
         if reason == "none":
-            res = (
-                f"{fst_name} is AFK!\n"
-                f"Last seen: {since_afk}"
-            )
+            res = f"{fst_name} is AFK!\nLast seen: {since_afk}"
         else:
             res = (
-                f"{fst_name} is AFK!\n"
-                f"Reason: {reason}\n"
-                f"Last seen: {since_afk}"
+                f"{fst_name} is AFK!\nReason: {reason}\nLast seen: {since_afk}"
             )
 
         update.effective_message.reply_text(res)
