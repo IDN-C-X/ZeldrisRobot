@@ -129,8 +129,7 @@ def reply_afk(update, context):
                         )
                     )
                     return
-
-            fst_name = chat.first_name
+                fst_name = chat.first_name
 
             else:
                 return
