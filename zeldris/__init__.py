@@ -122,7 +122,6 @@ if ENV:
     API_HASH = os.environ.get("API_HASH", None)
     SPAMWATCH = os.environ.get("SPAMWATCH_API", None)
     SPAMMERS = os.environ.get("SPAMMERS", None)
-    CUSTOM_CMD = ["/", "!"]
 
 else:
     from zeldris.config import Development as Config
