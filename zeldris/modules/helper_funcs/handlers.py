@@ -37,7 +37,7 @@ if CUSTOM_CMD:
     CMD_STARTERS = CUSTOM_CMD
     LOGGER.debug('Bot custom command handler = "%s"', CMD_STARTERS)
 else:
-    CMD_STARTERS = ["/", "!"]
+    CMD_STARTERS = ("/", "!")
 
 
 class AntiSpam:

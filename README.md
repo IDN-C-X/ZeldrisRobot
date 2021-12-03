@@ -45,7 +45,7 @@
 ## How to set up/deploy.
 
 <details>
-  <summary>Steps to self Host!!</summary>
+  <summary>Step to self Host!!</summary>
 
 ## Setting up the bot (Read this before trying to use!):
 
@@ -165,7 +165,7 @@ You should now be able to build your database URI. This will be:
 Replace sqldbtype with whichever DB you're using (e.g. Postgres, MySQL, SQLite, `etc.)
 repeat for your username, password, hostname (localhost?), port (5432?), and DB name.
 
-Or, register on [ElephantSQL](https://www.elephantsql.com/) for free Postgresql. Learn for your self, I won't teach you
+Or, register on [ElephantSQL](https://www.elephantsql.com/) for free Postgresql. Learn for your self, We won't teach you
 anything.
 </details>
 

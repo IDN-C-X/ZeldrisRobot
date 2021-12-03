@@ -56,7 +56,7 @@ def afk(update, _):
     REDIS.set(f"afk_time_{user.id}", start_afk_time)
     fname = user.first_name
     try:
-        message.reply_text("{} is now AFK!".format(fname))
+        message.reply_text(f"{fname} is now AFK!")
     except BadRequest:
         pass
 
@@ -80,12 +80,10 @@ def no_longer_afk(update, _):
         firstname = update.effective_user.first_name
         try:
             message.reply_text(
-                "{} is back online!\nYou were away for: {}".format(
-                    firstname, end_afk_time
-                )
+                f"{firstname} is back online!\nYou were away for: {end_afk_time}"
             )
-        except BaseException:
-            pass
+        except BadRequest:
+            return
 
 
 def reply_afk(update, context):
@@ -123,10 +121,10 @@ def reply_afk(update, context):
 
                 try:
                     chat = context.bot.get_chat(user_id)
-                except BadRequest:
+                except BadRequest as e:
                     print(
-                        "Error: Could not fetch userid {} for AFK module".format(
-                            user_id
+                        "Error: Could not fetch userid {} for AFK module due to {}".format(
+                            user_id, e
                         )
                     )
                     return
@@ -143,7 +141,7 @@ def reply_afk(update, context):
         check_afk(update, context, user_id, fst_name, userc_id)
 
 
-def check_afk(update, context, user_id: int, fst_name: int, userc_id: int):
+def check_afk(update, _, user_id: int, fst_name: int, userc_id: int):
     if is_user_afk(user_id):
         reason = afk_reason(user_id)
         since_afk = get_readable_time(
@@ -152,11 +150,9 @@ def check_afk(update, context, user_id: int, fst_name: int, userc_id: int):
         if int(userc_id) == int(user_id):
             return
         if reason == "none":
-            res = "{} is AFK!\nLast seen: {}".format(fst_name, since_afk)
+            res = f"{fst_name} is AFK!\nLast seen: {since_afk}"
         else:
-            res = "{} is AFK!\nReason: {}\nLast seen: {}".format(
-                fst_name, reason, since_afk
-            )
+            res = f"{fst_name} is AFK!\nReason: {reason}\nLast seen: {since_afk}"
 
         update.effective_message.reply_text(res)
 

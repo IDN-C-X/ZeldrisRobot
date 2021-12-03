@@ -19,8 +19,8 @@ import random
 import threading
 from typing import Union
 
-from sqlalchemy import BigInteger, Boolean, Column, Integer, String, UnicodeText
-
+from sqlalchemy import Boolean, Column, Integer, String, UnicodeText
+from sqlalchemy.sql.sqltypes import BigInteger
 from zeldris.modules.helper_funcs.msg_types import Types
 from zeldris.modules.sql import BASE, SESSION
 
@@ -300,7 +300,7 @@ class WelcomeMute(BASE):
 
 class WelcomeMuteUsers(BASE):
     __tablename__ = "human_checks"
-    user_id = Column(Integer, primary_key=True)
+    user_id = Column(BigInteger, primary_key=True)
     chat_id = Column(String(14), primary_key=True)
     human_check = Column(Boolean)
 

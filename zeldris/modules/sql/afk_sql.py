@@ -17,15 +17,15 @@
 
 import threading
 
-from sqlalchemy import Column, UnicodeText, Boolean, Integer
-
+from sqlalchemy import Column, UnicodeText, Boolean
+from sqlalchemy.sql.sqltypes import BigInteger
 from zeldris.modules.sql import BASE, SESSION
 
 
 class AFK(BASE):
     __tablename__ = "afk_users"
 
-    user_id = Column(Integer, primary_key=True)
+    user_id = Column(BigInteger, primary_key=True)
     is_afk = Column(Boolean)
     reason = Column(UnicodeText)
 
