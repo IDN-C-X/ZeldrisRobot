@@ -51,6 +51,22 @@ def ban(update, context):
     user = update.effective_user
     message = update.effective_message
     bot, args = context.bot, context.args
+    reason = ""
+    if message.reply_to_message and message.reply_to_message.sender_chat:
+        r = bot.ban_chat_sender_chat(
+            chat_id=chat.id, sender_chat_id=message.reply_to_message.sender_chat.id
+        )
+        if r:
+            message.reply_text(
+                "Finally! Channel {} was banned successfully from {}\n\n💡 He can only write with his profile but not through other channels.".format(
+                    html.escape(message.reply_to_message.sender_chat.title),
+                    html.escape(chat.title),
+                ),
+                parse_mode="html",
+            )
+        else:
+            message.reply_text("Failed to ban channel")
+        return
 
     if user_can_ban(chat, user, bot.id) is False:
         message.reply_text("You don't have enough rights to ban users!")
@@ -366,8 +382,23 @@ def unban(update, context):
     message = update.effective_message  # type: Optional[Message]
     user = update.effective_user  # type: Optional[User]
     chat = update.effective_chat  # type: Optional[Chat]
-    args = context.args
-
+    log_message = ""
+    bot, args = context.bot, context.args
+    if message.reply_to_message and message.reply_to_message.sender_chat:
+        r = bot.unban_chat_sender_chat(
+            chat_id=chat.id, sender_chat_id=message.reply_to_message.sender_chat.id
+        )
+        if r:
+            message.reply_text(
+                "Finally! Channel {} was unbanned successfully from {}\n\n💡 Now this users can send the messages with they channel again".format(
+                    html.escape(message.reply_to_message.sender_chat.title),
+                    html.escape(chat.title),
+                ),
+                parse_mode="html",
+            )
+        else:
+            message.reply_text("Failed to unban channel")
+        return
     if user_can_ban(chat, user, context.bot.id) is False:
         message.reply_text("You don't have enough rights to unban people here!")
         return ""
