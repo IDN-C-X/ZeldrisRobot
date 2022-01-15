@@ -114,7 +114,11 @@ def system_status(update: Update, context: CallbackContext):
     status += "<b>    ◤ 𝚁𝚊𝚖 𝚞𝚜𝚊𝚐𝚎 :</b> <code>" + str(mem[2]) + " %</code>\n"
     status += "<b>    ◤ 𝚂𝚝𝚘𝚛𝚊𝚐𝚎 𝚞𝚜𝚎𝚍 :</b> <code>" + str(disk[3]) + " %</code>\n\n"
     status += "<b>    ◤ 𝙿𝚢𝚝𝚑𝚘𝚗 𝚟𝚎𝚛𝚜𝚒𝚘𝚗 :</b> <code>" + python_version() + "</code>\n"
-    status += "<b>    ◤ 𝙻𝚒𝚋𝚛𝚊𝚛𝚢 𝚟𝚎𝚛𝚜𝚒𝚘𝚗 :</b> <code>" + str(telegram.__version__) + "</code>\n"
+    status += (
+        "<b>    ◤ 𝙻𝚒𝚋𝚛𝚊𝚛𝚢 𝚟𝚎𝚛𝚜𝚒𝚘𝚗 :</b> <code>"
+        + str(telegram.__version__)
+        + "</code>\n"
+    )
     status += "<b>    ◤ 𝚂𝚙𝚊𝚖𝚠𝚊𝚝𝚌𝚑 𝙰𝙿𝙸 :</b> <code>" + str(__sw__) + "</code>\n"
     status += "<b>┖</b>\n"
     context.bot.sendMessage(update.effective_chat.id, status, parse_mode=ParseMode.HTML)

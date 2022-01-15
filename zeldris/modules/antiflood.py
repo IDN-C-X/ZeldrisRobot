@@ -294,7 +294,9 @@ def set_flood_mode(update: Update, context: CallbackContext):
                     "but you didn't specified time; Try, `/setfloodmode tban <timevalue>`."
                     "Examples of time value: 4m = 4 minutes, 3h = 3 hours, 6d = 6 days, 5w = 5 weeks."
                 )
-                send_message(update.effective_message, teks, parse_mode=ParseMode.MARKDOWN)
+                send_message(
+                    update.effective_message, teks, parse_mode=ParseMode.MARKDOWN
+                )
                 return
             settypeflood = "tban for {}".format(args[1])
             sql.set_flood_strength(chat_id, 4, str(args[1]))
@@ -305,7 +307,9 @@ def set_flood_mode(update: Update, context: CallbackContext):
                     "but you didn't specified time; Try, `/setfloodmode tban <timevalue>`."
                     "Examples of time value: 4m = 4 minutes, 3h = 3 hours, 6d = 6 days, 5w = 5 weeks."
                 )
-                send_message(update.effective_message, teks, parse_mode=ParseMode.MARKDOWN)
+                send_message(
+                    update.effective_message, teks, parse_mode=ParseMode.MARKDOWN
+                )
                 return
             settypeflood = "tmute for {}".format(args[1])
             sql.set_flood_strength(chat_id, 5, str(args[1]))

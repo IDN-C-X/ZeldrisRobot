@@ -30,7 +30,13 @@ from telegram import (
 )
 from telegram import Message
 from telegram.error import BadRequest
-from telegram.ext import CallbackContext, CommandHandler, MessageHandler, Filters, CallbackQueryHandler
+from telegram.ext import (
+    CallbackContext,
+    CommandHandler,
+    MessageHandler,
+    Filters,
+    CallbackQueryHandler,
+)
 from telegram.utils.helpers import mention_html
 
 import zeldris.modules.sql.notes_sql as sql

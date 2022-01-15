@@ -56,7 +56,9 @@ def afk(update: Update, _: CallbackContext):
     REDIS.set(f"afk_time_{user.id}", start_afk_time)
     fname = user.first_name
     try:
-        message.reply_text(f"<code>{fname}</code> is now AFK!", parse_mode=ParseMode.HTML)
+        message.reply_text(
+            f"<code>{fname}</code> is now AFK!", parse_mode=ParseMode.HTML
+        )
     except BadRequest:
         pass
 
