@@ -21,6 +21,7 @@ from typing import Union
 
 from sqlalchemy import Boolean, Column, Integer, String, UnicodeText
 from sqlalchemy.sql.sqltypes import BigInteger
+
 from zeldris.modules.helper_funcs.msg_types import Types
 from zeldris.modules.sql import BASE, SESSION
 

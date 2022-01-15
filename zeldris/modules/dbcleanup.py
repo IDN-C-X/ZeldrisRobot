@@ -19,7 +19,7 @@ from time import sleep
 
 from telegram import Bot, Update, InlineKeyboardMarkup, InlineKeyboardButton
 from telegram.error import BadRequest, Unauthorized
-from telegram.ext import CommandHandler, CallbackQueryHandler, Filters
+from telegram.ext import CallbackContext, CommandHandler, CallbackQueryHandler, Filters
 
 import zeldris.modules.sql.global_bans_sql as gban_sql
 import zeldris.modules.sql.users_sql as user_sql
@@ -95,7 +95,7 @@ def get_invalid_gban(bot: Bot, remove: bool = False):
     return ungbanned_users
 
 
-def dbcleanup(update, context):
+def dbcleanup(update: Update, context: CallbackContext):
     msg = update.effective_message
 
     msg.reply_text("Getting invalid chat count ...")
@@ -164,7 +164,7 @@ def get_muted_chats(bot: Bot, update: Update, leave: bool = False):
     return muted_chats
 
 
-def leave_muted_chats(update, context):
+def leave_muted_chats(update: Update, context: CallbackContext):
     message = update.effective_message
     progress_message = message.reply_text("Getting chat count ...")
     muted_chats = get_muted_chats(context.bot, update)
@@ -178,7 +178,7 @@ def leave_muted_chats(update, context):
     progress_message.delete()
 
 
-def callback_button(update, context):
+def callback_button(update: Update, context: CallbackContext):
     bot = context.bot
     query = update.callback_query
     message = query.message

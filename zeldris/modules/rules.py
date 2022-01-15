@@ -17,10 +17,10 @@
 
 from typing import Optional
 
-from telegram import Message, User
+from telegram import Message, User, Update
 from telegram import ParseMode, InlineKeyboardMarkup, InlineKeyboardButton
 from telegram.error import BadRequest
-from telegram.ext import CommandHandler, Filters
+from telegram.ext import CommandHandler, Filters, CallbackContext
 from telegram.utils.helpers import escape_markdown
 
 import zeldris.modules.sql.rules_sql as sql
@@ -31,7 +31,7 @@ from zeldris.modules.helper_funcs.string_handling import markdown_parser
 
 
 @typing_action
-def get_rules(update, context):
+def get_rules(update: Update, _: CallbackContext):
     chat_id = update.effective_chat.id
     send_rules(update, chat_id)
 
@@ -86,7 +86,7 @@ def send_rules(update, chat_id, from_pm=False):
 
 @user_admin
 @typing_action
-def set_rules(update, context):
+def set_rules(update: Update, _: CallbackContext):
     chat_id = update.effective_chat.id
     msg = update.effective_message  # type: Optional[Message]
     raw_text = msg.text
@@ -104,7 +104,7 @@ def set_rules(update, context):
 
 @user_admin
 @typing_action
-def clear_rules(update, context):
+def clear_rules(update: Update, _: CallbackContext):
     chat_id = update.effective_chat.id
     sql.set_rules(chat_id, "")
     update.effective_message.reply_text("Successfully cleared rules!")
@@ -124,7 +124,7 @@ def __migrate__(old_chat_id, new_chat_id):
     sql.migrate_chat(old_chat_id, new_chat_id)
 
 
-def __chat_settings__(chat_id, user_id):
+def __chat_settings__(chat_id, _):
     return "This chat has had it's rules set: `{}`".format(bool(sql.get_rules(chat_id)))
 
 
@@ -134,7 +134,7 @@ Every chat works with different rules; this module will help make those rules cl
 × /rules: get the rules for this chat.
 
 *Admin only:*
-× /setrules <your rules here>: Sets rules for the chat.
+× /setrules `<your rules here>`: Sets rules for the chat.
 × /clearrules: Clears saved rules for the chat.
 """
 

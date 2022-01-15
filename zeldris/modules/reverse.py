@@ -24,7 +24,8 @@ from urllib.error import URLError, HTTPError
 
 import requests
 from bs4 import BeautifulSoup
-from telegram import InputMediaPhoto, TelegramError
+from telegram import InputMediaPhoto, TelegramError, Update
+from telegram.ext import CallbackContext
 
 from zeldris import dispatcher
 from zeldris.modules.disable import DisableAbleCommandHandler
@@ -41,7 +42,7 @@ opener.addheaders = [("User-agent", useragent)]
 
 
 @typing_action
-def reverse(update, context):
+def reverse(update: Update, context: CallbackContext):
     if os.path.isfile("okgoogle.png"):
         os.remove("okgoogle.png")
 
@@ -112,13 +113,13 @@ def reverse(update, context):
         return
 
     try:
-        searchUrl = "https://www.google.com/searchbyimage/upload"
+        search_url = "https://www.google.com/searchbyimage/upload"
         multipart = {
             "encoded_image": (imagename, open(imagename, "rb")),
             "image_content": "",
         }
-        response = requests.post(searchUrl, files=multipart, allow_redirects=False)
-        fetchUrl = response.headers["Location"]
+        response = requests.post(search_url, files=multipart, allow_redirects=False)
+        fetch_url = response.headers["Location"]
 
         if response != 400:
             xx = context.bot.send_message(
@@ -128,13 +129,13 @@ def reverse(update, context):
                 reply_to_message_id=rtmid,
             )
         else:
-            xx = context.bot.send_message(
+            context.bot.send_message(
                 chat_id, "Google told me to go away.", reply_to_message_id=rtmid
             )
             return
 
         os.remove(imagename)
-        match = ParseSauce(fetchUrl + "&hl=en")
+        match = parse_sauce(fetch_url + "&hl=en")
         guess = match["best_guess"]
         if match["override"] and match["override"] != "":
             imgspage = match["override"]
@@ -143,7 +144,7 @@ def reverse(update, context):
 
         if guess and imgspage:
             xx.edit_text(
-                f"[{guess}]({fetchUrl})\nLooking for images...",
+                f"[{guess}]({fetch_url})\nLooking for images...",
                 parse_mode="Markdown",
                 disable_web_page_preview=True,
             )
@@ -154,7 +155,7 @@ def reverse(update, context):
         images = scam(imgspage, lim)
         if len(images) == 0:
             xx.edit_text(
-                f"[{guess}]({fetchUrl})\n\n[Visually similar images]({imgspage})",
+                f"[{guess}]({fetch_url})\n\n[Visually similar images]({imgspage})",
                 parse_mode="Markdown",
                 disable_web_page_preview=True,
             )
@@ -169,7 +170,7 @@ def reverse(update, context):
             chat_id=chat_id, media=imglinks, reply_to_message_id=rtmid
         )
         xx.edit_text(
-            f"[{guess}]({fetchUrl})\n\n[Visually similar images]({imgspage})",
+            f"[{guess}]({fetch_url})\n\n[Visually similar images]({imgspage})",
             parse_mode="Markdown",
             disable_web_page_preview=True,
         )
@@ -179,7 +180,7 @@ def reverse(update, context):
         print(exception)
 
 
-def ParseSauce(googleurl):
+def parse_sauce(googleurl):
     source = opener.open(googleurl).read()
     soup = BeautifulSoup(source, "html.parser")
 

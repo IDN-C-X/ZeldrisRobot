@@ -14,13 +14,15 @@
 #
 # You should have received a copy of the GNU Affero General Public License
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
+
 import json
 import time
 
 import requests
 from pytz import country_names as cname
-from telegram import ParseMode
+from telegram import ParseMode, Update
 from telegram.error import BadRequest
+from telegram.ext import CallbackContext
 
 from zeldris import dispatcher, API_WEATHER as APPID
 from zeldris.modules.disable import DisableAbleCommandHandler
@@ -28,7 +30,7 @@ from zeldris.modules.helper_funcs.alternate import typing_action
 
 
 @typing_action
-def weather(update, context):
+def weather(update: Update, context: CallbackContext):
     args = context.args
     if len(args) == 0:
         reply = "Write a location to check the weather."
@@ -50,8 +52,8 @@ def weather(update, context):
 
         return
 
-    CITY = " ".join(args)
-    url = f"https://api.openweathermap.org/data/2.5/weather?q={CITY}&appid={APPID}"
+    city = " ".join(args)
+    url = f"https://api.openweathermap.org/data/2.5/weather?q={city}&appid={APPID}"
     request = requests.get(url)
     result = json.loads(request.text)
     if request.status_code != 200:
@@ -116,12 +118,16 @@ def weather(update, context):
     def fahr(c):
         c1 = 9 / 5
         c2 = 459.67
-        tF = c * c1 - c2
-        if tF < 0 and tF > -1:
-            tF = 0
-        return str(round(tF))
+        t_f = c * c1 - c2
+        if 0 > t_f > -1:
+            t_f = 0
+        return str(round(t_f))
 
-    reply = f"*Current weather for {cityname}, {country_name} is*:\n\n*Temperature:* `{celsius(curtemp)}°C ({fahr(curtemp)}ºF), feels like {celsius(feels_like)}°C ({fahr(feels_like)}ºF) \n`*Condition:* `{condmain}, {conddet}` {icon}\n*Humidity:* `{humidity}%`\n*Wind:* `{kmph[0]} km/h`\n"
+    reply = f"*Current weather for {cityname}, {country_name} is*:\n\n" \
+            f"*Temperature:* `{celsius(curtemp)}°C ({fahr(curtemp)}ºF), " \
+            f"feels like {celsius(feels_like)}°C ({fahr(feels_like)}ºF) \n" \
+            f"`*Condition:* `{condmain}, {conddet}` {icon}\n" \
+            f"*Humidity:* `{humidity}%`\n*Wind:* `{kmph[0]} km/h`\n "
     del_msg = update.effective_message.reply_text(
         "{}".format(reply), parse_mode=ParseMode.MARKDOWN, disable_web_page_preview=True
     )

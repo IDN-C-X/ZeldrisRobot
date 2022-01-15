@@ -19,19 +19,18 @@ import json
 import os
 import time
 from io import BytesIO
+from typing import Optional
 
-from telegram import ParseMode, Message
+from telegram import ParseMode, Message, Update, User
 from telegram.error import BadRequest
-from telegram.ext import CommandHandler
+from telegram.ext import CommandHandler, CallbackContext
 
 # from zeldris.modules.sql import warns_sql as warnssql
 import zeldris.modules.sql.blacklist_sql as blacklistsql
-
 # from zeldris.modules.sql import cust_filters_sql as filtersql
 # import zeldris.modules.sql.welcome_sql as welcsql
 import zeldris.modules.sql.locks_sql as locksql
 import zeldris.modules.sql.notes_sql as sql
-
 # from zeldris.modules.rules import get_rules
 import zeldris.modules.sql.rules_sql as rulessql
 from zeldris import dispatcher, LOGGER, OWNER_ID, MESSAGE_DUMP
@@ -44,7 +43,7 @@ from zeldris.modules.sql import disable_sql as disabledsql
 
 @user_admin
 @typing_action
-def import_data(update, context):
+def import_data(update: Update, context: CallbackContext):
     msg = update.effective_message
     chat = update.effective_chat
     user = update.effective_user
@@ -82,7 +81,8 @@ def import_data(update, context):
         # only import one group
         if len(data) > 1 and str(chat.id) not in data:
             msg.reply_text(
-                "There are more than one group in this file and the chat.id is not same! How am i supposed to import it?"
+                "There are more than one group in this file and the chat.id is not same! How am i supposed to import "
+                "it? "
             )
             return
 
@@ -102,7 +102,8 @@ def import_data(update, context):
         try:
             if str(context.bot.id) != str(data[str(chat.id)]["bot"]):
                 return msg.reply_text(
-                    "Backup from another bot that is not suggested might cause the problem, documents, photos, videos, audios, records might not work as it should be."
+                    "Backup from another bot that is not suggested might cause the problem, documents, photos, "
+                    "videos, audios, records might not work as it should be. "
                 )
         except Exception:
             pass
@@ -117,11 +118,12 @@ def import_data(update, context):
                 mod.__import_data__(str(chat.id), data)
         except Exception:
             msg.reply_text(
-                "An error occurred while recovering your data. The process failed. If you experience a problem with this, please ask on @IDNCoderX."
+                "An error occurred while recovering your data. The process failed. If you experience a problem with "
+                "this, please ask on @IDNCoderX. "
             )
 
             LOGGER.exception(
-                "Imprt for the chat %s with the name %s failed.",
+                "Import for the chat %s with the name %s failed.",
                 str(chat.id),
                 str(chat.title),
             )
@@ -138,13 +140,13 @@ def import_data(update, context):
 
 
 @user_admin
-def export_data(update, context):
+def export_data(update: Update, context: CallbackContext):
     chat_data = context.chat_data
     msg = update.effective_message  # type: Optional[Message]
     user = update.effective_user  # type: Optional[User]
-    chat_id = update.effective_chat.id
     chat = update.effective_chat
     current_chat_id = update.effective_chat.id
+
     conn = connected(context.bot, update, chat, user.id, need_admin=True)
     if conn:
         chat = dispatcher.bot.getChat(conn)
@@ -188,7 +190,7 @@ def export_data(update, context):
     buttonlist = []
     namacat = ""
     isicat = ""
-    rules = ""
+    # rules = ""
     count = 0
     countbtn = 0
     # Notes
@@ -261,38 +263,37 @@ def export_data(update, context):
     # Disabled command
     disabledcmd = list(disabledsql.get_all_disabled(chat_id))
     # Filters (TODO)
-    """
-	all_filters = list(filtersql.get_chat_triggers(chat_id))
-	export_filters = {}
-	for filters in all_filters:
-		filt = filtersql.get_filter(chat_id, filters)
-		# print(vars(filt))
-		if filt.is_sticker:
-			tipefilt = "sticker"
-		elif filt.is_document:
-			tipefilt = "doc"
-		elif filt.is_image:
-			tipefilt = "img"
-		elif filt.is_audio:
-			tipefilt = "audio"
-		elif filt.is_voice:
-			tipefilt = "voice"
-		elif filt.is_video:
-			tipefilt = "video"
-		elif filt.has_buttons:
-			tipefilt = "button"
-			buttons = filtersql.get_buttons(chat.id, filt.keyword)
-			print(vars(buttons))
-		elif filt.has_markdown:
-			tipefilt = "text"
-		if tipefilt == "button":
-			content = "{}#=#{}|btn|{}".format(tipefilt, filt.reply, buttons)
-		else:
-			content = "{}#=#{}".format(tipefilt, filt.reply)
-		print(content)
-		export_filters[filters] = content
-	print(export_filters)
-	"""
+    #     all_filters = list(filtersql.get_chat_triggers(chat_id))
+    #     export_filters = {}
+    #     for filters in all_filters:
+    # 	      filt = filtersql.get_filter(chat_id, filters)
+    # 	      print(vars(filt))
+    # 	          if filt.is_sticker:
+    #                 tipefilt = "sticker"
+    #             elif filt.is_document:
+    # 	              tipefilt = "doc"
+    #             elif filt.is_image:
+    # 	              tipefilt = "img"
+    #             elif filt.is_audio:
+    # 	              tipefilt = "audio"
+    #             elif filt.is_voice:
+    #                 tipefilt = "voice"
+    #             elif filt.is_video:
+    # 	              tipefilt = "video"
+    #             elif filt.has_buttons:
+    # 	              tipefilt = "button"
+    # 	              buttons = filtersql.get_buttons(chat.id, filt.keyword)
+    # 	              print(vars(buttons))
+    #             elif filt.has_markdown:
+    # 	              tipefilt = "text"
+    #             if tipefilt == "button":
+    # 	              content = "{}#=#{}|btn|{}".format(tipefilt, filt.reply, buttons)
+    #             else:
+    # 	              content = "{}#=#{}".format(tipefilt, filt.reply)
+    #             print(content)
+    #             export_filters[filters] = content
+    #     print(export_filters)
+    #
     # Welcome (TODO)
     # welc = welcsql.get_welc_pref(chat_id)
     # Locked
@@ -369,7 +370,8 @@ def export_data(update, context):
     context.bot.sendDocument(
         current_chat_id,
         document=open("Zeldris{}.backup".format(chat_id), "rb"),
-        caption="*Successfully Exported backup:*\nChat: `{}`\nChat ID: `{}`\nOn: `{}`\n\nNote: This `Zeldris-Backup` was specially made for notes.".format(
+        caption="*Successfully Exported backup:*\nChat: `{}`\nChat ID: `{}`\nOn: `{}`\n\nNote: This `Zeldris-Backup` "
+                "was specially made for notes.".format(
             chat.title,
             chat_id,
             tgl,
@@ -401,7 +403,7 @@ __mod_name__ = "Backups"
 __help__ = """
 *Only for chat administrator:*
 
-× /import: Reply to the backup file for the butler / emilia group to import as much as possible, making transfers 
+× /import: Reply to the backup file to import as much as possible, making transfers 
 very easy! Note that files / photos cannot be imported due to telegram restrictions. 
 
 × /export: Export group data, which will be exported are: rules, notes (documents, images, music, video, audio, 

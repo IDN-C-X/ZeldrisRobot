@@ -36,9 +36,10 @@ from telegram import (
     ParseMode,
     ChatAction,
     TelegramError,
+    Update,
 )
 from telegram.error import BadRequest
-from telegram.ext import CommandHandler, Filters
+from telegram.ext import CommandHandler, Filters, CallbackContext
 from telegram.utils.helpers import escape_markdown, mention_html
 
 from zeldris import (
@@ -58,7 +59,7 @@ from zeldris.modules.helper_funcs.filters import CustomFilters
 
 
 @typing_action
-def get_id(update, context):
+def get_id(update: Update, context: CallbackContext):
     args = context.args
     user_id = extract_user(update.effective_message, args)
     if user_id:
@@ -97,7 +98,7 @@ def get_id(update, context):
             )
 
 
-def info(update, context):
+def info(update: Update, context: CallbackContext):
     args = context.args
     msg = update.effective_message  # type: Optional[Message]
     user_id = extract_user(update.effective_message, args)
@@ -290,7 +291,7 @@ def markdown_help(update, _):
 
 
 @typing_action
-def wiki(update, context):
+def wiki(update: Update, context: CallbackContext):
     kueri = re.split(pattern="wiki", string=update.effective_message.text)
     wikipedia.set_lang("en")
     if len(str(kueri[1])) == 0:
@@ -324,7 +325,7 @@ def wiki(update, context):
 
 
 @typing_action
-def ud(update, context):
+def ud(update: Update, context: CallbackContext):
     msg = update.effective_message
     args = context.args
     text = " ".join(args).lower()
@@ -373,7 +374,7 @@ def src(update, _) -> None:
 
 
 @send_action(ChatAction.UPLOAD_PHOTO)
-def wall(update, context):
+def wall(update: Update, context: CallbackContext):
     chat_id = update.effective_chat.id
     msg = update.effective_message
     msg_id = update.effective_message.message_id
@@ -417,7 +418,7 @@ def wall(update, context):
 
 
 @typing_action
-def getlink(update, context):
+def getlink(update: Update, context: CallbackContext):
     args = context.args
     message = update.effective_message
     if args:
@@ -445,7 +446,7 @@ def getlink(update, context):
 
 
 @send_action(ChatAction.UPLOAD_PHOTO)
-def rmemes(update, context):
+def rmemes(update: Update, context: CallbackContext):
     msg = update.effective_message
     chat = update.effective_chat
 
@@ -513,7 +514,7 @@ def stats(update, _):
     )
 
 
-def paste(update, context):
+def paste(update: Update, context: CallbackContext):
     msg = update.effective_message
 
     if msg.reply_to_message and msg.reply_to_message.document:

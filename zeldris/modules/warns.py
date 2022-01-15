@@ -20,10 +20,19 @@ import re
 from typing import Optional
 
 import telegram
-from telegram import InlineKeyboardButton, InlineKeyboardMarkup, ParseMode, User
-from telegram import Message, Chat
+from telegram import (
+    InlineKeyboardButton,
+    InlineKeyboardMarkup,
+    ParseMode,
+    User,
+    Update,
+    CallbackQuery,
+    Message,
+    Chat,
+)
 from telegram.error import BadRequest
 from telegram.ext import (
+    CallbackContext,
     CommandHandler,
     DispatcherHandlerStop,
     MessageHandler,
@@ -81,7 +90,7 @@ def warn(
             )
 
         else:  # ban
-            chat.kick_member(user.id)
+            chat.ban_member(user.id)
             reply = "That's{} warnings, {} has been banned!".format(
                 limit, mention_html(user.id, user.first_name)
             )
@@ -196,7 +205,7 @@ def button(update, _):
 @can_restrict
 @loggable
 @typing_action
-def warn_user(update, context):
+def warn_user(update: Update, context: CallbackContext):
     message = update.effective_message  # type: Optional[Message]
     chat = update.effective_chat  # type: Optional[Chat]
     warner = update.effective_user  # type: Optional[User]
@@ -227,7 +236,7 @@ def warn_user(update, context):
 @bot_admin
 @loggable
 @typing_action
-def reset_warns(update, context):
+def reset_warns(update: Update, context: CallbackContext):
     message = update.effective_message  # type: Optional[Message]
     chat = update.effective_chat  # type: Optional[Chat]
     user = update.effective_user  # type: Optional[User]
@@ -257,7 +266,7 @@ def reset_warns(update, context):
 @bot_admin
 @loggable
 @typing_action
-def remove_warns(update, context):
+def remove_warns(update: Update, context: CallbackContext):
     message = update.effective_message  # type: Optional[Message]
     chat = update.effective_chat  # type: Optional[Chat]
     user = update.effective_user  # type: Optional[User]
@@ -285,7 +294,7 @@ def remove_warns(update, context):
 
 
 @typing_action
-def warns(update, context):
+def warns(update: Update, context: CallbackContext):
     message = update.effective_message  # type: Optional[Message]
     chat = update.effective_chat  # type: Optional[Chat]
     args = context.args
@@ -426,7 +435,7 @@ def reply_filter(update, _) -> str:
 @user_admin
 @loggable
 @typing_action
-def set_warn_limit(update, context) -> str:
+def set_warn_limit(update: Update, context: CallbackContext) -> str:
     chat = update.effective_chat  # type: Optional[Chat]
     user = update.effective_user  # type: Optional[User]
     msg = update.effective_message  # type: Optional[Message]
@@ -459,7 +468,7 @@ def set_warn_limit(update, context) -> str:
 
 @user_admin
 @typing_action
-def set_warn_strength(update, context):
+def set_warn_strength(update: Update, context: CallbackContext):
     chat = update.effective_chat  # type: Optional[Chat]
     user = update.effective_user  # type: Optional[User]
     msg = update.effective_message  # type: Optional[Message]
@@ -526,7 +535,7 @@ def __migrate__(old_chat_id, new_chat_id):
     sql.migrate_chat(old_chat_id, new_chat_id)
 
 
-def __chat_settings__(chat_id, user_id):
+def __chat_settings__(chat_id, _):
     num_warn_filters = sql.num_warn_chat_filters(chat_id)
     limit, soft_warn = sql.get_warn_setting(chat_id)
     return (

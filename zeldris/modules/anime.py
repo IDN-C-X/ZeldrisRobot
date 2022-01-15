@@ -245,7 +245,6 @@ def anime(update: Update, _):
         msg = msg[:-2] + "`\n"
         info = json.get("siteUrl")
         trailer = json.get("trailer", None)
-        anime_id = json["id"]
         if trailer:
             trailer_id = trailer.get("id", None)
             site = trailer.get("site", None)
@@ -496,12 +495,12 @@ Get information about anime, manga or characters from [AniList](anilist.co).
 
 *Available commands:*
 
-× /anime <anime>: returns information about the anime.
-× /character <character>: returns information about the character.
-× /manga <manga>: returns information about the manga.
-× /user <user>: returns information about a MyAnimeList user.
+× /anime `<anime>`: returns information about the anime.
+× /character `<character>`: returns information about the character.
+× /manga `<manga>`: returns information about the manga.
+× /user `<user>`: returns information about a MyAnimeList user.
 × /upcoming: returns a list of new anime in the upcoming seasons.
-× /airing <anime>: returns anime airing info.
+× /airing `<anime>`: returns anime airing info.
  """
 
 ANIME_HANDLER = DisableAbleCommandHandler("anime", anime, run_async=True)

@@ -167,10 +167,10 @@ if is_module_loaded(FILENAME):
         args = context.args
         chat = update.effective_chat
         if len(args) >= 1:
-            disable_module = "zeldris.modules." + args[0].rsplit(".", 1)[0]
+            disable_modules = "zeldris.modules." + args[0].rsplit(".", 1)[0]
 
             try:
-                module = importlib.import_module(disable_module)
+                module = importlib.import_module(disable_modules)
             except BaseException:
                 update.effective_message.reply_text("Does that module even exist?")
                 return
@@ -241,10 +241,10 @@ if is_module_loaded(FILENAME):
         chat = update.effective_chat
 
         if len(args) >= 1:
-            enable_module = "zeldris.modules." + args[0].rsplit(".", 1)[0]
+            enable_modules = "zeldris.modules." + args[0].rsplit(".", 1)[0]
 
             try:
-                module = importlib.import_module(enable_module)
+                module = importlib.import_module(enable_modules)
             except BaseException:
                 update.effective_message.reply_text("Does that module even exist?")
                 return
@@ -288,7 +288,7 @@ if is_module_loaded(FILENAME):
 
     @connection_status
     @user_admin
-    def list_cmds(update: Update, context: CallbackContext):
+    def list_cmds(update: Update, _: CallbackContext):
         if DISABLE_CMDS + DISABLE_OTHER:
             result = "".join(
                 f" - `{escape_markdown(cmd)}`\n"
@@ -312,7 +312,7 @@ if is_module_loaded(FILENAME):
         return "The following commands are currently restricted:\n{}".format(result)
 
     @connection_status
-    def commands(update: Update, context: CallbackContext):
+    def commands(update: Update, _: CallbackContext):
         chat = update.effective_chat
         update.effective_message.reply_text(
             build_curr_disabled(chat.id),
@@ -325,7 +325,7 @@ if is_module_loaded(FILENAME):
     def __migrate__(old_chat_id, new_chat_id):
         sql.migrate_chat(old_chat_id, new_chat_id)
 
-    def __chat_settings__(chat_id, user_id):
+    def __chat_settings__(chat_id, _):
         return build_curr_disabled(chat_id)
 
     DISABLE_HANDLER = CommandHandler("disable", disable, run_async=True)
@@ -356,10 +356,10 @@ It'll also allow you to autodelete them, stopping people from bluetexting.
 × /cmds: Check the current status of disabled commands.
 
 *Admin only:*
-× /enable <cmd name>: Enable that command.
-× /disable <cmd name>: Disable that command.
-×/enablemodule <module name>: enable all commands in that module.
-×/disablemodule <module name>: disable all commands in that module.
+× /enable `<cmd name>`: Enable that command.
+× /disable `<cmd name>`: Disable that command.
+×/enablemodule `<module name>`: enable all commands in that module.
+×/disablemodule `<module name>`: disable all commands in that module.
 × /listcmds: List all possible disablable commands.
     """
 

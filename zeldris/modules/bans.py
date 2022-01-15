@@ -18,9 +18,9 @@
 import html
 from typing import Optional
 
-from telegram import Chat, Message, User, ParseMode
+from telegram import Chat, Message, User, ParseMode, Update
 from telegram.error import BadRequest
-from telegram.ext import CommandHandler, Filters
+from telegram.ext import CommandHandler, Filters, CallbackContext
 from telegram.utils.helpers import mention_html
 
 from zeldris import dispatcher, LOGGER
@@ -46,23 +46,22 @@ from zeldris.modules.log_channel import loggable
 @user_admin
 @loggable
 @typing_action
-def ban(update, context):
+def ban(update: Update, context: CallbackContext):
+    bot, args = context.bot, context.args
     chat = update.effective_chat
     user = update.effective_user
     message = update.effective_message
-    bot, args = context.bot, context.args
-    reason = ""
+
     if message.reply_to_message and message.reply_to_message.sender_chat:
         r = bot.ban_chat_sender_chat(
             chat_id=chat.id, sender_chat_id=message.reply_to_message.sender_chat.id
         )
         if r:
             message.reply_text(
-                "Finally! Channel {} was banned successfully from {}\n\n💡 He can only write with his profile but not through other channels.".format(
-                    html.escape(message.reply_to_message.sender_chat.title),
-                    html.escape(chat.title),
-                ),
-                parse_mode="html",
+                f"Banned channel <b>{html.escape(message.reply_to_message.sender_chat.title)}</b> "
+                f"from <b>{html.escape(chat.title)}</b>\n\n💡 He can only write with his profile "
+                f"but not through other channels.",
+                parse_mode=ParseMode.HTML,
             )
         else:
             message.reply_text("Failed to ban channel")
@@ -126,7 +125,7 @@ def ban(update, context):
     if reason:
         reply += f"<b>Reason:</b> {html.escape(reason)}"
     try:
-        chat.kick_member(user_id)
+        chat.ban_member(user_id)
 
         if silent:
             if message.reply_to_message:
@@ -167,11 +166,11 @@ def ban(update, context):
 @user_admin
 @loggable
 @typing_action
-def temp_ban(update, context):
+def temp_ban(update: Update, context: CallbackContext):
+    bot, args = context.bot, context.args
     chat = update.effective_chat
     user = update.effective_user
     message = update.effective_message
-    bot, args = context.bot, context.args
 
     if user_can_ban(chat, user, bot.id) is False:
         message.reply_text("You don't have enough rights to temporarily ban someone!")
@@ -233,7 +232,7 @@ def temp_ban(update, context):
     if reason:
         reply += f"<b>Reason:</b> {html.escape(reason)}"
     try:
-        chat.kick_member(user_id, until_date=bantime)
+        chat.ban_member(user_id, until_date=bantime)
         # bot.send_sticker(chat.id, BAN_STICKER)  # banhammer marie sticker
         bot.sendMessage(
             chat.id,
@@ -267,13 +266,13 @@ def temp_ban(update, context):
 @user_admin
 @loggable
 @typing_action
-def kick(update, context):
+def kick(update: Update, context: CallbackContext):
+    bot, args = context.bot, context.args
     chat = update.effective_chat  # type: Optional[Chat]
     user = update.effective_user  # type: Optional[User]
     message = update.effective_message  # type: Optional[Message]
-    args = context.args
 
-    if user_can_ban(chat, user, context.bot.id) is False:
+    if user_can_ban(chat, user, bot.id) is False:
         message.reply_text("You don't have enough rights to kick users!")
         return ""
 
@@ -333,7 +332,7 @@ def kick(update, context):
 @can_restrict
 @loggable
 @typing_action
-def banme(update, _):
+def banme(update: Update, _: CallbackContext):
     user_id = update.effective_message.from_user.id
     chat = update.effective_chat
     user = update.effective_user
@@ -341,7 +340,7 @@ def banme(update, _):
         update.effective_message.reply_text("Yeahhh.. not gonna ban an admin.")
         return
 
-    res = update.effective_chat.kick_member(user_id)
+    res = update.effective_chat.ban_member(user_id)
     if res:
         update.effective_message.reply_text("Yes, you're right! GTFO..")
         return (
@@ -360,7 +359,7 @@ def banme(update, _):
 @bot_admin
 @can_restrict
 @typing_action
-def kickme(update, _):
+def kickme(update: Update, _: CallbackContext):
     user_id = update.effective_message.from_user.id
     if is_user_admin(update.effective_chat, user_id):
         update.effective_message.reply_text("Yeahhh.. not gonna kick an admin.")
@@ -378,23 +377,22 @@ def kickme(update, _):
 @user_admin
 @loggable
 @typing_action
-def unban(update, context):
+def unban(update: Update, context: CallbackContext):
+    bot, args = context.bot, context.args
     message = update.effective_message  # type: Optional[Message]
     user = update.effective_user  # type: Optional[User]
     chat = update.effective_chat  # type: Optional[Chat]
-    log_message = ""
-    bot, args = context.bot, context.args
+
     if message.reply_to_message and message.reply_to_message.sender_chat:
         r = bot.unban_chat_sender_chat(
             chat_id=chat.id, sender_chat_id=message.reply_to_message.sender_chat.id
         )
         if r:
             message.reply_text(
-                "Finally! Channel {} was unbanned successfully from {}\n\n💡 Now this users can send the messages with they channel again".format(
-                    html.escape(message.reply_to_message.sender_chat.title),
-                    html.escape(chat.title),
-                ),
-                parse_mode="html",
+                f"Unbanned channel <b>{html.escape(message.reply_to_message.sender_chat.title)}</b> "
+                f"from <b>{html.escape(chat.title)}</b>\n\n💡 Now this users can send the messages "
+                f"with they channel again",
+                parse_mode=ParseMode.HTML,
             )
         else:
             message.reply_text("Failed to unban channel")
@@ -454,12 +452,12 @@ This module allows you to do that easily, by exposing some common actions, so ev
 × /banme: Bans the user who issued the command.
 
 *Admin only:*
-× /ban <userhandle>: Bans a user. (via handle, or reply).
-× /sban <userhandle>: Silently ban a user. Deletes command, Replied message and doesn't reply. (via handle, or reply).
+× /ban `<userhandle>`: Bans a user. (via handle, or reply).
+× /sban `<userhandle>`: Silently ban a user. Deletes command, Replied message and doesn't reply. (via handle, or reply).
 × /dban: Bans a user and delete the message. (via handle, or reply).
-× /tban <userhandle> x(m/h/d): Bans a user for x time. (via handle, or reply). m = minutes, h = hours, d = days.
-× /unban <userhandle>: Unbans a user. (via handle, or reply).
-× /kick <userhandle>: Kicks a user, (via handle, or reply).
+× /tban `<userhandle> x(m/h/d)`: Bans a user for x time. (via handle, or reply). m = minutes, h = hours, d = days.
+× /unban `<userhandle>`: Unbans a user. (via handle, or reply).
+× /kick `<userhandle>`: Kicks a user, (via handle, or reply).
 
 An example of temporarily banning someone:
 `/tban @username 2h`; this bans a user for 2 hours.

@@ -17,9 +17,9 @@
 
 import time
 
-from telegram import MessageEntity
+from telegram import MessageEntity, ParseMode, Update
 from telegram.error import BadRequest
-from telegram.ext import Filters, MessageHandler
+from telegram.ext import CallbackContext, Filters, MessageHandler
 
 from zeldris import dispatcher, REDIS
 from zeldris.modules.disable import (
@@ -39,7 +39,7 @@ AFK_GROUP = 7
 AFK_REPLY_GROUP = 8
 
 
-def afk(update, _):
+def afk(update: Update, _: CallbackContext):
     message = update.effective_message
     args = message.text.split(None, 1)
     user = update.effective_user
@@ -56,37 +56,43 @@ def afk(update, _):
     REDIS.set(f"afk_time_{user.id}", start_afk_time)
     fname = user.first_name
     try:
-        message.reply_text(f"{fname} is now AFK!")
+        message.reply_text(f"<code>{fname}</code> is now AFK!", parse_mode=ParseMode.HTML)
     except BadRequest:
         pass
 
 
-def no_longer_afk(update, _):
+def no_longer_afk(update: Update, _: CallbackContext):
     user = update.effective_user
     message = update.effective_message
+
     if not user:  # ignore channels
         return
 
     if not is_user_afk(user.id):  # Check if user is afk or not
         return
-    end_afk_time = get_readable_time(
-        (time.time() - float(REDIS.get(f"afk_time_{user.id}")))
-    )
+
+    x = REDIS.get(f"afk_time_{user.id}")
+    if not x:
+        return
+
+    end_afk_time = get_readable_time((time.time() - float(x)))
     REDIS.delete(f"afk_time_{user.id}")
     res = end_afk(user.id)
     if res:
-        if message.new_chat_members:  # dont say msg
+        if message.new_chat_members:  # don't say message
             return
-        firstname = update.effective_user.first_name
+        firstname = user.first_name
         try:
             message.reply_text(
-                f"{firstname} is back online!\nYou were away for: {end_afk_time}"
+                f"<b>{firstname}</b> is back online!\n"
+                f"You were away for: <code>{end_afk_time}</code>",
+                parse_mode=ParseMode.HTML,
             )
         except BadRequest:
             return
 
 
-def reply_afk(update, context):
+def reply_afk(update: Update, context: CallbackContext):
     message = update.effective_message
     userc = update.effective_user
     userc_id = userc.id
@@ -141,20 +147,23 @@ def reply_afk(update, context):
         check_afk(update, context, user_id, fst_name, userc_id)
 
 
-def check_afk(update, _, user_id: int, fst_name: int, userc_id: int):
+def check_afk(update: Update, _, user_id: int, fst_name: int, userc_id: int):
+    message = update.effective_message
     if is_user_afk(user_id):
         reason = afk_reason(user_id)
-        since_afk = get_readable_time(
-            (time.time() - float(REDIS.get(f"afk_time_{user_id}")))
-        )
+        z = REDIS.get(f"afk_time_{user_id}")
+        if not z:
+            return
+
+        since_afk = get_readable_time((time.time() - float(z)))
         if int(userc_id) == int(user_id):
             return
         if reason == "none":
-            res = f"{fst_name} is AFK!\nLast seen: {since_afk}"
+            res = f"<b>{fst_name}</b> is AFK!\nLast seen: <code>{since_afk}</code>"
         else:
-            res = f"{fst_name} is AFK!\nReason: {reason}\nLast seen: {since_afk}"
+            res = f"<b>{fst_name}</b> is AFK!\nReason: {reason}\nLast seen: {since_afk}"
 
-        update.effective_message.reply_text(res)
+        message.reply_text(res, parse_mode=ParseMode.HTML)
 
 
 def __gdpr__(user_id):
@@ -164,8 +173,8 @@ def __gdpr__(user_id):
 __help__ = """
 When marked as AFK, any mentions will be replied to with a message to say you're not available!
 
-× /afk <reason>: Mark yourself as AFK.
-× brb <reason>: Same as the afk command - but not a command.
+× /afk `<reason>`: Mark yourself as AFK.
+× brb `<reason>`: Same as the afk command - but not a command.
 
 An example of how to afk or brb:
 `/afk dinner` or brb dinner.

@@ -22,11 +22,11 @@ from platform import python_version
 
 import requests
 import speedtest
+import telegram
 from psutil import cpu_percent, virtual_memory, disk_usage, boot_time
 from spamwatch import __version__ as __sw__
 from telegram import ParseMode, Update
-from telegram import __version__
-from telegram.ext import CommandHandler, Filters
+from telegram.ext import CommandHandler, Filters, CallbackContext
 
 from zeldris import dispatcher, OWNER_ID
 from zeldris.modules.helper_funcs.alternate import typing_action
@@ -69,7 +69,7 @@ def get_bot_ip(update, _):
 
 
 @typing_action
-def speedtst(update, context):
+def speedtst(update: Update, context: CallbackContext):
     message = update.effective_message
     ed_msg = message.reply_text("Running high speed test . . .")
     test = speedtest.Speedtest()
@@ -93,7 +93,7 @@ def speedtst(update, context):
 
 
 @typing_action
-def system_status(update, context):
+def system_status(update: Update, context: CallbackContext):
     uptime = datetime.datetime.fromtimestamp(boot_time()).strftime("%Y-%m-%d %H:%M:%S")
     status = "<b>======[ 𝚂𝚈𝚂𝚃𝙴𝙼 𝚂𝚃𝙰𝚃𝙸𝚂𝚃𝙸𝙲𝚂 ]======</b>\n\n"
     status += "<b>📍 𝚂𝚢𝚜𝚝𝚎𝚖 𝚞𝚙𝚝𝚒𝚖𝚎 :</b> <code>" + str(uptime) + "</code>\n\n"
@@ -114,7 +114,7 @@ def system_status(update, context):
     status += "<b>    ◤ 𝚁𝚊𝚖 𝚞𝚜𝚊𝚐𝚎 :</b> <code>" + str(mem[2]) + " %</code>\n"
     status += "<b>    ◤ 𝚂𝚝𝚘𝚛𝚊𝚐𝚎 𝚞𝚜𝚎𝚍 :</b> <code>" + str(disk[3]) + " %</code>\n\n"
     status += "<b>    ◤ 𝙿𝚢𝚝𝚑𝚘𝚗 𝚟𝚎𝚛𝚜𝚒𝚘𝚗 :</b> <code>" + python_version() + "</code>\n"
-    status += "<b>    ◤ 𝙻𝚒𝚋𝚛𝚊𝚛𝚢 𝚟𝚎𝚛𝚜𝚒𝚘𝚗 :</b> <code>" + str(__version__) + "</code>\n"
+    status += "<b>    ◤ 𝙻𝚒𝚋𝚛𝚊𝚛𝚢 𝚟𝚎𝚛𝚜𝚒𝚘𝚗 :</b> <code>" + str(telegram.__version__) + "</code>\n"
     status += "<b>    ◤ 𝚂𝚙𝚊𝚖𝚠𝚊𝚝𝚌𝚑 𝙰𝙿𝙸 :</b> <code>" + str(__sw__) + "</code>\n"
     status += "<b>┖</b>\n"
     context.bot.sendMessage(update.effective_chat.id, status, parse_mode=ParseMode.HTML)

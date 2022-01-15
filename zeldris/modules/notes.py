@@ -26,10 +26,11 @@ from telegram import (
     ParseMode,
     InlineKeyboardMarkup,
     InlineKeyboardButton,
+    Update,
 )
 from telegram import Message
 from telegram.error import BadRequest
-from telegram.ext import CommandHandler, MessageHandler, Filters, CallbackQueryHandler
+from telegram.ext import CallbackContext, CommandHandler, MessageHandler, Filters, CallbackQueryHandler
 from telegram.utils.helpers import mention_html
 
 import zeldris.modules.sql.notes_sql as sql
@@ -226,7 +227,7 @@ def get(bot, update, notename, show_none=True, no_format=False):
 
 
 @typing_action
-def cmd_get(update, context):
+def cmd_get(update: Update, context: CallbackContext):
     args = context.args
     if len(args) >= 2 and args[1].lower() == "noformat":
         get(context.bot, update, args[0].lower(), show_none=True, no_format=True)
@@ -236,7 +237,7 @@ def cmd_get(update, context):
         update.effective_message.reply_text("Get rekt")
 
 
-def hash_get(update, context):
+def hash_get(update: Update, context: CallbackContext):
     message = update.effective_message.text
     fst_word = message.split()[0]
     no_hash = fst_word[1:].lower()
@@ -245,7 +246,7 @@ def hash_get(update, context):
 
 @user_admin
 @typing_action
-def save(update, context):
+def save(update: Update, context: CallbackContext):
     chat = update.effective_chat
     user = update.effective_user
     conn = connected(context.bot, update, chat, user.id)
@@ -281,7 +282,7 @@ def save(update, context):
 
 @user_admin
 @typing_action
-def clear(update, context):
+def clear(update: Update, context: CallbackContext):
     args = context.args
     chat = update.effective_chat
     user = update.effective_user
@@ -314,7 +315,7 @@ def clear(update, context):
 
 
 @typing_action
-def list_notes(update, context):
+def list_notes(update: Update, context: CallbackContext):
     chat_id = update.effective_chat.id
     chat = update.effective_chat
     user = update.effective_user
@@ -532,7 +533,7 @@ def __migrate__(old_chat_id, new_chat_id):
     sql.migrate_chat(old_chat_id, new_chat_id)
 
 
-def __chat_settings__(chat_id, user_id):
+def __chat_settings__(chat_id, _):
     notes = sql.get_all_chat_notes(chat_id)
     return "There are `{}` notes in this chat.".format(len(notes))
 

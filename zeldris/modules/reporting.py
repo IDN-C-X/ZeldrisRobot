@@ -18,10 +18,11 @@
 import html
 from typing import Optional
 
-from telegram import InlineKeyboardMarkup, InlineKeyboardButton
+from telegram import InlineKeyboardMarkup, InlineKeyboardButton, Update
 from telegram import Message, Chat, User, ParseMode
 from telegram.error import BadRequest, Unauthorized
 from telegram.ext import (
+    CallbackContext,
     CommandHandler,
     MessageHandler,
     Filters,
@@ -40,7 +41,7 @@ REPORT_GROUP = 5
 
 @user_admin
 @typing_action
-def report_setting(update, context):
+def report_setting(update: Update, context: CallbackContext):
     chat = update.effective_chat  # type: Optional[Chat]
     msg = update.effective_message  # type: Optional[Message]
     args = context.args
@@ -89,16 +90,15 @@ def report_setting(update, context):
 @user_not_admin
 @loggable
 @typing_action
-def report(update, context) -> str:
+def report(update: Update, context: CallbackContext) -> str:
     message = update.effective_message  # type: Optional[Message]
     chat = update.effective_chat  # type: Optional[Chat]
     user = update.effective_user  # type: Optional[User]
 
     if chat and message.reply_to_message and sql.chat_should_report(chat.id):
         reported_user = message.reply_to_message.from_user  # type: Optional[User]
-        chat_name = chat.title or chat.first or chat.username
+        chat_name = chat.title or chat.first_name or chat.username
         admin_list = chat.get_administrators()
-        messages = update.effective_message
 
         isadmeme = chat.get_member(reported_user.id).status
         if isadmeme in ["administrator", "creator"]:
@@ -187,7 +187,7 @@ def report(update, context) -> str:
     return ""
 
 
-def report_buttons(update, context):
+def report_buttons(update: Update, context: CallbackContext):
     query = update.callback_query
     splitter = query.data.replace("report_", "").split("=")
     if splitter[1] == "kick":

@@ -33,9 +33,10 @@ from telegram import (
     InlineKeyboardMarkup,
     InlineKeyboardButton,
     ChatAction,
+    Update,
 )
 from telegram.error import BadRequest, TelegramError, Unauthorized
-from telegram.ext import CommandHandler, CallbackQueryHandler
+from telegram.ext import CommandHandler, CallbackQueryHandler, CallbackContext
 from telegram.utils.helpers import mention_html, mention_markdown
 
 import zeldris.modules.sql.feds_sql as sql
@@ -104,7 +105,7 @@ UNFBAN_ERRORS = {
 
 
 @typing_action
-def new_fed(update, context):
+def new_fed(update: Update, context: CallbackContext):
     chat = update.effective_chat  # type: Optional[Chat]
     user = update.effective_user  # type: Optional[User]
     message = update.effective_message
@@ -156,7 +157,7 @@ def new_fed(update, context):
 
 
 @typing_action
-def del_fed(update, context):
+def del_fed(update: Update, context: CallbackContext):
     chat = update.effective_chat  # type: Optional[Chat]
     user = update.effective_user  # type: Optional[User]
     args = context.args
@@ -228,7 +229,7 @@ def fed_chat(update, _):
 
 
 @typing_action
-def join_fed(update, context):
+def join_fed(update: Update, context: CallbackContext):
     chat = update.effective_chat  # type: Optional[Chat]
     user = update.effective_user  # type: Optional[User]
 
@@ -283,7 +284,7 @@ def join_fed(update, context):
 
 
 @typing_action
-def leave_fed(update, context):
+def leave_fed(update: Update, context: CallbackContext):
     chat = update.effective_chat  # type: Optional[Chat]
     user = update.effective_user  # type: Optional[User]
 
@@ -323,7 +324,7 @@ def leave_fed(update, context):
 
 
 @typing_action
-def user_join_fed(update, context):
+def user_join_fed(update: Update, context: CallbackContext):
     chat = update.effective_chat
     user = update.effective_user
     msg = update.effective_message
@@ -387,7 +388,7 @@ def user_join_fed(update, context):
 
 
 @typing_action
-def user_demote_fed(update, context):
+def user_demote_fed(update: Update, context: CallbackContext):
     chat = update.effective_chat  # type: Optional[Chat]
     user = update.effective_user  # type: Optional[User]
     args = context.args
@@ -447,7 +448,7 @@ def user_demote_fed(update, context):
 
 
 @typing_action
-def fed_info(update, context):
+def fed_info(update: Update, context: CallbackContext):
     chat = update.effective_chat  # type: Optional[Chat]
     user = update.effective_user  # type: Optional[User]
     args = context.args
@@ -494,7 +495,7 @@ def fed_info(update, context):
 
 
 @typing_action
-def fed_admin(update, context):
+def fed_admin(update: Update, context: CallbackContext):
     chat = update.effective_chat  # type: Optional[Chat]
     user = update.effective_user  # type: Optional[User]
     args = context.args
@@ -542,7 +543,7 @@ def fed_admin(update, context):
 
 
 @typing_action
-def fed_ban(update, context):
+def fed_ban(update: Update, context: CallbackContext):
     chat = update.effective_chat  # type: Optional[Chat]
     user = update.effective_user  # type: Optional[User]
     args = context.args
@@ -944,7 +945,7 @@ def fed_ban(update, context):
 
 
 @typing_action
-def unfban(update, context):
+def unfban(update: Update, context: CallbackContext):
     chat = update.effective_chat
     user = update.effective_user
     message = update.effective_message
@@ -1163,7 +1164,7 @@ def unfban(update, context):
 
 
 @typing_action
-def set_frules(update, context):
+def set_frules(update: Update, context: CallbackContext):
     chat = update.effective_chat  # type: Optional[Chat]
     user = update.effective_user  # type: Optional[User]
     args = context.args
@@ -1219,7 +1220,7 @@ def set_frules(update, context):
 
 
 @typing_action
-def get_frules(update, context):
+def get_frules(update: Update, context: CallbackContext):
     chat = update.effective_chat  # type: Optional[Chat]
     args = context.args
 
@@ -1242,7 +1243,7 @@ def get_frules(update, context):
 
 
 @typing_action
-def fed_broadcast(update, context):
+def fed_broadcast(update: Update, context: CallbackContext):
     msg = update.effective_message
     user = update.effective_user
     chat = update.effective_chat
@@ -1301,7 +1302,7 @@ def fed_broadcast(update, context):
 
 
 @send_action(ChatAction.UPLOAD_DOCUMENT)
-def fed_ban_list(update, context):
+def fed_ban_list(update: Update, context: CallbackContext):
     chat = update.effective_chat  # type: Optional[Chat]
     user = update.effective_user  # type: Optional[User]
     args = context.args
@@ -1466,7 +1467,7 @@ def fed_ban_list(update, context):
 
 
 @typing_action
-def fed_notif(update, context):
+def fed_notif(update: Update, context: CallbackContext):
     chat = update.effective_chat
     user = update.effective_user
     msg = update.effective_messag
@@ -1501,7 +1502,7 @@ def fed_notif(update, context):
 
 
 @typing_action
-def fed_chats(update, context):
+def fed_chats(update: Update, context: CallbackContext):
     chat = update.effective_chat  # type: Optional[Chat]
     user = update.effective_user  # type: Optional[User]
     args = context.args
@@ -1565,7 +1566,7 @@ def fed_chats(update, context):
 
 
 @typing_action
-def fed_import_bans(update, context):
+def fed_import_bans(update: Update, context: CallbackContext):
     chat = update.effective_chat
     user = update.effective_user
     msg = update.effective_message
@@ -1797,7 +1798,7 @@ def del_fed_button(update, _):
 
 
 @typing_action
-def fed_stat_user(update, context):
+def fed_stat_user(update: Update, context: CallbackContext):
     user = update.effective_user
     msg = update.effective_message
     args = context.args
@@ -1900,7 +1901,7 @@ def fed_stat_user(update, context):
 
 
 @typing_action
-def set_fed_log(update, context):
+def set_fed_log(update: Update, context: CallbackContext):
     chat = update.effective_chat  # type: Optional[Chat]
     user = update.effective_user  # type: Optional[User]
     args = context.args
@@ -1940,7 +1941,7 @@ def set_fed_log(update, context):
 
 
 @typing_action
-def unset_fed_log(update, context):
+def unset_fed_log(update: Update, context: CallbackContext):
     chat = update.effective_chat
     user = update.effective_user
     msg = update.effective_message
@@ -1981,7 +1982,7 @@ def unset_fed_log(update, context):
 
 
 @typing_action
-def subs_feds(update, context):
+def subs_feds(update: Update, context: CallbackContext):
     chat = update.effective_chat
     user = update.effective_user
     msg = update.effective_message
@@ -2046,7 +2047,7 @@ def subs_feds(update, context):
 
 
 @typing_action
-def unsubs_feds(update, context):
+def unsubs_feds(update: Update, context: CallbackContext):
     chat = update.effective_chat
     user = update.effective_user
     msg = update.effective_message
@@ -2110,7 +2111,7 @@ def unsubs_feds(update, context):
 
 
 @typing_action
-def get_myfedsubs(update, context):
+def get_myfedsubs(update: Update, context: CallbackContext):
     chat = update.effective_chat
     user = update.effective_user
     msg = update.effective_message
@@ -2155,7 +2156,7 @@ def get_myfedsubs(update, context):
 
 
 @typing_action
-def get_myfeds_list(update, context):
+def get_myfeds_list(update: Update, context: CallbackContext):
     chat = update.effective_chat
     user = update.effective_user
     msg = update.effective_message
@@ -2191,7 +2192,7 @@ def is_user_fed_owner(fed_id, user_id):
     return str(user_id) == getfedowner or int(user_id) == OWNER_ID
 
 
-def welcome_fed(update, context):
+def welcome_fed(update: Update, context: CallbackContext):
     chat = update.effective_chat  # type: Optional[Chat]
     user = update.effective_user  # type: Optional[User]
 

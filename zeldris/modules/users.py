@@ -18,9 +18,9 @@
 from io import BytesIO
 from time import sleep
 
-from telegram import TelegramError
+from telegram import TelegramError, Update
 from telegram.error import BadRequest
-from telegram.ext import MessageHandler, Filters, CommandHandler
+from telegram.ext import MessageHandler, Filters, CommandHandler, CallbackContext
 
 import zeldris.modules.sql.users_sql as sql
 from zeldris import dispatcher, OWNER_ID, LOGGER
@@ -58,12 +58,12 @@ def get_user_id(username):
     return None
 
 
-def broadcast(update, context):
+def broadcast(update: Update, context: CallbackContext):
     to_send = update.effective_message.text.split(None, 1)
     if len(to_send) >= 2:
-        chats = sql.get_all_chats() or []
+        chats_ = sql.get_all_chats() or []
         failed = 0
-        for chat in chats:
+        for chat in chats_:
             try:
                 context.bot.sendMessage(int(chat.chat_id), to_send[1])
                 sleep(0.1)
@@ -114,7 +114,7 @@ def chats(update, _):
         )
 
 
-def chat_checker(update, context):
+def chat_checker(update: Update, context: CallbackContext):
     if (
         update.effective_message.chat.get_member(context.bot.id).can_send_messages
         is False

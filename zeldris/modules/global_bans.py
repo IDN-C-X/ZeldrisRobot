@@ -18,9 +18,9 @@
 import html
 from io import BytesIO
 
-from telegram import ParseMode, ChatAction
+from telegram import ParseMode, ChatAction, Update
 from telegram.error import BadRequest, TelegramError
-from telegram.ext import CommandHandler, MessageHandler, Filters
+from telegram.ext import CommandHandler, MessageHandler, Filters, CallbackContext
 from telegram.utils.helpers import mention_html
 
 import zeldris.modules.sql.global_bans_sql as sql
@@ -83,7 +83,7 @@ UNGBAN_ERRORS = {
 
 
 @typing_action
-def gban(update, context):
+def gban(update: Update, context: CallbackContext):
     message = update.effective_message
     chat = update.effective_chat
     args = context.args
@@ -227,7 +227,7 @@ def gban(update, context):
 
 
 @typing_action
-def ungban(update, context):
+def ungban(update: Update, context: CallbackContext):
     message = update.effective_message
     args = context.args
     user_id = extract_user(message, args)
@@ -329,7 +329,7 @@ def check_and_ban(update, user_id, should_message=True):
     try:
         spmban = spamwtc.get_ban(int(user_id))
         if spmban:
-            update.effective_chat.kick_member(user_id)
+            update.effective_chat.ban_member(user_id)
             if should_message:
                 update.effective_message.reply_text(
                     f"This person has been detected as spambot by @SpamWatch and has been removed!"
@@ -341,7 +341,7 @@ def check_and_ban(update, user_id, should_message=True):
         pass
 
     if sql.is_user_gbanned(user_id):
-        update.effective_chat.kick_member(user_id)
+        update.effective_chat.ban_member(user_id)
         if should_message:
             usr = sql.get_gbanned_user(user_id)
             greason = usr.reason
@@ -355,7 +355,7 @@ def check_and_ban(update, user_id, should_message=True):
             return
 
 
-def enforce_gban(update, context):
+def enforce_gban(update: Update, context: CallbackContext):
     # Not using @restrict handler to avoid spamming - just ignore if cant gban.
     if (
         not sql.does_chat_gban(update.effective_chat.id)
@@ -382,7 +382,7 @@ def enforce_gban(update, context):
 
 @user_admin
 @typing_action
-def gbanstat(update, context):
+def gbanstat(update: Update, context: CallbackContext):
     args = context.args
     if len(args) > 0:
         if args[0].lower() in ["on", "yes"]:
@@ -434,7 +434,7 @@ def __migrate__(old_chat_id, new_chat_id):
     sql.migrate_chat(old_chat_id, new_chat_id)
 
 
-def __chat_settings__(chat_id, user_id):
+def __chat_settings__(chat_id, _):
     return "This chat is enforcing *gbans*: `{}`.".format(sql.does_chat_gban(chat_id))
 
 

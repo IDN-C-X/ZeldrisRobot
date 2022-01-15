@@ -25,7 +25,9 @@ from requests import get
 from telegram import InlineKeyboardButton
 from telegram import InlineKeyboardMarkup
 from telegram import ParseMode
+from telegram import Update
 from telegram.error import BadRequest
+from telegram.ext import CallbackContext
 from ujson import loads
 
 from zeldris import dispatcher
@@ -37,7 +39,7 @@ DEVICES_DATA = "https://raw.githubusercontent.com/androidtrackers/certified-andr
 
 
 @typing_action
-def magisk(update, _):
+def magisk(update: Update, _: CallbackContext):
     url = "https://raw.githubusercontent.com/topjohnwu/magisk-files/"
     releases = ""
     for types, branch in {
@@ -68,7 +70,7 @@ def magisk(update, _):
 
 
 @typing_action
-def device(update, context):
+def device(update: Update, context: CallbackContext):
     args = context.args
     if len(args) == 0:
         reply = "No codename provided, write a codename for fetching informations."
@@ -124,7 +126,7 @@ def device(update, context):
 
 
 @typing_action
-def twrp(update, context):
+def twrp(update: Update, context: CallbackContext):
     args = context.args
     if len(args) == 0:
         reply = "No codename provided, write a codename for fetching informations."
@@ -203,7 +205,7 @@ def twrp(update, context):
 
 # Picked from AstrakoBot; Thanks to them!
 @typing_action
-def orangefox(update, _):
+def orangefox(update: Update, _: CallbackContext):
     message = update.effective_message
     devices = message.text[len("/orangefox ") :]
     btn = ""
@@ -233,7 +235,7 @@ def orangefox(update, _):
             version = page["version"]
             changelog = page["changelog"][0]
             size = str(round(float(page["size"]) / 1024 / 1024, 1)) + "MB"
-            dl_link = page["mirrors"]["DL"]
+            dl_link = page["mirrors"]["US"]
             date = datetime.fromtimestamp(page["date"])
             md5 = page["md5"]
             msg = f"*Latest OrangeFox Recovery for the {full_name}*\n\n"
@@ -250,7 +252,7 @@ def orangefox(update, _):
             msg += f"• MD5: `{md5}`\n"
             btn = [[InlineKeyboardButton(text="Download", url=dl_link)]]
     else:
-        msg = "Enter the device codename to fetch, like:\n`/orangefox mido`"
+        msg = "Enter the device codename to fetch, like:\n`/orangefox lavender`"
 
     update.message.reply_text(
         text=msg,
@@ -262,15 +264,15 @@ def orangefox(update, _):
 
 # Picked from UserIndoBot; Thanks to them!
 @typing_action
-def los(update, context) -> str:
+def los(update: Update, context: CallbackContext) -> str:
     message = update.effective_message
     args = context.args
     try:
-        device = args[0]
-    except Exception:
-        device = ""
+        device_ = args[0]
+    except IndexError:
+        device_ = ""
 
-    if device == "":
+    if device_ == "":
         reply_text = "*Please Type Your Device Codename*\nExample : `/los lavender`"
         message.reply_text(
             reply_text,
@@ -279,7 +281,7 @@ def los(update, context) -> str:
         )
         return
 
-    fetch = get(f"https://download.lineageos.org/api/v1/{device}/nightly/*")
+    fetch = get(f"https://download.lineageos.org/api/v1/{device_}/nightly/*")
     if fetch.status_code == 200 and len(fetch.json()["response"]) != 0:
         usr = fetch.json()
         data = len(usr["response"]) - 1  # the latest rom are below
@@ -314,7 +316,7 @@ def los(update, context) -> str:
 
 
 @typing_action
-def gsi(update, context):
+def gsi(update: Update, _: CallbackContext):
     message = update.effective_message
 
     usr = get(
@@ -332,12 +334,12 @@ def gsi(update, context):
 
 
 @typing_action
-def bootleg(update, context) -> str:
+def bootleg(update: Update, context: CallbackContext) -> str:
     message = update.effective_message
     args = context.args
     try:
         codename = args[0]
-    except Exception:
+    except IndexError:
         codename = ""
 
     if codename == "":
@@ -353,21 +355,21 @@ def bootleg(update, context) -> str:
         data = fetch.json()
 
         if codename.lower() == "x00t":
-            device = "X00T"
+            devicea = "X00T"
         elif codename.lower() == "rmx1971":
-            device = "RMX1971"
+            devicea = "RMX1971"
         else:
-            device = codename.lower()
+            devicea = codename.lower()
 
         try:
-            fullname = data[device]["fullname"]
-            filename = data[device]["filename"]
-            buildate = data[device]["buildate"]
-            buildsize = data[device]["buildsize"]
+            fullname = data[devicea]["fullname"]
+            filename = data[devicea]["filename"]
+            buildate = data[devicea]["buildate"]
+            buildsize = data[devicea]["buildsize"]
             buildsize = sizee(int(buildsize))
-            downloadlink = data[device]["download"]
-            if data[device]["mirrorlink"] != "":
-                mirrorlink = data[device]["mirrorlink"]
+            downloadlink = data[devicea]["download"]
+            if data[devicea]["mirrorlink"] != "":
+                mirrorlink = data[devicea]["mirrorlink"]
             else:
                 mirrorlink = None
         except KeyError:
@@ -414,11 +416,11 @@ __help__ = """
 Get the latest Magsik releases or TWRP for your device!
 
 *Android related commands:*
-× /magisk - Gets the latest magisk release for Stable/Beta/Canary.
-× /device <codename> - Gets android device basic info from its codename.
-× /twrp <codename> -  Gets latest twrp for the android device using the codename.
-× /orangefox <codename> -  Gets latest orangefox recovery for the android device using the codename.
-× /los <codename> - Gets Latest los build.
+× /magisk: Gets the latest magisk release for Stable/Beta/Canary.
+× /device `<codename>`: Gets android device basic info from its codename.
+× /twrp `<codename>`:  Gets latest twrp for the android device using the codename.
+× /orangefox `<codename>`:  Gets latest orangefox recovery for the android device using the codename.
+× /los `<codename>`: Gets Latest lineage os build.
 """
 
 __mod_name__ = "Android"

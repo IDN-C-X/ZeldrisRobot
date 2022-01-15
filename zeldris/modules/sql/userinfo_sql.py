@@ -19,6 +19,7 @@ import threading
 
 from sqlalchemy import Column, UnicodeText
 from sqlalchemy.sql.sqltypes import BigInteger
+
 from zeldris.modules.sql import SESSION, BASE
 
 

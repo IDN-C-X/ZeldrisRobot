@@ -20,9 +20,9 @@ import re
 import time
 
 import requests as r
-from telegram import MAX_MESSAGE_LENGTH, ParseMode, TelegramError
+from telegram import MAX_MESSAGE_LENGTH, ParseMode, TelegramError, Update
 from telegram.error import BadRequest
-from telegram.ext import CommandHandler, Filters
+from telegram.ext import CommandHandler, Filters, CallbackContext
 from telegram.utils.helpers import escape_markdown
 
 import zeldris.modules.helper_funcs.fun_strings as fun
@@ -37,12 +37,12 @@ from zeldris.modules.helper_funcs.filters import CustomFilters
 
 
 @typing_action
-def runs(update, context):
+def runs(update: Update, _: CallbackContext):
     update.effective_message.reply_text(random.choice(fun.RUN_STRINGS))
 
 
 @typing_action
-def slap(update, context):
+def slap(update: Update, context: CallbackContext):
     args = context.args
     msg = update.effective_message
 
@@ -86,7 +86,7 @@ def slap(update, context):
 
 
 @typing_action
-def punch(update, context):
+def punch(update: Update, context: CallbackContext):
     args = context.args
     msg = update.effective_message
 
@@ -121,15 +121,15 @@ def punch(update, context):
 
     temp = random.choice(fun.PUNCH_TEMPLATES)
     item = random.choice(fun.ITEMS)
-    punch = random.choice(fun.PUNCH)
+    punches = random.choice(fun.PUNCH)
 
-    repl = temp.format(user1=user1, user2=user2, item=item, punches=punch)
+    repl = temp.format(user1=user1, user2=user2, item=item, punches=punches)
 
     reply_text(repl, parse_mode=ParseMode.MARKDOWN)
 
 
 @typing_action
-def police(update, context):
+def police(update: Update, _: CallbackContext):
     message = update.effective_message.reply_text("Wuanjayy...")
     for i in fun.POLICE:
         message.edit_text(i)
@@ -137,7 +137,7 @@ def police(update, context):
 
 
 @typing_action
-def hug(update, context):
+def hug(update: Update, context: CallbackContext):
     args = context.args
     msg = update.effective_message
 
@@ -173,15 +173,15 @@ def hug(update, context):
         user2 = curr_user
 
     temp = random.choice(fun.HUG_TEMPLATES)
-    hug = random.choice(fun.HUG)
+    hugs = random.choice(fun.HUG)
 
-    repl = temp.format(user1=user1, user2=user2, hug=hug)
+    repl = temp.format(user1=user1, user2=user2, hug=hugs)
 
     reply_text(repl, parse_mode=ParseMode.MARKDOWN)
 
 
 @typing_action
-def abuse(update, context):
+def abuse(update: Update, _: CallbackContext):
     # reply to correct message
     reply_text = (
         update.effective_message.reply_to_message.reply_text
@@ -192,12 +192,12 @@ def abuse(update, context):
 
 
 @typing_action
-def dice(update, context):
+def dice(update: Update, context: CallbackContext):
     context.bot.sendDice(update.effective_chat.id)
 
 
 @typing_action
-def shrug(update, context):
+def shrug(update: Update, _: CallbackContext):
     # reply to correct message
     reply_text = (
         update.effective_message.reply_to_message.reply_text
@@ -207,7 +207,7 @@ def shrug(update, context):
     reply_text(random.choice(fun.SHGS))
 
 
-# def decide(update, context):
+# def decide(update: Update, context: CallbackContext):
 #    args = update.effective_message.text.split(None, 1)
 #    if len(args) >= 2:  # Don't reply if no args
 #        reply_text = (
@@ -218,7 +218,7 @@ def shrug(update, context):
 #        reply_text(random.choice(fun.DECIDE))
 
 
-def yesnowtf(update, context):
+def yesnowtf(update: Update, context: CallbackContext):
     msg = update.effective_message
     chat = update.effective_chat
     res = r.get("https://yesno.wtf/api")
@@ -234,7 +234,7 @@ def yesnowtf(update, context):
 
 
 @typing_action
-def table(update, context):
+def table(update: Update, _: CallbackContext):
     reply_text = (
         update.effective_message.reply_to_message.reply_text
         if update.effective_message.reply_to_message
@@ -244,7 +244,7 @@ def table(update, context):
 
 
 @typing_action
-def cri(update, context):
+def cri(update: Update, _: CallbackContext):
     reply_text = (
         update.effective_message.reply_to_message.reply_text
         if update.effective_message.reply_to_message
@@ -254,7 +254,7 @@ def cri(update, context):
 
 
 @typing_action
-def recite(update, context):
+def recite(update: Update, _: CallbackContext):
     reply_text = (
         update.effective_message.reply_to_message.reply_text
         if update.effective_message.reply_to_message
@@ -264,7 +264,7 @@ def recite(update, context):
 
 
 @typing_action
-def gbun(update, context):
+def gbun(update: Update, context: CallbackContext):
     user = update.effective_user
     chat = update.effective_chat
 
@@ -275,7 +275,7 @@ def gbun(update, context):
 
 
 @typing_action
-def snipe(update, context):
+def snipe(update: Update, context: CallbackContext):
     args = context.args
     try:
         chat_id = str(args[0])
@@ -298,7 +298,7 @@ def snipe(update, context):
 
 
 @typing_action
-def copypasta(update, context):
+def copypasta(update: Update, _: CallbackContext):
     message = update.effective_message
     if not message.reply_to_message:
         message.reply_text("I need a message to make pasta.")
@@ -351,7 +351,7 @@ def copypasta(update, context):
 
 
 @typing_action
-def clapmoji(update, context):
+def clapmoji(update: Update, _: CallbackContext):
     message = update.effective_message
     if not message.reply_to_message:
         message.reply_text("I need a message to clap!")
@@ -363,7 +363,7 @@ def clapmoji(update, context):
 
 
 @typing_action
-def owo(update, context):
+def owo(update: Update, _: CallbackContext):
     message = update.effective_message
     if not message.reply_to_message:
         message.reply_text("I need a message to meme.")
@@ -386,7 +386,7 @@ def owo(update, context):
             "*(^O^)*",
             "((+_+))",
         ]
-        reply_text = re.sub(r"[rl]", "w", message.reply_to_message.text)
+        re.sub(r"[rl]", "w", message.reply_to_message.text)
         reply_text = re.sub(r"[ｒｌ]", "ｗ", message.reply_to_message.text)
         reply_text = re.sub(r"[RL]", "W", reply_text)
         reply_text = re.sub(r"[ＲＬ]", "Ｗ", reply_text)
@@ -394,7 +394,7 @@ def owo(update, context):
         reply_text = re.sub(r"ｎ([ａｅｉｏｕ])", r"ｎｙ\1", reply_text)
         reply_text = re.sub(r"N([aeiouAEIOU])", r"Ny\1", reply_text)
         reply_text = re.sub(r"Ｎ([ａｅｉｏｕＡＥＩＯＵ])", r"Ｎｙ\1", reply_text)
-        reply_text = re.sub(r"\!+", " " + random.choice(faces), reply_text)
+        reply_text = re.sub(r"!+", " " + random.choice(faces), reply_text)
         reply_text = re.sub(r"！+", " " + random.choice(faces), reply_text)
         reply_text = reply_text.replace("ove", "uv")
         reply_text = reply_text.replace("ｏｖｅ", "ｕｖ")
@@ -403,7 +403,7 @@ def owo(update, context):
 
 
 @typing_action
-def stretch(update, context):
+def stretch(update: Update, _: CallbackContext):
     message = update.effective_message
     if not message.reply_to_message:
         message.reply_text("I need a message to streeeeeeeeetch.")
@@ -422,19 +422,19 @@ def stretch(update, context):
         message.reply_to_message.reply_text(reply_text)
 
 
-def me_too(update, context):
+def me_too(update: Update, _: CallbackContext):
     message = update.effective_message
     reply = random.choice(["Me too thanks", "Haha yes, me too", "Same lol", "Me irl"])
     message.reply_text(reply)
 
 
-def goodnight(update, context):
+def goodnight(update: Update, _: CallbackContext):
     message = update.effective_message
     reply = random.choice(fun.GDNIGHT)
     message.reply_text(reply, parse_mode=ParseMode.MARKDOWN)
 
 
-def goodmorning(update, context):
+def goodmorning(update: Update, _: CallbackContext):
     message = update.effective_message
     reply = random.choice(fun.GDMORNING)
     message.reply_text(reply, parse_mode=ParseMode.MARKDOWN)

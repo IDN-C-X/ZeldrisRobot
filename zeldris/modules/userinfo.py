@@ -18,8 +18,9 @@
 import html
 from typing import Optional
 
-from telegram import Message, User
+from telegram import Message, User, Update
 from telegram import ParseMode, MAX_MESSAGE_LENGTH
+from telegram.ext import CallbackContext
 from telegram.utils.helpers import escape_markdown
 
 import zeldris.modules.sql.userinfo_sql as sql
@@ -30,7 +31,7 @@ from zeldris.modules.helper_funcs.extraction import extract_user
 
 
 @typing_action
-def about_me(update, context):
+def about_me(update: Update, context: CallbackContext):
     message = update.effective_message  # type: Optional[Message]
     bot, args = context.bot, context.args
     user_id = extract_user(message, args)
@@ -76,7 +77,7 @@ def set_about_me(update, _):
 
 
 @typing_action
-def about_bio(update, context):
+def about_bio(update: Update, context: CallbackContext):
     message = update.effective_message  # type: Optional[Message]
     args = context.args
 
@@ -100,7 +101,7 @@ def about_bio(update, context):
 
 
 @typing_action
-def set_about_bio(update, context):
+def set_about_bio(update: Update, context: CallbackContext):
     message = update.effective_message  # type: Optional[Message]
     sender = update.effective_user  # type: Optional[User]
     if message.reply_to_message:

@@ -18,10 +18,10 @@
 import html
 
 from alphabet_detector import AlphabetDetector
-from telegram import ParseMode, MessageEntity
+from telegram import ParseMode, MessageEntity, Update
 from telegram import TelegramError, ChatPermissions
 from telegram.error import BadRequest
-from telegram.ext import CommandHandler, MessageHandler, Filters
+from telegram.ext import CallbackContext, CommandHandler, MessageHandler, Filters
 from telegram.utils.helpers import mention_html
 
 import zeldris.modules.sql.locks_sql as sql
@@ -155,7 +155,7 @@ def locktypes(update, _):
 @user_admin
 @loggable
 @typing_action
-def lock(update, context) -> str:
+def lock(update: Update, context: CallbackContext) -> str:
     args = context.args
     chat = update.effective_chat
     user = update.effective_user
@@ -171,7 +171,7 @@ def lock(update, context) -> str:
                 conn = connected(context.bot, update, chat, user.id, need_admin=True)
                 if conn:
                     chat = dispatcher.bot.getChat(conn)
-                    chat_id = conn
+                    # chat_id = conn
                     chat_name = chat.title
                     text = "Locked all {} messages for non-admins in {}!".format(
                         ltype, chat_name
@@ -184,8 +184,8 @@ def lock(update, context) -> str:
                         )
                         return ""
                     chat = update.effective_chat
-                    chat_id = update.effective_chat.id
-                    chat_name = update.effective_message.chat.title
+                    # chat_id = update.effective_chat.id
+                    # chat_name = update.effective_message.chat.title
                     text = "Locked all {} messages for non-admins!".format(ltype)
                 sql.update_lock(chat.id, ltype, locked=True)
                 send_message(update.effective_message, text, parse_mode="markdown")
@@ -220,7 +220,7 @@ def lock(update, context) -> str:
                         return ""
                     chat = update.effective_chat
                     chat_id = update.effective_chat.id
-                    chat_name = update.effective_message.chat.title
+                    # chat_name = update.effective_message.chat.title
                     text = "Locked {} for all non-admins!".format(ltype)
 
                 current_permission = context.bot.getChat(chat_id).permissions
@@ -262,7 +262,7 @@ def lock(update, context) -> str:
 @user_admin
 @loggable
 @typing_action
-def unlock(update, context) -> str:
+def unlock(update: Update, context: CallbackContext) -> str:
     args = context.args
     chat = update.effective_chat
     user = update.effective_user
@@ -275,7 +275,7 @@ def unlock(update, context) -> str:
                 conn = connected(context.bot, update, chat, user.id, need_admin=True)
                 if conn:
                     chat = dispatcher.bot.getChat(conn)
-                    chat_id = conn
+                    # chat_id = conn
                     chat_name = chat.title
                     text = "Unlocked {} messages for everyone in {}!".format(
                         ltype, chat_name
@@ -288,8 +288,8 @@ def unlock(update, context) -> str:
                         )
                         return ""
                     chat = update.effective_chat
-                    chat_id = update.effective_chat.id
-                    chat_name = update.effective_message.chat.title
+                    # chat_id = update.effective_chat.id
+                    # chat_name = update.effective_message.chat.title
                     text = "Unlocked {} messages for everyone!".format(ltype)
                 sql.update_lock(chat.id, ltype, locked=False)
                 send_message(update.effective_message, text, parse_mode="markdown")
@@ -321,7 +321,7 @@ def unlock(update, context) -> str:
                         return ""
                     chat = update.effective_chat
                     chat_id = update.effective_chat.id
-                    chat_name = update.effective_message.chat.title
+                    # chat_name = update.effective_message.chat.title
                     text = "Unlocked {} for everyone!".format(ltype)
 
                 current_permission = context.bot.getChat(chat_id).permissions
@@ -357,11 +357,11 @@ def unlock(update, context) -> str:
 
 
 @user_not_admin
-def del_lockables(update, context):
+def del_lockables(update: Update, context: CallbackContext):
     chat = update.effective_chat
     message = update.effective_message
 
-    for lockable, filter in LOCK_TYPES.items():
+    for lockable, FILTER in LOCK_TYPES.items():
         if lockable == "rtl":
             if sql.is_locked(chat.id, lockable) and can_delete(chat, context.bot.id):
                 if message.caption:
@@ -412,7 +412,7 @@ def del_lockables(update, context):
                 break
             continue
         if (
-            filter(update)
+            FILTER(update)
             and sql.is_locked(chat.id, lockable)
             and can_delete(chat, context.bot.id)
         ):
@@ -428,7 +428,7 @@ def del_lockables(update, context):
                             )
                             return
 
-                        chat.kick_member(new_mem.id)
+                        chat.ban_member(new_mem.id)
                         send_message(
                             update.effective_message,
                             "Only admins are allowed to add bots in this chat! Get outta here.",
@@ -492,7 +492,7 @@ def build_lock_message(chat_id):
 
 @user_admin
 @typing_action
-def list_locks(update, context):
+def list_locks(update: Update, context: CallbackContext):
     chat = update.effective_chat
     user = update.effective_user
 
@@ -548,7 +548,7 @@ def __migrate__(old_chat_id, new_chat_id):
     sql.migrate_chat(old_chat_id, new_chat_id)
 
 
-def __chat_settings__(chat_id, user_id):
+def __chat_settings__(chat_id, _):
     return build_lock_message(chat_id)
 
 

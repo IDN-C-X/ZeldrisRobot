@@ -18,9 +18,9 @@
 import html
 import os
 
-from telegram import ParseMode
+from telegram import ParseMode, Update
 from telegram.error import BadRequest
-from telegram.ext import CommandHandler, Filters
+from telegram.ext import CallbackContext, CommandHandler, Filters
 from telegram.utils.helpers import mention_html
 
 from zeldris import dispatcher
@@ -48,12 +48,12 @@ from zeldris.modules.log_channel import loggable
 @user_admin
 @loggable
 @typing_action
-def promote(update, context):
+def promote(update: Update, context: CallbackContext):
+    bot, args = context.bot, context.args
     chat_id = update.effective_chat.id
     message = update.effective_message
     chat = update.effective_chat
     user = update.effective_user
-    bot, args = context.bot, context.args
 
     if user_can_promote(chat, user, bot.id) is False:
         message.reply_text("You don't have enough rights to promote someone!")
@@ -131,11 +131,11 @@ def promote(update, context):
 @user_admin
 @loggable
 @typing_action
-def fullpromote(update, context):
+def fullpromote(update: Update, context: CallbackContext):
+    bot, args = context.bot, context.args
     message = update.effective_message
     chat = update.effective_chat
     user = update.effective_user
-    bot, args = context.bot, context.args
 
     if user_can_promote(chat, user, bot.id) is False:
         message.reply_text("You don't have enough rights to promote someone!")
@@ -210,11 +210,11 @@ def fullpromote(update, context):
 @user_admin
 @loggable
 @typing_action
-def demote(update, context):
+def demote(update: Update, context: CallbackContext):
+    bot, args = context.bot, context.args
     chat = update.effective_chat
     message = update.effective_message
     user = update.effective_user
-    bot, args = context.bot, context.args
 
     if user_can_promote(chat, user, bot.id) is False:
         message.reply_text("You don't have enough rights to demote someone!")
@@ -281,7 +281,7 @@ def demote(update, context):
 @user_admin
 @loggable
 @typing_action
-def pin(update, context):
+def pin(update: Update, context: CallbackContext):
     bot, args = context.bot, context.args
     user = update.effective_user
     chat = update.effective_chat
@@ -331,7 +331,7 @@ def pin(update, context):
 @user_admin
 @loggable
 @typing_action
-def unpin(update, context):
+def unpin(update: Update, context: CallbackContext):
     bot = context.bot
     chat = update.effective_chat
     user = update.effective_user
@@ -364,7 +364,7 @@ def unpin(update, context):
 
 @user_admin
 @typing_action
-def refresh_admin(update, _):
+def refresh_admin(update: Update, _: CallbackContext):
     try:
         ADMIN_CACHE.pop(update.effective_chat.id)
     except KeyError:
@@ -376,7 +376,7 @@ def refresh_admin(update, _):
 @bot_admin
 @user_admin
 @typing_action
-def invite(update, context):
+def invite(update: Update, context: CallbackContext):
     bot = context.bot
     user = update.effective_user
     msg = update.effective_message
@@ -397,7 +397,7 @@ def invite(update, context):
         bot_member = chat.get_member(bot.id)
         if bot_member.can_invite_users:
             invitelink = context.bot.exportChatInviteLink(chat.id)
-            msg.reply_text(invitelink)
+            msg.reply_text(invitelink, disable_web_page_preview=True)
         else:
             msg.reply_text(
                 "I don't have access to the invite link, try changing my permissions!"
@@ -409,7 +409,7 @@ def invite(update, context):
 
 
 @typing_action
-def adminlist(update, _):
+def adminlist(update: Update, _: CallbackContext):
     administrators = update.effective_chat.get_administrators()
     text = "Admins in <b>{}</b>:".format(update.effective_chat.title or "this chat")
     for admin in administrators:
@@ -432,7 +432,7 @@ def adminlist(update, _):
 @can_promote
 @user_admin
 @typing_action
-def set_title(update, context):
+def set_title(update: Update, context: CallbackContext):
     bot, args = context.bot, context.args
     chat = update.effective_chat
     message = update.effective_message
@@ -440,7 +440,7 @@ def set_title(update, context):
     user_id, title = extract_user_and_text(message, args)
     try:
         user_member = chat.get_member(user_id)
-    except Exception:
+    except BadRequest:
         return
 
     if not user_id:
@@ -490,7 +490,7 @@ def set_title(update, context):
 @bot_admin
 @user_admin
 @typing_action
-def setchatpic(update, context):
+def setchatpic(update: Update, context: CallbackContext):
     bot = context.bot
     chat = update.effective_chat
     msg = update.effective_message
@@ -528,8 +528,8 @@ def setchatpic(update, context):
 @bot_admin
 @user_admin
 @typing_action
-def rmchatpic(update, context):
-    bot = context.bo
+def rmchatpic(update: Update, context: CallbackContext):
+    bot = context.bot
     chat = update.effective_chat
     msg = update.effective_message
     user = update.effective_user
@@ -548,7 +548,7 @@ def rmchatpic(update, context):
 @bot_admin
 @user_admin
 @typing_action
-def setchat_title(update, context):
+def setchat_title(update: Update, context: CallbackContext):
     chat = update.effective_chat
     msg = update.effective_message
     user = update.effective_user
@@ -577,7 +577,7 @@ def setchat_title(update, context):
 @bot_admin
 @user_admin
 @typing_action
-def set_sticker(update, context):
+def set_sticker(update: Update, context: CallbackContext):
     bot = context.bot
     msg = update.effective_message
     chat = update.effective_chat
@@ -609,7 +609,7 @@ def set_sticker(update, context):
 @bot_admin
 @user_admin
 @typing_action
-def set_desc(update, context):
+def set_desc(update: Update, context: CallbackContext):
     bot = context.bot
     msg = update.effective_message
     chat = update.effective_chat
@@ -650,13 +650,13 @@ done easily using the bot.
 × /pin: Silently pins the message replied to - add `loud`, `notify` or `violent` to give notificaton to users.
 × /unpin: Unpins the currently pinned message.
 × /invitelink: Gets private chat's invitelink.
-× /promote <title>: Promotes the user replied to.
-× /fullpromote <title>: Promotes the user replied to with ful rights.
+× /promote `<title>`: Promotes the user replied to.
+× /fullpromote `<title>`: Promotes the user replied to with ful rights.
 × /demote: Demotes the user replied to.
 × /settitle: Sets a custom title for an admin which is promoted by bot.
 × /setgpic: As a reply to file or photo to set group profile pic!
 × /delgpic: Same as above but to remove group profile pic.
-× /setgtitle <newtitle>: Sets new chat title in your group.
+× /setgtitle `<newtitle>`: Sets new chat title in your group.
 × /setsticker: As a reply to some sticker to set it as group sticker set!
 × /setdescription: <description> Sets new chat description in group.
 
@@ -666,7 +666,7 @@ An example of promoting someone to admins:
 `/promote @username`; this promotes a user to admins.
 """
 
-__mod_name__ = "Admin"
+__mod_name__ = "Admins"
 
 PIN_HANDLER = CommandHandler(
     "pin", pin, pass_args=True, filters=Filters.chat_type.groups, run_async=True

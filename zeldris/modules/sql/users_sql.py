@@ -26,6 +26,7 @@ from sqlalchemy import (
     func,
 )
 from sqlalchemy.sql.sqltypes import BigInteger
+
 from zeldris import dispatcher
 from zeldris.modules.sql import BASE, SESSION
 

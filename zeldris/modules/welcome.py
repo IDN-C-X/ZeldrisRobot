@@ -190,8 +190,6 @@ def new_member(update: Update, context: CallbackContext):  # sourcery no-metrics
     for new_mem in new_members:
 
         welcome_log = None
-        res = None
-        sent = None
         should_mute = True
         welcome_bool = True
         media_wel = False
@@ -276,7 +274,7 @@ def new_member(update: Update, context: CallbackContext):  # sourcery no-metrics
                     fullname = escape_markdown(f"{first_name} {new_mem.last_name}")
                 else:
                     fullname = escape_markdown(first_name)
-                count = chat.get_members_count()
+                count = chat.get_member_count()
                 mention = mention_markdown(new_mem.id, escape_markdown(first_name))
                 if new_mem.username:
                     username = "@" + escape_markdown(new_mem.username)
@@ -635,7 +633,7 @@ def left_member(update: Update, context: CallbackContext):  # sourcery no-metric
                     fullname = escape_markdown(f"{first_name} {left_mem.last_name}")
                 else:
                     fullname = escape_markdown(first_name)
-                count = chat.get_members_count()
+                count = chat.get_member_count()
                 mention = mention_markdown(left_mem.id, first_name)
                 if left_mem.username:
                     username = "@" + escape_markdown(left_mem.username)
@@ -1224,7 +1222,7 @@ def __migrate__(old_chat_id, new_chat_id):
     sql.migrate_chat(old_chat_id, new_chat_id)
 
 
-def __chat_settings__(chat_id, user_id):
+def __chat_settings__(chat_id, _):
     welcome_pref = sql.get_welc_pref(chat_id)[0]
     goodbye_pref = sql.get_gdbye_pref(chat_id)[0]
     return (

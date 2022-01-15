@@ -18,10 +18,15 @@
 import html
 from typing import Optional
 
+from telegram import Chat
 from telegram import ChatPermissions
-from telegram import Message, Chat, User
+from telegram import Message
+from telegram import Update
+from telegram import User
 from telegram.error import BadRequest
-from telegram.ext import CommandHandler, Filters
+from telegram.ext import CallbackContext
+from telegram.ext import CommandHandler
+from telegram.ext import Filters
 from telegram.utils.helpers import mention_html
 
 from zeldris import dispatcher, LOGGER
@@ -42,7 +47,7 @@ from zeldris.modules.log_channel import loggable
 @user_admin
 @loggable
 @typing_action
-def mute(update, context):
+def mute(update: Update, context: CallbackContext):
     chat = update.effective_chat  # type: Optional[Chat]
     user = update.effective_user  # type: Optional[User]
     message = update.effective_message  # type: Optional[Message]
@@ -99,7 +104,7 @@ def mute(update, context):
 @user_admin
 @loggable
 @typing_action
-def unmute(update, context):
+def unmute(update: Update, context: CallbackContext):
     chat = update.effective_chat  # type: Optional[Chat]
     user = update.effective_user  # type: Optional[User]
     message = update.effective_message  # type: Optional[Message]
@@ -165,7 +170,7 @@ def unmute(update, context):
 @user_admin
 @loggable
 @typing_action
-def temp_mute(update, context):
+def temp_mute(update: Update, context: CallbackContext):
     chat = update.effective_chat  # type: Optional[Chat]
     user = update.effective_user  # type: Optional[User]
     message = update.effective_message  # type: Optional[Message]

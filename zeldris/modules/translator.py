@@ -38,8 +38,7 @@ trans = SyncTranslator()
 
 
 @typing_action
-def translate(update: Update, context: CallbackContext) -> None:
-    bot = context.bot
+def translate(update: Update, _: CallbackContext) -> None:
     message = update.effective_message
     reply_msg = message.reply_to_message
     to_translate = []
@@ -71,7 +70,7 @@ def translate(update: Update, context: CallbackContext) -> None:
 
 
 @typing_action
-def languages(update: Update, context: CallbackContext) -> None:
+def languages(update: Update, _: CallbackContext) -> None:
     update.effective_message.reply_text(
         "Click on the button below to see the list of supported language codes.",
         reply_markup=InlineKeyboardMarkup(
@@ -89,7 +88,7 @@ def languages(update: Update, context: CallbackContext) -> None:
 
 
 @send_action(ChatAction.RECORD_AUDIO)
-def gtts(update, context):
+def gtts(update: Update, context: CallbackContext):
     msg = update.effective_message
     reply = " ".join(context.args)
     if not reply:

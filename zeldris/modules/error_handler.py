@@ -62,7 +62,7 @@ def error_callback(update: Update, context: CallbackContext):
         try:
             stringio = io.StringIO()
             pretty_errors.output_stderr = stringio
-            output = pretty_errors.excepthook(
+            pretty_errors.excepthook(
                 type(context.error),
                 context.error,
                 context.error.__traceback__,
@@ -96,12 +96,17 @@ def error_callback(update: Update, context: CallbackContext):
             update.effective_message.text if update.effective_message else "No message",
             tb,
         )
-        key = requests.post(
-            "https://www.toptal.com/developers/hastebin/documents",
-            data=pretty_message.encode("UTF-8"),
-        ).json()
+        extension = "txt"
+        url = "https://spaceb.in/api/v1/documents/"
+        try:
+            response = requests.post(
+                url, data={"content": pretty_message, "extension": extension}
+            )
+        except Exception as e:
+            return {"error": str(e)}
+        response = response.json()
         e = html.escape(f"{context.error}")
-        if not key.get("key"):
+        if not response:
             with open("error.txt", "w+") as f:
                 f.write(pretty_message)
             context.bot.send_document(
@@ -112,8 +117,8 @@ def error_callback(update: Update, context: CallbackContext):
                 parse_mode="html",
             )
             return
-        key = key.get("key")
-        url = f"https://www.toptal.com/developers/hastebin/{key}"
+
+        url = f"https://spaceb.in/{response['payload']['id']}"
         context.bot.send_message(
             MESSAGE_DUMP,
             text=f"#{context.error.identifier}\n<b>Your enemy's make an error for you, demon king:"

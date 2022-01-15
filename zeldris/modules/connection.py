@@ -18,9 +18,9 @@
 import re
 import time
 
-from telegram import ParseMode, InlineKeyboardMarkup, InlineKeyboardButton
+from telegram import ParseMode, InlineKeyboardMarkup, InlineKeyboardButton, Update
 from telegram.error import BadRequest, Unauthorized
-from telegram.ext import CommandHandler, CallbackQueryHandler
+from telegram.ext import CommandHandler, CallbackQueryHandler, CallbackContext
 
 import zeldris.modules.sql.connection_sql as sql
 from zeldris import dispatcher, DEV_USERS
@@ -32,7 +32,7 @@ user_admin = chat_status.user_admin
 
 @user_admin
 @typing_action
-def allow_connections(update, context) -> str:
+def allow_connections(update: Update, context: CallbackContext) -> str:
     chat = update.effective_chat
     args = context.args
 
@@ -78,19 +78,17 @@ def allow_connections(update, context) -> str:
 
 
 @typing_action
-def connection_chat(update, context):
+def connection_chat(update: Update, context: CallbackContext):
     chat = update.effective_chat
     user = update.effective_user
 
     conn = connected(context.bot, update, chat, user.id, need_admin=True)
 
     if conn:
-        chat = dispatcher.bot.getChat(conn)
         chat_name = dispatcher.bot.getChat(conn).title
     else:
         if update.effective_message.chat.type != "private":
             return
-        chat = update.effective_chat
         chat_name = update.effective_message.chat.title
 
     if conn:
@@ -101,12 +99,12 @@ def connection_chat(update, context):
 
 
 @typing_action
-def connect_chat(update, context):
+def connect_chat(update: Update, context: CallbackContext):
+    args = context.args
     chat = update.effective_chat
     user = update.effective_user
-    args = context.args
 
-    if update.effective_chat.type == "private":
+    if chat.type == "private":
         if args and len(args) >= 1:
             try:
                 connect_chat = int(args[0])
@@ -257,7 +255,7 @@ def connect_chat(update, context):
             )
 
 
-def disconnect_chat(update, _):
+def disconnect_chat(update: Update, _: CallbackContext):
     if update.effective_chat.type == "private":
         disconnection_status = sql.disconnect(update.effective_message.from_user.id)
         if disconnection_status:
@@ -318,14 +316,14 @@ CONN_HELP = """
  • More in future!"""
 
 
-def help_connect_chat(update, _):
+def help_connect_chat(update: Update, _: CallbackContext):
     if update.effective_message.chat.type != "private":
         send_message(update.effective_message, "PM me with that command to get help.")
         return
     send_message(update.effective_message, CONN_HELP, parse_mode="markdown")
 
 
-def connect_button(update, context):
+def connect_button(update: Update, context: CallbackContext):
     query = update.callback_query
     chat = update.effective_chat
     user = update.effective_user
@@ -394,7 +392,7 @@ the group can view your data.
 × /helpconnect: List available commands that can be used remotely.
 
 *Admin only:*
-× /allowconnect <yes/no>: allow a user to connect to a chat.
+× /allowconnect `<yes/no>`: allow a user to connect to a chat.
 """
 
 CONNECT_CHAT_HANDLER = CommandHandler(

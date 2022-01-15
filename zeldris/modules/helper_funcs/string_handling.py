@@ -173,6 +173,7 @@ def button_markdown_parser(
 def escape_invalid_curly_brackets(text: str, valids: List[str]) -> str:
     new_text = ""
     idx = 0
+    v = []
     while idx < len(text):
         if text[idx] == "{":
             if idx + 1 < len(text) and text[idx + 1] == "{":

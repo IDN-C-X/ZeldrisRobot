@@ -17,14 +17,14 @@
 
 import math
 import os
-import requests
-import urllib.request as urllib
 from html import escape
 
+import requests
 from PIL import Image
-from bs4 import BeautifulSoup as bs
-from telegram import ParseMode, InlineKeyboardMarkup, InlineKeyboardButton
+from bs4 import BeautifulSoup
+from telegram import ParseMode, InlineKeyboardMarkup, InlineKeyboardButton, Update
 from telegram import TelegramError
+from telegram.ext import CallbackContext
 from telegram.utils.helpers import mention_html
 
 from zeldris import dispatcher
@@ -35,14 +35,14 @@ combot_stickers_url = "https://combot.org/telegram/stickers?q="
 
 
 @typing_action
-def combot_sticker(update, context):
+def combot_sticker(update: Update, _: CallbackContext):
     msg = update.effective_message
     split = msg.text.split(" ", 1)
     if len(split) == 1:
         msg.reply_text("Provide Some Name To Search For Packs.")
         return
     text = requests.get(combot_stickers_url + split[1]).text
-    soup = bs(text, "lxml")
+    soup = BeautifulSoup(text, "lxml")
     results = soup.find_all("a", {"class": "sticker-pack__btn"})
     titles = soup.find_all("div", "sticker-pack__title")
     if not results:
@@ -56,7 +56,7 @@ def combot_sticker(update, context):
 
 
 @typing_action
-def kang(update, context):
+def kang(update: Update, context: CallbackContext):
     msg = update.effective_message
     user = update.effective_user
     args = context.args
@@ -268,7 +268,7 @@ def kang(update, context):
 
 
 def makepack_internal(
-    update,
+    _,
     context,
     msg,
     user,
@@ -331,7 +331,7 @@ def makepack_internal(
         msg.reply_text("Failed to create sticker pack. Possibly due to blek mejik.")
 
 
-def getsticker(update, context):
+def getsticker(update: Update, context: CallbackContext):
     msg = update.effective_message
     chat_id = update.effective_chat.id
     if msg.reply_to_message and msg.reply_to_message.sticker:
@@ -345,8 +345,8 @@ def getsticker(update, context):
         )
         context.bot.sendChatAction(chat_id, "upload_document")
         file_id = msg.reply_to_message.sticker.file_id
-        newFile = context.bot.get_file(file_id)
-        newFile.download("sticker.png")
+        new_file = context.bot.get_file(file_id)
+        new_file.download("sticker.png")
         context.bot.sendDocument(chat_id, document=open("sticker.png", "rb"))
         context.bot.sendChatAction(chat_id, "upload_photo")
         context.bot.send_photo(chat_id, photo=open("sticker.png", "rb"))
@@ -362,7 +362,7 @@ def getsticker(update, context):
 
 
 @typing_action
-def stickerid(update, context):
+def stickerid(update: Update, _: CallbackContext):
     msg = update.effective_message
     if msg.reply_to_message and msg.reply_to_message.sticker:
         update.effective_message.reply_text(

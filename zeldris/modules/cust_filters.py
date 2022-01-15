@@ -19,9 +19,10 @@ import re
 from html import escape
 
 import telegram
-from telegram import InlineKeyboardMarkup, ParseMode
+from telegram import InlineKeyboardMarkup, ParseMode, Update
 from telegram.error import BadRequest
 from telegram.ext import (
+    CallbackContext,
     CommandHandler,
     DispatcherHandlerStop,
     Filters,
@@ -62,7 +63,7 @@ ENUM_FUNC_MAP = {
 
 
 @typing_action
-def list_handlers(update, context):
+def list_handlers(update: Update, context: CallbackContext):
     chat = update.effective_chat
     user = update.effective_user
 
@@ -111,7 +112,7 @@ def list_handlers(update, context):
 # NOT ASYNC BECAUSE DISPATCHER HANDLER RAISED
 @user_admin
 @typing_action
-def filters(update, context):
+def filters(update: Update, context: CallbackContext):
     chat = update.effective_chat
     user = update.effective_user
     msg = update.effective_message
@@ -221,8 +222,8 @@ def filters(update, context):
         return
 
     add = addnew_filter(update, chat_id, keyword, text, file_type, file_id, buttons)
-    # This is an old method
-    # sql.add_filter(chat_id, keyword, content, is_sticker, is_document, is_image, is_audio, is_voice, is_video, buttons)
+    # This is an old method sql.add_filter(chat_id, keyword, content, is_sticker, is_document, is_image, is_audio,
+    # is_voice, is_video, buttons)
 
     if add:
         send_message(
@@ -236,7 +237,7 @@ def filters(update, context):
 # NOT ASYNC BECAUSE DISPATCHER HANDLER RAISED
 @user_admin
 @typing_action
-def stop_filter(update, context):
+def stop_filter(update: Update, context: CallbackContext):
     chat = update.effective_chat
     user = update.effective_user
     args = update.effective_message.text.split(None, 1)
@@ -275,7 +276,7 @@ def stop_filter(update, context):
     )
 
 
-def reply_filter(update, context):
+def reply_filter(update: Update, context: CallbackContext):
     chat = update.effective_chat
     message = update.effective_message
 
@@ -467,7 +468,7 @@ def reply_filter(update, context):
 
 @user_admin
 @typing_action
-def rmall_filters(update, context):
+def rmall_filters(update: Update, _: CallbackContext):
     chat = update.effective_chat
     user = update.effective_user
     msg = update.effective_message
@@ -530,8 +531,8 @@ def __stats__():
 
 def __import_data__(chat_id, data):
     # set chat filters
-    filters = data.get("filters", {})
-    for trigger in filters:
+    filters_ = data.get("filters", {})
+    for trigger in filters_:
         sql.add_to_blacklist(chat_id, trigger)
 
 
@@ -542,16 +543,16 @@ def __migrate__(old_chat_id, new_chat_id):
         pass
 
 
-def __chat_settings__(chat_id, user_id):
+def __chat_settings__(chat_id, _):
     cust_filters = sql.get_chat_triggers(chat_id)
     return "There are `{}` custom filters here.".format(len(cust_filters))
 
 
 __help__ = """
- × /filters: List all active filters saved in the chat.
+× /filters: List all active filters saved in the chat.
  
 *Admin only:*
- × /filter <keyword> <reply message>: Add a filter to this chat. The bot will now reply that message whenever 'keyword'\
+× /filter <keyword> <reply message>: Add a filter to this chat. The bot will now reply that message whenever 'keyword'\
 is mentioned. If you reply to a sticker with a keyword, the bot will reply with that sticker. NOTE: all filter \
 keywords are in lowercase. If you want your keyword to be a sentence, use quotes. eg: /filter "hey there" How you \
 doin?

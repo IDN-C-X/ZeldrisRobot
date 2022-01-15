@@ -22,9 +22,9 @@ from zeldris.modules.helper_funcs.misc import is_module_loaded
 FILENAME = __name__.rsplit(".", 1)[-1]
 
 if is_module_loaded(FILENAME):
-    from telegram import Bot, ParseMode
+    from telegram import Bot, ParseMode, Update
     from telegram.error import BadRequest, Unauthorized
-    from telegram.ext import CommandHandler
+    from telegram.ext import CommandHandler, CallbackContext
     from telegram.utils.helpers import escape_markdown
 
     from zeldris import LOGGER, dispatcher
@@ -84,7 +84,7 @@ if is_module_loaded(FILENAME):
                 )
 
     @user_admin
-    def logging(update, context):
+    def logging(update: Update, context: CallbackContext):
         message = update.effective_message
         chat = update.effective_chat
 
@@ -102,7 +102,7 @@ if is_module_loaded(FILENAME):
             message.reply_text("No log channel has been set for this group!")
 
     @user_admin
-    def setlog(update, context):
+    def setlog(update: Update, context: CallbackContext):
         message = update.effective_message
         chat = update.effective_chat
         if chat.type == chat.CHANNEL:
@@ -144,7 +144,7 @@ if is_module_loaded(FILENAME):
             )
 
     @user_admin
-    def unsetlog(update, context):
+    def unsetlog(update: Update, context: CallbackContext):
         message = update.effective_message
         chat = update.effective_chat
 
@@ -165,7 +165,7 @@ if is_module_loaded(FILENAME):
     def __migrate__(old_chat_id, new_chat_id):
         sql.migrate_chat(old_chat_id, new_chat_id)
 
-    def __chat_settings__(chat_id, user_id):
+    def __chat_settings__(chat_id, _):
         log_channel = sql.get_chat_log_channel(chat_id)
         if log_channel:
             log_channel_info = dispatcher.bot.get_chat(log_channel)
