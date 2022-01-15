@@ -123,11 +123,13 @@ def weather(update: Update, context: CallbackContext):
             t_f = 0
         return str(round(t_f))
 
-    reply = f"*Current weather for {cityname}, {country_name} is*:\n\n" \
-            f"*Temperature:* `{celsius(curtemp)}°C ({fahr(curtemp)}ºF), " \
-            f"feels like {celsius(feels_like)}°C ({fahr(feels_like)}ºF) \n" \
-            f"`*Condition:* `{condmain}, {conddet}` {icon}\n" \
-            f"*Humidity:* `{humidity}%`\n*Wind:* `{kmph[0]} km/h`\n "
+    reply = (
+        f"*Current weather for {cityname}, {country_name} is*:\n\n"
+        f"*Temperature:* `{celsius(curtemp)}°C ({fahr(curtemp)}ºF), "
+        f"feels like {celsius(feels_like)}°C ({fahr(feels_like)}ºF) \n"
+        f"`*Condition:* `{condmain}, {conddet}` {icon}\n"
+        f"*Humidity:* `{humidity}%`\n*Wind:* `{kmph[0]} km/h`\n "
+    )
     del_msg = update.effective_message.reply_text(
         "{}".format(reply), parse_mode=ParseMode.MARKDOWN, disable_web_page_preview=True
     )

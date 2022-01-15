@@ -27,10 +27,12 @@ from telegram.ext import CommandHandler, CallbackContext
 
 # from zeldris.modules.sql import warns_sql as warnssql
 import zeldris.modules.sql.blacklist_sql as blacklistsql
+
 # from zeldris.modules.sql import cust_filters_sql as filtersql
 # import zeldris.modules.sql.welcome_sql as welcsql
 import zeldris.modules.sql.locks_sql as locksql
 import zeldris.modules.sql.notes_sql as sql
+
 # from zeldris.modules.rules import get_rules
 import zeldris.modules.sql.rules_sql as rulessql
 from zeldris import dispatcher, LOGGER, OWNER_ID, MESSAGE_DUMP
@@ -371,7 +373,7 @@ def export_data(update: Update, context: CallbackContext):
         current_chat_id,
         document=open("Zeldris{}.backup".format(chat_id), "rb"),
         caption="*Successfully Exported backup:*\nChat: `{}`\nChat ID: `{}`\nOn: `{}`\n\nNote: This `Zeldris-Backup` "
-                "was specially made for notes.".format(
+        "was specially made for notes.".format(
             chat.title,
             chat_id,
             tgl,

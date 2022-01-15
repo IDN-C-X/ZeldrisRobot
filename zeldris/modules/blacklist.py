@@ -258,10 +258,12 @@ def blacklist_mode(update: Update, context: CallbackContext):
             if len(args) == 1:
                 teks = (
                     "It looks like you tried to set time value for blacklist "
-                    "but you didn't specified time; Try, `/blacklistmode tban <timevalue>`."				
+                    "but you didn't specified time; Try, `/blacklistmode tban <timevalue>`."
                     "Examples of time value: 4m = 4 minutes, 3h = 3 hours, 6d = 6 days, 5w = 5 weeks."
                 )
-                send_message(update.effective_message, teks, parse_mode=ParseMode.MARKDOWN)
+                send_message(
+                    update.effective_message, teks, parse_mode=ParseMode.MARKDOWN
+                )
                 return ""
             restime = extract_time(msg, args[1])
             if not restime:
@@ -269,7 +271,9 @@ def blacklist_mode(update: Update, context: CallbackContext):
                     "Invalid time value!"
                     "Example of time value: `4m = 4 minutes`, `3h = 3 hours`, `6d = 6 days`, `5w = 5 weeks`."
                 )
-                send_message(update.effective_message, teks, parse_mode=ParseMode.MARKDOWN)
+                send_message(
+                    update.effective_message, teks, parse_mode=ParseMode.MARKDOWN
+                )
                 return ""
             settypeblacklist = "temporarily ban for {}".format(args[1])
             sql.set_blacklist_strength(chat_id, 6, str(args[1]))
@@ -277,10 +281,12 @@ def blacklist_mode(update: Update, context: CallbackContext):
             if len(args) == 1:
                 teks = (
                     "It looks like you tried to set time value for blacklist "
-                    "but you didn't specified time; Try, `/blacklistmode tban <timevalue>`."				
+                    "but you didn't specified time; Try, `/blacklistmode tban <timevalue>`."
                     "Examples of time value: 4m = 4 minutes, 3h = 3 hours, 6d = 6 days, 5w = 5 weeks."
                 )
-                send_message(update.effective_message, teks, parse_mode=ParseMode.MARKDOWN)
+                send_message(
+                    update.effective_message, teks, parse_mode=ParseMode.MARKDOWN
+                )
                 return ""
             restime = extract_time(msg, args[1])
             if not restime:
@@ -288,7 +294,9 @@ def blacklist_mode(update: Update, context: CallbackContext):
                     "Invalid time value!"
                     "Example of time value: `4m = 4 minutes`, `3h = 3 hours`, `6d = 6 days`, `5w = 5 weeks`."
                 )
-                send_message(update.effective_message, teks, parse_mode=ParseMode.MARKDOWN)
+                send_message(
+                    update.effective_message, teks, parse_mode=ParseMode.MARKDOWN
+                )
                 return ""
             settypeblacklist = "temporarily mute for {}".format(args[1])
             sql.set_blacklist_strength(chat_id, 7, str(args[1]))
