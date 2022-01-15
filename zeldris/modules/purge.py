@@ -77,7 +77,6 @@ async def purge(event):
             + "Messages maybe too old or I'm not admin! or dont have delete rights!"
         )
 
-
         del_res = await event.respond(text, parse_mode="md")
         await asyncio.sleep(5)
         await del_res.delete()
