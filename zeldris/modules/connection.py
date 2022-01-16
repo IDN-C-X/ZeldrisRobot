@@ -87,9 +87,9 @@ def connection_chat(update: Update, context: CallbackContext):
 
     if conn:
         chat_name = dispatcher.bot.getChat(conn).title
+    elif update.effective_message.chat.type != "private":
+        return
     else:
-        if update.effective_message.chat.type != "private":
-            return
         chat_name = update.effective_message.chat.title
 
     if conn:

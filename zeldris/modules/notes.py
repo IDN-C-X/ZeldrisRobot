@@ -352,7 +352,7 @@ def list_notes(update: Update, context: CallbackContext):
     if not note_list:
         update.effective_message.reply_text("No notes saved here!")
 
-    elif len(msg) != 0:
+    elif msg != '':
         try:
             update.effective_message.reply_text(
                 msg.format(chat_name) + des, parse_mode=ParseMode.MARKDOWN

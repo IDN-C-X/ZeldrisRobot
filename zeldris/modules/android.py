@@ -273,7 +273,7 @@ def los(update: Update, context: CallbackContext) -> str:
     except IndexError:
         device_ = ""
 
-    if device_ == "":
+    if not device_:
         reply_text = "*Please Type Your Device Codename*\nExample : `/los lavender`"
         message.reply_text(
             reply_text,
@@ -343,7 +343,7 @@ def bootleg(update: Update, context: CallbackContext) -> str:
     except IndexError:
         codename = ""
 
-    if codename == "":
+    if not codename:
         message.reply_text(
             "*Please Type Your Device Codename*\nExample : `/bootleg lavender`",
             parse_mode=ParseMode.MARKDOWN,
