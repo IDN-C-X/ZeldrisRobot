@@ -51,9 +51,7 @@ def is_afk(user_id):
 
 
 def check_afk_status(user_id):
-    if user_id in AFK_USERS:
-        return True, AFK_USERS[user_id]
-    return False, ""
+    return (True, AFK_USERS[user_id]) if user_id in AFK_USERS else (False, "")
 
 
 def set_afk(user_id, reason=""):

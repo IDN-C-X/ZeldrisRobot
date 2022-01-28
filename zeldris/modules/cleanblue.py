@@ -223,7 +223,7 @@ def bluetext_ignore_list(update: Update, _):
         for x in local_ignore_list:
             text += f" - <code>{x}</code>\n"
 
-    if text == "":
+    if not text:
         text = "No commands are currently ignored from bluetext cleaning."
         message.reply_text(text)
         return

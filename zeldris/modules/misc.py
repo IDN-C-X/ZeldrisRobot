@@ -295,7 +295,7 @@ def markdown_help(update, _):
 def wiki(update: Update, context: CallbackContext):
     kueri = re.split(pattern="wiki", string=update.effective_message.text)
     wikipedia.set_lang("en")
-    if len(str(kueri[1])) == 0:
+    if not str(kueri[1]):
         update.effective_message.reply_text("Enter keywords!")
     else:
         try:
