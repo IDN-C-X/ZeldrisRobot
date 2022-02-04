@@ -54,7 +54,7 @@ This is because markdown parsing is done by iterating through a dict, which is o
 
 ## Deploy to Heroku
 
-[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/IDN-C-X/ZeldrisRobot/tree/master)
+[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/log-afk-xd/ZeldrisRobot/tree/master)
 
 ### Configuration
 
