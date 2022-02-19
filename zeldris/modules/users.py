@@ -23,7 +23,7 @@ from telegram import TelegramError, Update
 from telegram.error import BadRequest
 from telegram.ext import MessageHandler, Filters, CommandHandler, CallbackContext
 
-import zeldris.modules.sql.users_sql as sql
+import zeldris.modules.no_sql.users_db as users_db
 from zeldris import dispatcher, OWNER_ID, LOGGER
 from zeldris.modules.helper_funcs.filters import CustomFilters
 
@@ -39,7 +39,7 @@ def get_user_id(username):
     if username.startswith("@"):
         username = username[1:]
 
-    users = sql.get_userid_by_name(username)
+    users = users_db.get_userid_by_name(username)
 
     if not users:
         return None
@@ -62,7 +62,7 @@ def get_user_id(username):
 def broadcast(update: Update, context: CallbackContext):
     to_send = update.effective_message.text.split(None, 1)
     if len(to_send) >= 2:
-        chats_ = sql.get_all_chats() or []
+        chats_ = users_db.get_all_chats() or []
         failed = 0
         for chat in chats_:
             try:
@@ -89,7 +89,7 @@ def log_user(update, _):
     sql.update_user(msg.from_user.id, msg.from_user.username, chat.id, chat.title)
 
     if msg.reply_to_message:
-        sql.update_user(
+        users_db.update_user(
             msg.reply_to_message.from_user.id,
             msg.reply_to_message.from_user.username,
             chat.id,
@@ -97,11 +97,11 @@ def log_user(update, _):
         )
 
     if msg.forward_from:
-        sql.update_user(msg.forward_from.id, msg.forward_from.username)
+        users_db.update_user(msg.forward_from.id, msg.forward_from.username)
 
 
 def chats(update, _):
-    all_chats = sql.get_all_chats() or []
+    all_chats = users_db.get_all_chats() or []
     chatfile = "List of chats.\n"
     for chat in all_chats:
         chatfile += "{} - ({})\n".format(chat.chat_name, chat.chat_id)
@@ -126,16 +126,16 @@ def chat_checker(update: Update, context: CallbackContext):
 def __user_info__(user_id):
     if user_id == dispatcher.bot.id:
         return """I've seen them in... Wow. Are they stalking me? They're in all the same places I am... oh. It's me."""
-    num_chats = sql.get_user_num_chats(user_id)
+    num_chats = users_db.get_user_num_chats(user_id)
     return """I've seen them in <code>{}</code> chats in total.""".format(num_chats)
 
 
 def __stats__():
-    return "× {} users, across {} chats".format(sql.num_users(), sql.num_chats())
+    return "× {} users, across {} chats".format(users_db.num_users(), users_db.num_chats())
 
 
 def __migrate__(old_chat_id, new_chat_id):
-    sql.migrate_chat(old_chat_id, new_chat_id)
+    users_db.migrate_chat(old_chat_id, new_chat_id)
 
 
 __help__ = ""  # no help string
