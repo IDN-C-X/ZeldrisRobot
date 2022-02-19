@@ -105,7 +105,8 @@ if ENV:
     URL = os.environ.get("URL", "")  # Does not contain token
     PORT = int(os.environ.get("PORT", 5000))
     CERT_PATH = os.environ.get("CERT_PATH")
-
+    MONGO_DB = os.environ.get("MONGO_DB", "Zeldris")
+    MONGO_PORT = os.environ.get("MONGO_PORT")
     DB_URI = os.environ.get("DATABASE_URL")
     REDIS_URL = os.environ.get("REDIS_URL")
     DONATION_LINK = os.environ.get("DONATION_LINK")
@@ -123,6 +124,7 @@ if ENV:
     API_HASH = os.environ.get("API_HASH", None)
     SPAMWATCH = os.environ.get("SPAMWATCH_API", None)
     SPAMMERS = os.environ.get("SPAMMERS", None)
+    MONGO_URI = os.environ.get("MONGO_URI", None)
 
 else:
     from zeldris.config import Development as Config
@@ -173,7 +175,9 @@ else:
     URL = Config.URL
     PORT = Config.PORT
     CERT_PATH = Config.CERT_PATH
-
+    MONGO_PORT = Config.MONGO_PORT
+    MONGO_URI = Config.MONGO_URI
+    MONGO_DB = Config.MONGO_DB
     DB_URI = Config.SQLALCHEMY_DATABASE_URI
     REDIS_URL = Config.REDIS_URL
     DONATION_LINK = Config.DONATION_LINK
