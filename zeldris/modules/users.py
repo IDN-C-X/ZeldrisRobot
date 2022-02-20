@@ -131,7 +131,9 @@ def __user_info__(user_id):
 
 
 def __stats__():
-    return "× {} users, across {} chats".format(users_db.num_users(), users_db.num_chats())
+    return "× {} users, across {} chats".format(
+        users_db.num_users(), users_db.num_chats()
+    )
 
 
 def __migrate__(old_chat_id, new_chat_id):
