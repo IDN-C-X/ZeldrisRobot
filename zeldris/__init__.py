@@ -106,7 +106,8 @@ if ENV:
     PORT = int(os.environ.get("PORT", 5000))
     CERT_PATH = os.environ.get("CERT_PATH")
 
-    DB_URI = os.environ.get("DATABASE_URL")
+    DB_URL = os.environ.get("DATABASE_URL")
+    DB_URL = DB_URL.replace("postgres://", "postgresql://", 1)
     REDIS_URL = os.environ.get("REDIS_URL")
     DONATION_LINK = os.environ.get("DONATION_LINK")
     LOAD = os.environ.get("LOAD", "").split()
@@ -174,7 +175,7 @@ else:
     PORT = Config.PORT
     CERT_PATH = Config.CERT_PATH
 
-    DB_URI = Config.SQLALCHEMY_DATABASE_URI
+    DB_URL = Config.SQLALCHEMY_DATABASE_URI
     REDIS_URL = Config.REDIS_URL
     DONATION_LINK = Config.DONATION_LINK
     LOAD = Config.LOAD
