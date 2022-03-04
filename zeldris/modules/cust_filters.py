@@ -283,7 +283,7 @@ def reply_filter(update: Update, context: CallbackContext):
 
     chat_filters = sql.get_chat_triggers(chat.id)
     for keyword in chat_filters:
-        pattern = r"( |^|[^\w])" + re.escape(keyword) + r"( |$|[^\w])"
+        pattern = f"( |^|[^\\w]){re.escape(keyword)}( |$|[^\\w])"
         if re.search(pattern, to_match, flags=re.IGNORECASE):
             filt = sql.get_filter(chat.id, keyword)
             if filt.reply == "there is should be a new reply":
@@ -301,10 +301,10 @@ def reply_filter(update: Update, context: CallbackContext):
                     "mention",
                 ]
                 if filt.reply_text:
-                    valid_format = escape_invalid_curly_brackets(
-                        markdown_to_html(filt.reply_text), VALID_WELCOME_FORMATTERS
-                    )
-                    if valid_format:
+                    if valid_format := escape_invalid_curly_brackets(
+                        markdown_to_html(filt.reply_text),
+                        VALID_WELCOME_FORMATTERS,
+                    ):
                         filtext = valid_format.format(
                             first=escape(message.from_user.first_name),
                             last=escape(
@@ -459,7 +459,7 @@ def reply_filter(update: Update, context: CallbackContext):
                 try:
                     send_message(update.effective_message, filt.reply)
                 except BadRequest as excp:
-                    LOGGER.exception("Error in filters: " + excp.message)
+                    LOGGER.exception(f"Error in filters: {excp.message}")
             break
 
 

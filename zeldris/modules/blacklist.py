@@ -46,8 +46,7 @@ def blacklist(update: Update, context: CallbackContext):
     chat = update.effective_chat
     user = update.effective_user
 
-    conn = connected(bot, update, chat, user.id, need_admin=False)
-    if conn:
+    if conn := connected(bot, update, chat, user.id, need_admin=False):
         chat_id = conn
         chat_name = dispatcher.bot.getChat(conn).title
     else:
