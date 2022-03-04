@@ -100,7 +100,7 @@ def connection_chat(update: Update, context: CallbackContext):
 
 
 @typing_action
-def connect_chat(update: Update, context: CallbackContext):
+def connect_chat(update: Update, context: CallbackContext):  # sourcery no-metrics
     args = context.args
     chat = update.effective_chat
     user = update.effective_user

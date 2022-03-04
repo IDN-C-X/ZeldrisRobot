@@ -113,7 +113,7 @@ def list_handlers(update: Update, context: CallbackContext):
 # NOT ASYNC BECAUSE DISPATCHER HANDLER RAISED
 @user_admin
 @typing_action
-def filters(update: Update, context: CallbackContext):
+def filters(update: Update, context: CallbackContext):  # sourcery no-metrics
     chat = update.effective_chat
     user = update.effective_user
     msg = update.effective_message
@@ -131,17 +131,13 @@ def filters(update: Update, context: CallbackContext):
 
     if not msg.reply_to_message and len(args) < 2:
         send_message(
-            update.effective_message,
-            "Please provide keyboard keyword for this filter to reply with!",
+            msg, "Please provide keyboard keyword for this filter to reply with!"
         )
         return
 
     if msg.reply_to_message:
         if len(args) < 2:
-            send_message(
-                update.effective_message,
-                "Please provide keyword for this filter to reply with!",
-            )
+            send_message(msg, "Please provide keyword for this filter to reply with!")
             return
         else:
             keyword = args[1]
@@ -170,8 +166,8 @@ def filters(update: Update, context: CallbackContext):
         text = text.strip()
         if not text:
             send_message(
-                update.effective_message,
-                "There is no note message - You can't JUST have buttons, you need a message to go with it!",
+                msg,
+                "There is no filter message - You can't JUST have buttons, you need a message to go with it!",
             )
             return
 
@@ -213,13 +209,13 @@ def filters(update: Update, context: CallbackContext):
         text = text.strip()
         if (msg.reply_to_message.text or msg.reply_to_message.caption) and not text:
             send_message(
-                update.effective_message,
-                "There is no note message - You can't JUST have buttons, you need a message to go with it!",
+                msg,
+                "There is no filter message - You can't JUST have buttons, you need a message to go with it!",
             )
             return
 
     else:
-        send_message(update.effective_message, "Invalid filter!")
+        send_message(msg, "Invalid filter!")
         return
 
     add = addnew_filter(update, chat_id, keyword, text, file_type, file_id, buttons)
@@ -551,7 +547,7 @@ def __chat_settings__(chat_id, _):
 
 __help__ = """
 × /filters: List all active filters saved in the chat.
- 
+
 *Admin only:*
 × /filter <keyword> <reply message>: Add a filter to this chat. The bot will now reply that message whenever 'keyword'\
 is mentioned. If you reply to a sticker with a keyword, the bot will reply with that sticker. NOTE: all filter \
@@ -561,7 +557,7 @@ doin?
 
 *Chat creator only:*
 × /rmallfilter: Stop all chat filters at once.
- 
+
 *Note*: Filters also support markdown formatters like: {first}, {last} etc.. and buttons.
 Check `/markdownhelp` to know more!
 """

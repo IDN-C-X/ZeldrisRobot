@@ -47,7 +47,7 @@ from zeldris.modules.log_channel import loggable
 @user_admin
 @loggable
 @typing_action
-def ban(update: Update, context: CallbackContext):
+def ban(update: Update, context: CallbackContext):  # sourcery no-metrics
     bot, args = context.bot, context.args
     chat = update.effective_chat
     user = update.effective_user
@@ -91,16 +91,16 @@ def ban(update: Update, context: CallbackContext):
         message.reply_text("I'm not gonna ban an admin, don't make fun of yourself!")
         return ""
 
-    if message.text.startswith("/d") and message.reply_to_message:
+    if message.text.startswith(("/d", "!d")) and message.reply_to_message:
         message.reply_to_message.delete()
 
     if user_id == bot.id:
         message.reply_text("I'm not gonna BAN myself, are you crazy or wot?")
         return ""
 
-    if message.text.startswith("/s"):
+    if message.text.startswith(("/s", "!s")):
         silent = True
-        if not can_delete(chat, context.bot.id):
+        if not can_delete(chat, bot.id):
             return ""
     else:
         silent = False
@@ -234,7 +234,6 @@ def temp_ban(update: Update, context: CallbackContext):
         reply += f"<b>Reason:</b> {html.escape(reason)}"
     try:
         chat.ban_member(user_id, until_date=bantime)
-        # bot.send_sticker(chat.id, BAN_STICKER)  # banhammer marie sticker
         bot.sendMessage(
             chat.id,
             reply,
@@ -304,7 +303,7 @@ def kick(update: Update, context: CallbackContext):
         # context.bot.send_sticker(chat.id, BAN_STICKER)  # banhammer marie sticker
         context.bot.sendMessage(
             chat.id,
-            "Untill we meet again {}!.".format(
+            "Until we meet again {}!.".format(
                 mention_html(member.user.id, member.user.first_name)
             ),
             parse_mode=ParseMode.HTML,
@@ -398,6 +397,7 @@ def unban(update: Update, context: CallbackContext):
         else:
             message.reply_text("Failed to unban channel")
         return
+
     if user_can_ban(chat, user, context.bot.id) is False:
         message.reply_text("You don't have enough rights to unban people here!")
         return ""
