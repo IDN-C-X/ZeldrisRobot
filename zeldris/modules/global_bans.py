@@ -328,8 +328,7 @@ def gbanlist(update, _):
 
 def check_and_ban(update, user_id, should_message=True):
     try:
-        spmban = spamwtc.get_ban(int(user_id))
-        if spmban:
+        if spmban := spamwtc.get_ban(int(user_id)):
             update.effective_chat.ban_member(user_id)
             if should_message:
                 update.effective_message.reply_text(
