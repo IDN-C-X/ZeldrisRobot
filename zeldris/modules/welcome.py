@@ -59,7 +59,7 @@ from zeldris.modules.helper_funcs.string_handling import (
     markdown_parser,
 )
 from zeldris.modules.log_channel import loggable
-from zeldris.modules.sql.global_bans_sql import is_user_gbanned
+from zeldris.modules.no_sql.gban_db import is_user_gbanned
 
 VALID_WELCOME_FORMATTERS = [
     "first",

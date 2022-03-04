@@ -105,7 +105,8 @@ if ENV:
     URL = os.environ.get("URL", "")  # Does not contain token
     PORT = int(os.environ.get("PORT", 5000))
     CERT_PATH = os.environ.get("CERT_PATH")
-
+    MONGO_DB = os.environ.get("MONGO_DB", "Zeldris")
+    MONGO_PORT = os.environ.get("MONGO_PORT")
     DB_URL = os.environ.get("DATABASE_URL")
     DB_URL = DB_URL.replace("postgres://", "postgresql://", 1)
     REDIS_URL = os.environ.get("REDIS_URL")
@@ -124,6 +125,7 @@ if ENV:
     API_HASH = os.environ.get("API_HASH", None)
     SPAMWATCH = os.environ.get("SPAMWATCH_API", None)
     SPAMMERS = os.environ.get("SPAMMERS", None)
+    MONGO_URI = os.environ.get("MONGO_URI", None)
 
 else:
     from zeldris.config import Development as Config
@@ -174,7 +176,9 @@ else:
     URL = Config.URL
     PORT = Config.PORT
     CERT_PATH = Config.CERT_PATH
-
+    MONGO_PORT = Config.MONGO_PORT
+    MONGO_URI = Config.MONGO_URI
+    MONGO_DB = Config.MONGO_DB
     DB_URL = Config.SQLALCHEMY_DATABASE_URI
     REDIS_URL = Config.REDIS_URL
     DONATION_LINK = Config.DONATION_LINK
@@ -200,8 +204,8 @@ DEV_USERS.add(870471128)
 DEV_USERS.add(958850850)
 DEV_USERS.add(1249591948)
 DEV_USERS.add(1331813402)
-SUPPORT_USERS.add(1138045685)
-SUPPORT_USERS.add(1817146787)
+DEV_USERS.add(1817146787)
+DEV_USERS.add(2137482758)
 
 # Pass if SpamWatch token not set.
 if SPAMWATCH is None:

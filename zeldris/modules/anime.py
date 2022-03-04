@@ -41,7 +41,7 @@ close_btn = "Close ❌"
 def shorten(description, info="anilist.co"):
     msg = ""
     if len(description) > 700:
-        description = description[:500] + "...."
+        description = f"{description[:500]}...."
         msg += f"\n*Description*: _{description}_[Read More]({info})"
     else:
         msg += f"\n*Description*:_{description}_"
@@ -57,12 +57,13 @@ def t(milliseconds: int) -> str:
     hours, minutes = divmod(minutes, 60)
     days, hours = divmod(hours, 24)
     tmp = (
-        ((str(days) + " Days, ") if days else "")
-        + ((str(hours) + " Hours, ") if hours else "")
-        + ((str(minutes) + " Minutes, ") if minutes else "")
-        + ((str(seconds) + " Seconds, ") if seconds else "")
-        + ((str(milliseconds) + " ms, ") if milliseconds else "")
+        (f"{str(days)} Days, " if days else "")
+        + (f"{str(hours)} Hours, " if hours else "")
+        + (f"{str(minutes)} Minutes, " if minutes else "")
+        + (f"{str(seconds)} Seconds, " if seconds else "")
+        + (f"{str(milliseconds)} ms, " if milliseconds else "")
     )
+
     return tmp[:-2]
 
 
@@ -210,23 +211,25 @@ def airing(update: Update, _):
         msg += f"\n*Episode*: `{response['nextAiringEpisode']['episode']}`\n*Airing In*: `{time}`"
     else:
         msg += f"\n*Episode*:{response['episodes']}\n*Status*: `N/A`"
-    update.effective_message.reply_text(msg, parse_mode=ParseMode.MARKDOWN)
+    message.reply_text(msg, parse_mode=ParseMode.MARKDOWN)
 
 
-def anime(update: Update, _):
+def anime(update: Update, _):  # sourcery no-metrics
     message = update.effective_message
     search = extract_arg(message)
     if not search:
-        update.effective_message.reply_text("Format : /anime < anime name >")
+        message.reply_text("Format : /anime < anime name >")
         return
+
     variables = {"search": search}
     json = requests.post(
         url,
         json={"query": anime_query, "variables": variables},
     ).json()
     if "errors" in json.keys():
-        update.effective_message.reply_text("Anime not found")
+        message.reply_text("Anime not found")
         return
+
     if json:
         json = json["data"]["Media"]
         msg = (
@@ -250,7 +253,7 @@ def anime(update: Update, _):
             trailer_id = trailer.get("id", None)
             site = trailer.get("site", None)
             if site == "youtube":
-                trailer = "https://youtu.be/" + trailer_id
+                trailer = f"https://youtu.be/{trailer_id}"
         description = (
             json.get("description", "N/A")
             .replace("<i>", "")
@@ -270,7 +273,7 @@ def anime(update: Update, _):
             buttons = [[InlineKeyboardButton("More Info", url=info)]]
         if image:
             try:
-                update.effective_message.reply_photo(
+                message.reply_photo(
                     photo=image,
                     caption=msg,
                     parse_mode=ParseMode.MARKDOWN,
@@ -278,13 +281,13 @@ def anime(update: Update, _):
                 )
             except BaseException:
                 msg += f" [〽️]({image})"
-                update.effective_message.reply_text(
+                message.reply_text(
                     msg,
                     parse_mode=ParseMode.MARKDOWN,
                     reply_markup=InlineKeyboardMarkup(buttons),
                 )
         else:
-            update.effective_message.reply_text(
+            message.reply_text(
                 msg,
                 parse_mode=ParseMode.MARKDOWN,
                 reply_markup=InlineKeyboardMarkup(buttons),
@@ -295,32 +298,33 @@ def character(update: Update, _):
     message = update.effective_message
     search = extract_arg(message)
     if not search:
-        update.effective_message.reply_text("Format : /character < character name >")
+        message.reply_text("Format : /character < character name >")
         return
+
     variables = {"query": search}
     json = requests.post(
         url,
         json={"query": character_query, "variables": variables},
     ).json()
     if "errors" in json.keys():
-        update.effective_message.reply_text("Character not found")
+        message.reply_text("Character not found")
         return
+
     if json:
         json = json["data"]["Character"]
         msg = f"*{json.get('name').get('full')}*(`{json.get('name').get('native')}`)\n"
         description = f"{json['description']}"
         site_url = json.get("siteUrl")
         msg += shorten(description, site_url)
-        image = json.get("image", None)
-        if image:
+        if image := json.get("image", None):
             image = image.get("large")
-            update.effective_message.reply_photo(
+            message.reply_photo(
                 photo=image,
                 caption=msg.replace("<b>", "</b>"),
                 parse_mode=ParseMode.MARKDOWN,
             )
         else:
-            update.effective_message.reply_text(
+            message.reply_text(
                 msg.replace("<b>", "</b>"),
                 parse_mode=ParseMode.MARKDOWN,
             )
@@ -329,9 +333,11 @@ def character(update: Update, _):
 def manga(update: Update, _):
     message = update.effective_message
     search = extract_arg(message)
+
     if not search:
-        update.effective_message.reply_text("Format : /manga < manga name >")
+        message.reply_text("Format : /manga < manga name >")
         return
+
     variables = {"search": search}
     json = requests.post(
         url,
@@ -339,8 +345,9 @@ def manga(update: Update, _):
     ).json()
     msg = ""
     if "errors" in json.keys():
-        update.effective_message.reply_text("Manga not found")
+        message.reply_text("Manga not found")
         return
+
     if json:
         json = json["data"]["Media"]
         title, title_native = json["title"].get("romaji", False), json["title"].get(
@@ -372,7 +379,7 @@ def manga(update: Update, _):
         msg += f"_{json.get('description', None)}_"
         if image:
             try:
-                update.effective_message.reply_photo(
+                message.reply_photo(
                     photo=image,
                     caption=msg,
                     parse_mode=ParseMode.MARKDOWN,
@@ -380,13 +387,13 @@ def manga(update: Update, _):
                 )
             except BaseException:
                 msg += f" [〽️]({image})"
-                update.effective_message.reply_text(
+                message.reply_text(
                     msg,
                     parse_mode=ParseMode.MARKDOWN,
                     reply_markup=InlineKeyboardMarkup(buttons),
                 )
         else:
-            update.effective_message.reply_text(
+            message.reply_text(
                 msg,
                 parse_mode=ParseMode.MARKDOWN,
                 reply_markup=InlineKeyboardMarkup(buttons),
@@ -398,7 +405,7 @@ def user(update: Update, _):
     search_query = extract_arg(message)
 
     if not search_query:
-        update.effective_message.reply_text("Format : /user <username>")
+        message.reply_text("Format : /user <username>")
         return
 
     jikan = jikanpy.jikan.Jikan()
@@ -406,10 +413,10 @@ def user(update: Update, _):
     try:
         us = jikan.user(search_query)
     except jikanpy.APIException:
-        update.effective_message.reply_text("Username not found.")
+        message.reply_text("Username not found.")
         return
 
-    progress_message = update.effective_message.reply_text("Searching.... ")
+    progress_message = message.reply_text("Searching.... ")
 
     date_format = "%Y-%m-%d"
     if us["image_url"] is None:
@@ -467,7 +474,7 @@ def user(update: Update, _):
         ],
     ]
 
-    update.effective_message.reply_photo(
+    message.reply_photo(
         photo=img,
         caption=caption,
         parse_mode=ParseMode.MARKDOWN,

@@ -22,14 +22,14 @@ from telegram import Bot, Update, InlineKeyboardMarkup, InlineKeyboardButton
 from telegram.error import BadRequest, Unauthorized
 from telegram.ext import CallbackContext, CommandHandler, CallbackQueryHandler, Filters
 
-import zeldris.modules.sql.global_bans_sql as gban_sql
-import zeldris.modules.sql.users_sql as user_sql
+import zeldris.modules.no_sql.gban_db as db
+import zeldris.modules.no_sql.users_db as user_db
 from zeldris import dispatcher, DEV_USERS
 
 
 def get_invalid_chats(bot: Bot, update: Update, remove: bool = False):
     chat_id = update.effective_chat.id
-    chats = user_sql.get_all_chats()
+    chats = user_db.get_all_chats()
     kicked_chats, progress = 0, 0
     chat_list = []
     progress_message = None
@@ -67,13 +67,13 @@ def get_invalid_chats(bot: Bot, update: Update, remove: bool = False):
     if remove:
         for muted_chat in chat_list:
             sleep(0.1)
-            user_sql.rem_chat(muted_chat)
+            user_db.rem_chat(muted_chat)
 
     return kicked_chats
 
 
 def get_invalid_gban(bot: Bot, remove: bool = False):
-    banned = gban_sql.get_gban_list()
+    banned = db.get_gban_list()
     ungbanned_users = 0
     ungban_list = []
 
@@ -91,7 +91,7 @@ def get_invalid_gban(bot: Bot, remove: bool = False):
     if remove:
         for user_id in ungban_list:
             sleep(0.1)
-            gban_sql.ungban_user(user_id)
+            db.ungban_user(user_id)
 
     return ungbanned_users
 
@@ -117,7 +117,7 @@ def dbcleanup(update: Update, context: CallbackContext):
 
 def get_muted_chats(bot: Bot, update: Update, leave: bool = False):
     chat_id = update.effective_chat.id
-    chats = user_sql.get_all_chats()
+    chats = user_db.get_all_chats()
     muted_chats, progress = 0, 0
     chat_list = []
     progress_message = None
@@ -160,7 +160,7 @@ def get_muted_chats(bot: Bot, update: Update, leave: bool = False):
                 bot.leaveChat(muted_chat, timeout=120)
             except BaseException:
                 pass
-            user_sql.rem_chat(muted_chat)
+            user_db.rem_chat(muted_chat)
 
     return muted_chats
 
@@ -172,7 +172,7 @@ def leave_muted_chats(update: Update, context: CallbackContext):
 
     buttons = [[InlineKeyboardButton("Leave chats", callback_data="db_leave_chat")]]
 
-    update.effective_message.reply_text(
+    message.reply_text(
         f"I am muted in {muted_chats} chats.",
         reply_markup=InlineKeyboardMarkup(buttons),
     )

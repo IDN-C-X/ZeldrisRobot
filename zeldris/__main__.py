@@ -63,7 +63,7 @@ from zeldris.modules.disable import DisableAbleCommandHandler
 from zeldris.modules.helper_funcs.chat_status import is_user_admin
 from zeldris.modules.helper_funcs.misc import paginate_modules
 from zeldris.modules.purge import client
-from zeldris.modules.sql import users_sql as sql
+from zeldris.modules.sql import users_db as db
 
 
 def get_readable_time(seconds: int) -> str:
@@ -246,8 +246,8 @@ def start(update: Update, context: CallbackContext):
                 PM_START_TEXT.format(
                     escape_markdown(context.bot.first_name),
                     escape_markdown(uptime),
-                    sql.num_users(),
-                    sql.num_chats(),
+                    db.num_users(),
+                    db.num_chats(),
                 ),
                 reply_markup=InlineKeyboardMarkup(buttons),
                 parse_mode=ParseMode.MARKDOWN,
@@ -378,8 +378,8 @@ def zel_cb(update, context):
             PM_START_TEXT.format(
                 escape_markdown(context.bot.first_name),
                 escape_markdown(get_readable_time((time.time() - StartTime))),
-                sql.num_users(),
-                sql.num_chats(),
+                db.num_users(),
+                db.num_chats(),
             ),
             reply_markup=InlineKeyboardMarkup(buttons),
             parse_mode=ParseMode.MARKDOWN,
