@@ -107,7 +107,8 @@ if ENV:
     CERT_PATH = os.environ.get("CERT_PATH")
     MONGO_DB = os.environ.get("MONGO_DB", "Zeldris")
     MONGO_PORT = os.environ.get("MONGO_PORT")
-    DB_URI = os.environ.get("DATABASE_URL")
+    DB_URL = os.environ.get("DATABASE_URL")
+    DB_URL = DB_URL.replace("postgres://", "postgresql://", 1)
     REDIS_URL = os.environ.get("REDIS_URL")
     DONATION_LINK = os.environ.get("DONATION_LINK")
     LOAD = os.environ.get("LOAD", "").split()
@@ -178,7 +179,7 @@ else:
     MONGO_PORT = Config.MONGO_PORT
     MONGO_URI = Config.MONGO_URI
     MONGO_DB = Config.MONGO_DB
-    DB_URI = Config.SQLALCHEMY_DATABASE_URI
+    DB_URL = Config.SQLALCHEMY_DATABASE_URI
     REDIS_URL = Config.REDIS_URL
     DONATION_LINK = Config.DONATION_LINK
     LOAD = Config.LOAD
