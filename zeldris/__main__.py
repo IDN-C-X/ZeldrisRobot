@@ -83,7 +83,7 @@ def get_readable_time(seconds: int) -> str:
     for x in range(len(time_list)):
         time_list[x] = str(time_list[x]) + time_suffix_list[x]
     if len(time_list) == 4:
-        ping_time += time_list.pop() + ", "
+        ping_time += f'{time_list.pop()}, '
 
     time_list.reverse()
     ping_time += ":".join(time_list)
@@ -703,14 +703,14 @@ def main():
         updater.start_polling(timeout=15, read_latency=4, drop_pending_updates=True)
         if MESSAGE_DUMP:
             updater.bot.send_message(chat_id=MESSAGE_DUMP, text="I'm a Demon King...")
-    if len(argv) not in (1, 3, 4):
-        client.disconnect()
-    else:
+    if len(argv) in {1, 3, 4}:
         client.run_until_disconnected()
+    else:
+        client.disconnect()
     updater.idle()
 
 
 if __name__ == "__main__":
-    LOGGER.info("[Zeldris] Successfully loaded modules: " + str(ALL_MODULES))
+    LOGGER.info(f"[Zeldris] Successfully loaded modules: {str(ALL_MODULES)}")
     client.start(bot_token=TOKEN)
     main()
