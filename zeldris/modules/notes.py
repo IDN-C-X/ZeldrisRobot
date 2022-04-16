@@ -175,13 +175,13 @@ def get(bot, update, notename, show_none=True, no_format=False):
                 text = ""
 
             keyb = []
-            parseMode = ParseMode.HTML
+            parseMode = ParseMode.MARKDOWN
             buttons = sql.get_buttons(chat_id, notename)
             if no_format:
                 parseMode = None
                 text += revert_buttons(buttons)
             else:
-                text = markdown_to_html(text)
+                #  text = markdown_to_html(text)
                 keyb = build_keyboard(buttons)
 
             keyboard = InlineKeyboardMarkup(keyb)
@@ -194,6 +194,7 @@ def get(bot, update, notename, show_none=True, no_format=False):
                         reply_to_message_id=reply_id,
                         parse_mode=parseMode,
                         reply_markup=keyboard,
+                        disable_web_page_preview=True,
                     )
                 else:
                     ENUM_FUNC_MAP[note.msgtype](
