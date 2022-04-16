@@ -16,6 +16,7 @@
 #  along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 
+import contextlib
 import html
 
 from alphabet_detector import AlphabetDetector
@@ -113,7 +114,7 @@ def restr_members(
     bot, chat_id, members, messages=False, media=False, other=False, previews=False
 ):
     for mem in members:
-        try:
+        with contextlib.suppress(TelegramError):
             bot.restrict_chat_member(
                 chat_id,
                 mem.user,
@@ -122,8 +123,6 @@ def restr_members(
                 can_send_other_messages=other,
                 can_add_web_page_previews=previews,
             )
-        except TelegramError:
-            pass
 
 
 # NOT ASYNC
@@ -131,7 +130,7 @@ def unrestr_members(
     bot, chat_id, members, messages=True, media=True, other=True, previews=True
 ):
     for mem in members:
-        try:
+        with contextlib.suppress(TelegramError):
             bot.restrict_chat_member(
                 chat_id,
                 mem.user,
@@ -140,11 +139,9 @@ def unrestr_members(
                 can_send_other_messages=other,
                 can_add_web_page_previews=previews,
             )
-        except TelegramError:
-            pass
 
 
-def locktypes(update, _):
+def locktypes(update: Update, _: CallbackContext):
     update.effective_message.reply_text(
         "\n × ".join(
             ["Locks available: "]
@@ -156,7 +153,7 @@ def locktypes(update, _):
 @user_admin
 @loggable
 @typing_action
-def lock(update: Update, context: CallbackContext) -> str:
+def lock(update: Update, context: CallbackContext) -> str:  # sourcery no-metrics
     args = context.args
     chat = update.effective_chat
     user = update.effective_user
@@ -263,7 +260,7 @@ def lock(update: Update, context: CallbackContext) -> str:
 @user_admin
 @loggable
 @typing_action
-def unlock(update: Update, context: CallbackContext) -> str:
+def unlock(update: Update, context: CallbackContext) -> str:  # sourcery no-metrics
     args = context.args
     chat = update.effective_chat
     user = update.effective_user
@@ -276,11 +273,8 @@ def unlock(update: Update, context: CallbackContext) -> str:
                     context.bot, update, chat, user.id, need_admin=True
                 ):
                     chat = dispatcher.bot.getChat(conn)
-                    # chat_id = conn
                     chat_name = chat.title
-                    text = "Unlocked {} messages for everyone in {}!".format(
-                        ltype, chat_name
-                    )
+                    text = f"Unlocked {ltype} messages for everyone in {chat_name}!"
                 else:
                     if update.effective_message.chat.type == "private":
                         send_message(
@@ -288,10 +282,7 @@ def unlock(update: Update, context: CallbackContext) -> str:
                             "This command is meant to use in group not in PM",
                         )
                         return ""
-                    chat = update.effective_chat
-                    # chat_id = update.effective_chat.id
-                    # chat_name = update.effective_message.chat.title
-                    text = "Unlocked {} messages for everyone!".format(ltype)
+                    text = f"Unlocked {ltype} messages for everyone!"
                 sql.update_lock(chat.id, ltype, locked=False)
                 send_message(update.effective_message, text, parse_mode="markdown")
                 return (
@@ -312,7 +303,7 @@ def unlock(update: Update, context: CallbackContext) -> str:
                     chat = dispatcher.bot.getChat(conn)
                     chat_id = conn
                     chat_name = chat.title
-                    text = "Unlocked {} for everyone in {}!".format(ltype, chat_name)
+                    text = f"Unlocked {ltype} for everyone in {chat_name}!"
                 else:
                     if update.effective_message.chat.type == "private":
                         send_message(
@@ -322,8 +313,7 @@ def unlock(update: Update, context: CallbackContext) -> str:
                         return ""
                     chat = update.effective_chat
                     chat_id = update.effective_chat.id
-                    # chat_name = update.effective_message.chat.title
-                    text = "Unlocked {} for everyone!".format(ltype)
+                    text = f"Unlocked {ltype} for everyone!"
 
                 current_permission = context.bot.getChat(chat_id).permissions
                 context.bot.set_chat_permissions(
@@ -358,7 +348,7 @@ def unlock(update: Update, context: CallbackContext) -> str:
 
 
 @user_not_admin
-def del_lockables(update: Update, context: CallbackContext):
+def del_lockables(update: Update, context: CallbackContext):  # sourcery no-metrics
     chat = update.effective_chat
     message = update.effective_message
 
@@ -366,7 +356,7 @@ def del_lockables(update: Update, context: CallbackContext):
         if lockable == "rtl":
             if sql.is_locked(chat.id, lockable) and can_delete(chat, context.bot.id):
                 if message.caption:
-                    check = ad.detect_alphabet("{}".format(message.caption))
+                    check = ad.detect_alphabet(f"{message.caption}")
                     if "ARABIC" in check:
                         try:
                             message.delete()
@@ -375,7 +365,7 @@ def del_lockables(update: Update, context: CallbackContext):
                                 LOGGER.exception("ERROR in lockables")
                         break
                 if message.text:
-                    check = ad.detect_alphabet("{}".format(message.text))
+                    check = ad.detect_alphabet(f"{message.text}")
                     if "ARABIC" in check:
                         try:
                             message.delete()
@@ -566,12 +556,12 @@ The locks module allows you to lock away some common items in the \
 telegram world; the bot will automatically delete them!
 
 × /locktypes: Lists all possible locktypes.
- 
+
 *Admin only:*
 × /lock <type>: Lock items of a certain type (not available in private).
 × /unlock <type>: Unlock items of a certain type (not available in private).
 × /locks: The current list of locks in this chat.
- 
+
 Locks can be used to restrict a group's users.
 eg:
 Locking urls will auto-delete all messages with urls, locking stickers will restrict all \

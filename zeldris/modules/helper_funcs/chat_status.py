@@ -16,6 +16,7 @@
 #  along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 
+import contextlib
 from functools import wraps
 from threading import RLock
 
@@ -173,11 +174,8 @@ def user_admin(func):
             pass
 
         elif DEL_CMDS and " " not in update.effective_message.text:
-            try:
+            with contextlib.suppress(BadRequest):
                 update.effective_message.delete()
-            except BadRequest:
-                pass
-
         else:
             update.effective_message.reply_text(
                 "You're missing admin rights for using this command!"
@@ -222,10 +220,8 @@ def dev_plus(func):
         if not user:
             pass
         elif DEL_CMDS and " " not in update.effective_message.text:
-            try:
+            with contextlib.suppress(BaseException):
                 update.effective_message.delete()
-            except BaseException:
-                pass
         else:
             update.effective_message.reply_text(
                 "This is a developer restricted command."
@@ -238,15 +234,13 @@ def dev_plus(func):
 def connection_status(func):
     @wraps(func)
     def connected_status(update: Update, context: CallbackContext, *args, **kwargs):
-        conn = connected(
+        if conn := connected(
             context.bot,
             update,
             update.effective_chat,
             update.effective_user.id,
             need_admin=False,
-        )
-
-        if conn:
+        ):
             chat = dispatcher.bot.getChat(conn)
             update.__setattr__("_effective_chat", chat)
             return func(update, context, *args, **kwargs)

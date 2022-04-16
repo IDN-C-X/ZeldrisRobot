@@ -44,8 +44,7 @@ def shell(update: Update, context: CallbackContext):
     stdout, stderr = process.communicate()
     reply = ""
     stderr = stderr.decode()
-    stdout = stdout.decode()
-    if stdout:
+    if stdout := stdout.decode():
         reply += f"*Stdout*\n`{stdout}`\n"
         LOGGER.info(f"Shell - {cmd} - {stdout}")
     if stderr:

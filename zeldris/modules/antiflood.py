@@ -76,7 +76,7 @@ def check_flood(update: Update, context: CallbackContext) -> str:
         elif getmode == 4:
             bantime = extract_time(msg, getvalue)
             chat.ban_member(user.id, until_date=bantime)
-            execstrings = "Banned for {}".format(getvalue)
+            execstrings = f"Banned for {getvalue}"
             tag = "TBAN"
 
         elif getmode == 5:
@@ -87,13 +87,12 @@ def check_flood(update: Update, context: CallbackContext) -> str:
                 until_date=mutetime,
                 permissions=ChatPermissions(can_send_messages=False),
             )
-            execstrings = "Muted for {}".format(getvalue)
+            execstrings = f"Muted for {getvalue}"
             tag = "TMUTE"
 
         send_message(
             msg,
-            "Great, I like to leave flooding to natural disasters but you, "
-            "you were just a disappointment. {}!".format(execstrings),
+            f"Great, I like to leave flooding to natural disasters but you, you were just a disappointment. {execstrings}!",
         )
 
         return (
@@ -147,9 +146,7 @@ def set_flood(update: Update, context: CallbackContext) -> str:  # sourcery no-m
         if val in ["off", "no", "0"]:
             sql.set_flood(chat_id, 0)
             if conn:
-                message.reply_text(
-                    "Antiflood has been disabled in {}.".format(chat_name)
-                )
+                message.reply_text(f"Antiflood has been disabled in {chat_name}.")
             else:
                 message.reply_text("Antiflood has been disabled.")
 
@@ -158,9 +155,7 @@ def set_flood(update: Update, context: CallbackContext) -> str:  # sourcery no-m
             if amount <= 0:
                 sql.set_flood(chat_id, 0)
                 if conn:
-                    message.reply_text(
-                        "Antiflood has been disabled in {}.".format(chat_name)
-                    )
+                    message.reply_text(f"Antiflood has been disabled in {chat_name}.")
                 else:
                     message.reply_text("Antiflood has been disabled.")
                 return (
@@ -181,13 +176,11 @@ def set_flood(update: Update, context: CallbackContext) -> str:  # sourcery no-m
             sql.set_flood(chat_id, amount)
             if conn:
                 message.reply_text(
-                    "Anti-flood has been set to {} in chat: {}".format(
-                        amount, chat_name
-                    )
+                    f"Anti-flood has been set to {amount} in chat: {chat_name}"
                 )
             else:
                 message.reply_text(
-                    "Successfully updated anti-flood limit to {}!".format(amount)
+                    f"Successfully updated anti-flood limit to {amount}!"
                 )
             return (
                 "<b>{}:</b>"
@@ -235,23 +228,21 @@ def flood(update: Update, context: CallbackContext):
     if limit == 0:
         if conn:
             text = msg.reply_text(
-                "I'm not enforcing any flood control in {}!".format(chat_name)
+                f"I'm not enforcing any flood control in {chat_name}!"
             )
         else:
             text = msg.reply_text("I'm not enforcing any flood control here!")
     elif conn:
         text = msg.reply_text(
-            "I'm currently restricting members after {} consecutive messages in {}.".format(
-                limit, chat_name
-            )
+            f"I'm currently restricting members after {limit} consecutive messages in {chat_name}."
         )
+
     else:
         text = msg.reply_text(
-            "I'm currently restricting members after {} consecutive messages.".format(
-                limit
-            )
+            f"I'm currently restricting members after {limit} consecutive messages."
         )
-    send_message(update.effective_message, text, parse_mode="markdown")
+
+    send_message(update.effective_message, text, parse_mode=ParseMode.MARKDOWN)
 
 
 @user_admin
@@ -303,7 +294,7 @@ def set_flood_mode(update: Update, context: CallbackContext):  # sourcery no-met
                     update.effective_message, teks, parse_mode=ParseMode.MARKDOWN
                 )
                 return
-            settypeflood = "tban for {}".format(args[1])
+            settypeflood = f"tban for {args[1]}"
             sql.set_flood_strength(chat_id, 4, str(args[1]))
 
         elif args[0].lower() == "tmute":
@@ -317,7 +308,7 @@ def set_flood_mode(update: Update, context: CallbackContext):  # sourcery no-met
                     update.effective_message, teks, parse_mode=ParseMode.MARKDOWN
                 )
                 return
-            settypeflood = "tmute for {}".format(args[1])
+            settypeflood = f"tmute for {args[1]}"
             sql.set_flood_strength(chat_id, 5, str(args[1]))
         else:
             send_message(
@@ -326,17 +317,15 @@ def set_flood_mode(update: Update, context: CallbackContext):  # sourcery no-met
             return
         if conn:
             text = msg.reply_text(
-                "Exceeding consecutive flood limit will result in {} in {}!".format(
-                    settypeflood, chat_name
-                )
+                f"Exceeding consecutive flood limit will result in {settypeflood} in {chat_name}!"
             )
+
         else:
             text = msg.reply_text(
-                "Exceeding consecutive flood limit will result in {}!".format(
-                    settypeflood
-                )
+                f"Exceeding consecutive flood limit will result in {settypeflood}!"
             )
-        send_message(update.effective_message, text, parse_mode="markdown")
+
+        send_message(update.effective_message, text, parse_mode=ParseMode.MARKDOWN)
         return (
             "<b>{}:</b>\n"
             "<b>Admin:</b> {}\n"
@@ -354,21 +343,19 @@ def set_flood_mode(update: Update, context: CallbackContext):  # sourcery no-met
     elif getmode == 3:
         settypeflood = "mute"
     elif getmode == 4:
-        settypeflood = "tban for {}".format(getvalue)
+        settypeflood = f"tban for {getvalue}"
     elif getmode == 5:
-        settypeflood = "tmute for {}".format(getvalue)
+        settypeflood = f"tmute for {getvalue}"
     if conn:
         text = msg.reply_text(
-            "Sending more messages than flood limit will result in {} in {}.".format(
-                settypeflood, chat_name
-            )
+            f"Sending more messages than flood limit will result in {settypeflood} in {chat_name}."
         )
+
     else:
         text = msg.reply_text(
-            "Sending more message than flood limit will result in {}.".format(
-                settypeflood
-            )
+            f"Sending more message than flood limit will result in {settypeflood}."
         )
+
     send_message(update.effective_message, text, parse_mode=ParseMode.MARKDOWN)
     return ""
 
@@ -394,7 +381,8 @@ will result in restricting that user.
 
 *Admin only*:
 
-× /setflood <`int/no/off>`: enables or disables flood control × /setfloodmode <ban/kick/mute/tban/tmute> <value>: 
+× /setflood <`int/no/off>`: enables or disables flood control
+× /setfloodmode <ban/kick/mute/tban/tmute> <value>: 
 Action to perform when user have exceeded flood limit. ban/kick/mute/tmute/tban 
 
 Note:
@@ -405,7 +393,7 @@ It can be:
 `6h` = 6 hours
 `3d` = 3 days
 `1w` = 1 week
- """
+"""
 
 __mod_name__ = "Anti-flood"
 
@@ -416,13 +404,13 @@ FLOOD_BAN_HANDLER = MessageHandler(
 )
 SET_FLOOD_HANDLER = CommandHandler(
     "setflood", set_flood, pass_args=True, run_async=True
-)  # , filters=Filters.chat_type.groups, run_async=True)
+)  # , filters=Filters.chat_type.groups)
 SET_FLOOD_MODE_HANDLER = CommandHandler(
     "setfloodmode", set_flood_mode, pass_args=True, run_async=True
 )  # , filters=Filters.chat_type.groups)
 FLOOD_HANDLER = CommandHandler(
-    "flood", flood
-)  # , filters=Filters.chat_type.groups, run_async=True)
+    "flood", flood, run_async=True
+)  # , filters=Filters.chat_type.groups)
 
 dispatcher.add_handler(FLOOD_BAN_HANDLER, FLOOD_GROUP)
 dispatcher.add_handler(SET_FLOOD_HANDLER)

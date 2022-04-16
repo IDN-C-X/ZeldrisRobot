@@ -16,6 +16,7 @@
 #  along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 
+import contextlib
 import os
 import re
 import urllib
@@ -43,7 +44,7 @@ opener.addheaders = [("User-agent", useragent)]
 
 
 @typing_action
-def reverse(update: Update, context: CallbackContext):
+def reverse(update: Update, context: CallbackContext):  # sourcery no-metrics
     if os.path.isfile("okgoogle.png"):
         os.remove("okgoogle.png")
 
@@ -53,8 +54,7 @@ def reverse(update: Update, context: CallbackContext):
     args = context.args
     imagename = "okgoogle.png"
 
-    reply = msg.reply_to_message
-    if reply:
+    if reply := msg.reply_to_message:
         if reply.sticker:
             file_id = reply.sticker.file_id
         elif reply.photo:
@@ -136,7 +136,7 @@ def reverse(update: Update, context: CallbackContext):
             return
 
         os.remove(imagename)
-        match = parse_sauce(fetch_url + "&hl=en")
+        match = parse_sauce(f"{fetch_url}&hl=en")
         guess = match["best_guess"]
         if match["override"] and match["override"] != "":
             imgspage = match["override"]
@@ -187,12 +187,10 @@ def parse_sauce(googleurl):
 
     results = {"similar_images": "", "override": "", "best_guess": ""}
 
-    try:
+    with contextlib.suppress(BaseException):
         for bess in soup.findAll("a", {"class": "PBorbe"}):
             url = "https://www.google.com" + bess.get("href")
             results["override"] = url
-    except BaseException:
-        pass
 
     for similar_image in soup.findAll("input", {"class": "gLFyf"}):
         url = "https://www.google.com/search?tbm=isch&q=" + urllib.parse.quote_plus(

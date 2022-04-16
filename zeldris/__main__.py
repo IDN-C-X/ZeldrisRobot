@@ -16,6 +16,7 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 
+import contextlib
 import importlib
 import re
 import time
@@ -91,6 +92,7 @@ def get_readable_time(seconds: int) -> str:
     return ping_time
 
 
+# sourcery skip: raise-specific-error
 ZELDRIS_IMG = "https://telegra.ph/file/1fa00785f30375c0c1b50.jpg"
 
 PM_START_TEXT = """
@@ -196,7 +198,7 @@ def send_help(chat_id, text, keyboard=None):
     )
 
 
-def test(update: Update, _):
+def test(update: Update, _: CallbackContext):
     # pprint(ast.literal_eval(str(update)))
     # update.effective_message.reply_text("Hola tester! _I_ *have* `markdown`", parse_mode=ParseMode.MARKDOWN)
     update.effective_message.reply_text("This person edited a message")
@@ -277,7 +279,7 @@ def start(update: Update, context: CallbackContext):
         )
 
 
-def error_handler(_, context):
+def error_handler(_: Update, context: CallbackContext):
     """for test purposes"""
     try:
         raise context.error
@@ -298,16 +300,14 @@ def error_handler(_, context):
         # handle all other telegram related errors
 
 
-def help_button(update, context):
+def help_button(update: Update, context: CallbackContext):
     query = update.callback_query
     mod_match = re.match(r"help_module\((.+?)\)", query.data)
     prev_match = re.match(r"help_prev\((.+?)\)", query.data)
     next_match = re.match(r"help_next\((.+?)\)", query.data)
     back_match = re.match(r"help_back", query.data)
 
-    print(query.message.chat.id)
-
-    try:
+    with contextlib.suppress(BadRequest):
         if mod_match:
             module = mod_match.group(1)
             text = (
@@ -356,13 +356,9 @@ def help_button(update, context):
 
         # ensure no spinny white circle
         context.bot.answer_callback_query(query.id)
-        # query.message.delete()
-
-    except BadRequest:
-        pass
 
 
-def zel_cb(update, context):
+def zel_cb(update: Update, context: CallbackContext):
     query = update.callback_query
     if query.data == "zel_":
         query.message.edit_text(
@@ -402,14 +398,13 @@ def get_help(update: Update, context: CallbackContext):
                         [
                             InlineKeyboardButton(
                                 text="Help",
-                                url="t.me/{}?start=ghelp_{}".format(
-                                    context.bot.username, module
-                                ),
+                                url=f"t.me/{context.bot.username}?start=ghelp_{module}",
                             )
                         ]
                     ]
                 ),
             )
+
             return
         update.effective_message.reply_text(
             "Contact me in PM to get the list of possible commands.",
@@ -417,13 +412,13 @@ def get_help(update: Update, context: CallbackContext):
                 [
                     [
                         InlineKeyboardButton(
-                            text="Help",
-                            url="t.me/{}?start=help".format(context.bot.username),
+                            text="Help", url=f"t.me/{context.bot.username}?start=help"
                         )
                     ]
                 ]
             ),
         )
+
         return
 
     if len(args) >= 2 and any(args[1].lower() == x for x in HELPABLE):
@@ -470,13 +465,12 @@ def send_settings(chat_id, user_id, user=False):
         chat_name = dispatcher.bot.getChat(chat_id).title
         dispatcher.bot.send_message(
             user_id,
-            text="Which module would you like to check {}'s settings for?".format(
-                chat_name
-            ),
+            text=f"Which module would you like to check {chat_name}'s settings for?",
             reply_markup=InlineKeyboardMarkup(
                 paginate_modules(0, CHAT_SETTINGS, "stngs", chat=chat_id)
             ),
         )
+
     else:
         dispatcher.bot.send_message(
             user_id,
@@ -509,8 +503,7 @@ def settings_button(update: Update, context: CallbackContext):
                     [
                         [
                             InlineKeyboardButton(
-                                text="Back",
-                                callback_data="stngs_back({})".format(chat_id),
+                                text="Back", callback_data=f"stngs_back({chat_id})"
                             )
                         ]
                     ]
@@ -522,8 +515,7 @@ def settings_button(update: Update, context: CallbackContext):
             curr_page = int(prev_match.group(2))
             chat = bot.get_chat(chat_id)
             query.message.edit_text(
-                "Hi there! There are quite a few settings for {} - go ahead and pick what "
-                "you're interested in.".format(chat.title),
+                f"Hi there! There are quite a few settings for {chat.title} - go ahead and pick what you're interested in.",
                 reply_markup=InlineKeyboardMarkup(
                     paginate_modules(
                         curr_page - 1, CHAT_SETTINGS, "stngs", chat=chat_id
@@ -536,8 +528,7 @@ def settings_button(update: Update, context: CallbackContext):
             next_page = int(next_match.group(2))
             chat = bot.get_chat(chat_id)
             query.message.edit_text(
-                "Hi there! There are quite a few settings for {} - go ahead and pick what "
-                "you're interested in.".format(chat.title),
+                f"Hi there! There are quite a few settings for {chat.title} - go ahead and pick what you're interested in.",
                 reply_markup=InlineKeyboardMarkup(
                     paginate_modules(
                         next_page + 1, CHAT_SETTINGS, "stngs", chat=chat_id
@@ -549,8 +540,7 @@ def settings_button(update: Update, context: CallbackContext):
             chat_id = back_match.group(1)
             chat = bot.get_chat(chat_id)
             query.message.edit_text(
-                text="Hi there! There are quite a few settings for {} - go ahead and pick what "
-                "you're interested in.".format(escape_markdown(chat.title)),
+                text=f"Hi there! There are quite a few settings for {escape_markdown(chat.title)} - go ahead and pick what you're interested in.",
                 parse_mode=ParseMode.MARKDOWN,
                 reply_markup=InlineKeyboardMarkup(
                     paginate_modules(0, CHAT_SETTINGS, "stngs", chat=chat_id)
@@ -586,19 +576,18 @@ def get_settings(update: Update, context: CallbackContext):
                     [
                         InlineKeyboardButton(
                             text="Settings",
-                            url="t.me/{}?start=stngs_{}".format(
-                                context.bot.username, chat.id
-                            ),
+                            url=f"t.me/{context.bot.username}?start=stngs_{chat.id}",
                         )
                     ]
                 ]
             ),
         )
+
     else:
         "Click here to check your settings."
 
 
-def migrate_chats(update, _):
+def migrate_chats(update: Update, _: CallbackContext):
     msg = update.effective_message  # type: Optional[Message]
     if msg.migrate_to_chat_id:
         old_chat = update.effective_chat.id
@@ -611,16 +600,14 @@ def migrate_chats(update, _):
 
     LOGGER.info("Migrating from %s, to %s", str(old_chat), str(new_chat))
     for mod in MIGRATEABLE:
-        try:
+        with contextlib.suppress(KeyError, AttributeError):
             mod.__migrate__(old_chat, new_chat)
-        except BaseException:
-            pass  # Some sql modules make errors.
 
     LOGGER.info("Successfully migrated!")
     raise DispatcherHandlerStop
 
 
-def is_chat_allowed(update, context):
+def is_chat_allowed(update: Update, context: CallbackContext):
     if len(WHITELIST_CHATS) != 0:
         chat_id = update.effective_message.chat_id
         if chat_id not in WHITELIST_CHATS:

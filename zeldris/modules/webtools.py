@@ -35,7 +35,7 @@ from zeldris.modules.helper_funcs.filters import CustomFilters
 
 
 @typing_action
-def ping(update: Update, _):
+def ping(update: Update, _: CallbackContext):
     msg = update.effective_message
     start_time = time.time()
     message = msg.reply_text("Pinging...")
@@ -61,7 +61,7 @@ def speed_convert(size):
 
 
 @typing_action
-def get_bot_ip(update, _):
+def get_bot_ip(update: Update, _: CallbackContext):
     """Sends the bot's IP address, so as to be able to ssh in if necessary.
     OWNER ONLY.
     """

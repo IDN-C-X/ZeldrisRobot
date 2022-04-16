@@ -86,15 +86,11 @@ def warn(
         sql.reset_warns(user.id, chat.id)
         if soft_warn:  # kick
             chat.unban_member(user.id)
-            reply = "That's {} warnings, {} has been kicked!".format(
-                limit, mention_html(user.id, user.first_name)
-            )
+            reply = f"That's {limit} warnings, {mention_html(user.id, user.first_name)} has been kicked!"
 
         else:  # ban
             chat.ban_member(user.id)
-            reply = "That's{} warnings, {} has been banned!".format(
-                limit, mention_html(user.id, user.first_name)
-            )
+            reply = f"That's{limit} warnings, {mention_html(user.id, user.first_name)} has been banned!"
 
         for warn_reason in reasons:
             reply += "\n - {}".format(html.escape(warn_reason))
@@ -123,15 +119,14 @@ def warn(
             [
                 [
                     InlineKeyboardButton(
-                        "Remove warn ⚠️", callback_data="rm_warn({})".format(user.id)
+                        "Remove warn ⚠️", callback_data=f"rm_warn({user.id})"
                     )
                 ]
             ]
         )
 
-        reply = "User {} has {}/{} warnings... watch out!".format(
-            mention_html(user.id, user.first_name), num_warns, limit
-        )
+        reply = f"User {mention_html(user.id, user.first_name)} has {num_warns}/{limit} warnings... watch out!"
+
         if reason:
             reply += "\nReason for last warn:\n{}".format(html.escape(reason))
 
@@ -158,7 +153,10 @@ def warn(
         if excp.message == "Reply message not found":
             # Do not reply
             message.reply_text(
-                reply, reply_markup=keyboard, parse_mode=ParseMode.HTML, quote=False
+                reply,
+                reply_markup=keyboard,
+                parse_mode=ParseMode.HTML,
+                allow_sending_without_reply=True,
             )
         else:
             raise
@@ -168,21 +166,19 @@ def warn(
 @user_admin_no_reply
 @bot_admin
 @loggable
-def button(update, _):
+def button(update: Update, _: CallbackContext):  # sourcery skip: use-named-expression
     query = update.callback_query  # type: Optional[CallbackQuery]
     user = update.effective_user  # type: Optional[User]
-    match = re.match(r"rm_warn\((.+?)\)", query.data)
-    if match:
+    if match := re.match(r"rm_warn\((.+?)\)", query.data):
         user_id = match.group(1)
         chat = update.effective_chat  # type: Optional[Chat]
         res = sql.remove_warn(user_id, chat.id)
         if res:
             update.effective_message.edit_text(
-                "Last warn removed by {}.".format(
-                    mention_html(user.id, user.first_name)
-                ),
+                f"Last warn removed by {mention_html(user.id, user.first_name)}.",
                 parse_mode=ParseMode.HTML,
             )
+
             user_member = chat.get_member(user_id)
             return (
                 "<b>{}:</b>"
@@ -242,9 +238,7 @@ def reset_warns(update: Update, context: CallbackContext):
     chat = update.effective_chat  # type: Optional[Chat]
     user = update.effective_user  # type: Optional[User]
     args = context.args
-    user_id = extract_user(message, args)
-
-    if user_id:
+    if user_id := extract_user(message, args):
         sql.reset_warns(user_id, chat.id)
         message.reply_text("Warnings have been reset!")
         warned = chat.get_member(user_id).user
@@ -272,18 +266,16 @@ def remove_warns(update: Update, context: CallbackContext):
     chat = update.effective_chat  # type: Optional[Chat]
     user = update.effective_user  # type: Optional[User]
     args = context.args
-    user_id = extract_user(message, args)
-
-    if user_id:
+    if user_id := extract_user(message, args):
         sql.remove_warn(user_id, chat.id)
         message.reply_text("Last warn has been removed!")
         warned = chat.get_member(user_id).user
         return (
             "<b>{}:</b>"
             "\n#UNWARN"
-            "\n<b>• Admin:</b> {}"
-            "\n<b>• User:</b> {}"
-            "\n<b>• ID:</b> <code>{}</code>".format(
+            "\n<b>Admin:</b> {}"
+            "\n<b>User:</b> {}"
+            "\n<b>ID:</b> <code>{}</code>".format(
                 html.escape(chat.title),
                 mention_html(user.id, user.first_name),
                 mention_html(warned.id, warned.first_name),
@@ -306,9 +298,8 @@ def warns(update: Update, context: CallbackContext):
         limit, soft_warn = sql.get_warn_setting(chat.id)
 
         if reasons:
-            text = "This user has {}/{} warnings, for the following reasons:".format(
-                num_warns, limit
-            )
+            text = f"This user has {num_warns}/{limit} warnings, for the following reasons:"
+
             for num, reason in enumerate(reasons, start=1):
                 text += "\n {}. {}".format(num, reason)
             msgs = split_message(text)
@@ -316,17 +307,16 @@ def warns(update: Update, context: CallbackContext):
                 update.effective_message.reply_text(msg)
         else:
             update.effective_message.reply_text(
-                "User has {}/{} warnings, but no reasons for any of them.".format(
-                    num_warns, limit
-                )
+                f"User has {num_warns}/{limit} warnings, but no reasons for any of them."
             )
+
     else:
         update.effective_message.reply_text("This user hasn't got any warnings!")
 
 
 # Dispatcher handler stop - do not async
 @user_admin
-def add_warn_filter(update, _):
+def add_warn_filter(update: Update, _: CallbackContext):
     chat = update.effective_chat  # type: Optional[Chat]
     msg = update.effective_message  # type: Optional[Message]
 
@@ -353,12 +343,12 @@ def add_warn_filter(update, _):
 
     sql.add_warn_filter(chat.id, keyword, content)
 
-    update.effective_message.reply_text("Warn filter added for '{}'!".format(keyword))
+    update.effective_message.reply_text(f"Warn filter added for '{keyword}'!")
     raise DispatcherHandlerStop
 
 
 @user_admin
-def remove_warn_filter(update, _):
+def remove_warn_filter(update: Update, _: CallbackContext):
     chat = update.effective_chat  # type: Optional[Chat]
     msg = update.effective_message  # type: Optional[Message]
 
@@ -393,7 +383,7 @@ def remove_warn_filter(update, _):
     )
 
 
-def list_warn_filters(update, _):
+def list_warn_filters(update: Update, _: CallbackContext):
     chat = update.effective_chat  # type: Optional[Chat]
     all_handlers = sql.get_chat_warn_triggers(chat.id)
 
@@ -415,7 +405,7 @@ def list_warn_filters(update, _):
 
 
 @loggable
-def reply_filter(update, _) -> str:
+def reply_filter(update: Update, _: CallbackContext) -> str:
     chat = update.effective_chat  # type: Optional[Chat]
     message = update.effective_message  # type: Optional[Message]
 

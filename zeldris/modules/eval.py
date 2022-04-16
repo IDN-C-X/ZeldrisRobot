@@ -23,8 +23,7 @@ import os
 # Common imports for eval
 import textwrap
 import traceback
-from contextlib import redirect_stdout
-
+from contextlib import redirect_stdout, suppress
 from telegram import ParseMode, Update
 from telegram.ext import CallbackContext, CommandHandler
 
@@ -123,10 +122,8 @@ def do(func, bot, update):
             if value:
                 result = f"{value}"
             else:
-                try:
+                with suppress(Exception):
                     result = f"{repr(ast.literal_eval(body, env))}"
-                except:
-                    pass
         else:
             result = f"{value}{func_return}"
         if result:

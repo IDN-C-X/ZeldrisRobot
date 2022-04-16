@@ -16,6 +16,7 @@
 #  along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 
+import contextlib
 from time import sleep
 
 from telegram import Bot, Update, InlineKeyboardMarkup, InlineKeyboardButton
@@ -39,12 +40,10 @@ def get_invalid_chats(bot: Bot, update: Update, remove: bool = False):
         if ((100 * chats.index(chat)) / len(chats)) > progress:
             progress_bar = f"{progress}% completed in getting invalid chats."
             if progress_message:
-                try:
+                with contextlib.suppress(BaseException):
                     bot.editMessageText(
                         progress_bar, chat_id, progress_message.message_id
                     )
-                except BaseException:
-                    pass
             else:
                 progress_message = bot.sendMessage(chat_id, progress_bar)
             progress += 5
@@ -59,11 +58,8 @@ def get_invalid_chats(bot: Bot, update: Update, remove: bool = False):
         except BaseException:
             pass
 
-    try:
+    with contextlib.suppress(BaseException):
         progress_message.delete()
-    except BaseException:
-        pass
-
     if remove:
         for muted_chat in chat_list:
             sleep(0.1)
@@ -127,12 +123,10 @@ def get_muted_chats(bot: Bot, update: Update, leave: bool = False):
         if ((100 * chats.index(chat)) / len(chats)) > progress:
             progress_bar = f"{progress}% completed in getting muted chats."
             if progress_message:
-                try:
+                with contextlib.suppress(BaseException):
                     bot.editMessageText(
                         progress_bar, chat_id, progress_message.message_id
                     )
-                except BaseException:
-                    pass
             else:
                 progress_message = bot.sendMessage(chat_id, progress_bar)
             progress += 5
@@ -148,18 +142,14 @@ def get_muted_chats(bot: Bot, update: Update, leave: bool = False):
         except BaseException:
             pass
 
-    try:
+    with contextlib.suppress(BaseException):
         progress_message.delete()
-    except BaseException:
-        pass
 
     if leave:
         for muted_chat in chat_list:
             sleep(0.1)
-            try:
+            with contextlib.suppress(BaseException):
                 bot.leaveChat(muted_chat, timeout=120)
-            except BaseException:
-                pass
             user_db.rem_chat(muted_chat)
 
     return muted_chats
@@ -204,9 +194,8 @@ def callback_button(update: Update, context: CallbackContext):
         bot.editMessageText("Cleaning up DB ...", chat_id, message.message_id)
         invalid_chat_count = get_invalid_chats(bot, update, True)
         invalid_gban_count = get_invalid_gban(bot, True)
-        reply = "Cleaned up {} chats and {} gbanned users from db.".format(
-            invalid_chat_count, invalid_gban_count
-        )
+        reply = f"Cleaned up {invalid_chat_count} chats and {invalid_gban_count} gbanned users from db."
+
         bot.sendMessage(chat_id, reply)
 
 

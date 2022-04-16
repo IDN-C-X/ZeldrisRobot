@@ -16,6 +16,7 @@
 #  along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 
+import contextlib
 import html
 import os
 
@@ -111,10 +112,8 @@ def promote(update: Update, context: CallbackContext):
         parse_mode=ParseMode.HTML,
     )
     # refresh admin cache
-    try:
+    with contextlib.suppress(KeyError):
         ADMIN_CACHE.pop(update.effective_chat.id)
-    except KeyError:
-        pass
     return (
         "<b>{}:</b>"
         "\n#PROMOTED"

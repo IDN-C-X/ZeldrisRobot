@@ -46,8 +46,7 @@ if is_module_loaded(FILENAME):
                             chat.username, message.message_id
                         )
                     )
-                log_chat = sql.get_chat_log_channel(chat.id)
-                if log_chat:
+                if log_chat := sql.get_chat_log_channel(chat.id):
                     try:
                         send_log(context.bot, log_chat, chat.id, result)
                     except Unauthorized:
@@ -89,13 +88,10 @@ if is_module_loaded(FILENAME):
         message = update.effective_message
         chat = update.effective_chat
 
-        log_channel = sql.get_chat_log_channel(chat.id)
-        if log_channel:
+        if log_channel := sql.get_chat_log_channel(chat.id):
             log_channel_info = context.bot.get_chat(log_channel)
             message.reply_text(
-                "This group has all it's logs sent to: {} (`{}`)".format(
-                    escape_markdown(log_channel_info.title), log_channel
-                ),
+                f"This group has all it's logs sent to: {escape_markdown(log_channel_info.title)} (`{log_channel}`)",
                 parse_mode=ParseMode.MARKDOWN,
             )
 
@@ -149,11 +145,9 @@ if is_module_loaded(FILENAME):
         message = update.effective_message
         chat = update.effective_chat
 
-        log_channel = sql.stop_chat_logging(chat.id)
-        if log_channel:
+        if log_channel := sql.stop_chat_logging(chat.id):
             context.bot.send_message(
-                log_channel,
-                "Channel has been unlinked from {}".format(chat.title),
+                log_channel, f"Channel has been unlinked from {chat.title}"
             )
             message.reply_text("Log channel has been un-set.")
 
@@ -161,18 +155,16 @@ if is_module_loaded(FILENAME):
             message.reply_text("No log channel has been set yet!")
 
     def __stats__():
-        return "× {} log channels have been set.".format(sql.num_logchannels())
+        return f"× {sql.num_logchannels()} log channels have been set."
 
     def __migrate__(old_chat_id, new_chat_id):
         sql.migrate_chat(old_chat_id, new_chat_id)
 
     def __chat_settings__(chat_id, _):
-        log_channel = sql.get_chat_log_channel(chat_id)
-        if log_channel:
+        if log_channel := sql.get_chat_log_channel(chat_id):
             log_channel_info = dispatcher.bot.get_chat(log_channel)
-            return "This group has all it's logs sent to: {} (`{}`)".format(
-                escape_markdown(log_channel_info.title), log_channel
-            )
+            return f"This group has all it's logs sent to: {escape_markdown(log_channel_info.title)} (`{log_channel}`)"
+
         return "No log channel is set for this group!"
 
     __help__ = """

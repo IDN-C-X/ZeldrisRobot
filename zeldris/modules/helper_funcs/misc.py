@@ -16,6 +16,7 @@
 #  along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 
+import contextlib
 from typing import List, Dict
 
 from telegram import MAX_MESSAGE_LENGTH, InlineKeyboardButton, Bot, ParseMode
@@ -54,31 +55,28 @@ def split_message(msg: str) -> List[str]:
     return result
 
 
-def paginate_modules(page_n: int, module_dict: Dict, prefix, chat=None) -> List:
-    if not chat:
-        modules = sorted(
+def paginate_modules(_: int, module_dict: Dict, prefix, chat=None) -> List:
+    modules = (
+        sorted(
             [
                 EqInlineKeyboardButton(
                     x.__mod_name__,
-                    callback_data="{}_module({})".format(
-                        prefix, x.__mod_name__.lower()
-                    ),
+                    callback_data=f"{prefix}_module({chat},{x.__mod_name__.lower()})",
                 )
                 for x in module_dict.values()
             ]
         )
-    else:
-        modules = sorted(
+        if chat
+        else sorted(
             [
                 EqInlineKeyboardButton(
                     x.__mod_name__,
-                    callback_data="{}_module({},{})".format(
-                        prefix, chat, x.__mod_name__.lower()
-                    ),
+                    callback_data=f"{prefix}_module({x.__mod_name__.lower()})",
                 )
                 for x in module_dict.values()
             ]
         )
+    )
 
     pairs = [modules[i * 3 : (i + 1) * 3] for i in range((len(modules) + 3 - 1) // 3)]
     round_num = len(modules) / 3
@@ -92,19 +90,17 @@ def paginate_modules(page_n: int, module_dict: Dict, prefix, chat=None) -> List:
 
 def send_to_list(
     bot: Bot, send_to: list, message: str, markdown=False, html=False
-) -> None:
+) -> None:  # sourcery skip: raise-specific-error
     if html and markdown:
         raise Exception("Can only send with either markdown or HTML!")
     for user_id in set(send_to):
-        try:
+        with contextlib.suppress(TelegramError):
             if markdown:
                 bot.send_message(user_id, message, parse_mode=ParseMode.MARKDOWN)
             elif html:
                 bot.send_message(user_id, message, parse_mode=ParseMode.HTML)
             else:
                 bot.send_message(user_id, message)
-        except TelegramError:
-            pass  # ignore users who fail
 
 
 def build_keyboard(buttons):
@@ -135,7 +131,7 @@ def build_keyboard_parser(bot, chat_id, buttons):
     keyb = []
     for btn in buttons:
         if btn.url == "{rules}":
-            btn.url = "http://t.me/{}?start={}".format(bot.username, chat_id)
+            btn.url = f"https://t.me/{bot.username}?start={chat_id}"
         if btn.same_line and keyb:
             keyb[-1].append(InlineKeyboardButton(btn.name, url=btn.url))
         else:

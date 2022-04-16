@@ -129,7 +129,7 @@ def new_fed(update: Update, context: CallbackContext):
         x = sql.new_fed(user.id, fed_name, fed_id)
         if not x:
             update.effective_message.reply_text(
-                "Can't federate! Please contact my owner @starryboi if the problem persists."
+                "Can't federate! Please contact @IDNCoderX if the problem persists."
             )
             return
 
@@ -205,7 +205,7 @@ def del_fed(update: Update, context: CallbackContext):
 
 
 @typing_action
-def fed_chat(update, _):
+def fed_chat(update: Update, _: CallbackContext):
     chat = update.effective_chat
     fed_id = sql.get_fed_id(chat.id)
 
@@ -496,10 +496,11 @@ def fed_info(update: Update, context: CallbackContext):
 
 
 @typing_action
-def fed_admin(update: Update, context: CallbackContext):
+def fed_admin(
+    update: Update, context: CallbackContext
+):  # sourcery skip: use-fstring-for-concatenation
     chat = update.effective_chat  # type: Optional[Chat]
     user = update.effective_user  # type: Optional[User]
-    args = context.args
 
     if chat.type == "private":
         send_message(
@@ -522,8 +523,7 @@ def fed_admin(update: Update, context: CallbackContext):
     chat = update.effective_chat
     info = sql.get_fed_info(fed_id)
 
-    text = "<b>Federation Admin {}:</b>\n\n".format(info["fname"])
-    text += "👑 Owner:\n"
+    text = "<b>Federation Admin {}:</b>\n\n".format(info["fname"]) + "👑 Owner:\n"
     owner = context.bot.get_chat(info["owner"])
     try:
         owner_name = owner.first_name + " " + owner.last_name
@@ -544,7 +544,7 @@ def fed_admin(update: Update, context: CallbackContext):
 
 
 @typing_action
-def fed_ban(update: Update, context: CallbackContext):
+def fed_ban(update: Update, context: CallbackContext):  # sourcery no-metrics
     chat = update.effective_chat  # type: Optional[Chat]
     user = update.effective_user  # type: Optional[User]
     args = context.args
@@ -575,7 +575,7 @@ def fed_ban(update: Update, context: CallbackContext):
 
     user_id, reason = extract_unt_fedban(message, args)
 
-    fban, fbanreason, fbantime = sql.get_fban_user(fed_id, user_id)
+    fban, _, __ = sql.get_fban_user(fed_id, user_id)
 
     if not user_id:
         message.reply_text("You don't seem to be referring to a user")
@@ -724,7 +724,7 @@ def fed_ban(update: Update, context: CallbackContext):
 							 "\n<b>User ID:</b> <code>{}</code>" \
 							 "\n<b>Reason:</b> {}".format(fed_name, mention_html(user.id, user.first_name), user_target, fban_user_id, reason), parse_mode="HTML")
 				"""
-                context.bot.kick_chat_member(fedschat, fban_user_id)
+                context.bot.ban_chat_member(fedschat, fban_user_id)
             except BadRequest as excp:
                 if excp.message in FBAN_ERRORS:
                     try:
@@ -763,7 +763,7 @@ def fed_ban(update: Update, context: CallbackContext):
                 all_fedschat = sql.all_fed_chats(fedsid)
                 for fedschat in all_fedschat:
                     try:
-                        context.bot.kick_chat_member(fedschat, fban_user_id)
+                        context.bot.ban_chat_member(fedschat, fban_user_id)
                     except BadRequest as excp:
                         if excp.message in FBAN_ERRORS:
                             try:
@@ -881,7 +881,7 @@ def fed_ban(update: Update, context: CallbackContext):
 							"\n<b>User ID:</b> <code>{}</code>" \
 							"\n<b>Reason:</b> {}".format(fed_name, mention_html(user.id, user.first_name), user_target, fban_user_id, reason), parse_mode="HTML")
 			"""
-            context.bot.kick_chat_member(fedschat, fban_user_id)
+            context.bot.ban_chat_member(fedschat, fban_user_id)
         except BadRequest as excp:
             if excp.message in FBAN_ERRORS:
                 pass
@@ -913,7 +913,7 @@ def fed_ban(update: Update, context: CallbackContext):
                 all_fedschat = sql.all_fed_chats(fedsid)
                 for fedschat in all_fedschat:
                     try:
-                        context.bot.kick_chat_member(fedschat, fban_user_id)
+                        context.bot.ban_chat_member(fedschat, fban_user_id)
                     except BadRequest as excp:
                         if excp.message in FBAN_ERRORS:
                             try:
@@ -946,7 +946,7 @@ def fed_ban(update: Update, context: CallbackContext):
 
 
 @typing_action
-def unfban(update: Update, context: CallbackContext):
+def unfban(update: Update, context: CallbackContext):  # sourcery no-metrics
     chat = update.effective_chat
     user = update.effective_user
     message = update.effective_message
@@ -984,8 +984,6 @@ def unfban(update: Update, context: CallbackContext):
         isvalid = True
         fban_user_id = user_chat.id
         fban_user_name = user_chat.first_name
-        fban_user_lname = user_chat.last_name
-        fban_user_uname = user_chat.username
     except BadRequest as excp:
         if not str(user_id).isdigit():
             send_message(update.effective_message, excp.message)
@@ -996,8 +994,6 @@ def unfban(update: Update, context: CallbackContext):
         isvalid = False
         fban_user_id = int(user_id)
         fban_user_name = "user({})".format(user_id)
-        fban_user_lname = None
-        fban_user_uname = None
 
     if isvalid and user_chat.type != "private":
         message.reply_text("That's so not a user!")
@@ -1008,7 +1004,7 @@ def unfban(update: Update, context: CallbackContext):
     else:
         user_target = fban_user_name
 
-    fban, fbanreason, fbantime = sql.get_fban_user(fed_id, fban_user_id)
+    fban, _, __ = sql.get_fban_user(fed_id, fban_user_id)
     if not fban:
         message.reply_text("This user is not fbanned!")
         return
@@ -1221,9 +1217,8 @@ def set_frules(update: Update, context: CallbackContext):
 
 
 @typing_action
-def get_frules(update: Update, context: CallbackContext):
+def get_frules(update: Update, _: CallbackContext):
     chat = update.effective_chat  # type: Optional[Chat]
-    args = context.args
 
     if chat.type == "private":
         send_message(
@@ -1303,7 +1298,7 @@ def fed_broadcast(update: Update, context: CallbackContext):
 
 
 @send_action(ChatAction.UPLOAD_DOCUMENT)
-def fed_ban_list(update: Update, context: CallbackContext):
+def fed_ban_list(update: Update, context: CallbackContext):  # sourcery no-metrics
     chat = update.effective_chat  # type: Optional[Chat]
     user = update.effective_user  # type: Optional[User]
     args = context.args
@@ -1506,7 +1501,6 @@ def fed_notif(update: Update, context: CallbackContext):
 def fed_chats(update: Update, context: CallbackContext):
     chat = update.effective_chat  # type: Optional[Chat]
     user = update.effective_user  # type: Optional[User]
-    args = context.args
 
     if chat.type == "private":
         send_message(
@@ -1567,7 +1561,7 @@ def fed_chats(update: Update, context: CallbackContext):
 
 
 @typing_action
-def fed_import_bans(update: Update, context: CallbackContext):
+def fed_import_bans(update: Update, context: CallbackContext):  # sourcery no-metrics
     chat = update.effective_chat
     user = update.effective_user
     msg = update.effective_message
@@ -1779,7 +1773,9 @@ def fed_import_bans(update: Update, context: CallbackContext):
         send_message(update.effective_message, text)
 
 
-def del_fed_button(update, _):
+def del_fed_button(
+    update: Update, _: CallbackContext
+):  # sourcery skip: use-named-expression
     query = update.callback_query
     fed_id = query.data.split("_")[1]
 
@@ -1787,20 +1783,17 @@ def del_fed_button(update, _):
         query.message.edit_text("Federation deletion cancelled")
         return
 
-    getfed = sql.get_fed_info(fed_id)
-    if getfed:
+    if getfed := sql.get_fed_info(fed_id):
         delete = sql.del_fed(fed_id)
         if delete:
             query.message.edit_text(
-                "You have removed your Federation! Now all the Groups that are connected with `{}` do not have a "
-                "Federation.".format(getfed["fname"]),
+                f'You have removed your Federation! Now all the Groups that are connected with `{getfed["fname"]}` do not have a Federation.',
                 parse_mode="markdown",
             )
 
 
 @typing_action
-def fed_stat_user(update: Update, context: CallbackContext):
-    user = update.effective_user
+def fed_stat_user(update: Update, context: CallbackContext):  # sourcery no-metrics
     msg = update.effective_message
     args = context.args
 
@@ -1945,7 +1938,6 @@ def set_fed_log(update: Update, context: CallbackContext):
 def unset_fed_log(update: Update, context: CallbackContext):
     chat = update.effective_chat
     user = update.effective_user
-    msg = update.effective_message
     args = context.args
 
     if chat.type == "private":
@@ -1986,7 +1978,6 @@ def unset_fed_log(update: Update, context: CallbackContext):
 def subs_feds(update: Update, context: CallbackContext):
     chat = update.effective_chat
     user = update.effective_user
-    msg = update.effective_message
     args = context.args
 
     if chat.type == "private":
@@ -2051,7 +2042,6 @@ def subs_feds(update: Update, context: CallbackContext):
 def unsubs_feds(update: Update, context: CallbackContext):
     chat = update.effective_chat
     user = update.effective_user
-    msg = update.effective_message
     args = context.args
 
     if chat.type == "private":
@@ -2115,8 +2105,6 @@ def unsubs_feds(update: Update, context: CallbackContext):
 def get_myfedsubs(update: Update, context: CallbackContext):
     chat = update.effective_chat
     user = update.effective_user
-    msg = update.effective_message
-    args = context.args
 
     if chat.type == "private":
         send_message(
@@ -2157,11 +2145,8 @@ def get_myfedsubs(update: Update, context: CallbackContext):
 
 
 @typing_action
-def get_myfeds_list(update: Update, context: CallbackContext):
-    chat = update.effective_chat
+def get_myfeds_list(update: Update, _: CallbackContext):
     user = update.effective_user
-    msg = update.effective_message
-    args = context.args
 
     fedowner = sql.get_user_owner_fed_full(user.id)
     if fedowner:
@@ -2198,12 +2183,12 @@ def welcome_fed(update: Update, context: CallbackContext):
     user = update.effective_user  # type: Optional[User]
 
     fed_id = sql.get_fed_id(chat.id)
-    fban, fbanreason, fbantime = sql.get_fban_user(fed_id, user.id)
+    fban, _, __ = sql.get_fban_user(fed_id, user.id)
     if fban:
         update.effective_message.reply_text(
             "This user is banned in current federation! I will remove him."
         )
-        context.bot.kick_chat_member(chat.id, user.id)
+        context.bot.ban_chat_member(chat.id, user.id)
         return True
     return False
 

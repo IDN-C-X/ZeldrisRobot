@@ -60,9 +60,7 @@ def report_setting(update: Update, context: CallbackContext):
                 msg.reply_text("Turned off reporting! You wont get any reports.")
         else:
             msg.reply_text(
-                "Your current report preference is: `{}`".format(
-                    sql.user_should_report(chat.id)
-                ),
+                f"Your current report preference is: `{sql.user_should_report(chat.id)}`",
                 parse_mode=ParseMode.MARKDOWN,
             )
 
@@ -81,9 +79,7 @@ def report_setting(update: Update, context: CallbackContext):
             )
     else:
         msg.reply_text(
-            "This chat's current setting is: `{}`".format(
-                sql.chat_should_report(chat.id)
-            ),
+            f"This chat's current setting is: `{sql.chat_should_report(chat.id)}`",
             parse_mode=ParseMode.MARKDOWN,
         )
 
@@ -91,7 +87,7 @@ def report_setting(update: Update, context: CallbackContext):
 @user_not_admin
 @loggable
 @typing_action
-def report(update: Update, context: CallbackContext) -> str:
+def report(update: Update, context: CallbackContext) -> str:  # sourcery no-metrics
     message = update.effective_message  # type: Optional[Message]
     chat = update.effective_chat  # type: Optional[Chat]
     user = update.effective_user  # type: Optional[User]
@@ -179,7 +175,7 @@ def report(update: Update, context: CallbackContext) -> str:
                 except BadRequest as excp:  # TODO: cleanup exceptions
                     if excp.message != "Message_id_invalid":
                         LOGGER.exception(
-                            "Exception while reporting user " + excp.message
+                            f"Exception while reporting user {excp.message}"
                         )
 
         message.reply_to_message.reply_text(reported, parse_mode=ParseMode.HTML)
@@ -193,7 +189,7 @@ def report_buttons(update: Update, context: CallbackContext):
     splitter = query.data.replace("report_", "").split("=")
     if splitter[1] == "kick":
         try:
-            context.bot.kickChatMember(splitter[0], splitter[2])
+            context.bot.banChatMember(splitter[0], splitter[2])
             context.bot.unbanChatMember(splitter[0], splitter[2])
             query.answer("User has been succesfully kicked")
             return ""
@@ -206,7 +202,7 @@ def report_buttons(update: Update, context: CallbackContext):
             )
     elif splitter[1] == "banned":
         try:
-            context.bot.kickChatMember(splitter[0], splitter[2])
+            context.bot.banChatMember(splitter[0], splitter[2])
             query.answer("User has been succesfully banned")
             return ""
         except Exception as err:
@@ -235,9 +231,7 @@ def __migrate__(old_chat_id, new_chat_id):
 
 
 def __chat_settings__(chat_id, user_id):
-    return "This chat is setup to send user reports to admins, via /report and @admin: `{}`".format(
-        sql.chat_should_report(chat_id)
-    )
+    return f"This chat is setup to send user reports to admins, via /report and @admin: `{sql.chat_should_report(chat_id)}`"
 
 
 def __user_settings__(user_id):

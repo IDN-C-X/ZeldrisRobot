@@ -38,9 +38,7 @@ def about_me(update: Update, context: CallbackContext):
     user_id = extract_user(message, args)
 
     user = bot.get_chat(user_id) if user_id else message.from_user
-    info = sql.get_user_me_info(user.id)
-
-    if info:
+    if info := sql.get_user_me_info(user.id):
         update.effective_message.reply_text(
             "*{}*:\n{}".format(user.first_name, escape_markdown(info)),
             parse_mode=ParseMode.MARKDOWN,
@@ -49,8 +47,9 @@ def about_me(update: Update, context: CallbackContext):
     elif message.reply_to_message:
         username = message.reply_to_message.from_user.first_name
         update.effective_message.reply_text(
-            username + "Information about him is currently unavailable !"
+            f"{username} Information about him is currently unavailable !"
         )
+
     else:
         update.effective_message.reply_text(
             "You have not added any information about yourself yet !"
@@ -58,7 +57,7 @@ def about_me(update: Update, context: CallbackContext):
 
 
 @typing_action
-def set_about_me(update, _):
+def set_about_me(update: Update, _: CallbackContext):
     message = update.effective_message
     user_id = message.from_user.id
     text = message.text
@@ -71,9 +70,7 @@ def set_about_me(update, _):
             message.reply_text("Your bio has been saved successfully")
         else:
             message.reply_text(
-                " About You{} To be confined to letters ".format(
-                    MAX_MESSAGE_LENGTH // 4, len(info[1])
-                )
+                f" About You {MAX_MESSAGE_LENGTH // 4} To be confined to letters "
             )
 
 
@@ -84,9 +81,7 @@ def about_bio(update: Update, context: CallbackContext):
 
     user_id = extract_user(message, args)
     user = context.bot.get_chat(user_id) if user_id else message.from_user
-    info = sql.get_user_bio(user.id)
-
-    if info:
+    if info := sql.get_user_bio(user.id):
         update.effective_message.reply_text(
             "*{}*:\n{}".format(user.first_name, escape_markdown(info)),
             parse_mode=ParseMode.MARKDOWN,
@@ -95,8 +90,9 @@ def about_bio(update: Update, context: CallbackContext):
     elif message.reply_to_message:
         username = user.first_name
         update.effective_message.reply_text(
-            "{} No details about him have been saved yet !".format(username)
+            f"{username} No details about him have been saved yet !"
         )
+
     else:
         update.effective_message.reply_text(" Your bio  about you has been saved !")
 
@@ -123,17 +119,14 @@ def set_about_bio(update: Update, context: CallbackContext):
             if len(bio[1]) < MAX_MESSAGE_LENGTH // 4:
                 sql.set_user_bio(user_id, bio[1])
                 message.reply_text(
-                    "{} bio has been successfully saved!".format(
-                        repl_message.from_user.first_name
-                    )
+                    f"{repl_message.from_user.first_name} bio has been successfully saved!"
                 )
+
             else:
                 message.reply_text(
-                    "About you {} Must stick to the letter! "
-                    "The number of characters you have just tried {} hm .".format(
-                        MAX_MESSAGE_LENGTH // 4, len(bio[1])
-                    )
+                    f"About you {MAX_MESSAGE_LENGTH // 4} Must stick to the letter! The number of characters you have just tried {len(bio[1])} hm ."
                 )
+
     else:
         message.reply_text(" His bio can only be saved if someone MESSAGE as a REPLY")
 
@@ -141,11 +134,11 @@ def set_about_bio(update: Update, context: CallbackContext):
 def __user_info__(user_id):
     bio = html.escape(sql.get_user_bio(user_id) or "")
     me = html.escape(sql.get_user_me_info(user_id) or "")
-    if bio and me:
-        return "<b>About user:</b>\n{me}\n\n<b>What others say:</b>\n{bio}".format(
-            me=me, bio=bio
-        )
     if bio:
+        if me:
+            return "<b>About user:</b>\n{me}\n\n<b>What others say:</b>\n{bio}".format(
+                me=me, bio=bio
+            )
         return "<b>What others say:</b>\n{bio}\n".format(me=me, bio=bio)
     if me:
         return "<b>About user:</b>\n{me}" "".format(me=me, bio=bio)
