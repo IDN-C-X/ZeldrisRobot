@@ -63,7 +63,7 @@ from zeldris.modules.disable import DisableAbleCommandHandler
 from zeldris.modules.helper_funcs.chat_status import is_user_admin
 from zeldris.modules.helper_funcs.misc import paginate_modules
 from zeldris.modules.purge import client
-from zeldris.modules.sql import users_db as db
+from zeldris.modules.no_sql import users_db as db
 
 
 def get_readable_time(seconds: int) -> str:
