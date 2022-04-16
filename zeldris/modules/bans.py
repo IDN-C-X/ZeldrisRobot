@@ -54,10 +54,9 @@ def ban(update: Update, context: CallbackContext):  # sourcery no-metrics
     message = update.effective_message
 
     if message.reply_to_message and message.reply_to_message.sender_chat:
-        r = bot.ban_chat_sender_chat(
+        if bot.ban_chat_sender_chat(
             chat_id=chat.id, sender_chat_id=message.reply_to_message.sender_chat.id
-        )
-        if r:
+        ):
             message.reply_text(
                 f"Banned channel <b>{html.escape(message.reply_to_message.sender_chat.title)}</b> "
                 f"from <b>{html.escape(chat.title)}</b>\n\n💡 He can only write with his profile "
@@ -243,10 +242,7 @@ def temp_ban(update: Update, context: CallbackContext):
 
     except BadRequest as excp:
         if excp.message == "Reply message not found":
-            # Do not reply
-            message.reply_text(
-                "Goodbye.. we'll meet after {}.".format(time_val), quote=False
-            )
+            message.reply_text(f"Goodbye.. we'll meet after {time_val}.")
             return log
         LOGGER.warning(update)
         LOGGER.exception(
@@ -256,8 +252,8 @@ def temp_ban(update: Update, context: CallbackContext):
             chat.id,
             excp.message,
         )
-        message.reply_text("Well damn, I can't ban that user.")
 
+        message.reply_text("Well damn, I can't ban that user.")
     return ""
 
 
@@ -384,10 +380,9 @@ def unban(update: Update, context: CallbackContext):
     chat = update.effective_chat  # type: Optional[Chat]
 
     if message.reply_to_message and message.reply_to_message.sender_chat:
-        r = bot.unban_chat_sender_chat(
+        if bot.unban_chat_sender_chat(
             chat_id=chat.id, sender_chat_id=message.reply_to_message.sender_chat.id
-        )
-        if r:
+        ):
             message.reply_text(
                 f"Unbanned channel <b>{html.escape(message.reply_to_message.sender_chat.title)}</b> "
                 f"from <b>{html.escape(chat.title)}</b>\n\n💡 Now this users can send the messages "

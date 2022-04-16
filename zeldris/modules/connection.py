@@ -16,6 +16,7 @@
 #  along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 
+import contextlib
 import re
 import time
 
@@ -62,20 +63,18 @@ def allow_connections(update: Update, context: CallbackContext) -> str:
                 "Please enter `yes` or `no`!",
                 parse_mode=ParseMode.MARKDOWN,
             )
+    elif sql.allow_connect_to_chat(chat.id):
+        send_message(
+            update.effective_message,
+            "Connections to this group are *Allowed* for members!",
+            parse_mode=ParseMode.MARKDOWN,
+        )
     else:
-        get_settings = sql.allow_connect_to_chat(chat.id)
-        if get_settings:
-            send_message(
-                update.effective_message,
-                "Connections to this group are *Allowed* for members!",
-                parse_mode=ParseMode.MARKDOWN,
-            )
-        else:
-            send_message(
-                update.effective_message,
-                "Connection to this group are *Not Allowed* for members!",
-                parse_mode=ParseMode.MARKDOWN,
-            )
+        send_message(
+            update.effective_message,
+            "Connection to this group are *Not Allowed* for members!",
+            parse_mode=ParseMode.MARKDOWN,
+        )
 
 
 @typing_action
@@ -132,10 +131,7 @@ def connect_chat(update: Update, context: CallbackContext):  # sourcery no-metri
             isallow = sql.allow_connect_to_chat(connect_chat)
 
             if isadmin or (isallow and ismember) or (user.id in DEV_USERS):
-                connection_status = sql.connect(
-                    update.effective_message.from_user.id, connect_chat
-                )
-                if connection_status:
+                if sql.connect(update.effective_message.from_user.id, connect_chat):
                     conn_chat = dispatcher.bot.getChat(
                         connected(context.bot, update, chat, user.id, need_admin=False)
                     )
@@ -169,8 +165,8 @@ def connect_chat(update: Update, context: CallbackContext):  # sourcery no-metri
                 buttons = []
             if conn := connected(context.bot, update, chat, user.id, need_admin=False):
                 connectedchat = dispatcher.bot.getChat(conn)
-                text = "You are currently connected to *{}* (`{}`)".format(
-                    connectedchat.title, conn
+                text = (
+                    f"You are currently connected to *{connectedchat.title}* (`{conn}`)"
                 )
                 buttons.append(
                     InlineKeyboardButton(
@@ -195,12 +191,11 @@ def connect_chat(update: Update, context: CallbackContext):  # sourcery no-metri
                         [
                             InlineKeyboardButton(
                                 text=gethistory[x]["chat_name"],
-                                callback_data="connect({})".format(
-                                    gethistory[x]["chat_id"]
-                                ),
+                                callback_data=f'connect({gethistory[x]["chat_id"]})',
                             )
                         ]
                     )
+
                 text += "╘══「 Total {} Chats 」".format(
                     f"{len(gethistory)} (max)"
                     if len(gethistory) == 5
@@ -227,17 +222,17 @@ def connect_chat(update: Update, context: CallbackContext):  # sourcery no-metri
         ismember = getstatusadmin.status in "member"
         isallow = sql.allow_connect_to_chat(chat.id)
         if isadmin or (isallow and ismember) or (user.id in DEV_USERS):
-            connection_status = sql.connect(
+            if connection_status := sql.connect(
                 update.effective_message.from_user.id, chat.id
-            )
-            if connection_status:
+            ):
                 chat_name = dispatcher.bot.getChat(chat.id).title
                 send_message(
                     update.effective_message,
-                    "Successfully connected to *{}*.".format(chat_name),
+                    f"Successfully connected to *{chat_name}*.",
                     parse_mode=ParseMode.MARKDOWN,
                 )
-                try:
+
+                with contextlib.suppress(BadRequest, Unauthorized):
                     sql.add_history_conn(user.id, str(chat.id), chat_name)
                     context.bot.send_message(
                         update.effective_message.from_user.id,
@@ -246,8 +241,6 @@ def connect_chat(update: Update, context: CallbackContext):  # sourcery no-metri
                         ),
                         parse_mode="markdown",
                     )
-                except (BadRequest, Unauthorized):
-                    pass
             else:
                 send_message(update.effective_message, "Connection failed!")
         else:
@@ -258,8 +251,7 @@ def connect_chat(update: Update, context: CallbackContext):  # sourcery no-metri
 
 def disconnect_chat(update: Update, _: CallbackContext):
     if update.effective_chat.type == "private":
-        disconnection_status = sql.disconnect(update.effective_message.from_user.id)
-        if disconnection_status:
+        if sql.disconnect(update.effective_message.from_user.id):
             sql.disconnected_chat = send_message(
                 update.effective_message, "Disconnected from chat!"
             )
@@ -305,16 +297,17 @@ def connected(bot, update, chat, user_id, need_admin=True):
 
 
 CONN_HELP = """
- Actions are available with connected groups:
- • View and edit Notes.
- • View and edit Filters.
- • Get invite link of chat.
- • Set and control AntiFlood settings.
- • Set and control Blacklist settings.
- • Set Locks and Unlocks in chat.
- • Enable and Disable commands in chat.
- • Export and Imports of chat backup.
- • More in future!"""
+Actions are available with connected groups:
+• View and edit Notes.
+• View and edit Filters.
+• Get invite link of chat.
+• Set and control AntiFlood settings.
+• Set and control Blacklist settings.
+• Set Locks and Unlocks in chat.
+• Enable and Disable commands in chat.
+• Export and Imports of chat backup.
+• More in future!
+"""
 
 
 def help_connect_chat(update: Update, _: CallbackContext):
@@ -335,16 +328,14 @@ def connect_button(update: Update, context: CallbackContext):
     connect_close = query.data == "connect_close"
 
     if connect_match:
-        target_chat = connect_match.group(1)
+        target_chat = connect_match[1]
         getstatusadmin = context.bot.get_chat_member(target_chat, query.from_user.id)
         isadmin = getstatusadmin.status in ("administrator", "creator")
         ismember = getstatusadmin.status in "member"
         isallow = sql.allow_connect_to_chat(target_chat)
 
         if isadmin or (isallow and ismember) or (user.id in DEV_USERS):
-            connection_status = sql.connect(query.from_user.id, target_chat)
-
-            if connection_status:
+            if sql.connect(query.from_user.id, target_chat):
                 conn_chat = dispatcher.bot.getChat(
                     connected(context.bot, update, chat, user.id, need_admin=False)
                 )
@@ -363,8 +354,7 @@ def connect_button(update: Update, context: CallbackContext):
                 query.id, "Connection to this chat is not allowed!", show_alert=True
             )
     elif disconnect_match:
-        disconnection_status = sql.disconnect(query.from_user.id)
-        if disconnection_status:
+        if sql.disconnect(query.from_user.id):
             sql.disconnected_chat = query.message.edit_text("Disconnected from chat!")
         else:
             context.bot.answer_callback_query(

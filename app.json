@@ -13,23 +13,23 @@
   "website": "https://idn-c-x.github.io",
   "success_url": "t.me/IDNCoder",
   "addons": [
-   {
-     "options": {
-       "version": "12"
-     },
-     "plan": "heroku-postgresql"
-   }
+    {
+      "options": {
+        "version": "12"
+      },
+      "plan": "heroku-postgresql"
+    }
   ],
   "buildpacks": [
-   {
-     "url": "https://github.com/heroku/heroku-buildpack-python"
-   },
-   {
-     "url": "https://github.com/jonathanong/heroku-buildpack-ffmpeg-latest"
-   },
-   {
-     "url": "heroku/python"
-   }
+    {
+      "url": "https://github.com/heroku/heroku-buildpack-python"
+    },
+    {
+      "url": "https://github.com/jonathanong/heroku-buildpack-ffmpeg-latest"
+    },
+    {
+      "url": "heroku/python"
+    }
   ],
   "env": {
     "TOKEN": {
@@ -80,17 +80,17 @@
       "value": "-1001599383497"
     },
     "DEV_USERS": {
-      "description": "ID of users who are Devs of your bot (can use /py etc.). If you are a noob and would come and bother Masha support then keep the current ID's here at they are and add yours.",
+      "description": "ID of users who are Devs of your bot (can use /py etc.). If you are a noob and would come and bother Zeldris Support then keep the current ID's here at they are and add yours.",
       "required": false,
       "value": ""
     },
     "SUPPORT_USERS": {
-      "description": "ID of users who are Devs of your bot (can use /py etc.). If you are a noob and would come and bother Masha support then keep the current ID's here at they are and add yours.",
+      "description": "ID of users who are Devs of your bot (can use /py etc.). If you are a noob and would come and bother Zeldris Support then keep the current ID's here at they are and add yours.",
       "required": false,
       "value": ""
     },
     "WHITELIST_USERS": {
-      "description": "ID of users who are Devs of your bot (can use /py etc.). If you are a noob and would come and bother Masha support then keep the current ID's here at they are and add yours.",
+      "description": "ID of users who are Devs of your bot (can use /py etc.). If you are a noob and would come and bother Zeldris Support then keep the current ID's here at they are and add yours.",
       "required": false,
       "value": ""
     },
@@ -167,7 +167,22 @@
     },
     "REDIS_URL": {
       "description": "Take it from redislabs.com and the format should be redis://username:password@cluster/",
-      "required": "True",
+      "required": true,
+      "value": ""
+    },
+    "MONGO_DB": {
+      "description": "Your mongodb name",
+      "required": true,
+      "value": ""
+    },
+    "MONGO_PORT": {
+      "description": "Your mongodb port",
+      "required": true,
+      "value": "27017"
+    },
+    "MONGO_URI": {
+      "description": "Your mongodb url",
+      "required": true,
       "value": ""
     }
   }

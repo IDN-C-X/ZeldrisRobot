@@ -71,13 +71,13 @@ def send_rules(update, chat_id, from_pm=False):
                 [
                     [
                         InlineKeyboardButton(
-                            text="Rules",
-                            url="t.me/{}?start={}".format(bot.username, chat_id),
+                            text="Rules", url=f"t.me/{bot.username}?start={chat_id}"
                         )
                     ]
                 ]
             ),
         )
+
     else:
         update.effective_message.reply_text(
             "The group admins haven't set any rules for this chat yet. "
@@ -112,7 +112,7 @@ def clear_rules(update: Update, _: CallbackContext):
 
 
 def __stats__():
-    return "× {} chats have rules set.".format(sql.num_chats())
+    return f"× {sql.num_chats()} chats have rules set."
 
 
 def __import_data__(chat_id, data):
@@ -126,7 +126,7 @@ def __migrate__(old_chat_id, new_chat_id):
 
 
 def __chat_settings__(chat_id, _):
-    return "This chat has had it's rules set: `{}`".format(bool(sql.get_rules(chat_id)))
+    return f"This chat has had it's rules set: `{bool(sql.get_rules(chat_id))}`"
 
 
 __help__ = """

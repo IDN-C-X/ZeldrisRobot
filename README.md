@@ -82,6 +82,9 @@ class Development(Config):
     SUDO_USERS = [1234, 1234]  # List of id's for users which have sudo access to the bot.
     LOAD = []
     NO_LOAD = ['translation']
+    MONGO_URI = ""
+    MONGO_PORT = []
+    MONGO_DB = ""
 ```
 
 If you can't have a config.py file (EG on Heroku), it is also possible to use environment variables. The following env

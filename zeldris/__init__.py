@@ -16,6 +16,7 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 
+# sourcery skip: raise-specific-error
 import logging
 import os
 import sys
@@ -56,50 +57,54 @@ if ENV:
     TOKEN = os.environ.get("TOKEN", None)
     try:
         OWNER_ID = int(os.environ.get("OWNER_ID", None))
-    except ValueError:
-        raise Exception("[Zeldris] Your OWNER_ID env variable is not a valid integer.")
+    except ValueError as e:
+        raise Exception(
+            "[Zeldris] Your OWNER_ID env variable is not a valid integer."
+        ) from e
 
     MESSAGE_DUMP = os.environ.get("MESSAGE_DUMP", None)
     OWNER_USERNAME = os.environ.get("OWNER_USERNAME", None)
 
     try:
         DEV_USERS = {int(x) for x in os.environ.get("DEV_USERS", "").split()}
-    except ValueError:
+    except ValueError as exc:
         raise Exception(
             "[Zeldris] Your dev users list does not contain valid integers."
-        )
+        ) from exc
 
     try:
         SUPPORT_USERS = {int(x) for x in os.environ.get("SUPPORT_USERS", "").split()}
-    except ValueError:
+    except ValueError as err:
         raise Exception(
             "[Zeldris] Your support users list does not contain valid integers."
-        )
+        ) from err
 
     try:
         WHITELIST_USERS = {
             int(x) for x in os.environ.get("WHITELIST_USERS", "").split()
         }
-    except ValueError:
+    except ValueError as exception:
         raise Exception(
             "[Zeldris] Your whitelisted users list does not contain valid integers."
-        )
+        ) from exception
+
     try:
         WHITELIST_CHATS = {
             int(x) for x in os.environ.get("WHITELIST_CHATS", "").split()
         }
-    except ValueError:
+    except ValueError as error:
         raise Exception(
             "[Zeldris] Your whitelisted chats list does not contain valid integers."
-        )
+        ) from error
+
     try:
         BLACKLIST_CHATS = {
             int(x) for x in os.environ.get("BLACKLIST_CHATS", "").split()
         }
-    except ValueError:
+    except ValueError as an_exception:
         raise Exception(
             "[Zeldris] Your blacklisted chats list does not contain valid integers."
-        )
+        ) from an_exception
 
     WEBHOOK = bool(os.environ.get("WEBHOOK", False))
     URL = os.environ.get("URL", "")  # Does not contain token
@@ -128,49 +133,53 @@ if ENV:
     MONGO_URI = os.environ.get("MONGO_URI", None)
 
 else:
-    from zeldris.config import Development as Config
+    from zeldris.sample_config import Development as Config
 
     TOKEN = Config.TOKEN
     try:
         OWNER_ID = int(Config.OWNER_ID)
-    except ValueError:
-        raise Exception("[Zeldris] Your OWNER_ID variable is not a valid integer.")
+    except ValueError as e:
+        raise Exception(
+            "[Zeldris] Your OWNER_ID variable is not a valid integer."
+        ) from e
 
     MESSAGE_DUMP = Config.MESSAGE_DUMP
     OWNER_USERNAME = Config.OWNER_USERNAME
 
     try:
         DEV_USERS = {int(x) for x in Config.DEV_USERS or []}
-    except ValueError:
+    except ValueError as exc:
         raise Exception(
             "[Zeldris] Your dev users list does not contain valid integers."
-        )
+        ) from exc
 
     try:
         SUPPORT_USERS = {int(x) for x in Config.SUPPORT_USERS or []}
-    except ValueError:
+    except ValueError as err:
         raise Exception(
             "[Zeldris] Your support users list does not contain valid integers."
-        )
+        ) from err
 
     try:
         WHITELIST_USERS = {int(x) for x in Config.WHITELIST_USERS or []}
-    except ValueError:
+    except ValueError as exception:
         raise Exception(
             "[Zeldris] Your whitelisted users list does not contain valid integers."
-        )
+        ) from exception
+
     try:
         WHITELIST_CHATS = {int(x) for x in Config.WHITELIST_CHATS or []}
-    except ValueError:
+    except ValueError as error:
         raise Exception(
             "[Zeldris] Your whitelisted chats list does not contain valid integers."
-        )
+        ) from error
+
     try:
         BLACKLIST_CHATS = {int(x) for x in Config.BLACKLIST_CHATS or []}
-    except ValueError:
+    except ValueError as an_exception:
         raise Exception(
             "[Zeldris] Your blacklisted users list does not contain valid integers."
-        )
+        ) from an_exception
 
     WEBHOOK = Config.WEBHOOK
     URL = Config.URL
@@ -218,8 +227,11 @@ REDIS = StrictRedis.from_url(REDIS_URL, decode_responses=True)
 try:
     REDIS.ping()
     LOGGER.info("[Zeldris] Your redis server is now alive!")
-except BaseException:
-    raise Exception("[Zeldris] Your redis server is not alive, please check again.")
+except BaseException as an_error:
+    raise Exception(
+        "[Zeldris] Your redis server is not alive, please check again."
+    ) from an_error
+
 finally:
     REDIS.ping()
     LOGGER.info("[Zeldris] Your redis server is now alive!")

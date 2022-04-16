@@ -39,7 +39,7 @@ class FloodControl(BASE):
         self.chat_id = str(chat_id)  # ensure string
 
     def __repr__(self):
-        return "<flood control for %s>" % self.chat_id
+        return f"<flood control for {self.chat_id}>"
 
 
 class FloodSettings(BASE):
@@ -54,7 +54,7 @@ class FloodSettings(BASE):
         self.value = value
 
     def __repr__(self):
-        return "<{} will executing {} for flood.>".format(self.chat_id, self.flood_type)
+        return f"<{self.chat_id} will executing {self.flood_type} for flood.>"
 
 
 FloodControl.__table__.create(checkfirst=True)
@@ -81,7 +81,9 @@ def set_flood(chat_id, amount):
         SESSION.commit()
 
 
-def update_flood(chat_id: str, user_id) -> bool:
+def update_flood(
+    chat_id: str, user_id
+) -> bool:  # sourcery skip: remove-unnecessary-cast
     if str(chat_id) not in CHAT_FLOOD:
         return
 
@@ -131,8 +133,7 @@ def set_flood_strength(chat_id, flood_type, value):
 
 def get_flood_setting(chat_id):
     try:
-        setting = SESSION.query(FloodSettings).get(str(chat_id))
-        if setting:
+        if setting := SESSION.query(FloodSettings).get(str(chat_id)):
             return setting.flood_type, setting.value
         return 1, "0"
 
@@ -142,8 +143,7 @@ def get_flood_setting(chat_id):
 
 def migrate_chat(old_chat_id, new_chat_id):
     with INSERTION_FLOOD_LOCK:
-        flood = SESSION.query(FloodControl).get(str(old_chat_id))
-        if flood:
+        if flood := SESSION.query(FloodControl).get(str(old_chat_id)):
             CHAT_FLOOD[str(new_chat_id)] = CHAT_FLOOD.get(str(old_chat_id), DEF_OBJ)
             flood.chat_id = str(new_chat_id)
             SESSION.commit()

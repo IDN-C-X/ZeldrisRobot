@@ -77,12 +77,11 @@ def broadcast(update: Update, context: CallbackContext):
                 )
 
         update.effective_message.reply_text(
-            "Broadcast complete. {} groups failed to receive the message, probably "
-            "due to being kicked.".format(failed)
+            f"Broadcast complete. {failed} groups failed to receive the message, probably due to being kicked."
         )
 
 
-def log_user(update, _):
+def log_user(update: Update, _: CallbackContext):
     chat = update.effective_chat
     msg = update.effective_message
 
@@ -100,7 +99,7 @@ def log_user(update, _):
         users_db.update_user(msg.forward_from.id, msg.forward_from.username)
 
 
-def chats(update, _):
+def chats(update: Update, _: CallbackContext):
     all_chats = users_db.get_all_chats() or []
     chatfile = "List of chats.\n"
     for chat in all_chats:
@@ -127,13 +126,11 @@ def __user_info__(user_id):
     if user_id == dispatcher.bot.id:
         return """I've seen them in... Wow. Are they stalking me? They're in all the same places I am... oh. It's me."""
     num_chats = users_db.get_user_num_chats(user_id)
-    return """I've seen them in <code>{}</code> chats in total.""".format(num_chats)
+    return f"""I've seen them in <code>{num_chats}</code> chats in total."""
 
 
 def __stats__():
-    return "× {} users, across {} chats".format(
-        users_db.num_users(), users_db.num_chats()
-    )
+    return f"× {users_db.num_users()} users, across {users_db.num_chats()} chats"
 
 
 def __migrate__(old_chat_id, new_chat_id):

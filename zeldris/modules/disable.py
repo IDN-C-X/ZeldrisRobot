@@ -63,7 +63,7 @@ if is_module_loaded(FILENAME):
                 if admin_ok:
                     ADMIN_CMDS.extend(command)
 
-        def check_update(self, update):
+        def check_update(self, update):  # sourcery no-metrics
             if not isinstance(update, Update) or not update.effective_message:
                 return
             message = update.effective_message
@@ -87,8 +87,7 @@ if is_module_loaded(FILENAME):
                     user_id = chat.id if user.id == 1087968824 else user.id
                     if SpamChecker.check_user(user_id):
                         return None
-                    filter_result = self.filters(update)
-                    if filter_result:
+                    if filter_result := self.filters(update):
                         # disabled, admincmd, user admin
                         if sql.is_command_disabled(chat.id, command[0].lower()):
                             # check if command was disabled
@@ -178,7 +177,7 @@ if is_module_loaded(FILENAME):
 
             try:
                 command_list = module.__command_list__
-            except:
+            except Exception:
                 update.effective_message.reply_text(
                     "Module does not contain command list!",
                 )
@@ -252,7 +251,7 @@ if is_module_loaded(FILENAME):
 
             try:
                 command_list = module.__command_list__
-            except:
+            except Exception:
                 update.effective_message.reply_text(
                     "Module does not contain command list!",
                 )

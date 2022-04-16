@@ -16,6 +16,7 @@
 #  along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 
+import contextlib
 import json
 import os
 import time
@@ -46,7 +47,7 @@ from zeldris.modules.sql import disable_sql as disabledsql
 
 @user_admin
 @typing_action
-def import_data(update: Update, context: CallbackContext):
+def import_data(update: Update, context: CallbackContext):  # sourcery no-metrics
     msg = update.effective_message
     chat = update.effective_chat
     user = update.effective_user
@@ -93,23 +94,20 @@ def import_data(update: Update, context: CallbackContext):
         try:
             if data.get(str(chat.id)) is None:
                 if conn:
-                    text = "Backup comes from another chat, I can't return another chat to chat *{}*".format(
-                        chat_name,
-                    )
+                    text = f"Backup comes from another chat, I can't return another chat to chat *{chat_name}*"
+
                 else:
                     text = "Backup comes from another chat, I can't return another chat to this chat"
-                return msg.reply_text(text, parse_mode="markdown")
+                return msg.reply_text(text, parse_mode=ParseMode.MARKDOWN)
         except Exception:
             return msg.reply_text("There is problem while importing the data!")
         # Check if backup is from self
-        try:
+        with contextlib.suppress(Exception):
             if str(context.bot.id) != str(data[str(chat.id)]["bot"]):
                 return msg.reply_text(
                     "Backup from another bot that is not suggested might cause the problem, documents, photos, "
                     "videos, audios, records might not work as it should be. "
                 )
-        except Exception:
-            pass
         # Select data source
         if str(chat.id) in data:
             data = data[str(chat.id)]["hashes"]
@@ -136,14 +134,14 @@ def import_data(update: Update, context: CallbackContext):
         # NOTE: consider default permissions stuff?
         if conn:
 
-            text = "Backup fully restored on *{}*.".format(chat_name)
+            text = f"Backup fully restored on *{chat_name}*."
         else:
             text = "Backup fully restored"
-        msg.reply_text(text, parse_mode="markdown")
+        msg.reply_text(text, parse_mode=ParseMode.MARKDOWN)
 
 
 @user_admin
-def export_data(update: Update, context: CallbackContext):
+def export_data(update: Update, context: CallbackContext):  # sourcery no-metrics
     chat_data = context.chat_data
     msg = update.effective_message  # type: Optional[Message]
     user = update.effective_user  # type: Optional[User]

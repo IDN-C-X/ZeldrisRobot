@@ -787,7 +787,7 @@ def goodbye(update: Update, context: CallbackContext):
 
 @user_admin
 @loggable
-def set_welcome(update: Update, _) -> str:
+def set_welcome(update: Update, _: CallbackContext) -> str:
     chat = update.effective_chat
     user = update.effective_user
     msg = update.effective_message
@@ -811,7 +811,7 @@ def set_welcome(update: Update, _) -> str:
 
 @user_admin
 @loggable
-def reset_welcome(update: Update, _) -> str:
+def reset_welcome(update: Update, _: CallbackContext) -> str:
     chat = update.effective_chat
     user = update.effective_user
 
@@ -830,7 +830,7 @@ def reset_welcome(update: Update, _) -> str:
 
 @user_admin
 @loggable
-def set_goodbye(update: Update, _) -> str:
+def set_goodbye(update: Update, _: CallbackContext) -> str:
     chat = update.effective_chat
     user = update.effective_user
     msg = update.effective_message
@@ -852,7 +852,7 @@ def set_goodbye(update: Update, _) -> str:
 
 @user_admin
 @loggable
-def reset_goodbye(update: Update, _) -> str:
+def reset_goodbye(update: Update, _: CallbackContext) -> str:
     chat = update.effective_chat
     user = update.effective_user
 
@@ -1196,12 +1196,12 @@ WELC_MUTE_HELP_TXT = (
 
 
 @user_admin
-def welcome_help(update: Update, _):
+def welcome_help(update: Update, _: CallbackContext):
     update.effective_message.reply_text(WELC_HELP_TXT, parse_mode=ParseMode.MARKDOWN)
 
 
 @user_admin
-def welcome_mute_help(update: Update, _):
+def welcome_mute_help(update: Update, _: CallbackContext):
     update.effective_message.reply_text(
         WELC_MUTE_HELP_TXT, parse_mode=ParseMode.MARKDOWN
     )

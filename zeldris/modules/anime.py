@@ -16,6 +16,7 @@
 #  along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 
+import contextlib
 import datetime
 import textwrap
 
@@ -28,6 +29,7 @@ from telegram import (
     Update,
     Message,
 )
+from telegram.ext import CallbackContext
 
 from zeldris import dispatcher
 from zeldris.modules.disable import DisableAbleCommandHandler
@@ -52,7 +54,7 @@ def shorten(description, info="anilist.co"):
 def t(milliseconds: int) -> str:
     """Inputs time in milliseconds, to get beautified time,
     as string"""
-    seconds, milliseconds = divmod(int(milliseconds), 1000)
+    seconds, milliseconds = divmod(milliseconds, 1000)
     minutes, seconds = divmod(seconds, 60)
     hours, minutes = divmod(minutes, 60)
     days, hours = divmod(hours, 24)
@@ -191,7 +193,7 @@ def extract_arg(message: Message):
     return None
 
 
-def airing(update: Update, _):
+def airing(update: Update, _: CallbackContext):
     message = update.effective_message
     search_str = extract_arg(message)
     if not search_str:
@@ -214,7 +216,7 @@ def airing(update: Update, _):
     message.reply_text(msg, parse_mode=ParseMode.MARKDOWN)
 
 
-def anime(update: Update, _):  # sourcery no-metrics
+def anime(update: Update, _: CallbackContext):  # sourcery no-metrics
     message = update.effective_message
     search = extract_arg(message)
     if not search:
@@ -294,7 +296,7 @@ def anime(update: Update, _):  # sourcery no-metrics
             )
 
 
-def character(update: Update, _):
+def character(update: Update, _: CallbackContext):
     message = update.effective_message
     search = extract_arg(message)
     if not search:
@@ -330,7 +332,7 @@ def character(update: Update, _):
             )
 
 
-def manga(update: Update, _):
+def manga(update: Update, _: CallbackContext):
     message = update.effective_message
     search = extract_arg(message)
 
@@ -400,7 +402,7 @@ def manga(update: Update, _):
             )
 
 
-def user(update: Update, _):
+def user(update: Update, _: CallbackContext):
     message = update.effective_message
     search_query = extract_arg(message)
 
@@ -439,11 +441,8 @@ def user(update: Update, _):
 
     about = us["about"].split(" ", 60)
 
-    try:
+    with contextlib.suppress(IndexError):
         about.pop(60)
-    except IndexError:
-        pass
-
     about_string = " ".join(about)
     about_string = about_string.replace("<br>", "").strip().replace("\r\n", "\n")
 
@@ -483,7 +482,7 @@ def user(update: Update, _):
     progress_message.delete()
 
 
-def upcoming(update: Update, _):
+def upcoming(update: Update, _: CallbackContext):
     jikan = jikanpy.jikan.Jikan()
     upcomin = jikan.top("anime", page=1, subtype="upcoming")
 
@@ -509,7 +508,7 @@ Get information about anime, manga or characters from [AniList](anilist.co).
 × /user `<user>`: returns information about a MyAnimeList user.
 × /upcoming: returns a list of new anime in the upcoming seasons.
 × /airing `<anime>`: returns anime airing info.
- """
+"""
 
 ANIME_HANDLER = DisableAbleCommandHandler("anime", anime, run_async=True)
 AIRING_HANDLER = DisableAbleCommandHandler("airing", airing, run_async=True)

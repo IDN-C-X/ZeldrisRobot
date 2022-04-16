@@ -255,9 +255,7 @@ class Welcome(BASE):
         self.should_goodbye = should_goodbye
 
     def __repr__(self):
-        return "<Chat {} should Welcome new users: {}>".format(
-            self.chat_id, self.should_welcome
-        )
+        return f"<Chat {self.chat_id} should Welcome new users: {self.should_welcome}>"
 
 
 class WelcomeButtons(BASE):
@@ -321,7 +319,7 @@ class CleanServiceSetting(BASE):
         self.chat_id = str(chat_id)
 
     def __repr__(self):
-        return "<Chat used clean service ({})>".format(self.chat_id)
+        return f"<Chat used clean service ({self.chat_id})>"
 
 
 Welcome.__table__.create(checkfirst=True)
@@ -340,8 +338,7 @@ CS_LOCK = threading.RLock()
 
 def welcome_mutes(chat_id):
     try:
-        welcomemutes = SESSION.query(WelcomeMute).get(str(chat_id))
-        if welcomemutes:
+        if welcomemutes := SESSION.query(WelcomeMute).get(str(chat_id)):
             return welcomemutes.welcomemutes
         return False
     finally:
@@ -350,8 +347,7 @@ def welcome_mutes(chat_id):
 
 def set_welcome_mutes(chat_id, welcomemutes):
     with WM_LOCK:
-        prev = SESSION.query(WelcomeMute).get((str(chat_id)))
-        if prev:
+        if prev := SESSION.query(WelcomeMute).get((str(chat_id))):
             SESSION.delete(prev)
         welcome_m = WelcomeMute(str(chat_id), welcomemutes)
         SESSION.add(welcome_m)
@@ -582,8 +578,7 @@ def get_gdbye_buttons(chat_id):
 
 def clean_service(chat_id: Union[str, int]) -> bool:
     try:
-        chat_setting = SESSION.query(CleanServiceSetting).get(str(chat_id))
-        if chat_setting:
+        if chat_setting := SESSION.query(CleanServiceSetting).get(str(chat_id)):
             return chat_setting.clean_service
         return False
     finally:
@@ -603,8 +598,7 @@ def set_clean_service(chat_id: Union[int, str], setting: bool):
 
 def migrate_chat(old_chat_id, new_chat_id):
     with INSERTION_LOCK:
-        chat = SESSION.query(Welcome).get(str(old_chat_id))
-        if chat:
+        if chat := SESSION.query(Welcome).get(str(old_chat_id)):
             chat.chat_id = str(new_chat_id)
 
         with WELC_BTN_LOCK:

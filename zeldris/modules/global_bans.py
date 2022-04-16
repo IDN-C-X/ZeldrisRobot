@@ -16,6 +16,7 @@
 #  along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 
+import contextlib
 import html
 from io import BytesIO
 
@@ -84,7 +85,7 @@ UNGBAN_ERRORS = {
 
 
 @typing_action
-def gban(update: Update, context: CallbackContext):
+def gban(update: Update, context: CallbackContext):  # sourcery no-metrics
     message = update.effective_message
     chat = update.effective_chat
     args = context.args
@@ -220,10 +221,8 @@ def gban(update: Update, context: CallbackContext):
         parse_mode=ParseMode.HTML,
     )
 
-    try:
+    with contextlib.suppress(BadRequest):
         context.bot.ban_chat_member(chat.id, user_chat.id)
-    except BadRequest:
-        pass
     db.gban_user(user_id, user_chat.username or user_chat.first_name, reason)
 
 
@@ -302,7 +301,7 @@ def ungban(update: Update, context: CallbackContext):
 
 
 @send_action(ChatAction.UPLOAD_DOCUMENT)
-def gbanlist(update, _):
+def gbanlist(update: Update, _: CallbackContext):
     banned_users = db.get_gban_list()
 
     if not banned_users:

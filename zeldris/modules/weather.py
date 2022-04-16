@@ -31,7 +31,7 @@ from zeldris.modules.helper_funcs.alternate import typing_action
 
 
 @typing_action
-def weather(update: Update, context: CallbackContext):
+def weather(update: Update, context: CallbackContext):  # sourcery no-metrics
     args = context.args
     if len(args) == 0:
         reply = "Write a location to check the weather."

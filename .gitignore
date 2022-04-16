@@ -7,7 +7,6 @@ zeldris.session-journal
 .project
 .pydevproject
 .directory
-.vscode
 okgoogle.png
 *.backup
 sticker.png
@@ -16,3 +15,4 @@ kangsticker.tgs
 kangsticker
 zeldris.mp3
 gpic.png
+log.txt

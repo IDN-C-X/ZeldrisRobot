@@ -17,6 +17,7 @@
 
 
 import codecs
+import contextlib
 import html
 import os
 import random
@@ -62,8 +63,7 @@ from zeldris.modules.helper_funcs.filters import CustomFilters
 @typing_action
 def get_id(update: Update, context: CallbackContext):
     args = context.args
-    user_id = extract_user(update.effective_message, args)
-    if user_id:
+    if user_id := extract_user(update.effective_message, args):
         if (
             update.effective_message.reply_to_message
             and update.effective_message.reply_to_message.forward_from
@@ -82,24 +82,24 @@ def get_id(update: Update, context: CallbackContext):
         else:
             user = context.bot.get_chat(user_id)
             update.effective_message.reply_text(
-                "{}'s id is `{}`.".format(escape_markdown(user.first_name), user.id),
+                f"{escape_markdown(user.first_name)}'s id is `{user.id}`.",
                 parse_mode=ParseMode.MARKDOWN,
             )
+
     else:
         chat = update.effective_chat  # type: Optional[Chat]
         if chat.type == "private":
             update.effective_message.reply_text(
-                "Your id is `{}`.".format(chat.id), parse_mode=ParseMode.MARKDOWN
+                f"Your id is `{chat.id}`.", parse_mode=ParseMode.MARKDOWN
             )
 
         else:
             update.effective_message.reply_text(
-                "This group's id is `{}`.".format(chat.id),
-                parse_mode=ParseMode.MARKDOWN,
+                f"This group's id is `{chat.id}`.", parse_mode=ParseMode.MARKDOWN
             )
 
 
-def info(update: Update, context: CallbackContext):
+def info(update: Update, context: CallbackContext):  # sourcery no-metrics
     args = context.args
     msg = update.effective_message  # type: Optional[Message]
     user_id = extract_user(update.effective_message, args)
@@ -149,13 +149,10 @@ def info(update: Update, context: CallbackContext):
         context.bot.get_user_profile_photos(user.id).total_count
     )
 
-    try:
-        sw = spamwtc.get_ban(int(user.id))
-        if sw:
+    with contextlib.suppress(BaseException):
+        if sw := spamwtc.get_ban(int(user.id)):
             text += "\n\n<b>This person is banned in Spamwatch!</b>"
             text += f"\nResason: <pre>{sw.reason}</pre>"
-    except BaseException:
-        pass  # Don't break on exceptions like if api is down?
 
     if user.id == OWNER_ID:
         text += "\n\nAye this guy is my owner.\nI would never do anything against him!"
@@ -178,15 +175,12 @@ def info(update: Update, context: CallbackContext):
             "That means I'm not allowed to ban/kick them."
         )
 
-    try:
+    with contextlib.suppress(BadRequest):
         memstatus = chat.get_member(user.id).status
         if memstatus in ["administrator", "creator"]:
             result = context.bot.get_chat_member(chat.id, user.id)
             if result.custom_title:
                 text += f"\n\nThis user has custom title <b>{result.custom_title}</b> in this chat."
-    except BadRequest:
-        pass
-
     for mod in USER_INFO:
         try:
             mod_info = mod.__user_info__(user.id).strip()
@@ -212,7 +206,7 @@ def info(update: Update, context: CallbackContext):
 
 
 @typing_action
-def echo(update, _):
+def echo(update: Update, _: CallbackContext):
     args = update.effective_message.text.split(None, 1)
     message = update.effective_message
 
@@ -231,7 +225,7 @@ def echo(update, _):
 
 
 @typing_action
-def gdpr(update, _):
+def gdpr(update: Update, _: CallbackContext):
     update.effective_message.reply_text("Deleting identifiable data...")
     for mod in GDPR:
         mod.__gdpr__(update.effective_user.id)
@@ -279,7 +273,7 @@ Keep in mind that your message <b>MUST</b> contain some text other than just a b
 
 
 @typing_action
-def markdown_help(update, _):
+def markdown_help(update: Update, _: CallbackContext):
     update.effective_message.reply_text(MARKDOWN_HELP, parse_mode=ParseMode.HTML)
     update.effective_message.reply_text(
         "Try forwarding the following message to me, and you'll see!"
@@ -333,9 +327,6 @@ def ud(update: Update, context: CallbackContext):
     if not text:
         msg.reply_text("Please enter keywords to search!")
         return
-    if text == "starry":
-        msg.reply_text("Fek off bitch!")
-        return
     try:
         results = get(f"http://api.urbandictionary.com/v0/define?term={text}").json()
         reply_text = f'Word: {text}\nDefinition: {results["list"][0]["definition"]}'
@@ -357,7 +348,7 @@ def ud(update: Update, context: CallbackContext):
 
 
 @typing_action
-def src(update, _) -> None:
+def src(update: Update, _: CallbackContext) -> None:
     update.effective_message.reply_text(
         "Hey there! You can find what makes me by clicking the button below!",
         reply_markup=InlineKeyboardMarkup(
@@ -496,7 +487,7 @@ def rmemes(update: Update, context: CallbackContext):
         return msg.reply_text(f"Error! {excp.message}")
 
 
-def staff_ids(update, _):
+def staff_ids(update: Update, _: CallbackContext):
     sfile = "List of SUDO & SUPPORT users:\n"
     sfile += f"× SUDO USER IDs; {DEV_USERS}\n"
     sfile += f"× SUPPORT USER IDs; {SUPPORT_USERS}"
@@ -509,7 +500,7 @@ def staff_ids(update, _):
         )
 
 
-def stats(update, _):
+def stats(update: Update, _: CallbackContext):
     update.effective_message.reply_text(
         "Current stats:\n" + "\n".join([mod.__stats__() for mod in STATS])
     )

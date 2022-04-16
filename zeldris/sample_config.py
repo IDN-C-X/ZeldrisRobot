@@ -48,6 +48,9 @@ class Config(object):
     NO_LOAD = []
     WEBHOOK = False
     URL = None
+    MONGO_URI = ""
+    MONGO_PORT = []
+    MONGO_DB = ""
 
     # OPTIONAL
     DEV_USERS = (
@@ -73,6 +76,7 @@ class Config(object):
     API_OPENWEATHER = None  # OpenWeather API
     SPAMWATCH_API = None  # Your SpamWatch token
     WALL_API = None
+    SPAMMERS = None
 
 
 class Production(Config):

@@ -16,6 +16,7 @@
 #  along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 
+import contextlib
 import time
 
 from telegram import MessageEntity, ParseMode, Update
@@ -45,10 +46,7 @@ def afk(update: Update, _: CallbackContext):
     args = message.text.split(None, 1)
     user = update.effective_user
 
-    if not user:  # ignore channels
-        return
-
-    if user.id in [777000, 1087968824]:
+    if not user or user.id in (777000, 1087968824, 136817688):  # ignore channels
         return
 
     start_afk_time = time.time()
@@ -56,12 +54,10 @@ def afk(update: Update, _: CallbackContext):
     start_afk(user.id, reason)
     REDIS.set(f"afk_time_{user.id}", start_afk_time)
     fname = user.first_name
-    try:
+    with contextlib.suppress(BadRequest):
         message.reply_text(
             f"<code>{fname}</code> is now AFK!", parse_mode=ParseMode.HTML
         )
-    except BadRequest:
-        pass
 
 
 def no_longer_afk(update: Update, _: CallbackContext):
@@ -80,8 +76,7 @@ def no_longer_afk(update: Update, _: CallbackContext):
 
     end_afk_time = get_readable_time((time.time() - float(x)))
     REDIS.delete(f"afk_time_{user.id}")
-    res = end_afk(user.id)
-    if res:
+    if res := end_afk(user.id):
         if message.new_chat_members:  # don't say message
             return
         firstname = user.first_name
@@ -132,9 +127,7 @@ def reply_afk(update: Update, context: CallbackContext):
                     chat = context.bot.get_chat(user_id)
                 except BadRequest as e:
                     print(
-                        "Error: Could not fetch userid {} for AFK module due to {}".format(
-                            user_id, e
-                        )
+                        f"Error: Could not fetch userid {user_id} for AFK module due to {e}"
                     )
                     return
                 fst_name = chat.first_name
@@ -150,7 +143,9 @@ def reply_afk(update: Update, context: CallbackContext):
         check_afk(update, context, user_id, fst_name, userc_id)
 
 
-def check_afk(update: Update, _, user_id: int, fst_name: int, userc_id: int):
+def check_afk(
+    update: Update, _: CallbackContext, user_id: int, fst_name: int, userc_id: int
+):
     message = update.effective_message
     if is_user_afk(user_id):
         reason = afk_reason(user_id)
@@ -159,7 +154,7 @@ def check_afk(update: Update, _, user_id: int, fst_name: int, userc_id: int):
             return
 
         since_afk = get_readable_time((time.time() - float(z)))
-        if int(userc_id) == int(user_id):
+        if userc_id == user_id:
             return
         if reason == "none":
             res = f"<b>{fst_name}</b> is AFK!\nLast seen: <code>{since_afk}</code>"

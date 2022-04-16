@@ -73,9 +73,10 @@ def blacklist(update: Update, context: CallbackContext):
         if filter_list == "Current blacklisted words in <b>{}</b>:\n".format(chat_name):
             send_message(
                 update.effective_message,
-                "No blacklisted words in <b>{}</b>!".format(chat_name),
+                f"No blacklisted words in <b>{chat_name}</b>!",
                 parse_mode=ParseMode.HTML,
             )
+
             return
         send_message(update.effective_message, text, parse_mode=ParseMode.HTML)
 
@@ -109,18 +110,14 @@ def add_blacklist(update: Update, context: CallbackContext):
         if len(to_blacklist) == 1:
             send_message(
                 msg,
-                "Added blacklist <code>{}</code> in chat: <b>{}</b>!".format(
-                    html.escape(to_blacklist[0]), chat_name
-                ),
+                f"Added blacklist <code>{html.escape(to_blacklist[0])}</code> in chat: <b>{chat_name}</b>!",
                 parse_mode=ParseMode.HTML,
             )
 
         else:
             send_message(
                 msg,
-                "Added blacklist trigger: <code>{}</code> in <b>{}</b>!".format(
-                    len(to_blacklist), chat_name
-                ),
+                f"Added blacklist trigger: <code>{len(to_blacklist)}</code> in <b>{chat_name}</b>!",
                 parse_mode=ParseMode.HTML,
             )
 
@@ -164,11 +161,10 @@ def unblacklist(update: Update, context: CallbackContext):
             if successful:
                 send_message(
                     update.effective_message,
-                    "Removed <code>{}</code> from blacklist in <b>{}</b>!".format(
-                        html.escape(to_unblacklist[0]), chat_name
-                    ),
+                    f"Removed <code>{html.escape(to_unblacklist[0])}</code> from blacklist in <b>{chat_name}</b>!",
                     parse_mode=ParseMode.HTML,
                 )
+
             else:
                 send_message(
                     update.effective_message, "This is not a blacklist trigger!"
@@ -177,30 +173,23 @@ def unblacklist(update: Update, context: CallbackContext):
         elif successful == len(to_unblacklist):
             send_message(
                 update.effective_message,
-                "Removed <code>{}</code> from blacklist in <b>{}</b>!".format(
-                    successful, chat_name
-                ),
+                f"Removed <code>{successful}</code> from blacklist in <b>{chat_name}</b>!",
                 parse_mode=ParseMode.HTML,
             )
 
         elif not successful:
             send_message(
                 update.effective_message,
-                "None of these triggers exist so it can't be removed.".format(
-                    successful, len(to_unblacklist) - successful
-                ),
-                parse_mode=ParseMode.HTML,
+                "None of these triggers exist so it can't be removed.",
             )
 
         else:
             send_message(
                 update.effective_message,
-                "Removed <code>{}</code> from blacklist. {} did not exist, "
-                "so were not removed.".format(
-                    successful, len(to_unblacklist) - successful
-                ),
+                f"Removed <code>{successful}</code> from blacklist. {len(to_unblacklist) - successful} did not exist, so were not removed.",
                 parse_mode=ParseMode.HTML,
             )
+
     else:
         send_message(
             update.effective_message,

@@ -85,10 +85,7 @@ def list_handlers(update: Update, context: CallbackContext):
     all_handlers = sql.get_chat_triggers(chat_id)
 
     if not all_handlers:
-        send_message(
-            update.effective_message,
-            "No filters saved in {}!".format(chat_name),
-        )
+        send_message(update.effective_message, f"No filters saved in {chat_name}!")
         return
 
     for keyword in all_handlers:
@@ -113,7 +110,9 @@ def list_handlers(update: Update, context: CallbackContext):
 # NOT ASYNC BECAUSE DISPATCHER HANDLER RAISED
 @user_admin
 @typing_action
-def filters(update: Update, context: CallbackContext):  # sourcery no-metrics
+def filters(
+    update: Update, context: CallbackContext
+):  # sourcery no-metrics skip: use-named-expression
     chat = update.effective_chat
     user = update.effective_user
     msg = update.effective_message
@@ -225,9 +224,10 @@ def filters(update: Update, context: CallbackContext):  # sourcery no-metrics
     if add:
         send_message(
             update.effective_message,
-            "Saved filter '{}' in *{}*!".format(keyword, chat_name),
+            f"Saved filter '{keyword}' in *{chat_name}*!",
             parse_mode=telegram.ParseMode.MARKDOWN,
         )
+
     raise DispatcherHandlerStop
 
 
@@ -273,7 +273,7 @@ def stop_filter(update: Update, context: CallbackContext):
     )
 
 
-def reply_filter(update: Update, context: CallbackContext):
+def reply_filter(update: Update, context: CallbackContext):  # sourcery no-metrics
     chat = update.effective_chat
     message = update.effective_message
 

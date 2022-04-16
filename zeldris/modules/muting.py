@@ -71,9 +71,7 @@ def mute(update: Update, context: CallbackContext):
         message.reply_text("Yeahh... I'm not muting myself!")
         return ""
 
-    member = chat.get_member(int(user_id))
-
-    if member:
+    if member := chat.get_member(int(user_id)):
         if is_user_admin(chat, user_id, member=member):
             message.reply_text("Well i'm not gonna stop an admin from talking!")
 
@@ -241,14 +239,14 @@ def temp_mute(update: Update, context: CallbackContext):
                 until_date=mutetime,
                 permissions=ChatPermissions(can_send_messages=False),
             )
-            message.reply_text("shut up! 🤐 Taped for {}!".format(time_val))
+            message.reply_text(f"shut up! 🤐 Taped for {time_val}!")
             return log
+
         message.reply_text("This user is already muted.")
 
     except BadRequest as excp:
         if excp.message == "Reply message not found":
-            # Do not reply
-            message.reply_text("shut up! 🤐 Taped for {}!".format(time_val), quote=False)
+            message.reply_text(f"shut up! 🤐 Taped for {time_val}!")
             return log
         LOGGER.warning(update)
         LOGGER.exception(
@@ -258,8 +256,8 @@ def temp_mute(update: Update, context: CallbackContext):
             chat.id,
             excp.message,
         )
-        message.reply_text("Well damn, I can't mute that user.")
 
+        message.reply_text("Well damn, I can't mute that user.")
     return ""
 
 
