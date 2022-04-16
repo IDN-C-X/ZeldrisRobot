@@ -149,7 +149,7 @@ USER_SETTINGS = {}
 GDPR = []
 
 for module_name in ALL_MODULES:
-    imported_module = importlib.import_module("zeldris.modules." + module_name)
+    imported_module = importlib.import_module(f"zeldris.modules.{module_name}")
     if not hasattr(imported_module, "__mod_name__"):
         imported_module.__mod_name__ = imported_module.__name__
 
@@ -402,14 +402,13 @@ def get_help(update: Update, context: CallbackContext):
                         [
                             InlineKeyboardButton(
                                 text="Help",
-                                url="t.me/{}?start=ghelp_{}".format(
-                                    context.bot.username, module
-                                ),
+                                url=f"t.me/{context.bot.username}?start=ghelp_{module}",
                             )
                         ]
                     ]
                 ),
             )
+
             return
         update.effective_message.reply_text(
             "Contact me in PM to get the list of possible commands.",
@@ -418,12 +417,13 @@ def get_help(update: Update, context: CallbackContext):
                     [
                         InlineKeyboardButton(
                             text="Help",
-                            url="t.me/{}?start=help".format(context.bot.username),
+                            url=f"t.me/{context.bot.username}?start=help",
                         )
                     ]
                 ]
             ),
         )
+
         return
 
     if len(args) >= 2 and any(args[1].lower() == x for x in HELPABLE):
@@ -470,13 +470,12 @@ def send_settings(chat_id, user_id, user=False):
         chat_name = dispatcher.bot.getChat(chat_id).title
         dispatcher.bot.send_message(
             user_id,
-            text="Which module would you like to check {}'s settings for?".format(
-                chat_name
-            ),
+            text=f"Which module would you like to check {chat_name}'s settings for?",
             reply_markup=InlineKeyboardMarkup(
                 paginate_modules(0, CHAT_SETTINGS, "stngs", chat=chat_id)
             ),
         )
+
     else:
         dispatcher.bot.send_message(
             user_id,
@@ -510,20 +509,20 @@ def settings_button(update: Update, context: CallbackContext):
                         [
                             InlineKeyboardButton(
                                 text="Back",
-                                callback_data="stngs_back({})".format(chat_id),
+                                callback_data=f"stngs_back({chat_id})",
                             )
                         ]
                     ]
                 ),
             )
 
+
         elif prev_match:
             chat_id = prev_match.group(1)
             curr_page = int(prev_match.group(2))
             chat = bot.get_chat(chat_id)
             query.message.edit_text(
-                "Hi there! There are quite a few settings for {} - go ahead and pick what "
-                "you're interested in.".format(chat.title),
+                f"Hi there! There are quite a few settings for {chat.title} - go ahead and pick what you're interested in.",
                 reply_markup=InlineKeyboardMarkup(
                     paginate_modules(
                         curr_page - 1, CHAT_SETTINGS, "stngs", chat=chat_id
@@ -531,13 +530,13 @@ def settings_button(update: Update, context: CallbackContext):
                 ),
             )
 
+
         elif next_match:
             chat_id = next_match.group(1)
             next_page = int(next_match.group(2))
             chat = bot.get_chat(chat_id)
             query.message.edit_text(
-                "Hi there! There are quite a few settings for {} - go ahead and pick what "
-                "you're interested in.".format(chat.title),
+                f"Hi there! There are quite a few settings for {chat.title} - go ahead and pick what you're interested in.",
                 reply_markup=InlineKeyboardMarkup(
                     paginate_modules(
                         next_page + 1, CHAT_SETTINGS, "stngs", chat=chat_id
@@ -545,17 +544,18 @@ def settings_button(update: Update, context: CallbackContext):
                 ),
             )
 
+
         elif back_match:
             chat_id = back_match.group(1)
             chat = bot.get_chat(chat_id)
             query.message.edit_text(
-                text="Hi there! There are quite a few settings for {} - go ahead and pick what "
-                "you're interested in.".format(escape_markdown(chat.title)),
+                text=f"Hi there! There are quite a few settings for {escape_markdown(chat.title)} - go ahead and pick what you're interested in.",
                 parse_mode=ParseMode.MARKDOWN,
                 reply_markup=InlineKeyboardMarkup(
                     paginate_modules(0, CHAT_SETTINGS, "stngs", chat=chat_id)
                 ),
             )
+
 
         # ensure no spinny white circle
         bot.answer_callback_query(query.id)
@@ -586,14 +586,13 @@ def get_settings(update: Update, context: CallbackContext):
                     [
                         InlineKeyboardButton(
                             text="Settings",
-                            url="t.me/{}?start=stngs_{}".format(
-                                context.bot.username, chat.id
-                            ),
+                            url=f"t.me/{context.bot.username}?start=stngs_{chat.id}",
                         )
                     ]
                 ]
             ),
         )
+
     else:
         "Click here to check your settings."
 
