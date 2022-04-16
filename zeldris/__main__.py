@@ -516,7 +516,6 @@ def settings_button(update: Update, context: CallbackContext):
                 ),
             )
 
-
         elif prev_match:
             chat_id = prev_match.group(1)
             curr_page = int(prev_match.group(2))
@@ -529,7 +528,6 @@ def settings_button(update: Update, context: CallbackContext):
                     )
                 ),
             )
-
 
         elif next_match:
             chat_id = next_match.group(1)
@@ -544,7 +542,6 @@ def settings_button(update: Update, context: CallbackContext):
                 ),
             )
 
-
         elif back_match:
             chat_id = back_match.group(1)
             chat = bot.get_chat(chat_id)
@@ -555,7 +552,6 @@ def settings_button(update: Update, context: CallbackContext):
                     paginate_modules(0, CHAT_SETTINGS, "stngs", chat=chat_id)
                 ),
             )
-
 
         # ensure no spinny white circle
         bot.answer_callback_query(query.id)
