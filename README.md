@@ -79,7 +79,7 @@ class Development(Config):
     LOAD = []
     NO_LOAD = ['translation']
     MONGO_URI = ""
-    MONGO_PORT = 27017
+    MONGO_PORT = 27017  # leave it as it is
     MONGO_DB = "Zeldris"
 ```
 
@@ -98,6 +98,9 @@ variables are supported:
 - `NO_LOAD`: Space-separated list of modules you would like NOT to load
 - `WEBHOOK`: Setting this to ANYTHING will enable webhooks when in env mode messages
 - `URL`: The URL your webhook should connect to (only needed for webhook mode)
+- `MONGO_URI`: Your mongodb url
+- `MONGO_PORT`: Your mongodb port
+- `MONGO_DB`: Your mongodb name
 
 - `SUDO_USERS`: A space-separated list of user_ids which should be considered sudo users
 - `DEV_USERS`: A space-separated list of user_ids which should be considered dev users
@@ -119,7 +122,7 @@ variables are supported:
 
 Install the necessary Python dependencies by moving to the project directory and running:
 
-`pip3 install -r requirements.txt`.
+`pip3 install -U -r requirements.txt`.
 
 This will install all the necessary python packages.
 
