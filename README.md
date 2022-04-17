@@ -12,10 +12,10 @@
 <a href="https://t.me/ZeldrisRobot"> <img src="https://img.shields.io/badge/Zeldris-Robot-blue?&logo=telegram" alt="Zeldris on Telegram" /> </a><br>
 <a href="https://www.codacy.com/gh/IDN-C-X/ZeldrisRobot/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=IDN-C-X/ZeldrisRobot&amp;utm_campaign=Badge_Grade"><img src="https://app.codacy.com/project/badge/Grade/b290cfb10337403ba1e8d29fd474d39b"/></a><a href="https://www.codefactor.io/repository/github/idn-c-x/zeldrisrobot"><img src="https://www.codefactor.io/repository/github/idn-c-x/zeldrisrobot/badge" alt="CodeFactor" /></a><br>
 <a href="https://deepsource.io/gh/IDN-C-X/ZeldrisRobot/?ref=repository-badge"><img src="https://static.deepsource.io/deepsource-badge-light-mini.svg" alt="DeepSource"></a><br>
-<a href="https://python-telegram-bot.org"> <img src="https://img.shields.io/badge/PTB-13.9-brightgreen?&style=flat-round&logo=github" alt="Python Telegram Bot" /> </a>
+<a href="https://python-telegram-bot.org"> <img src="https://img.shields.io/badge/PTB-13.11.0-brightgreen?&style=flat-round&logo=github" alt="Python Telegram Bot" /> </a>
 <a href="https://github.com/psf/black"><img alt="Code style: black" src="https://img.shields.io/badge/code%20style-black-000000.svg"></a><br>
 <a href="https://docs.telethon.dev"> <img src="https://img.shields.io/badge/Telethon-1.24.0-brightgreen?&style=flat-round&logo=github" alt="Telethon" /> </a>
-<a href="https://docs.python.org"> <img src="https://img.shields.io/badge/Python-3.10.1-brightgreen?&style=flat-round&logo=python" alt="Python" /> </a><br>
+<a href="https://docs.python.org"> <img src="https://img.shields.io/badge/Python-3.10.2-brightgreen?&style=flat-round&logo=python" alt="Python" /> </a><br>
 <a href="https://github.com/IDN-C-X"> <img src="https://badges.frapsoft.com/os/v1/open-source.svg?v=103" alt="Open Source" /> </a>
 <a href="https://GitHub.com/IDN-C-X/ZeldrisRobot"> <img src="https://img.shields.io/badge/Maintained-Yes-brightgreen.svg" alt="Maintenance" /> </a><br>
 <a href="https://github.com/IDN-C-X/ZeldrisRobot/blob/main/LICENSE"> <img src="https://img.shields.io/badge/License-GPLv3-blue.svg" alt="License" /> </a>
@@ -69,13 +69,13 @@ defaults set in the sample_config, hence making it easier to upgrade.
 
 An example `config.py` file could be:
 
-```
+```python
 from zeldris.sample_config import Config
 
 class Development(Config):
     OWNER_ID = 123456789  # your telegram ID
     OWNER_USERNAME = "username"  # your telegram username
-    API_KEY = "your bot api key"  # your api key, as provided by the @botfather
+    TOKEN = "your bot token"  # your bot token, as provided by the @botfather
     SQLALCHEMY_DATABASE_URI = 'postgresql://username:password@localhost:5432/database'  # sample db credentials
     MESSAGE_DUMP = '-10007372' # some group chat that your bot is a member of
     USE_MESSAGE_DUMP = True
@@ -83,11 +83,11 @@ class Development(Config):
     LOAD = []
     NO_LOAD = ['translation']
     MONGO_URI = ""
-    MONGO_PORT = []
-    MONGO_DB = ""
+    MONGO_PORT = 27017
+    MONGO_DB = "Zeldris"
 ```
 
-If you can't have a config.py file (EG on Heroku), it is also possible to use environment variables. The following env
+If you can't have a [config.py](/zeldris/sample_config.py) file (EG on Heroku), it is also possible to use environment variables. The following env
 variables are supported:
 
 - `ENV`: Setting this to ANYTHING will enable env variables
