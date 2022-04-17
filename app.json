@@ -166,17 +166,17 @@
       "value": ""
     },
     "REDIS_URL": {
-      "description": "Take it from redislabs.com and the format should be redis://username:password@cluster/",
+      "description": "Take it from redislabs.com and the format should be redis://username:password@publicendpoint:port/",
       "required": true,
       "value": ""
     },
     "MONGO_DB": {
       "description": "Your mongodb name",
       "required": true,
-      "value": ""
+      "value": "Zeldris"
     },
     "MONGO_PORT": {
-      "description": "Your mongodb port",
+      "description": "Your mongodb port, better don't touch it",
       "required": true,
       "value": "27017"
     },
