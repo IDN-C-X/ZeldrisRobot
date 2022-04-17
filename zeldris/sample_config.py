@@ -49,8 +49,8 @@ class Config(object):
     WEBHOOK = False
     URL = None
     MONGO_URI = ""
-    MONGO_PORT = []
-    MONGO_DB = ""
+    MONGO_PORT = 27017  # leave it as it is
+    MONGO_DB = "Zeldris"
 
     # OPTIONAL
     DEV_USERS = (
