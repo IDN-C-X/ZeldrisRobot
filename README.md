@@ -52,10 +52,6 @@
 Please make sure to use python3.6, as I cannot guarantee everything will work as expected on older Python versions!
 This is because markdown parsing is done by iterating through a dict, which is ordered by default in 3.6.
 
-## Deploy to Heroku
-
-[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/IDN-C-X/ZeldrisRobot/tree/master)
-
 ### Configuration
 
 There are two possible ways of configuring your bot: a config.py file, or ENV variables.
