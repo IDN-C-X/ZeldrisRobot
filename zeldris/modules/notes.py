@@ -186,24 +186,33 @@ def get(bot, update, notename, show_none=True, no_format=False):  # sourcery no-
             keyboard = InlineKeyboardMarkup(keyb)
 
             try:
-                if note.msgtype in (sql.Types.BUTTON_TEXT, sql.Types.TEXT):
-                    bot.send_message(
-                        update.effective_chat.id,
+            if note.msgtype in (sql.Types.BUTTON_TEXT, sql.Types.TEXT):
+                bot.send_message(
+                        chat_id,
                         text,
                         reply_to_message_id=reply_id,
                         parse_mode=parseMode,
                         reply_markup=keyboard,
-                        disable_web_page_preview=True,
-                    )
-                else:
-                    ENUM_FUNC_MAP[note.msgtype](
-                        update.effective_chat.id,
+                        disable_web_page_preview=bool(preview),
+                        protect_content=bool(protect)
+                )
+            elif ENUM_FUNC_MAP[note.msgtype] == dispatcher.bot.send_sticker:
+                ENUM_FUNC_MAP[note.msgtype](
+                        chat_id,
+                        note.file,
+                        reply_to_message_id=reply_id,
+                        reply_markup=keyboard,
+                )
+            else:
+                ENUM_FUNC_MAP[note.msgtype](
+                        chat_id,
                         note.file,
                         caption=text,
                         reply_to_message_id=reply_id,
                         parse_mode=parseMode,
                         reply_markup=keyboard,
-                    )
+                        protect_content=bool(protect)
+                )
 
             except BadRequest as excp:
                 if excp.message == "Entity_mention_user_invalid":
