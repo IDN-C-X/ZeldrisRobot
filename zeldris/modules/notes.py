@@ -265,8 +265,7 @@ def hash_get(update: Update, context: CallbackContext):
 def save(update: Update, context: CallbackContext):
     chat = update.effective_chat
     user = update.effective_user
-    conn = connected(context.bot, update, chat, user.id)
-    if conn:
+    if conn := connected(context.bot, update, chat, user.id):
         chat_id = conn
         chat_name = dispatcher.bot.getChat(conn).title
     else:
@@ -335,8 +334,7 @@ def list_notes(update: Update, context: CallbackContext):
     chat_id = update.effective_chat.id
     chat = update.effective_chat
     user = update.effective_user
-    conn = connected(context.bot, update, chat, user.id, need_admin=False)
-    if conn:
+    if conn := connected(context.bot, update, chat, user.id, need_admin=False):
         chat_id = conn
         chat_name = dispatcher.bot.getChat(conn).title
         msg = "*Notes in {}:*\n"
@@ -533,7 +531,7 @@ def __import_data__(chat_id, data):  # sourcery no-metrics
 
 
 def __stats__():
-    return "× {} notes, across {} chats.".format(sql.num_notes(), sql.num_chats())
+    return f"× {sql.num_notes()} notes, across {sql.num_chats()} chats."
 
 
 def __migrate__(old_chat_id, new_chat_id):
@@ -542,7 +540,7 @@ def __migrate__(old_chat_id, new_chat_id):
 
 def __chat_settings__(chat_id, _):
     notes = sql.get_all_chat_notes(chat_id)
-    return "There are `{}` notes in this chat.".format(len(notes))
+    return f"There are `{len(notes)}` notes in this chat."
 
 
 __help__ = """
