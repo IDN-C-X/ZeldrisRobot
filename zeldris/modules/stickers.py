@@ -62,7 +62,7 @@ def kang(update: Update, context: CallbackContext):  # sourcery skip: low-code-q
     user = update.effective_user
     args = context.args
     packnum = 0
-    packname = "a" + str(user.id) + "_by_" + context.bot.username
+    packname = f"a{str(user.id)}_by_{context.bot.username}"
     packname_found = 0
     max_stickers = 120
     while packname_found == 0:
@@ -156,12 +156,20 @@ def kang(update: Update, context: CallbackContext):  # sourcery skip: low-code-q
             except TelegramError as e:
                 if e.message == "Internal Server Error: sticker set not found (500)":
                     msg.reply_text(
-                        "Sticker successfully added to [pack](t.me/addstickers/%s)"
-                        % packname
-                        + "\n"
-                        "Emoji is:" + " " + sticker_emoji,
+                        (
+                            (
+                                (
+                                    f"Sticker successfully added to [pack](t.me/addstickers/{packname})"
+                                    + "\n"
+                                    "Emoji is:"
+                                )
+                                + " "
+                            )
+                            + sticker_emoji
+                        ),
                         parse_mode=ParseMode.MARKDOWN,
                     )
+
                 elif e.message == "Invalid sticker emojis":
                     msg.reply_text("Invalid emoji(s).")
                 elif e.message == "Sticker_png_dimensions":
@@ -193,7 +201,7 @@ def kang(update: Update, context: CallbackContext):  # sourcery skip: low-code-q
                 print(e)
 
         else:
-            packname = "animated" + str(user.id) + "_by_" + context.bot.username
+            packname = f"animated{str(user.id)}_by_{context.bot.username}"
             packname_found = 0
             max_stickers = 50
             while packname_found == 0:
@@ -229,12 +237,20 @@ def kang(update: Update, context: CallbackContext):  # sourcery skip: low-code-q
             except TelegramError as e:
                 if e.message == "Internal Server Error: sticker set not found (500)":
                     msg.reply_text(
-                        "Sticker successfully added to [pack](t.me/addstickers/%s)"
-                        % packname
-                        + "\n"
-                        "Emoji is:" + " " + sticker_emoji,
+                        (
+                            (
+                                (
+                                    f"Sticker successfully added to [pack](t.me/addstickers/{packname})"
+                                    + "\n"
+                                    "Emoji is:"
+                                )
+                                + " "
+                            )
+                            + sticker_emoji
+                        ),
                         parse_mode=ParseMode.MARKDOWN,
                     )
+
                 elif e.message == "Invalid sticker emojis":
                     msg.reply_text("Invalid emoji(s).")
                 elif e.message == "Stickerset_invalid":
@@ -253,7 +269,7 @@ def kang(update: Update, context: CallbackContext):  # sourcery skip: low-code-q
     else:
         packs = "Please reply to a sticker, or image to kang it!\nOh, by the way. here are your packs:\n"
         if packnum > 0:
-            firstpackname = "a" + str(user.id) + "_by_" + context.bot.username
+            firstpackname = f"a{str(user.id)}_by_{context.bot.username}"
             for i in range(packnum + 1):
                 if i == 0:
                     packs += f"[pack](t.me/addstickers/{firstpackname})\n"
@@ -282,20 +298,21 @@ def makepack_internal(
     name = user.first_name
     name = name[:50]
     try:
-        extra_version = " " + str(packnum) if packnum > 0 else ""
+        extra_version = f" {str(packnum)}" if packnum > 0 else ""
         if png_sticker:
             success = context.bot.create_new_sticker_set(
                 user.id,
                 packname,
-                f"{name}s kang pack" + extra_version,
+                f"{name}s kang pack{extra_version}",
                 png_sticker=png_sticker,
                 emojis=emoji,
             )
+
         if tgs_sticker:
             success = context.bot.create_new_sticker_set(
                 user.id,
                 packname,
-                f"{name}s animated kang pack" + extra_version,
+                f"{name}s animated kang pack{extra_version}",
                 tgs_sticker=tgs_sticker,
                 emojis=emoji,
             )
@@ -304,9 +321,10 @@ def makepack_internal(
         print(e)
         if e.message == "Sticker set name is already occupied":
             msg.reply_text(
-                "Your pack can be found [here](t.me/addstickers/%s)" % packname,
+                f"Your pack can be found [here](t.me/addstickers/{packname})",
                 parse_mode=ParseMode.MARKDOWN,
             )
+
         else:
             msg.reply_text(
                 "Contact me in PM first.",
@@ -324,10 +342,10 @@ def makepack_internal(
 
     if success:
         msg.reply_text(
-            "Sticker pack successfully created. Get it [here](t.me/addstickers/%s)"
-            % packname,
+            f"Sticker pack successfully created. Get it [here](t.me/addstickers/{packname})",
             parse_mode=ParseMode.MARKDOWN,
         )
+
     else:
         msg.reply_text("Failed to create sticker pack. Possibly due to blek mejik.")
 
