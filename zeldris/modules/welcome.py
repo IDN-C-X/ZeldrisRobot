@@ -176,7 +176,9 @@ def send(update, message, keyboard, backup_message):
 
 
 @loggable
-def new_member(update: Update, context: CallbackContext):  # sourcery skip: low-code-quality
+def new_member(
+    update: Update, context: CallbackContext
+):  # sourcery skip: low-code-quality
     bot, job_queue = context.bot, context.job_queue
     chat = update.effective_chat
     user = update.effective_user
@@ -564,7 +566,9 @@ def check_not_bot(member, chat_id, message_id, context):
             pass
 
 
-def left_member(update: Update, context: CallbackContext):  # sourcery skip: low-code-quality
+def left_member(
+    update: Update, context: CallbackContext
+):  # sourcery skip: low-code-quality
     bot = context.bot
     chat = update.effective_chat
     user = update.effective_user

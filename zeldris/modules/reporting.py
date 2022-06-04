@@ -87,7 +87,9 @@ def report_setting(update: Update, context: CallbackContext):
 @user_not_admin
 @loggable
 @typing_action
-def report(update: Update, context: CallbackContext) -> str:  # sourcery skip: low-code-quality
+def report(
+    update: Update, context: CallbackContext
+) -> str:  # sourcery skip: low-code-quality
     message = update.effective_message  # type: Optional[Message]
     chat = update.effective_chat  # type: Optional[Chat]
     user = update.effective_user  # type: Optional[User]

@@ -47,7 +47,9 @@ from zeldris.modules.sql import disable_sql as disabledsql
 
 @user_admin
 @typing_action
-def import_data(update: Update, context: CallbackContext):  # sourcery skip: low-code-quality
+def import_data(
+    update: Update, context: CallbackContext
+):  # sourcery skip: low-code-quality
     msg = update.effective_message
     chat = update.effective_chat
     user = update.effective_user
@@ -141,7 +143,9 @@ def import_data(update: Update, context: CallbackContext):  # sourcery skip: low
 
 
 @user_admin
-def export_data(update: Update, context: CallbackContext):  # sourcery skip: low-code-quality
+def export_data(
+    update: Update, context: CallbackContext
+):  # sourcery skip: low-code-quality
     chat_data = context.chat_data
     msg = update.effective_message  # type: Optional[Message]
     user = update.effective_user  # type: Optional[User]

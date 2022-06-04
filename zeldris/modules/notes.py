@@ -76,7 +76,9 @@ ENUM_FUNC_MAP = {
 
 
 # Do not async
-def get(bot, update, notename, show_none=True, no_format=False):  # sourcery skip: low-code-quality
+def get(
+    bot, update, notename, show_none=True, no_format=False
+):  # sourcery skip: low-code-quality
     chat_id = update.effective_chat.id
     chat = update.effective_chat
     user = update.effective_user
