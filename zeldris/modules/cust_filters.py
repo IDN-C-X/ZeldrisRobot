@@ -112,7 +112,7 @@ def list_handlers(update: Update, context: CallbackContext):
 @typing_action
 def filters(
     update: Update, context: CallbackContext
-):  # sourcery no-metrics skip: use-named-expression
+):  # sourcery skip: low-code-quality
     chat = update.effective_chat
     user = update.effective_user
     msg = update.effective_message
@@ -217,11 +217,7 @@ def filters(
         send_message(msg, "Invalid filter!")
         return
 
-    add = addnew_filter(update, chat_id, keyword, text, file_type, file_id, buttons)
-    # This is an old method sql.add_filter(chat_id, keyword, content, is_sticker, is_document, is_image, is_audio,
-    # is_voice, is_video, buttons)
-
-    if add:
+    if _ := addnew_filter(update, chat_id, keyword, text, file_type, file_id, buttons):
         send_message(
             update.effective_message,
             f"Saved filter '{keyword}' in *{chat_name}*!",
@@ -262,9 +258,10 @@ def stop_filter(update: Update, context: CallbackContext):
             sql.remove_filter(chat_id, args[1])
             send_message(
                 update.effective_message,
-                "Okay, I'll stop replying to that filter in *{}*.".format(chat_name),
+                f"Okay, I'll stop replying to that filter in *{chat_name}*.",
                 parse_mode=telegram.ParseMode.MARKDOWN,
             )
+
             raise DispatcherHandlerStop
 
     send_message(
@@ -273,7 +270,9 @@ def stop_filter(update: Update, context: CallbackContext):
     )
 
 
-def reply_filter(update: Update, context: CallbackContext):  # sourcery no-metrics
+def reply_filter(
+    update: Update, context: CallbackContext
+):  # sourcery skip: low-code-quality
     chat = update.effective_chat
     message = update.effective_message
 

@@ -153,7 +153,7 @@ def locktypes(update: Update, _: CallbackContext):
 @user_admin
 @loggable
 @typing_action
-def lock(update: Update, context: CallbackContext) -> str:  # sourcery no-metrics
+def lock(update: Update, context: CallbackContext) -> str:  # sourcery skip: low-code-quality
     args = context.args
     chat = update.effective_chat
     user = update.effective_user
@@ -260,7 +260,7 @@ def lock(update: Update, context: CallbackContext) -> str:  # sourcery no-metric
 @user_admin
 @loggable
 @typing_action
-def unlock(update: Update, context: CallbackContext) -> str:  # sourcery no-metrics
+def unlock(update: Update, context: CallbackContext) -> str:  # sourcery skip: low-code-quality
     args = context.args
     chat = update.effective_chat
     user = update.effective_user
@@ -348,7 +348,7 @@ def unlock(update: Update, context: CallbackContext) -> str:  # sourcery no-metr
 
 
 @user_not_admin
-def del_lockables(update: Update, context: CallbackContext):  # sourcery no-metrics
+def del_lockables(update: Update, context: CallbackContext):  # sourcery skip: low-code-quality
     chat = update.effective_chat
     message = update.effective_message
 

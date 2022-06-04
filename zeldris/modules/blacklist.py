@@ -200,7 +200,9 @@ def unblacklist(update: Update, context: CallbackContext):
 @loggable
 @user_admin
 @typing_action
-def blacklist_mode(update: Update, context: CallbackContext):  # sourcery no-metrics
+def blacklist_mode(
+    update: Update, context: CallbackContext
+):  # sourcery skip: low-code-quality
     bot, args = context.bot, context.args
     chat = update.effective_chat
     user = update.effective_user
@@ -341,7 +343,9 @@ def findall(p, s):
 
 
 @user_not_admin
-def del_blacklist(update: Update, context: CallbackContext):  # sourcery no-metrics
+def del_blacklist(
+    update: Update, context: CallbackContext
+):  # sourcery skip: low-code-quality
     bot = context.bot
     chat = update.effective_chat
     message = update.effective_message

@@ -76,7 +76,7 @@ ENUM_FUNC_MAP = {
 
 
 # Do not async
-def get(bot, update, notename, show_none=True, no_format=False):  # sourcery no-metrics
+def get(bot, update, notename, show_none=True, no_format=False):  # sourcery skip: low-code-quality
     chat_id = update.effective_chat.id
     chat = update.effective_chat
     user = update.effective_user
@@ -425,7 +425,7 @@ def rmbutton(update: Update, _: CallbackContext):
         query.message.edit_text(f"Successfully cleaned {count} notes in {chat.title}.")
 
 
-def __import_data__(chat_id, data):  # sourcery no-metrics
+def __import_data__(chat_id, data):  # sourcery skip: low-code-quality
     failures = []
     for notename, notedata in data.get("extra", {}).items():
         match = FILE_MATCHER.match(notedata)

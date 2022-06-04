@@ -63,7 +63,7 @@ if is_module_loaded(FILENAME):
                 if admin_ok:
                     ADMIN_CMDS.extend(command)
 
-        def check_update(self, update):  # sourcery no-metrics
+        def check_update(self, update):  # sourcery skip: low-code-quality
             if not isinstance(update, Update) or not update.effective_message:
                 return
             message = update.effective_message

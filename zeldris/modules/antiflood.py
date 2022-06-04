@@ -121,7 +121,9 @@ def check_flood(update: Update, context: CallbackContext) -> str:
 @user_admin
 @loggable
 @typing_action
-def set_flood(update: Update, context: CallbackContext) -> str:  # sourcery no-metrics
+def set_flood(
+    update: Update, context: CallbackContext
+) -> str:  # sourcery skip: low-code-quality
     bot, args = context.bot, context.args
     chat = update.effective_chat  # type: Optional[Chat]
     user = update.effective_user  # type: Optional[User]
@@ -248,7 +250,9 @@ def flood(update: Update, context: CallbackContext):
 @user_admin
 @loggable
 @typing_action
-def set_flood_mode(update: Update, context: CallbackContext):  # sourcery no-metrics
+def set_flood_mode(
+    update: Update, context: CallbackContext
+):  # sourcery skip: low-code-quality
     chat = update.effective_chat  # type: Optional[Chat]
     user = update.effective_user  # type: Optional[User]
     msg = update.effective_message  # type: Optional[Message]
@@ -368,7 +372,7 @@ def __chat_settings__(chat_id, _):
     limit = sql.get_flood_limit(chat_id)
     if limit == 0:
         return "Not enforcing to flood control."
-    return "Antiflood has been set to`{}`.".format(limit)
+    return f"Antiflood has been set to`{limit}`."
 
 
 __help__ = """

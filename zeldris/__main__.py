@@ -151,7 +151,7 @@ USER_SETTINGS = {}
 GDPR = []
 
 for module_name in ALL_MODULES:
-    imported_module = importlib.import_module("zeldris.modules." + module_name)
+    imported_module = importlib.import_module(f"zeldris.modules.{module_name}")
     if not hasattr(imported_module, "__mod_name__"):
         imported_module.__mod_name__ = imported_module.__name__
 
@@ -233,12 +233,12 @@ def start(update: Update, context: CallbackContext):
 
             elif args[0].lower().startswith("stngs_"):
                 match = re.match("stngs_(.*)", args[0].lower())
-                chat = dispatcher.bot.getChat(match.group(1))
+                chat = dispatcher.bot.getChat(match[1])
 
                 if is_user_admin(chat, update.effective_user.id):
-                    send_settings(match.group(1), update.effective_user.id, False)
+                    send_settings(match[1], update.effective_user.id, False)
                 else:
-                    send_settings(match.group(1), update.effective_user.id, True)
+                    send_settings(match[1], update.effective_user.id, True)
 
             elif args[0][1:].isdigit() and "rules" in IMPORTED:
                 IMPORTED["rules"].send_rules(update, args[0], from_pm=True)
@@ -309,7 +309,7 @@ def help_button(update: Update, context: CallbackContext):
 
     with contextlib.suppress(BadRequest):
         if mod_match:
-            module = mod_match.group(1)
+            module = mod_match[1]
             text = (
                 "Here is the help for the *{}* module:\n".format(
                     HELPABLE[module].__mod_name__
@@ -326,7 +326,7 @@ def help_button(update: Update, context: CallbackContext):
             )
 
         elif prev_match:
-            curr_page = int(prev_match.group(1))
+            curr_page = int(prev_match[1])
             query.message.edit_text(
                 text=HELP_STRINGS,
                 parse_mode=ParseMode.MARKDOWN,
@@ -336,7 +336,7 @@ def help_button(update: Update, context: CallbackContext):
             )
 
         elif next_match:
-            next_page = int(next_match.group(1))
+            next_page = int(next_match[1])
             query.message.edit_text(
                 text=HELP_STRINGS,
                 parse_mode=ParseMode.MARKDOWN,
@@ -490,8 +490,8 @@ def settings_button(update: Update, context: CallbackContext):
     back_match = re.match(r"stngs_back\((.+?)\)", query.data)
     try:
         if mod_match:
-            chat_id = mod_match.group(1)
-            module = mod_match.group(2)
+            chat_id = mod_match[1]
+            module = mod_match[2]
             chat = bot.get_chat(chat_id)
             text = "*{}* has the following settings for the *{}* module:\n\n".format(
                 escape_markdown(chat.title), CHAT_SETTINGS[module].__mod_name__
@@ -511,8 +511,8 @@ def settings_button(update: Update, context: CallbackContext):
             )
 
         elif prev_match:
-            chat_id = prev_match.group(1)
-            curr_page = int(prev_match.group(2))
+            chat_id = prev_match[1]
+            curr_page = int(prev_match[2])
             chat = bot.get_chat(chat_id)
             query.message.edit_text(
                 f"Hi there! There are quite a few settings for {chat.title} - go ahead and pick what you're interested in.",
@@ -524,8 +524,8 @@ def settings_button(update: Update, context: CallbackContext):
             )
 
         elif next_match:
-            chat_id = next_match.group(1)
-            next_page = int(next_match.group(2))
+            chat_id = next_match[1]
+            next_page = int(next_match[2])
             chat = bot.get_chat(chat_id)
             query.message.edit_text(
                 f"Hi there! There are quite a few settings for {chat.title} - go ahead and pick what you're interested in.",
@@ -537,7 +537,7 @@ def settings_button(update: Update, context: CallbackContext):
             )
 
         elif back_match:
-            chat_id = back_match.group(1)
+            chat_id = back_match[1]
             chat = bot.get_chat(chat_id)
             query.message.edit_text(
                 text=f"Hi there! There are quite a few settings for {escape_markdown(chat.title)} - go ahead and pick what you're interested in.",

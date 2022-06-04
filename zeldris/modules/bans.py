@@ -47,7 +47,7 @@ from zeldris.modules.log_channel import loggable
 @user_admin
 @loggable
 @typing_action
-def ban(update: Update, context: CallbackContext):  # sourcery no-metrics
+def ban(update: Update, context: CallbackContext):  # sourcery skip: low-code-quality
     bot, args = context.bot, context.args
     chat = update.effective_chat
     user = update.effective_user
@@ -294,16 +294,14 @@ def kick(update: Update, context: CallbackContext):
         message.reply_text("Yeahhh I'm not gonna do that")
         return ""
 
-    res = chat.unban_member(user_id)  # unban on current user = kick
-    if res:
+    if _ := chat.unban_member(user_id):
         # context.bot.send_sticker(chat.id, BAN_STICKER)  # banhammer marie sticker
         context.bot.sendMessage(
             chat.id,
-            "Until we meet again {}!.".format(
-                mention_html(member.user.id, member.user.first_name)
-            ),
+            f"Until we meet again {mention_html(member.user.id, member.user.first_name)}!.",
             parse_mode=ParseMode.HTML,
         )
+
         log = (
             "<b>{}:</b>"
             "\n#KICKED"
@@ -336,8 +334,7 @@ def banme(update: Update, _: CallbackContext):
         update.effective_message.reply_text("Yeahhh.. not gonna ban an admin.")
         return
 
-    res = update.effective_chat.ban_member(user_id)
-    if res:
+    if _ := update.effective_chat.ban_member(user_id):
         update.effective_message.reply_text("Yes, you're right! GTFO..")
         return (
             "<b>{}:</b>"
@@ -361,8 +358,7 @@ def kickme(update: Update, _: CallbackContext):
         update.effective_message.reply_text("Yeahhh.. not gonna kick an admin.")
         return
 
-    res = update.effective_chat.unban_member(user_id)  # unban on current user = kick
-    if res:
+    if _ := update.effective_chat.unban_member(user_id):
         update.effective_message.reply_text("Yeah, you're right Get Out!..")
     else:
         update.effective_message.reply_text("Huh? I can't :/")

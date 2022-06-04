@@ -57,7 +57,7 @@ def combot_sticker(update: Update, _: CallbackContext):
 
 
 @typing_action
-def kang(update: Update, context: CallbackContext):  # sourcery no-metrics
+def kang(update: Update, context: CallbackContext):  # sourcery skip: low-code-quality
     msg = update.effective_message
     user = update.effective_user
     args = context.args

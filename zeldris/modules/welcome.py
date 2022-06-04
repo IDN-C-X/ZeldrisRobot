@@ -176,7 +176,7 @@ def send(update, message, keyboard, backup_message):
 
 
 @loggable
-def new_member(update: Update, context: CallbackContext):  # sourcery no-metrics
+def new_member(update: Update, context: CallbackContext):  # sourcery skip: low-code-quality
     bot, job_queue = context.bot, context.job_queue
     chat = update.effective_chat
     user = update.effective_user
@@ -564,7 +564,7 @@ def check_not_bot(member, chat_id, message_id, context):
             pass
 
 
-def left_member(update: Update, context: CallbackContext):  # sourcery no-metrics
+def left_member(update: Update, context: CallbackContext):  # sourcery skip: low-code-quality
     bot = context.bot
     chat = update.effective_chat
     user = update.effective_user
@@ -1074,7 +1074,7 @@ def user_button(update: Update, context: CallbackContext):
 
 
 def user_captcha_button(update: Update, context: CallbackContext):
-    # sourcery no-metrics
+    # sourcery skip: low-code-quality
     chat = update.effective_chat
     user = update.effective_user
     query = update.callback_query

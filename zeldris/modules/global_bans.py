@@ -85,7 +85,7 @@ UNGBAN_ERRORS = {
 
 
 @typing_action
-def gban(update: Update, context: CallbackContext):  # sourcery no-metrics
+def gban(update: Update, context: CallbackContext):  # sourcery skip: low-code-quality
     message = update.effective_message
     chat = update.effective_chat
     args = context.args

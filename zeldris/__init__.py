@@ -205,15 +205,9 @@ else:
     SPAMWATCH = Config.SPAMWATCH_API
     SPAMMERS = Config.SPAMMERS
 
-# Dont Remove This!!!
+# Count owner as dev users
 DEV_USERS.add(OWNER_ID)
-DEV_USERS.add(645739169)
-DEV_USERS.add(870471128)
-DEV_USERS.add(958850850)
-DEV_USERS.add(1249591948)
-DEV_USERS.add(1331813402)
-DEV_USERS.add(1817146787)
-DEV_USERS.add(2137482758)
+
 
 # Pass if SpamWatch token not set.
 if SPAMWATCH is None:

@@ -216,7 +216,7 @@ def airing(update: Update, _: CallbackContext):
     message.reply_text(msg, parse_mode=ParseMode.MARKDOWN)
 
 
-def anime(update: Update, _: CallbackContext):  # sourcery no-metrics
+def anime(update: Update, _: CallbackContext):  # sourcery skip: low-code-quality
     message = update.effective_message
     search = extract_arg(message)
     if not search:

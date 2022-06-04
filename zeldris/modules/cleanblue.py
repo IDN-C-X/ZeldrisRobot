@@ -141,14 +141,11 @@ def remove_bluetext_ignore(update: Update, context: CallbackContext):
         val = args[0].lower()
         if sql.chat_unignore_command(chat.id, val):
             reply = (
-                "<b>{}</b> has been removed from bluetext cleaner ignore list.".format(
-                    args[0],
-                )
+                f"<b>{args[0]}</b> has been removed from bluetext cleaner ignore list."
             )
         else:
             reply = "Command isn't ignored currently."
         message.reply_text(reply, parse_mode=ParseMode.HTML)
-
     else:
         reply = "No command supplied to be unignored."
         message.reply_text(reply)

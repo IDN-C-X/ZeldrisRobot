@@ -99,7 +99,7 @@ def get_id(update: Update, context: CallbackContext):
             )
 
 
-def info(update: Update, context: CallbackContext):  # sourcery no-metrics
+def info(update: Update, context: CallbackContext):  # sourcery skip: low-code-quality
     args = context.args
     msg = update.effective_message  # type: Optional[Message]
     user_id = extract_user(update.effective_message, args)
@@ -375,7 +375,6 @@ def wall(update: Update, context: CallbackContext):
     if not query:
         msg.reply_text("Please enter a query!")
         return
-    caption = query
     term = query.replace(" ", "%20")
     json_rep = requests.get(
         f"https://wall.alphacoders.com/api2.0/get.php?auth={WALL_API}&method=search&term={term}"
@@ -399,6 +398,7 @@ def wall(update: Update, context: CallbackContext):
             reply_to_message_id=msg_id,
             timeout=60,
         )
+        caption = query
         context.bot.send_document(
             chat_id,
             document=wallpaper,
@@ -411,9 +411,8 @@ def wall(update: Update, context: CallbackContext):
 
 @typing_action
 def getlink(update: Update, context: CallbackContext):
-    args = context.args
     message = update.effective_message
-    if args:
+    if _ := context.args:
         pattern = re.compile(r"-\d+")
     else:
         message.reply_text("You don't seem to be referring to any chats.")
@@ -464,10 +463,10 @@ def rmemes(update: Update, context: CallbackContext):
         return
     res = res.json()
 
-    rpage = res.get(str("subreddit"))  # Subreddit
-    title = res.get(str("title"))  # Post title
-    memeu = res.get(str("url"))  # meme pic url
-    plink = res.get(str("postLink"))
+    rpage = res.get("subreddit")
+    title = res.get("title")
+    memeu = res.get("url")
+    plink = res.get("postLink")
 
     caps = f"× <b>Title</b>: {title}\n"
     caps += f"× <b>Subreddit:</b> <pre>r/{rpage}</pre>"
@@ -501,9 +500,11 @@ def staff_ids(update: Update, _: CallbackContext):
 
 
 def stats(update: Update, _: CallbackContext):
-    update.effective_message.reply_text(
-        "Current stats:\n" + "\n".join([mod.__stats__() for mod in STATS])
+    statistic = f"Current {dispatcher.bot.first_name} stats:\n" + "\n".join(
+        [mod.__stats__() for mod in STATS]
     )
+    statsu = re.sub(r"(\d+)", r"<code>\1</code>", statistic)
+    update.effective_message.reply_text(statsu, parse_mode=ParseMode.HTML)
 
 
 def paste(update: Update, context: CallbackContext):
@@ -514,18 +515,18 @@ def paste(update: Update, context: CallbackContext):
         file.download("file.txt")
         text = codecs.open("file.txt", "r+", encoding="utf-8")
         paste_text = text.read()
-        url = "https://www.toptal.com/developers/hastebin/documents"
+        url = "http://paste.isekai.eu.org/documents"
         key = requests.post(url, data=paste_text.encode("UTF-8")).json().get("key")
         text = "**Pasted to Hastebin!!!**"
         buttons = [
             [
                 InlineKeyboardButton(
                     text="View Link",
-                    url=f"https://www.toptal.com/developers/hastebin/{key}",
+                    url=f"http:/paste.isekai.eu.org/{key}",
                 ),
                 InlineKeyboardButton(
                     text="View Raw",
-                    url=f"https://www.toptal.com/developers/hastebin/raw/{key}",
+                    url=f"http:/paste.isekai.eu.org/raw/{key}",
                 ),
             ]
         ]
@@ -537,7 +538,7 @@ def paste(update: Update, context: CallbackContext):
         )
         os.remove("file.txt")
     else:
-        msg.reply_text("Give me a text file to paste on hastebin")
+        msg.reply_text("Give me a text file to paste.")
         return
 
 
