@@ -98,7 +98,7 @@ def get_note_type(msg: Message):
 
 
 # note: add own args?
-def get_welcome_type(msg: Message):  # sourcery no-metrics
+def get_welcome_type(msg: Message):  # sourcery skip: low-code-quality
     data_type = None
     content = None
     text = ""

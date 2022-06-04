@@ -15,7 +15,7 @@
 #  You should have received a copy of the GNU Affero General Public License
 #  along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-
+import contextlib
 import html
 import random
 import re
@@ -96,10 +96,8 @@ def send(update, message, keyboard, backup_message):
     reply = update.message.message_id
     # Clean service welcome
     if cleanserv:
-        try:
+        with contextlib.suppress(BadRequest):
             dispatcher.bot.delete_message(chat.id, update.message.message_id)
-        except BadRequest:
-            pass
         reply = False
     try:
         msg = update.effective_message.reply_text(
@@ -176,7 +174,9 @@ def send(update, message, keyboard, backup_message):
 
 
 @loggable
-def new_member(update: Update, context: CallbackContext):  # sourcery no-metrics
+def new_member(
+    update: Update, context: CallbackContext
+):  # sourcery skip: low-code-quality
     bot, job_queue = context.bot, context.job_queue
     chat = update.effective_chat
     user = update.effective_user
@@ -551,7 +551,7 @@ def check_not_bot(member, chat_id, message_id, context):
     if not member_status:
         try:
             bot.unban_chat_member(chat_id, member.id)
-        except:
+        except BadRequest:
             pass
 
         try:
@@ -560,11 +560,13 @@ def check_not_bot(member, chat_id, message_id, context):
                 chat_id=chat_id,
                 message_id=message_id,
             )
-        except:
+        except BadRequest:
             pass
 
 
-def left_member(update: Update, context: CallbackContext):  # sourcery no-metrics
+def left_member(
+    update: Update, context: CallbackContext
+):  # sourcery skip: low-code-quality
     bot = context.bot
     chat = update.effective_chat
     user = update.effective_user
@@ -1040,7 +1042,7 @@ def user_button(update: Update, context: CallbackContext):
         )
         try:
             bot.deleteMessage(chat.id, message.message_id)
-        except:
+        except BadRequest:
             pass
         if member_dict["should_welc"]:
             if member_dict["media_wel"]:
@@ -1074,7 +1076,7 @@ def user_button(update: Update, context: CallbackContext):
 
 
 def user_captcha_button(update: Update, context: CallbackContext):
-    # sourcery no-metrics
+    # sourcery skip: low-code-quality
     chat = update.effective_chat
     user = update.effective_user
     query = update.callback_query
@@ -1110,7 +1112,7 @@ def user_captcha_button(update: Update, context: CallbackContext):
             )
             try:
                 bot.deleteMessage(chat.id, message.message_id)
-            except:
+            except BadRequest:
                 pass
             if member_dict["should_welc"]:
                 if member_dict["media_wel"]:
@@ -1141,7 +1143,7 @@ def user_captcha_button(update: Update, context: CallbackContext):
         else:
             try:
                 bot.deleteMessage(chat.id, message.message_id)
-            except:
+            except BadRequest:
                 pass
             kicked_msg = f"""
             ❌ [{escape_markdown(join_usr_data.first_name)}](tg://user?id={join_user}) failed the captcha and was kicked.

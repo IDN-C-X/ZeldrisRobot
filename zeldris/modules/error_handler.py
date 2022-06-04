@@ -24,7 +24,7 @@ import traceback
 
 import pretty_errors
 import requests
-from telegram import Update, InlineKeyboardMarkup, InlineKeyboardButton
+from telegram import ParseMode, Update, InlineKeyboardMarkup, InlineKeyboardButton
 from telegram.ext import CallbackContext, CommandHandler
 
 from zeldris import dispatcher, DEV_USERS, MESSAGE_DUMP
@@ -97,17 +97,12 @@ def error_callback(update: Update, context: CallbackContext):
             update.effective_message.text if update.effective_message else "No message",
             tb,
         )
-        extension = "txt"
-        url = "https://spaceb.in/api/v1/documents/"
-        try:
-            response = requests.post(
-                url, data={"content": pretty_message, "extension": extension}
-            )
-        except Exception as e:
-            return {"error": str(e)}
-        response = response.json()
+        key = requests.post(
+            "http://paste.isekai.eu.org/documents",
+            data=pretty_message.encode("UTF-8"),
+        ).json()
         e = html.escape(f"{context.error}")
-        if not response:
+        if not key.get("key"):
             with open("error.txt", "w+") as f:
                 f.write(pretty_message)
             context.bot.send_document(
@@ -115,11 +110,12 @@ def error_callback(update: Update, context: CallbackContext):
                 open("error.txt", "rb"),
                 caption=f"#{context.error.identifier}\n<b>Your enemy's make an error for you, demon king:"
                 f"</b>\n<code>{e}</code>",
-                parse_mode="html",
+                parse_mode=ParseMode.HTML,
             )
             return
 
-        url = f"https://spaceb.in/{response['payload']['id']}"
+        key = key.get("key")
+        url = f"http://paste.isekai.eu.org/{key}"
         context.bot.send_message(
             MESSAGE_DUMP,
             text=f"#{context.error.identifier}\n<b>Your enemy's make an error for you, demon king:"
@@ -127,7 +123,7 @@ def error_callback(update: Update, context: CallbackContext):
             reply_markup=InlineKeyboardMarkup(
                 [[InlineKeyboardButton("Cursed Errors", url=url)]],
             ),
-            parse_mode="html",
+            parse_mode=ParseMode.HTML,
         )
 
 
@@ -146,10 +142,13 @@ def list_errors(update: Update, context: CallbackContext):
             update.effective_chat.id,
             open("errors_msg.txt", "rb"),
             caption="Too many errors have occured..",
-            parse_mode="html",
+            parse_mode=ParseMode.HTML,
         )
         return
-    update.effective_message.reply_text(msg, parse_mode="html")
+    update.effective_message.reply_text(
+        msg,
+        parse_mode=ParseMode.HTML,
+    )
 
 
 dispatcher.add_error_handler(error_callback)

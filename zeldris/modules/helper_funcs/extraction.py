@@ -113,7 +113,7 @@ def extract_text(message) -> str:
 
 def extract_unt_fedban(
     message: Message, args: List[str]
-) -> Tuple[Optional[int], Optional[str]]:  # sourcery no-metrics
+) -> Tuple[Optional[int], Optional[str]]:  # sourcery skip: low-code-quality
     prev_message = message.reply_to_message
     split_text = message.text.split(None, 1)
 

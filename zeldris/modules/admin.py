@@ -365,10 +365,8 @@ def unpin(update: Update, context: CallbackContext):
 @user_admin
 @typing_action
 def refresh_admin(update: Update, _: CallbackContext):
-    try:
+    with contextlib.suppress(KeyError):
         ADMIN_CACHE.pop(update.effective_chat.id)
-    except KeyError:
-        pass
 
     update.effective_message.reply_text("Admins cache refreshed!")
 
@@ -382,8 +380,7 @@ def invite(update: Update, context: CallbackContext):
     msg = update.effective_message
     chat = update.effective_chat
 
-    conn = connected(bot, update, chat, user.id, need_admin=True)
-    if conn:
+    if conn := connected(bot, update, chat, user.id, need_admin=True):
         chat = dispatcher.bot.getChat(conn)
     else:
         if msg.chat.type == "private":
@@ -411,7 +408,7 @@ def invite(update: Update, context: CallbackContext):
 @typing_action
 def adminlist(update: Update, _: CallbackContext):
     administrators = update.effective_chat.get_administrators()
-    text = "Admins in <b>{}</b>:".format(update.effective_chat.title or "this chat")
+    text = f'Admins in <b>{update.effective_chat.title or "this chat"}</b>:'
     for admin in administrators:
         user = admin.user
         status = admin.status
@@ -477,12 +474,9 @@ def set_title(update: Update, context: CallbackContext):
     try:
         bot.setChatAdministratorCustomTitle(chat.id, user_id, title)
         message.reply_text(
-            "Sucessfully set title for <b>{}</b> to <code>{}</code>!".format(
-                user_member.user.first_name or user_id, title[:16]
-            ),
+            f"Sucessfully set title for <b>{user_member.user.first_name or user_id}</b> to <code>{title[:16]}</code>!",
             parse_mode=ParseMode.HTML,
         )
-
     except BadRequest:
         message.reply_text("I can't set custom title for admins that I didn't promote!")
 
@@ -564,7 +558,7 @@ def setchat_title(update: Update, context: CallbackContext):
         return
 
     try:
-        bot.setChatTitle(int(chat.id), str(title))
+        bot.setChatTitle(int(chat.id), title)
         msg.reply_text(
             f"Successfully set <b>{title}</b> as new chat title!",
             parse_mode=ParseMode.HTML,

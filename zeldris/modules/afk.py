@@ -144,7 +144,7 @@ def reply_afk(update: Update, context: CallbackContext):
 
 
 def check_afk(
-    update: Update, _: CallbackContext, user_id: int, fst_name: int, userc_id: int
+    update: Update, _: CallbackContext, user_id: int, fst_name: str, userc_id: int
 ):
     message = update.effective_message
     if is_user_afk(user_id):

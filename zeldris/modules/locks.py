@@ -153,7 +153,9 @@ def locktypes(update: Update, _: CallbackContext):
 @user_admin
 @loggable
 @typing_action
-def lock(update: Update, context: CallbackContext) -> str:  # sourcery no-metrics
+def lock(
+    update: Update, context: CallbackContext
+) -> str:  # sourcery skip: low-code-quality
     args = context.args
     chat = update.effective_chat
     user = update.effective_user
@@ -171,9 +173,7 @@ def lock(update: Update, context: CallbackContext) -> str:  # sourcery no-metric
                     chat = dispatcher.bot.getChat(conn)
                     # chat_id = conn
                     chat_name = chat.title
-                    text = "Locked all {} messages for non-admins in {}!".format(
-                        ltype, chat_name
-                    )
+                    text = f"Locked all {ltype} messages for non-admins in {chat_name}!"
                 else:
                     if update.effective_message.chat.type == "private":
                         send_message(
@@ -184,7 +184,7 @@ def lock(update: Update, context: CallbackContext) -> str:  # sourcery no-metric
                     chat = update.effective_chat
                     # chat_id = update.effective_chat.id
                     # chat_name = update.effective_message.chat.title
-                    text = "Locked all {} messages for non-admins!".format(ltype)
+                    text = f"Locked all {ltype} messages for non-admins!"
                 sql.update_lock(chat.id, ltype, locked=True)
                 send_message(update.effective_message, text, parse_mode="markdown")
 
@@ -206,9 +206,7 @@ def lock(update: Update, context: CallbackContext) -> str:  # sourcery no-metric
                     chat = dispatcher.bot.getChat(conn)
                     chat_id = conn
                     chat_name = chat.title
-                    text = "Locked {} for all non-admins in {}!".format(
-                        ltype, chat_name
-                    )
+                    text = f"Locked {ltype} for all non-admins in {chat_name}!"
                 else:
                     if update.effective_message.chat.type == "private":
                         send_message(
@@ -219,7 +217,7 @@ def lock(update: Update, context: CallbackContext) -> str:  # sourcery no-metric
                     chat = update.effective_chat
                     chat_id = update.effective_chat.id
                     # chat_name = update.effective_message.chat.title
-                    text = "Locked {} for all non-admins!".format(ltype)
+                    text = f"Locked {ltype} for all non-admins!"
 
                 current_permission = context.bot.getChat(chat_id).permissions
                 context.bot.set_chat_permissions(
@@ -260,7 +258,9 @@ def lock(update: Update, context: CallbackContext) -> str:  # sourcery no-metric
 @user_admin
 @loggable
 @typing_action
-def unlock(update: Update, context: CallbackContext) -> str:  # sourcery no-metrics
+def unlock(
+    update: Update, context: CallbackContext
+) -> str:  # sourcery skip: low-code-quality
     args = context.args
     chat = update.effective_chat
     user = update.effective_user
@@ -348,7 +348,9 @@ def unlock(update: Update, context: CallbackContext) -> str:  # sourcery no-metr
 
 
 @user_not_admin
-def del_lockables(update: Update, context: CallbackContext):  # sourcery no-metrics
+def del_lockables(
+    update: Update, context: CallbackContext
+):  # sourcery skip: low-code-quality
     chat = update.effective_chat
     message = update.effective_message
 
@@ -443,36 +445,36 @@ def build_lock_message(chat_id):
         res += "*" + "These are the current locks in this Chat:" + "*"
         locklist.extend(
             (
-                "sticker = `{}`".format(locks.sticker),
-                "audio = `{}`".format(locks.audio),
-                "voice = `{}`".format(locks.voice),
-                "document = `{}`".format(locks.document),
-                "video = `{}`".format(locks.video),
-                "contact = `{}`".format(locks.contact),
-                "photo = `{}`".format(locks.photo),
-                "gif = `{}`".format(locks.gif),
-                "url = `{}`".format(locks.url),
-                "bots = `{}`".format(locks.bots),
-                "forward = `{}`".format(locks.forward),
-                "game = `{}`".format(locks.game),
-                "location = `{}`".format(locks.location),
-                "rtl = `{}`".format(locks.rtl),
-                "button = `{}`".format(locks.button),
-                "egame = `{}`".format(locks.egame),
-                "inline = `{}`".format(locks.inline),
+                f"sticker = `{locks.sticker}`",
+                f"audio = `{locks.audio}`",
+                f"voice = `{locks.voice}`",
+                f"document = `{locks.document}`",
+                f"video = `{locks.video}`",
+                f"contact = `{locks.contact}`",
+                f"photo = `{locks.photo}`",
+                f"gif = `{locks.gif}`",
+                f"url = `{locks.url}`",
+                f"bots = `{locks.bots}`",
+                f"forward = `{locks.forward}`",
+                f"game = `{locks.game}`",
+                f"location = `{locks.location}`",
+                f"rtl = `{locks.rtl}`",
+                f"button = `{locks.button}`",
+                f"egame = `{locks.egame}`",
+                f"inline = `{locks.inline}`",
             )
         )
 
     permissions = dispatcher.bot.get_chat(chat_id).permissions
     permslist = [
-        "messages = `{}`".format(permissions.can_send_messages),
-        "media = `{}`".format(permissions.can_send_media_messages),
-        "poll = `{}`".format(permissions.can_send_polls),
-        "other = `{}`".format(permissions.can_send_other_messages),
-        "previews = `{}`".format(permissions.can_add_web_page_previews),
-        "info = `{}`".format(permissions.can_change_info),
-        "invite = `{}`".format(permissions.can_invite_users),
-        "pin = `{}`".format(permissions.can_pin_messages),
+        f"messages = `{permissions.can_send_messages}`",
+        f"media = `{permissions.can_send_media_messages}`",
+        f"poll = `{permissions.can_send_polls}`",
+        f"other = `{permissions.can_send_other_messages}`",
+        f"previews = `{permissions.can_add_web_page_previews}`",
+        f"info = `{permissions.can_change_info}`",
+        f"invite = `{permissions.can_invite_users}`",
+        f"pin = `{permissions.can_pin_messages}`",
     ]
 
     if locklist:
@@ -510,7 +512,7 @@ def list_locks(update: Update, context: CallbackContext):
 
     res = build_lock_message(chat.id)
     if conn:
-        res = res.replace("Locks in", "*{}*".format(chat_name))
+        res = res.replace("Locks in", f"*{chat_name}*")
 
     send_message(update.effective_message, res, parse_mode=ParseMode.MARKDOWN)
 
@@ -526,7 +528,7 @@ def get_permission_list(current, new):
         "can_invite_users": None,
         "can_pin_messages": None,
     }
-    permissions.update(current)
+    permissions |= current
     permissions.update(new)
     return ChatPermissions(**permissions)
 

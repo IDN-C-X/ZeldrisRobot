@@ -44,7 +44,9 @@ opener.addheaders = [("User-agent", useragent)]
 
 
 @typing_action
-def reverse(update: Update, context: CallbackContext):  # sourcery no-metrics
+def reverse(
+    update: Update, context: CallbackContext
+):  # sourcery skip: low-code-quality
     if os.path.isfile("okgoogle.png"):
         os.remove("okgoogle.png")
 

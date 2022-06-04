@@ -27,21 +27,18 @@ from contextlib import redirect_stdout, suppress
 from telegram import ParseMode, Update
 from telegram.ext import CallbackContext, CommandHandler
 
-from zeldris import LOGGER, dispatcher
+from zeldris import LOGGER, TOKEN, dispatcher
 from zeldris.modules.helper_funcs.chat_status import dev_plus
 
 namespaces = {}
 
 
-def namespace_of(chat, update, bot):
+def namespace_of(chat, update, context):
     if chat not in namespaces:
         namespaces[chat] = {
             "__builtins__": globals()["__builtins__"],
-            "bot": bot,
-            "effective_message": update.effective_message,
-            "effective_user": update.effective_user,
-            "effective_chat": update.effective_chat,
             "update": update,
+            "context": context,
         }
 
     return namespaces[chat]
@@ -53,7 +50,7 @@ def log_input(update):
     LOGGER.info(f"IN: {update.effective_message.text} (user={user}, chat={chat})")
 
 
-def send(msg, bot, update):
+def send(msg, update, bot):
     if len(str(msg)) > 2000:
         with io.BytesIO(str.encode(msg)) as out_file:
             out_file.name = "output.txt"
@@ -62,21 +59,21 @@ def send(msg, bot, update):
         LOGGER.info(f"OUT: '{msg}'")
         bot.send_message(
             chat_id=update.effective_chat.id,
-            text=f"<b>Result</b>:\n<code>{msg}</code>",
-            parse_mode=ParseMode.HTML,
+            text=f"`{msg}`",
+            parse_mode=ParseMode.MARKDOWN,
         )
 
 
 @dev_plus
 def evaluate(update: Update, context: CallbackContext):
     bot = context.bot
-    send(do(eval, bot, update), bot, update)
+    send(do(eval, update, context), update, bot)
 
 
 @dev_plus
 def execute(update: Update, context: CallbackContext):
     bot = context.bot
-    send(do(exec, bot, update), bot, update)
+    send(do(exec, update, context), update, bot)
 
 
 def cleanup_code(code):
@@ -85,11 +82,11 @@ def cleanup_code(code):
     return code.strip("` \n")
 
 
-def do(func, bot, update):
+def do(func, update, context):  # skipcq
     log_input(update)
     content = update.message.text.split(" ", 1)[-1]
     body = cleanup_code(content)
-    env = namespace_of(update.message.chat_id, update, bot)
+    env = namespace_of(update.message.chat_id, update, context)
 
     os.chdir(os.getcwd())
     with open(
@@ -104,7 +101,7 @@ def do(func, bot, update):
 
     try:
         exec(to_compile, env)
-    except Exception as e:
+    except Exception as e:  # skipcq PYL-W0703
         return f"{e.__class__.__name__}: {e}"
 
     func = env["func"]
@@ -112,22 +109,26 @@ def do(func, bot, update):
     try:
         with redirect_stdout(stdout):
             func_return = func()
-    except Exception:
+    except Exception:  # skipcq PYL-W0703
         value = stdout.getvalue()
         return f"{value}{traceback.format_exc()}"
-    else:
-        value = stdout.getvalue()
-        result = None
-        if func_return is None:
-            if value:
-                result = f"{value}"
-            else:
-                with suppress(Exception):
-                    result = f"{repr(ast.literal_eval(body, env))}"
+
+    value = stdout.getvalue()
+    result = None
+    if func_return is None:
+        if value:
+            result = f"{value}"
         else:
-            result = f"{value}{func_return}"
-        if result:
-            return result
+            with suppress(Exception):
+                result = f"{repr(eval(body, env))}"
+    else:
+        result = f"{value}{func_return}"
+
+    if result:
+        # don't send results if it has bot token inside.
+        if TOKEN in result:
+            result = "Results includes bot TOKEN, aborting..."
+        return result
 
 
 @dev_plus

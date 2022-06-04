@@ -16,6 +16,7 @@
 #  along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 
+import contextlib
 import re
 import time
 from datetime import datetime
@@ -76,9 +77,7 @@ def device(update: Update, context: CallbackContext):
     if len(args) == 0:
         reply = "No codename provided, write a codename for fetching informations."
         del_msg = update.effective_message.reply_text(
-            "{}".format(reply),
-            parse_mode=ParseMode.MARKDOWN,
-            disable_web_page_preview=True,
+            f"{reply}", parse_mode=ParseMode.MARKDOWN, disable_web_page_preview=True
         )
         time.sleep(5)
         try:
@@ -107,10 +106,9 @@ def device(update: Update, context: CallbackContext):
     except KeyError:
         reply = f"Couldn't find info about {devices}!\n"
         del_msg = update.effective_message.reply_text(
-            "{}".format(reply),
-            parse_mode=ParseMode.MARKDOWN,
-            disable_web_page_preview=True,
+            f"{reply}", parse_mode=ParseMode.MARKDOWN, disable_web_page_preview=True
         )
+
         time.sleep(5)
         try:
             del_msg.delete()
@@ -122,7 +120,7 @@ def device(update: Update, context: CallbackContext):
             ]:
                 return
     update.message.reply_text(
-        "{}".format(reply), parse_mode=ParseMode.HTML, disable_web_page_preview=True
+        f"{reply}", parse_mode=ParseMode.HTML, disable_web_page_preview=True
     )
 
 
@@ -132,8 +130,7 @@ def twrp(update: Update, context: CallbackContext):
     if len(args) == 0:
         reply = "No codename provided, write a codename for fetching informations."
         del_msg = update.effective_message.reply_text(
-            "{}".format(reply),
-            parse_mode=ParseMode.MARKDOWN,
+            f"{reply}", parse_mode=ParseMode.MARKDOWN
         )
         time.sleep(5)
         try:
@@ -151,10 +148,9 @@ def twrp(update: Update, context: CallbackContext):
     if url.status_code == 404:
         reply = f"Couldn't find twrp downloads for {_device}!\n"
         del_msg = update.effective_message.reply_text(
-            "{}".format(reply),
-            parse_mode=ParseMode.MARKDOWN,
-            disable_web_page_preview=True,
+            f"{reply}", parse_mode=ParseMode.MARKDOWN, disable_web_page_preview=True
         )
+
         time.sleep(5)
         try:
             del_msg.delete()
@@ -169,12 +165,10 @@ def twrp(update: Update, context: CallbackContext):
         reply = f"*Latest Official TWRP for {_device}*\n"
         db = get(DEVICES_DATA).json()
         newdevice = _device.strip("lte") if _device.startswith("beyond") else _device
-        try:
+        with contextlib.suppress(KeyError):
             brand = db[newdevice][0]["brand"]
             name = db[newdevice][0]["name"]
             reply += f"*{brand} - {name}*\n"
-        except KeyError:
-            pass
         page = BeautifulSoup(url.content, "lxml")
         date = page.find("em").text.strip()
         reply += f"*Updated:* {date}\n"
@@ -186,7 +180,7 @@ def twrp(update: Update, context: CallbackContext):
         for i, tag in enumerate(trs):
             dl_path = tag.find("a")["href"]
             match = re.search(r"([\d.]+)", dl_path)
-            new_ver = tuple(int(x) for x in match.group(1).split("."))
+            new_ver = tuple(int(x) for x in match[1].split("."))
             if new_ver > base_ver:
                 base_ver = new_ver
                 idx = i
@@ -198,9 +192,7 @@ def twrp(update: Update, context: CallbackContext):
         reply += f"[{dl_file}]({dl_link}) - {size}\n"
 
         update.message.reply_text(
-            "{}".format(reply),
-            parse_mode=ParseMode.MARKDOWN,
-            disable_web_page_preview=True,
+            f"{reply}", parse_mode=ParseMode.MARKDOWN, disable_web_page_preview=True
         )
 
 

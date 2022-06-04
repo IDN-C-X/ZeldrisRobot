@@ -112,7 +112,7 @@ def list_handlers(update: Update, context: CallbackContext):
 @typing_action
 def filters(
     update: Update, context: CallbackContext
-):  # sourcery no-metrics skip: use-named-expression
+):  # sourcery skip: low-code-quality
     chat = update.effective_chat
     user = update.effective_user
     msg = update.effective_message
@@ -217,11 +217,7 @@ def filters(
         send_message(msg, "Invalid filter!")
         return
 
-    add = addnew_filter(update, chat_id, keyword, text, file_type, file_id, buttons)
-    # This is an old method sql.add_filter(chat_id, keyword, content, is_sticker, is_document, is_image, is_audio,
-    # is_voice, is_video, buttons)
-
-    if add:
+    if _ := addnew_filter(update, chat_id, keyword, text, file_type, file_id, buttons):
         send_message(
             update.effective_message,
             f"Saved filter '{keyword}' in *{chat_name}*!",
@@ -262,9 +258,10 @@ def stop_filter(update: Update, context: CallbackContext):
             sql.remove_filter(chat_id, args[1])
             send_message(
                 update.effective_message,
-                "Okay, I'll stop replying to that filter in *{}*.".format(chat_name),
+                f"Okay, I'll stop replying to that filter in *{chat_name}*.",
                 parse_mode=telegram.ParseMode.MARKDOWN,
             )
+
             raise DispatcherHandlerStop
 
     send_message(
@@ -273,7 +270,9 @@ def stop_filter(update: Update, context: CallbackContext):
     )
 
 
-def reply_filter(update: Update, context: CallbackContext):  # sourcery no-metrics
+def reply_filter(
+    update: Update, context: CallbackContext
+):  # sourcery skip: low-code-quality
     chat = update.effective_chat
     message = update.effective_message
 
@@ -319,7 +318,7 @@ def reply_filter(update: Update, context: CallbackContext):  # sourcery no-metri
                                 if message.from_user.last_name
                                 else [escape(message.from_user.first_name)]
                             ),
-                            username="@" + escape(message.from_user.username)
+                            username=f"@{escape(message.from_user.username)}"
                             if message.from_user.username
                             else mention_html(
                                 message.from_user.id,
@@ -334,6 +333,7 @@ def reply_filter(update: Update, context: CallbackContext):  # sourcery no-metri
                             else escape(message.from_user.first_name),
                             id=message.from_user.id,
                         )
+
                     else:
                         filtext = ""
                 else:
@@ -359,7 +359,7 @@ def reply_filter(update: Update, context: CallbackContext):  # sourcery no-metri
                                     reply_markup=keyboard,
                                 )
                             except BadRequest as excp:
-                                LOGGER.exception("Error in filters: " + excp.message)
+                                LOGGER.exception(f"Error in filters: {excp.message}")
                                 send_message(
                                     update.effective_message,
                                     get_exception(excp, filt, chat),
@@ -372,7 +372,7 @@ def reply_filter(update: Update, context: CallbackContext):  # sourcery no-metri
                                 )
                             except BadRequest as excp:
                                 LOGGER.exception(
-                                    "Failed to send message: " + excp.message
+                                    f"Failed to send message: {excp.message}"
                                 )
                 elif ENUM_FUNC_MAP[filt.file_type] == dispatcher.bot.send_sticker:
                     ENUM_FUNC_MAP[filt.file_type](
@@ -424,7 +424,7 @@ def reply_filter(update: Update, context: CallbackContext):  # sourcery no-metri
                                 "again...",
                             )
                         except BadRequest as excp:
-                            LOGGER.exception("Error in filters: " + excp.message)
+                            LOGGER.exception(f"Error in filters: {excp.message}")
                     elif excp.message == "Reply message not found":
                         try:
                             context.bot.send_message(
@@ -434,7 +434,7 @@ def reply_filter(update: Update, context: CallbackContext):  # sourcery no-metri
                                 reply_markup=keyboard,
                             )
                         except BadRequest as excp:
-                            LOGGER.exception("Error in filters: " + excp.message)
+                            LOGGER.exception(f"Error in filters: {excp.message}")
                     else:
                         try:
                             send_message(
@@ -442,7 +442,7 @@ def reply_filter(update: Update, context: CallbackContext):  # sourcery no-metri
                                 "This message couldn't be sent as it's incorrectly formatted.",
                             )
                         except BadRequest as excp:
-                            LOGGER.exception("Error in filters: " + excp.message)
+                            LOGGER.exception(f"Error in filters: {excp.message}")
                         LOGGER.warning(
                             "Message %s could not be parsed",
                             str(filt.reply),
@@ -523,7 +523,7 @@ def addnew_filter(update, chat_id, keyword, text, file_type, file_id, buttons):
 
 
 def __stats__():
-    return "× {} filters, across {} chats.".format(sql.num_filters(), sql.num_chats())
+    return f"× {sql.num_filters()} filters, across {sql.num_chats()} chats."
 
 
 def __import_data__(chat_id, data):
@@ -542,7 +542,7 @@ def __migrate__(old_chat_id, new_chat_id):
 
 def __chat_settings__(chat_id, _):
     cust_filters = sql.get_chat_triggers(chat_id)
-    return "There are `{}` custom filters here.".format(len(cust_filters))
+    return f"There are `{len(cust_filters)}` custom filters here."
 
 
 __help__ = """

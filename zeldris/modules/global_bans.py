@@ -15,13 +15,12 @@
 #  You should have received a copy of the GNU Affero General Public License
 #  along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-
 import contextlib
 import html
 from io import BytesIO
 
 from telegram import ParseMode, ChatAction, Update
-from telegram.error import BadRequest, TelegramError
+from telegram.error import BadRequest, TelegramError, Unauthorized
 from telegram.ext import CommandHandler, MessageHandler, Filters, CallbackContext
 from telegram.utils.helpers import mention_html
 
@@ -85,7 +84,7 @@ UNGBAN_ERRORS = {
 
 
 @typing_action
-def gban(update: Update, context: CallbackContext):  # sourcery no-metrics
+def gban(update: Update, context: CallbackContext):  # sourcery skip: low-code-quality
     message = update.effective_message
     chat = update.effective_chat
     args = context.args
@@ -246,10 +245,7 @@ def ungban(update: Update, context: CallbackContext):
 
     banner = update.effective_user
 
-    message.reply_text(
-        "I'll give {} a second chance, globally.".format(user_chat.first_name)
-    )
-
+    message.reply_text(f"I'll give {user_chat.first_name} a second chance, globally.")
     context.bot.sendMessage(
         MESSAGE_DUMP,
         "<b>Regression of Global Ban</b>"
@@ -280,9 +276,9 @@ def ungban(update: Update, context: CallbackContext):
 
         except BadRequest as excp:
             if excp.message not in UNGBAN_ERRORS:
-                message.reply_text("Could not un-gban due to: {}".format(excp.message))
+                message.reply_text(f"Could not un-gban due to: {excp.message}")
                 context.bot.send_message(
-                    MESSAGE_DUMP, "Could not un-gban due to: {}".format(excp.message)
+                    MESSAGE_DUMP, f"Could not un-gban due to: {excp.message}"
                 )
                 return
         except TelegramError:
@@ -292,9 +288,7 @@ def ungban(update: Update, context: CallbackContext):
 
     context.bot.sendMessage(
         MESSAGE_DUMP,
-        "User {} has been successfully un-gbanned!".format(
-            mention_html(user_chat.id, user_chat.first_name)
-        ),
+        f"User {mention_html(user_chat.id, user_chat.first_name)} has been successfully un-gbanned!",
         parse_mode=ParseMode.HTML,
     )
     message.reply_text("Person has been un-gbanned.")
@@ -326,7 +320,7 @@ def gbanlist(update: Update, _: CallbackContext):
 
 
 def check_and_ban(update, user_id, should_message=True):
-    try:
+    with contextlib.suppress(BadRequest, TelegramError, Unauthorized):
         if spmban := spamwtc.get_ban(int(user_id)):
             update.effective_chat.ban_member(user_id)
             if should_message:
@@ -336,8 +330,6 @@ def check_and_ban(update, user_id, should_message=True):
                     parse_mode=ParseMode.HTML,
                 )
             return
-    except Exception:
-        pass
 
     if db.is_user_gbanned(user_id):
         update.effective_chat.ban_member(user_id)
@@ -408,7 +400,7 @@ def gbanstat(update: Update, context: CallbackContext):
 
 
 def __stats__():
-    return "× {} gbanned users.".format(db.num_gbanned_users())
+    return f"× {db.num_gbanned_users()} gbanned users."
 
 
 def __user_info__(user_id):
@@ -434,7 +426,7 @@ def __migrate__(old_chat_id, new_chat_id):
 
 
 def __chat_settings__(chat_id, _):
-    return "This chat is enforcing *gbans*: `{}`.".format(db.does_chat_gban(chat_id))
+    return f"This chat is enforcing *gbans*: `{db.does_chat_gban(chat_id)}`."
 
 
 __help__ = """

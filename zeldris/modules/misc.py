@@ -16,13 +16,13 @@
 #  along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 
-import codecs
 import contextlib
 import html
 import os
 import random
 import re
 from io import BytesIO
+from json import JSONDecodeError
 from random import randint
 from typing import Optional
 
@@ -99,7 +99,7 @@ def get_id(update: Update, context: CallbackContext):
             )
 
 
-def info(update: Update, context: CallbackContext):  # sourcery no-metrics
+def info(update: Update, context: CallbackContext):  # sourcery skip: low-code-quality
     args = context.args
     msg = update.effective_message  # type: Optional[Message]
     user_id = extract_user(update.effective_message, args)
@@ -375,7 +375,6 @@ def wall(update: Update, context: CallbackContext):
     if not query:
         msg.reply_text("Please enter a query!")
         return
-    caption = query
     term = query.replace(" ", "%20")
     json_rep = requests.get(
         f"https://wall.alphacoders.com/api2.0/get.php?auth={WALL_API}&method=search&term={term}"
@@ -399,6 +398,7 @@ def wall(update: Update, context: CallbackContext):
             reply_to_message_id=msg_id,
             timeout=60,
         )
+        caption = query
         context.bot.send_document(
             chat_id,
             document=wallpaper,
@@ -411,9 +411,8 @@ def wall(update: Update, context: CallbackContext):
 
 @typing_action
 def getlink(update: Update, context: CallbackContext):
-    args = context.args
     message = update.effective_message
-    if args:
+    if _ := context.args:
         pattern = re.compile(r"-\d+")
     else:
         message.reply_text("You don't seem to be referring to any chats.")
@@ -464,10 +463,10 @@ def rmemes(update: Update, context: CallbackContext):
         return
     res = res.json()
 
-    rpage = res.get(str("subreddit"))  # Subreddit
-    title = res.get(str("title"))  # Post title
-    memeu = res.get(str("url"))  # meme pic url
-    plink = res.get(str("postLink"))
+    rpage = res.get("subreddit")
+    title = res.get("title")
+    memeu = res.get("url")
+    plink = res.get("postLink")
 
     caps = f"× <b>Title</b>: {title}\n"
     caps += f"× <b>Subreddit:</b> <pre>r/{rpage}</pre>"
@@ -501,44 +500,80 @@ def staff_ids(update: Update, _: CallbackContext):
 
 
 def stats(update: Update, _: CallbackContext):
-    update.effective_message.reply_text(
-        "Current stats:\n" + "\n".join([mod.__stats__() for mod in STATS])
+    statistic = f"Current {dispatcher.bot.first_name} stats:\n" + "\n".join(
+        [mod.__stats__() for mod in STATS]
     )
+    statsu = re.sub(r"(\d+)", r"<code>\1</code>", statistic)
+    update.effective_message.reply_text(statsu, parse_mode=ParseMode.HTML)
 
 
 def paste(update: Update, context: CallbackContext):
+    args = context.args
     msg = update.effective_message
 
-    if msg.reply_to_message and msg.reply_to_message.document:
-        file = context.bot.get_file(msg.reply_to_message.document)
-        file.download("file.txt")
-        text = codecs.open("file.txt", "r+", encoding="utf-8")
-        paste_text = text.read()
-        url = "https://www.toptal.com/developers/hastebin/documents"
-        key = requests.post(url, data=paste_text.encode("UTF-8")).json().get("key")
-        text = "**Pasted to Hastebin!!!**"
+    pre = update.effective_chat.send_message(
+        "Pasting ...",
+        reply_to_message_id=msg.message_id,
+        allow_sending_without_reply=True,
+    )
+
+    if msg.reply_to_message:
+        if msg.reply_to_message.document:
+            file = context.bot.get_file(msg.reply_to_message.document)
+            if file.file_size > 600000:
+                pre.edit_text(
+                    "File too big to paste! Max file size that can be pasted is 600 kb."
+                )
+                return
+            file.download("file.txt")
+            with open("file.txt", "rb") as fd:
+                paste_text = fd.read().decode("UTF-8")
+            os.remove("file.txt")
+        else:
+            try:
+                paste_text = msg.reply_to_message.text
+            except AttributeError:
+                pre.edit_text(
+                    "Reply to text or give content after paste command or reply to a document to paste their content."
+                )
+                return
+
+    elif len(args) >= 1:
+        paste_text = msg.text.split(None, 1)[1]
+    else:
+        pre.edit_text("What am I supposed to do with this?")
+        return
+    if not paste_text:
+        pre.edit_text(
+            "Reply to text or give content after paste command or reply to a document to paste their content."
+        )
+        return
+    if len(paste_text) > 65000:
+        paste_text = paste_text[:65000]
+    try:
+        key = (
+            requests.post(
+                "http://paste.isekai.eu.org/documents", data=paste_text.encode("UTF-8")
+            )
+            .json()
+            .get("key")
+        )
+        url = f"http://paste.isekai.eu.org/{key}"
+        reply_text = "Pasted to IsekaiBin!!!"
         buttons = [
             [
-                InlineKeyboardButton(
-                    text="View Link",
-                    url=f"https://www.toptal.com/developers/hastebin/{key}",
-                ),
-                InlineKeyboardButton(
-                    text="View Raw",
-                    url=f"https://www.toptal.com/developers/hastebin/raw/{key}",
-                ),
+                InlineKeyboardButton(text="View Link", url=url),
             ]
         ]
-        msg.reply_text(
-            text,
+        pre.edit_text(
+            reply_text,
             reply_markup=InlineKeyboardMarkup(buttons),
             parse_mode=ParseMode.MARKDOWN,
             disable_web_page_preview=True,
         )
-        os.remove("file.txt")
-    else:
-        msg.reply_text("Give me a text file to paste on hastebin")
-        return
+    except JSONDecodeError as err:
+        pre.edit_text(f"failed to paste: {err}")
+    return
 
 
 # /ip is for private use

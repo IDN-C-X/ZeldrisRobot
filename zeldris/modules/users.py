@@ -16,6 +16,8 @@
 #  along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 
+import contextlib
+
 from io import BytesIO
 from time import sleep
 
@@ -87,16 +89,56 @@ def log_user(update: Update, _: CallbackContext):
 
     users_db.update_user(msg.from_user.id, msg.from_user.username, chat.id, chat.title)
 
-    if msg.reply_to_message:
+    if rep := msg.reply_to_message:
         users_db.update_user(
-            msg.reply_to_message.from_user.id,
-            msg.reply_to_message.from_user.username,
+            rep.from_user.id,
+            rep.from_user.username,
             chat.id,
             chat.title,
         )
 
+        if rep.forward_from:
+            users_db.update_user(
+                rep.forward_from.id,
+                rep.forward_from.username,
+            )
+
+        if rep.entities:
+            for entity in rep.entities:
+                if entity.type in ["text_mention", "mention"]:
+                    with contextlib.suppress(AttributeError):
+                        users_db.update_user(entity.user.id, entity.user.username)
+        if rep.sender_chat and not rep.is_automatic_forward:
+            users_db.update_user(
+                rep.sender_chat.id,
+                rep.sender_chat.username,
+                chat.id,
+                chat.title,
+            )
+
     if msg.forward_from:
         users_db.update_user(msg.forward_from.id, msg.forward_from.username)
+
+    if msg.entities:
+        for entity in msg.entities:
+            if entity.type in ["text_mention", "mention"]:
+                with contextlib.suppress(AttributeError):
+                    users_db.update_user(entity.user.id, entity.user.username)
+    if msg.sender_chat and not msg.is_automatic_forward:
+        users_db.update_user(
+            msg.sender_chat.id, msg.sender_chat.username, chat.id, chat.title
+        )
+
+    if msg.new_chat_members:
+        for user in msg.new_chat_members:
+            if user.id == msg.from_user.id:  # we already added that in the first place
+                continue
+            users_db.update_user(user.id, user.username, chat.id, chat.title)
+
+    if req := update.chat_join_request:
+        users_db.update_user(
+            req.from_user.id, req.from_user.username, chat.id, chat.title
+        )
 
 
 def chats(update: Update, _: CallbackContext):
