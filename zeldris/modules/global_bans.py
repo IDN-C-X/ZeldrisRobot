@@ -15,13 +15,12 @@
 #  You should have received a copy of the GNU Affero General Public License
 #  along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-
 import contextlib
 import html
 from io import BytesIO
 
 from telegram import ParseMode, ChatAction, Update
-from telegram.error import BadRequest, TelegramError
+from telegram.error import BadRequest, TelegramError, Unauthorized
 from telegram.ext import CommandHandler, MessageHandler, Filters, CallbackContext
 from telegram.utils.helpers import mention_html
 
@@ -246,11 +245,8 @@ def ungban(update: Update, context: CallbackContext):
 
     banner = update.effective_user
 
-    message.reply_text(
-        f"I'll give {user_chat.first_name} a second chance, globally."
-    )
 
-
+    message.reply_text(f"I'll give {user_chat.first_name} a second chance, globally.")
     context.bot.sendMessage(
         MESSAGE_DUMP,
         "<b>Regression of Global Ban</b>"
@@ -327,7 +323,7 @@ def gbanlist(update: Update, _: CallbackContext):
 
 
 def check_and_ban(update, user_id, should_message=True):
-    with contextlib.suppress(Exception):
+    with contextlib.suppress(BadRequest, TelegramError, Unauthorized):
         if spmban := spamwtc.get_ban(int(user_id)):
             update.effective_chat.ban_member(user_id)
             if should_message:
@@ -337,6 +333,7 @@ def check_and_ban(update, user_id, should_message=True):
                     parse_mode=ParseMode.HTML,
                 )
             return
+
     if db.is_user_gbanned(user_id):
         update.effective_chat.ban_member(user_id)
         if should_message:
