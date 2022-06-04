@@ -245,7 +245,6 @@ def ungban(update: Update, context: CallbackContext):
 
     banner = update.effective_user
 
-
     message.reply_text(f"I'll give {user_chat.first_name} a second chance, globally.")
     context.bot.sendMessage(
         MESSAGE_DUMP,
