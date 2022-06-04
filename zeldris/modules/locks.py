@@ -465,7 +465,6 @@ def build_lock_message(chat_id):
             )
         )
 
-
     permissions = dispatcher.bot.get_chat(chat_id).permissions
     permslist = [
         f"messages = `{permissions.can_send_messages}`",
@@ -477,7 +476,6 @@ def build_lock_message(chat_id):
         f"invite = `{permissions.can_invite_users}`",
         f"pin = `{permissions.can_pin_messages}`",
     ]
-
 
     if locklist:
         # Ordering lock list

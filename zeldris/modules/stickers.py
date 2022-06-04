@@ -154,10 +154,7 @@ def kang(update: Update, context: CallbackContext):  # sourcery skip: low-code-q
                 return
 
             except TelegramError as e:
-                if (
-                    e.message
-                    == "Internal Server Error: sticker set not found (500)"
-                ):
+                if e.message == "Internal Server Error: sticker set not found (500)":
                     msg.reply_text(
                         (
                             (
@@ -238,10 +235,7 @@ def kang(update: Update, context: CallbackContext):  # sourcery skip: low-code-q
                     parse_mode=ParseMode.MARKDOWN,
                 )
             except TelegramError as e:
-                if (
-                    e.message
-                    == "Internal Server Error: sticker set not found (500)"
-                ):
+                if e.message == "Internal Server Error: sticker set not found (500)":
                     msg.reply_text(
                         (
                             (
@@ -322,7 +316,6 @@ def makepack_internal(
                 tgs_sticker=tgs_sticker,
                 emojis=emoji,
             )
-
 
     except TelegramError as e:
         print(e)

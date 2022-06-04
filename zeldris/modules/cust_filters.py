@@ -371,7 +371,9 @@ def reply_filter(
                                     get_exception(excp, filt, chat),
                                 )
                             except BadRequest as excp:
-                                LOGGER.exception(f"Failed to send message: {excp.message}")
+                                LOGGER.exception(
+                                    f"Failed to send message: {excp.message}"
+                                )
                 elif ENUM_FUNC_MAP[filt.file_type] == dispatcher.bot.send_sticker:
                     ENUM_FUNC_MAP[filt.file_type](
                         chat.id,
