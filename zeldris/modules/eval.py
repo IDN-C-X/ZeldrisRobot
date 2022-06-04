@@ -50,7 +50,7 @@ def log_input(update):
     LOGGER.info(f"IN: {update.effective_message.text} (user={user}, chat={chat})")
 
 
-def send(msg, bot, update):
+def send(msg, update, bot):
     if len(str(msg)) > 2000:
         with io.BytesIO(str.encode(msg)) as out_file:
             out_file.name = "output.txt"

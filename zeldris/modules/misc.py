@@ -522,11 +522,11 @@ def paste(update: Update, context: CallbackContext):
             [
                 InlineKeyboardButton(
                     text="View Link",
-                    url=f"http:/paste.isekai.eu.org/{key}",
+                    url=f"http://paste.isekai.eu.org/{key}",
                 ),
                 InlineKeyboardButton(
                     text="View Raw",
-                    url=f"http:/paste.isekai.eu.org/raw/{key}",
+                    url=f"http://paste.isekai.eu.org/raw/{key}",
                 ),
             ]
         ]
