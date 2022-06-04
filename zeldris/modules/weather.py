@@ -31,7 +31,9 @@ from zeldris.modules.helper_funcs.alternate import typing_action
 
 
 @typing_action
-def weather(update: Update, context: CallbackContext):  # sourcery skip: low-code-quality
+def weather(
+    update: Update, context: CallbackContext
+):  # sourcery skip: low-code-quality
     args = context.args
     if len(args) == 0:
         reply = "Write a location to check the weather."
