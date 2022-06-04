@@ -16,13 +16,13 @@
 #  along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 
-import codecs
 import contextlib
 import html
 import os
 import random
 import re
 from io import BytesIO
+from json import JSONDecodeError
 from random import randint
 from typing import Optional
 
@@ -508,38 +508,72 @@ def stats(update: Update, _: CallbackContext):
 
 
 def paste(update: Update, context: CallbackContext):
+    args = context.args
     msg = update.effective_message
 
-    if msg.reply_to_message and msg.reply_to_message.document:
-        file = context.bot.get_file(msg.reply_to_message.document)
-        file.download("file.txt")
-        text = codecs.open("file.txt", "r+", encoding="utf-8")
-        paste_text = text.read()
-        url = "http://paste.isekai.eu.org/documents"
-        key = requests.post(url, data=paste_text.encode("UTF-8")).json().get("key")
-        text = "**Pasted to Hastebin!!!**"
+    pre = update.effective_chat.send_message(
+        "Pasting ...",
+        reply_to_message_id=msg.message_id,
+        allow_sending_without_reply=True,
+    )
+
+    if msg.reply_to_message:
+        if msg.reply_to_message.document:
+            file = context.bot.get_file(msg.reply_to_message.document)
+            if file.file_size > 600000:
+                pre.edit_text(
+                    "File too big to paste! Max file size that can be pasted is 600 kb."
+                )
+                return
+            file.download("file.txt")
+            with open("file.txt", "rb") as fd:
+                paste_text = fd.read().decode("UTF-8")
+            os.remove("file.txt")
+        else:
+            try:
+                paste_text = msg.reply_to_message.text
+            except AttributeError:
+                pre.edit_text(
+                    "Reply to text or give content after paste command or reply to a document to paste their content."
+                )
+                return
+
+    elif len(args) >= 1:
+        paste_text = msg.text.split(None, 1)[1]
+    else:
+        pre.edit_text("What am I supposed to do with this?")
+        return
+    if not paste_text:
+        pre.edit_text(
+            "Reply to text or give content after paste command or reply to a document to paste their content."
+        )
+        return
+    if len(paste_text) > 65000:
+        paste_text = paste_text[:65000]
+    try:
+        key = (
+            requests.post(
+                "http://paste.isekai.eu.org/documents", data=paste_text.encode("UTF-8")
+            )
+            .json()
+            .get("key")
+        )
+        url = f"http://paste.isekai.eu.org/{key}"
+        reply_text = "Pasted to IsekaiBin!!!"
         buttons = [
             [
-                InlineKeyboardButton(
-                    text="View Link",
-                    url=f"http://paste.isekai.eu.org/{key}",
-                ),
-                InlineKeyboardButton(
-                    text="View Raw",
-                    url=f"http://paste.isekai.eu.org/raw/{key}",
-                ),
+                InlineKeyboardButton(text="View Link", url=url),
             ]
         ]
-        msg.reply_text(
-            text,
+        pre.edit_text(
+            reply_text,
             reply_markup=InlineKeyboardMarkup(buttons),
             parse_mode=ParseMode.MARKDOWN,
             disable_web_page_preview=True,
         )
-        os.remove("file.txt")
-    else:
-        msg.reply_text("Give me a text file to paste.")
-        return
+    except JSONDecodeError as err:
+        pre.edit_text(f"failed to paste: {err}")
+    return
 
 
 # /ip is for private use
