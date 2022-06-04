@@ -318,7 +318,7 @@ def reply_filter(
                                 if message.from_user.last_name
                                 else [escape(message.from_user.first_name)]
                             ),
-                            username="@" + escape(message.from_user.username)
+                            username=f"@{escape(message.from_user.username)}"
                             if message.from_user.username
                             else mention_html(
                                 message.from_user.id,
@@ -333,6 +333,7 @@ def reply_filter(
                             else escape(message.from_user.first_name),
                             id=message.from_user.id,
                         )
+
                     else:
                         filtext = ""
                 else:
@@ -358,7 +359,7 @@ def reply_filter(
                                     reply_markup=keyboard,
                                 )
                             except BadRequest as excp:
-                                LOGGER.exception("Error in filters: " + excp.message)
+                                LOGGER.exception(f"Error in filters: {excp.message}")
                                 send_message(
                                     update.effective_message,
                                     get_exception(excp, filt, chat),
@@ -370,9 +371,7 @@ def reply_filter(
                                     get_exception(excp, filt, chat),
                                 )
                             except BadRequest as excp:
-                                LOGGER.exception(
-                                    "Failed to send message: " + excp.message
-                                )
+                                LOGGER.exception(f"Failed to send message: {excp.message}")
                 elif ENUM_FUNC_MAP[filt.file_type] == dispatcher.bot.send_sticker:
                     ENUM_FUNC_MAP[filt.file_type](
                         chat.id,
@@ -423,7 +422,7 @@ def reply_filter(
                                 "again...",
                             )
                         except BadRequest as excp:
-                            LOGGER.exception("Error in filters: " + excp.message)
+                            LOGGER.exception(f"Error in filters: {excp.message}")
                     elif excp.message == "Reply message not found":
                         try:
                             context.bot.send_message(
@@ -433,7 +432,7 @@ def reply_filter(
                                 reply_markup=keyboard,
                             )
                         except BadRequest as excp:
-                            LOGGER.exception("Error in filters: " + excp.message)
+                            LOGGER.exception(f"Error in filters: {excp.message}")
                     else:
                         try:
                             send_message(
@@ -441,7 +440,7 @@ def reply_filter(
                                 "This message couldn't be sent as it's incorrectly formatted.",
                             )
                         except BadRequest as excp:
-                            LOGGER.exception("Error in filters: " + excp.message)
+                            LOGGER.exception(f"Error in filters: {excp.message}")
                         LOGGER.warning(
                             "Message %s could not be parsed",
                             str(filt.reply),
@@ -522,7 +521,7 @@ def addnew_filter(update, chat_id, keyword, text, file_type, file_id, buttons):
 
 
 def __stats__():
-    return "× {} filters, across {} chats.".format(sql.num_filters(), sql.num_chats())
+    return f"× {sql.num_filters()} filters, across {sql.num_chats()} chats."
 
 
 def __import_data__(chat_id, data):
@@ -541,7 +540,7 @@ def __migrate__(old_chat_id, new_chat_id):
 
 def __chat_settings__(chat_id, _):
     cust_filters = sql.get_chat_triggers(chat_id)
-    return "There are `{}` custom filters here.".format(len(cust_filters))
+    return f"There are `{len(cust_filters)}` custom filters here."
 
 
 __help__ = """

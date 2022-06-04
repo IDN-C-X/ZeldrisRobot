@@ -262,7 +262,7 @@ def blacklist_mode(
                 )
                 send_message(msg, teks, parse_mode=ParseMode.MARKDOWN)
                 return ""
-            settypeblacklist = "temporarily ban for {}".format(args[1])
+            settypeblacklist = f"temporarily ban for {args[1]}"
             sql.set_blacklist_strength(chat_id, 6, str(args[1]))
         elif args[0].lower() == "tmute":
             if len(args) == 1:
@@ -283,7 +283,7 @@ def blacklist_mode(
                 )
                 send_message(msg, teks, parse_mode=ParseMode.MARKDOWN)
                 return ""
-            settypeblacklist = "temporarily mute for {}".format(args[1])
+            settypeblacklist = f"temporarily mute for {args[1]}"
             sql.set_blacklist_strength(chat_id, 7, str(args[1]))
         else:
             send_message(
@@ -292,11 +292,9 @@ def blacklist_mode(
             )
             return ""
         if conn:
-            text = "Changed blacklist mode: `{}` in *{}*!".format(
-                settypeblacklist, chat_name
-            )
+            text = f"Changed blacklist mode: `{settypeblacklist}` in *{chat_name}*!"
         else:
-            text = "Changed blacklist mode: `{}`!".format(settypeblacklist)
+            text = f"Changed blacklist mode: `{settypeblacklist}`!"
         send_message(msg, text, parse_mode="markdown")
         return (
             "<b>{}:</b>\n"
@@ -322,15 +320,13 @@ def blacklist_mode(
     elif getmode == 5:
         settypeblacklist = "ban"
     elif getmode == 6:
-        settypeblacklist = "temporarily ban for {}".format(getvalue)
+        settypeblacklist = f"temporarily ban for {getvalue}"
     elif getmode == 7:
-        settypeblacklist = "temporarily mute for {}".format(getvalue)
+        settypeblacklist = f"temporarily mute for {getvalue}"
     if conn:
-        text = "Current blacklistmode: *{}* in *{}*.".format(
-            settypeblacklist, chat_name
-        )
+        text = f"Current blacklistmode: *{settypeblacklist}* in *{chat_name}*."
     else:
-        text = "Current blacklistmode: *{}*.".format(settypeblacklist)
+        text = f"Current blacklistmode: *{settypeblacklist}*."
     send_message(msg, text, parse_mode=ParseMode.MARKDOWN)
     return ""
 
@@ -371,10 +367,11 @@ def del_blacklist(
                     warn(
                         update.effective_user,
                         chat,
-                        ("Using blacklisted trigger: {}".format(trigger)),
+                        f"Using blacklisted trigger: {trigger}",
                         message,
                         update.effective_user,
                     )
+
                     return
                 elif getmode == 3:
                     message.delete()
@@ -390,8 +387,7 @@ def del_blacklist(
                     return
                 elif getmode == 4:
                     message.delete()
-                    res = chat.unban_member(update.effective_user.id)
-                    if res:
+                    if res := chat.unban_member(update.effective_user.id):
                         bot.sendMessage(
                             chat.id,
                             f"Kicked {user.first_name} for using Blacklisted word: {trigger}!",
@@ -447,13 +443,11 @@ def __migrate__(old_chat_id, new_chat_id):
 
 def __chat_settings__(chat_id, _):
     blacklisted = sql.num_blacklist_chat_filters(chat_id)
-    return "There are {} blacklisted words.".format(blacklisted)
+    return f"There are {blacklisted} blacklisted words."
 
 
 def __stats__():
-    return "× {} blacklist triggers, across {} chats.".format(
-        sql.num_blacklist_filters(), sql.num_blacklist_filter_chats()
-    )
+    return f"× {sql.num_blacklist_filters()} blacklist triggers, across {sql.num_blacklist_filter_chats()} chats."
 
 
 __mod_name__ = "Blacklists"
