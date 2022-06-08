@@ -47,10 +47,10 @@ def get_user_id(username):
         return None
 
     if len(users) == 1:
-        return users[0].user_id
+        return users[0].["_id"]
     for user_obj in users:
         try:
-            userdat = dispatcher.bot.get_chat(user_obj.user_id)
+            userdat = dispatcher.bot.get_chat(user_obj.["_id"])
             if userdat.username == username:
                 return userdat.id
 
@@ -68,14 +68,14 @@ def broadcast(update: Update, context: CallbackContext):
         failed = 0
         for chat in chats_:
             try:
-                context.bot.sendMessage(int(chat.chat_id), to_send[1])
+                context.bot.sendMessage(int(chat.["chat_id"]), to_send[1])
                 sleep(0.1)
             except TelegramError:
                 failed += 1
                 LOGGER.warning(
                     "Couldn't send broadcast to %s, group name %s",
-                    str(chat.chat_id),
-                    str(chat.chat_name),
+                    str(chat.["chat_id"]),
+                    str(chat.["chat_name"]),
                 )
 
         update.effective_message.reply_text(
@@ -145,7 +145,7 @@ def chats(update: Update, _: CallbackContext):
     all_chats = users_db.get_all_chats() or []
     chatfile = "List of chats.\n"
     for chat in all_chats:
-        chatfile += "{} - ({})\n".format(chat.chat_name, chat.chat_id)
+        chatfile += "{} - ({})\n".format(chat.["chat_name"], chat.["chat_id"])
 
     with BytesIO(str.encode(chatfile)) as output:
         output.name = "chatlist.txt"
