@@ -21,7 +21,7 @@ pretty-errors~=1.2.25
 psutil~=5.9.0
 psycopg2-binary
 pyrate-limiter
-python-telegram-bot==13.11
+python-telegram-bot==13.12
 pytz
 redis~=4.2.2
 requests

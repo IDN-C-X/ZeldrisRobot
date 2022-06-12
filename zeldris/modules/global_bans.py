@@ -245,7 +245,9 @@ def ungban(update: Update, context: CallbackContext):
 
     banner = update.effective_user
 
-    message.reply_text(f"I'll give {user_chat.first_name} a second chance, globally.")
+    pre = message.reply_text(
+        f"I'll give {user_chat.first_name} a second chance, globally."
+    )
     context.bot.sendMessage(
         MESSAGE_DUMP,
         "<b>Regression of Global Ban</b>"
@@ -276,7 +278,7 @@ def ungban(update: Update, context: CallbackContext):
 
         except BadRequest as excp:
             if excp.message not in UNGBAN_ERRORS:
-                message.reply_text(f"Could not un-gban due to: {excp.message}")
+                pre.edit_text(f"Could not un-gban due to: {excp.message}")
                 context.bot.send_message(
                     MESSAGE_DUMP, f"Could not un-gban due to: {excp.message}"
                 )
@@ -291,7 +293,7 @@ def ungban(update: Update, context: CallbackContext):
         f"User {mention_html(user_chat.id, user_chat.first_name)} has been successfully un-gbanned!",
         parse_mode=ParseMode.HTML,
     )
-    message.reply_text("Person has been un-gbanned.")
+    pre.edit_text("Person has been un-gbanned.")
 
 
 @send_action(ChatAction.UPLOAD_DOCUMENT)
