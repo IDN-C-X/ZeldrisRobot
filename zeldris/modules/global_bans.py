@@ -245,7 +245,9 @@ def ungban(update: Update, context: CallbackContext):
 
     banner = update.effective_user
 
-    pre = message.reply_text(f"I'll give {user_chat.first_name} a second chance, globally.")
+    pre = message.reply_text(
+        f"I'll give {user_chat.first_name} a second chance, globally."
+    )
     context.bot.sendMessage(
         MESSAGE_DUMP,
         "<b>Regression of Global Ban</b>"
