@@ -169,7 +169,7 @@ def fullpromote(update: Update, context: CallbackContext):
         can_promote_members=bot_member.can_promote_members,
         can_restrict_members=bot_member.can_restrict_members,
         can_pin_messages=bot_member.can_pin_messages,
-        can_manage_voice_chats=bot_member.can_manage_voice_chats,
+        can_manage_video_chats=bot_member.can_manage_video_chats,
     )
 
     title = "admin"
@@ -251,7 +251,7 @@ def demote(update: Update, context: CallbackContext):
             can_invite_users=False,
             can_restrict_members=False,
             can_pin_messages=False,
-            can_manage_voice_chats=False,
+            can_manage_video_chats=False,
         )
         message.reply_text(
             f"Successfully demoted <b>{user_member.user.first_name or user_id}</b>!",
