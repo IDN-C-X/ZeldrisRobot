@@ -553,12 +553,12 @@ def paste(update: Update, context: CallbackContext):
     try:
         key = (
             requests.post(
-                "http://paste.isekai.eu.org/documents", data=paste_text.encode("UTF-8")
+                "https://paste.isekai.eu.org/documents", data=paste_text.encode("UTF-8")
             )
             .json()
             .get("key")
         )
-        url = f"http://paste.isekai.eu.org/{key}"
+        url = f"https://paste.isekai.eu.org/{key}"
         reply_text = "Pasted to IsekaiBin!!!"
         buttons = [
             [
