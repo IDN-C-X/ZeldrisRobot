@@ -98,7 +98,7 @@ def error_callback(update: Update, context: CallbackContext):
             tb,
         )
         key = requests.post(
-            "http://paste.isekai.eu.org/documents",
+            "https://paste.isekai.eu.org/documents",
             data=pretty_message.encode("UTF-8"),
         ).json()
         e = html.escape(f"{context.error}")
@@ -115,7 +115,7 @@ def error_callback(update: Update, context: CallbackContext):
             return
 
         key = key.get("key")
-        url = f"http://paste.isekai.eu.org/{key}"
+        url = f"https://paste.isekai.eu.org/{key}"
         context.bot.send_message(
             MESSAGE_DUMP,
             text=f"#{context.error.identifier}\n<b>Your enemy's make an error for you, demon king:"
