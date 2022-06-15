@@ -308,9 +308,9 @@ def gbanlist(update: Update, _: CallbackContext):
 
     banfile = "List of retards.\n"
     for user in banned_users:
-        banfile += "[x] {} - {}\n".format(user["name"] - user["_id"])
+        banfile += f"[x] {user['name']} - {user['_id']}\n"
         if user["reason"]:
-            banfile += "Reason: {}\n".format(user["reason"])
+            banfile += f"Reason: {user['reason']}\n"
 
     with BytesIO(str.encode(banfile)) as output:
         output.name = "gbanlist.txt"
@@ -337,7 +337,7 @@ def check_and_ban(update, user_id, should_message=True):
         update.effective_chat.ban_member(user_id)
         if should_message:
             usr = db.get_gbanned_user(user_id)
-            greason = usr.reason
+            greason = usr["reason"]
             if not greason:
                 greason = "No reason given"
 
@@ -381,13 +381,13 @@ def gbanstat(update: Update, context: CallbackContext):
         if args[0].lower() in ["on", "yes"]:
             db.enable_gbans(update.effective_chat.id)
             update.effective_message.reply_text(
-                "I've enabled Spam Sheild in this group. This will help protect you "
+                "I've enabled Spam Shield in this group. This will help protect you "
                 "from spammers, unsavoury characters, and the biggest trolls."
             )
         elif args[0].lower() in ["off", "no"]:
             db.disable_gbans(update.effective_chat.id)
             update.effective_message.reply_text(
-                "I've disabled Spam sheild in this group. GBans wont affect your users "
+                "I've disabled Spam Shield in this group. GBans wont affect your users "
                 "anymore. You'll be less protected from any trolls and spammers "
                 "though!"
             )
@@ -409,14 +409,17 @@ def __user_info__(user_id):
     is_gbanned = db.is_user_gbanned(user_id)
 
     text = "<b>Globally banned</b>: {}"
-
+    if user_id in [777000, 1087968824]:
+        return ""
+    if user_id == dispatcher.bot.id:
+        return ""
     if int(user_id) in DEV_USERS + SUPPORT_USERS:
         return ""
     if is_gbanned:
         text = text.format("Yes")
         user = db.get_gbanned_user(user_id)
-        if user.reason:
-            text += "\nReason: {}".format(html.escape(user["reason"]))
+        if user["reason"]:
+            text += f"\nReason: {html.escape(user['reason'])}"
             text += "\n\nAppeal at @IDNCoderX if you think it's invalid."
     else:
         text = text.format("No")
