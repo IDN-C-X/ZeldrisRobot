@@ -189,7 +189,6 @@ def new_member(
     new_members = update.effective_message.new_chat_members
 
     for new_mem in new_members:
-
         welcome_log = None
         should_mute = True
         welcome_bool = True
@@ -211,7 +210,6 @@ def new_member(
             reply = False
 
         if should_welc:
-
             # Give the owner a special welcome
             if new_mem.id == OWNER_ID:
                 update.effective_message.reply_text(
@@ -586,10 +584,8 @@ def left_member(
         reply = False
 
     if should_goodbye:
-
         left_mem = update.effective_message.left_chat_member
         if left_mem:
-
             # Thingy for spamwatched users
             if spamwtc is not None:
                 sw_ban = spamwtc.get_ban(left_mem.id)

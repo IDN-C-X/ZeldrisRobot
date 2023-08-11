@@ -36,7 +36,6 @@ def get_invalid_chats(bot: Bot, update: Update, remove: bool = False):
     progress_message = None
 
     for chat in chats:
-
         if ((100 * chats.index(chat)) / len(chats)) > progress:
             progress_bar = f"{progress}% completed in getting invalid chats."
             if progress_message:
@@ -119,7 +118,6 @@ def get_muted_chats(bot: Bot, update: Update, leave: bool = False):
     progress_message = None
 
     for chat in chats:
-
         if ((100 * chats.index(chat)) / len(chats)) > progress:
             progress_bar = f"{progress}% completed in getting muted chats."
             if progress_message:

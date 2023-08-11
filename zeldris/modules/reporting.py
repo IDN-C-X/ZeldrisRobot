@@ -112,7 +112,6 @@ def report(
             return ""
 
         if chat.username and chat.type == Chat.SUPERGROUP:
-
             reported = f"Reported {mention_html(reported_user.id, reported_user.first_name)} to the admins!"
 
             msg = (

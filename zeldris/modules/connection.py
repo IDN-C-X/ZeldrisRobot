@@ -267,7 +267,6 @@ def connected(bot, update, chat, user_id, need_admin=True):
     user = update.effective_user
 
     if chat.type == chat.PRIVATE and sql.get_connected_chat(user_id):
-
         conn_id = sql.get_connected_chat(user_id).chat_id
         getstatusadmin = bot.get_chat_member(
             conn_id, update.effective_message.from_user.id
