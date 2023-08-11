@@ -12,12 +12,12 @@
 <a href="https://t.me/ZeldrisRobot"> <img src="https://img.shields.io/badge/Zeldris-Robot-blue?&logo=telegram" alt="Zeldris on Telegram" /> </a><br>
 <a href="https://www.codacy.com/gh/IDN-C-X/ZeldrisRobot/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=IDN-C-X/ZeldrisRobot&amp;utm_campaign=Badge_Grade"><img src="https://app.codacy.com/project/badge/Grade/b290cfb10337403ba1e8d29fd474d39b"/></a><a href="https://www.codefactor.io/repository/github/idn-c-x/zeldrisrobot"><img src="https://www.codefactor.io/repository/github/idn-c-x/zeldrisrobot/badge" alt="CodeFactor" /></a><br>
 <a href="https://deepsource.io/gh/IDN-C-X/ZeldrisRobot/?ref=repository-badge"><img src="https://static.deepsource.io/deepsource-badge-light-mini.svg" alt="DeepSource"></a><br>
-<a href="https://python-telegram-bot.org"> <img src="https://img.shields.io/badge/PTB-13.12-brightgreen?&style=flat-round&logo=github" alt="Python Telegram Bot" /> </a>
+<a href="https://python-telegram-bot.org"> <img src="https://img.shields.io/badge/PTB-13.13-brightgreen?&style=flat-round&logo=github" alt="Python Telegram Bot" /> </a>
 <a href="https://github.com/psf/black"><img alt="Code style: black" src="https://img.shields.io/badge/code%20style-black-000000.svg"></a><br>
 <a href="https://docs.telethon.dev"> <img src="https://img.shields.io/badge/Telethon-1.24.0-brightgreen?&style=flat-round&logo=github" alt="Telethon" /> </a>
 <a href="https://docs.python.org"> <img src="https://img.shields.io/badge/Python-3.10.4-brightgreen?&style=flat-round&logo=python" alt="Python" /> </a><br>
 <a href="https://github.com/IDN-C-X"> <img src="https://badges.frapsoft.com/os/v1/open-source.svg?v=103" alt="Open Source" /> </a>
-<a href="https://GitHub.com/IDN-C-X/ZeldrisRobot"> <img src="https://img.shields.io/badge/Maintained-Yes-brightgreen.svg" alt="Maintenance" /> </a><br>
+<a href="https://GitHub.com/IDN-C-X/ZeldrisRobot"> <img src="https://img.shields.io/badge/Maintained-No-darkred.svg" alt="Maintenance" /> </a><br>
 <a href="https://github.com/IDN-C-X/ZeldrisRobot/blob/main/LICENSE"> <img src="https://img.shields.io/badge/License-GPLv3-blue.svg" alt="License" /> </a>
 <a href="https://makeapullrequest.com"> <img src="https://img.shields.io/badge/PRs-Welcome-blue.svg?style=flat-round" alt="PRs" /> </a>
 </p>
