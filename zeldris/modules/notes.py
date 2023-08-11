@@ -411,7 +411,6 @@ def rmbutton(update: Update, _: CallbackContext):
         return query.message.edit_text("Cancelled deletion of notes.")
 
     if match == "true" and usermem == "creator":
-
         allnotes = sql.get_all_chat_notes(chat.id)
         count = 0
         notelist = []
